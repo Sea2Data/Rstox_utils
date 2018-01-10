@@ -1,0 +1,43 @@
+##### Create and install the package stox in R: #####
+
+##### Load devtools: #####
+library("devtools")
+
+# Source the utility functions:
+source("https://github.com/Sea2Data/Rstox_utils/blob/master/Rstox_utils.R")
+
+
+# Define the directory of the working copy:
+#arnejh
+dir <- "~/Documents/Produktivt/Prosjekt/R-packages/Rstox/Rstox"
+# aasmunds
+#dir <- "C:/Projects/Sea2Data/NewBeam/trunk/beam/StoX/StoX-Main/src/main/resources/stox/system/r"
+
+
+# Build 1.6.2:
+# buildRstox(dir, version="1.6.2", Rversion="3.3.3", official=FALSE, check=FALSE)
+
+
+# # Build 1.6.3:
+# buildRstox(dir, version="1.6.3", Rversion="3.3.3", official=FALSE, check=FALSE, pckversion=list(data.table="1.10.4-3"))
+
+
+# Build 1.6.4:
+# buildRstox(dir, version="1.6.4", Rversion="3.4.2", pckversion=list(data.table="1.10.4-3"), official=FALSE, check=FALSE)
+
+
+# Build 1.6.5:
+#buildRstox(dir, version="1.6.5", Rversion="3.4.2", pckversion=list(data.table="1.10.4-3"), official=FALSE, check=FALSE)
+
+
+# Build 1.7:
+#buildRstox(dir, version="1.7", Rversion="3.4.2", pckversion=list(data.table="1.10.4-3"), official=TRUE, check=FALSE)
+
+# Build 1.7.1:
+#buildRstox(dir, version="1.7.1", Rversion="3.4.2", pckversion=list(data.table="1.10.4-3"), official=FALSE, check=FALSE)
+
+# Build 1.7.2:
+buildRstox(dir, version="1.7.2", Rversion="3.4.2", pckversion=list(data.table="1.10.4-3"), official=FALSE, check=FALSE)
+
+# Build 1.8:
+#buildRstox(dir, version="1.8", Rversion="3.4.3", pckversion=list(data.table="1.10.4-3"), official=TRUE, check=FALSE)

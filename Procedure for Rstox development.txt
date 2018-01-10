@@ -1,0 +1,145 @@
+Procedure for building Rstox releases. Alpha and beta versions are named by three and two integers respectively, such as Rstox 1.7.2 and the following beta release 1.8. Alpha versions are non-official, and for use only by trusted developers and test users:
+
+
+0. Make changes to the source code.
+
+
+1. Make note of all changes in the NEWS file in the Rstox repository. Use one line per change and separate changes by one or more lines. Separate changes of different versions by lines such as "########## Version 1.7.1 (2017-12-01) ##########". For beta versions, copy all changes from the preceding alpha versions.
+	
+
+2. Build Rstox using the script "build.R" in Rstox_utils (using the path to your local Rstox git repository as 'dir'). 
+	
+	- You may use check = FALSE for continued development but preferably check = TRUE to run a full R CMD check with examples (required before alpha and beta releases). 
+	
+	- Use official = FALSE for alpha versions and official = TRUE for beta versions.
+	
+	- Use the latest R version, and always the latest when preparing for a beta version, and state the version in the Rversion parameter to buildRstox().
+	
+
+3. Commit verified changes, pull, and push.
+
+	Example:
+
+	# Change direcotry to the local Rstox git repository:
+	cd THE_LOCAL_RSTOX_REPOSITORY
+
+	# Check changes:
+	git status
+
+	# If any files are new or should be removed, run git add NEW_FILE or git rm FILE_TO_BE_REMOVED
+
+	# Commit changes:
+	git commit -a -m "Some changes" 
+
+	# Pull changes from the GitHub repository:
+	git pull
+
+	$ Push your changes:
+	git push -u origin develop
+
+
+4. When approaching an alpha or beta release, run the test projects with diff to the previous version, using the script "Rstox_utils.R" in Rstox_utils. Resolve any unwanted changes and approve any accepted changes, rerun the autmated tests until satisfied. Report of the testing can be found in "~/workspace/stox/project/Test\ projects/Automated\ testing/Diff/progress.txt".
+
+
+
+5. Merge develop with alpha and possibly further with master
+
+	5-alpha. After an alpha version is verified merge the develop to the alpha branch:
+
+		# Merge develop to alpha
+		git checkout alpha
+
+		git merge develop
+
+		git push -u origin alpha
+	
+	5-beta. After a beta version is verified merge the develop to the alpha branch, AND also the alpha to the master branch:
+
+		# Merge develop to alpha
+		git checkout alpha
+
+		git merge develop
+
+		git push -u origin alpha
+		
+		# Merge alpha to master
+		git checkout master
+
+		git merge alpha
+
+		git push -u origin master
+
+
+6. Create a release on GitHub:
+
+	6-alpha. Create an alpha release on GitHub:
+
+		- Go to https://github.com/Sea2Data/Rstox/releases
+	
+		- Click on "Draft a new release"
+	
+		- Choose Target: alpha
+	
+		- Provide "Tag version", e.g., v1.7.2
+	
+		- Provide "Release title", e.g., "Rstox unofficial version 1.7.2"
+	
+		- Provide "Decscribe this release", e.g., "Test release prior to Rstox_1.8"
+	
+		- Publish release
+	
+	6-beta. Create a beta release on GitHub:
+
+		- Go to https://github.com/Sea2Data/Rstox/releases
+	
+		- Click on "Draft a new release"
+	
+		- Choose Target: master
+	
+		- Provide "Tag version", e.g., v1.8
+	
+		- Provide "Release title", e.g., "Rstox official version 1.8"
+	
+		- Provide "Decscribe this release", e.g., that of https://github.com/Sea2Data/Rstox/releases/tag/v1.7
+		
+		- Publish release
+	
+	
+7. Download the "Source code (tar.gz)" of the release to you local system. Rename the file to using underscore instead of hyphen, e.g., rename "Rstox-1.7.2.tar.gz" to "Rstox_1.7.2.tar.gz".
+
+
+8. Put the release on the ftp server:
+
+	8-alpha. Put the alpha release on the ftp server:
+	
+		- Create a new folder in ftp://ftp.imr.no/StoX/Download/Rstox/Versions/Alpha/ named by the alpha release, e.g., "Rstox_1.7.2". 
+	
+		- Copy the renamed tar.gz file to the folder. 
+	
+		- Unzip the tar.gz file, and copy the README tile to the folder.
+
+	8-beta. Put the beta release on the ftp server:
+	
+		- Create a new folder in ftp://ftp.imr.no/StoX/Download/Rstox/Versions/ named by the previous beta release, e.g., "Rstox_1.7". 
+	
+		- Move the file ftp://ftp.imr.no/StoX/Download/Rstox/README and the current official Rstox file, e.g., ftp://ftp.imr.no/StoX/Download/Rstox/Rstox_1.7.tar.gz to the folder. 
+	
+		- Copy the renamed tar.gz file to the official folder ftp://ftp.imr.no/StoX/Download/Rstox. 
+	
+		- Unzip the tar.gz file, and copy the README tile to the official folder.
+
+	
+9. If the verified alpha version is also verified for a beta version, the alpha version will be "renamed" to a beta version, i.e., the source code will be identical, but the package version name and README file will differ.
+
+	- Rerun step 1, 2, and 3 to generate a beta version on develop.
+	
+	- Run step 5-beta.
+	
+	- Run step 6-beta.
+	
+	- Rerun step 7.
+	
+	- Run step 8-beta.
+
+
+
