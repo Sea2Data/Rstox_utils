@@ -41,7 +41,6 @@ Procedure for building Rstox releases. Alpha and beta versions are named by thre
 4. When approaching an alpha or beta release, run the test projects with diff to the previous version, using the script "Rstox_utils.R" in Rstox_utils. Resolve any unwanted changes and approve any accepted changes, rerun the autmated tests until satisfied. Report of the testing can be found in "~/workspace/stox/project/Test\ projects/Automated\ testing/Diff/progress.txt".
 
 
-
 5. Merge develop with alpha and possibly further with master
 
 	5-alpha. After an alpha version is verified merge the develop to the alpha branch:
@@ -140,6 +139,5 @@ Procedure for building Rstox releases. Alpha and beta versions are named by thre
 	- Rerun step 7.
 	
 	- Run step 8-beta.
-
 
 
