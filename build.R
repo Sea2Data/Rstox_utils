@@ -4,7 +4,7 @@
 library("devtools")
 
 # Source the utility functions:
-source("https://github.com/Sea2Data/Rstox_utils/blob/master/Rstox_utils.R")
+source("https://raw.githubusercontent.com/Sea2Data/Rstox_utils/master/Rstox_utils.R")
 
 
 # Define the directory of the working copy:
