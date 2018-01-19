@@ -84,7 +84,7 @@ read_biotic_tables <- function(filename, coltypes=NULL){
 
 fix_missing_data <- function(ecaobj){
 	#mission <- read_biotic_tables("data/Mission.csv")
-	#station <- read_biotic_tables("data/Station.csv", paste(rep("c", 46), collapse="")) #coltypes forced because of unexpected type Oppdrag type.
+	station <- read_biotic_tables("/Users/a5362/code/github/eca_testset_generation/data/Station.csv", paste(rep("c", 46), collapse="")) #coltypes forced because of unexpected type Oppdrag type.
 	#catch <- read_biotic_tables("data/Catch.csv")
 	#ind <- read_biotic_tables("data/Individual.csv")
 	#age <- read_biotic_tables("data/Age.csv")

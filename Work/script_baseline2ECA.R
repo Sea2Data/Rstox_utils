@@ -1,10 +1,12 @@
 library(Rstox)
 options(java.parameters="-Xmx6g")
 dir <- "/Users/a5362/code/github/Rstox_utils/Work"
+outpath <- "/Users/a5362/code/github/Rstox_utils/Work/output"
 #sildeprosjekt: /delphi/Felles/alle/stox/ECA/2015/ECA_sild_2015. Legg til sild == '161724' i filter (annen kode for sild'g03)
 
 # Get ECA output using Rstox 1.5.2, which does not contain the hierarchy matrix, and has discrepancy between the defintion and values for covariate Season:
-projectname <- "ECA_torsk_2015"
+# projectname <- "ECA_torsk_2015"
+projectname <- "ECA_sild_2015"
 baselineOutput <- getBaseline(projectname)
 eca <- baseline2eca(projectname)
 
@@ -17,8 +19,7 @@ eca <- baseline2eca(projectname)
 eca$resources$covariateLink$season$Covariate <- paste0("Q", 1:4)
 
 #workarounds
-setwd(dirname(sys.frame(1)$ofile))
-source(paste(dir, "workarounds.R"))
+source(paste(dir, "workarounds.R", sep="/"))
 #eca <- fix_missing_data(eca) #fix in stox
 if (projectname=="ECA_torsk_2015"){ #must be preceeeded by fix missing data
 	eca <- fix_cod(eca)
@@ -197,7 +198,7 @@ getAgeLengthBiotic <- function(eca, ecaParameters){
 		CovariateMatrix$haulcount <- haulcount[match(eca$biotic$serialno, names(haulcount))]
 	}
 	if(ecaParameters$includeBoat){
-		CovariateMatrix$boat <- eca$biotic$vessel
+		CovariateMatrix$boat <- eca$biotic$platform
 	}
 	CovariateMatrix <- CovariateMatrix[!duplicated(CovariateMatrix$samplingID),]
 
@@ -329,4 +330,4 @@ WeightLength <- AgeLength2WeightLength(AgeLength, eca)
 checkAgeLength(AgeLength)
 checkWeightLength(WeightLength)
 
-save(GlobalParameters, Landings, WeightLength, AgeLength, file=paste("output/", projectname, ".RData", sep=""))
+save(GlobalParameters, Landings, WeightLength, AgeLength, file=file.path(outpath, paste0(projectname, ".RData")))
