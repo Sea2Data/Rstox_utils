@@ -1,5 +1,6 @@
 library(Rstox)
 options(java.parameters="-Xmx6g")
+dir <- "/Users/a5362/code/github/Rstox_utils/Work"
 #sildeprosjekt: /delphi/Felles/alle/stox/ECA/2015/ECA_sild_2015. Legg til sild == '161724' i filter (annen kode for sild'g03)
 
 # Get ECA output using Rstox 1.5.2, which does not contain the hierarchy matrix, and has discrepancy between the defintion and values for covariate Season:
@@ -17,8 +18,8 @@ eca$resources$covariateLink$season$Covariate <- paste0("Q", 1:4)
 
 #workarounds
 setwd(dirname(sys.frame(1)$ofile))
-source("workarounds.R")
-eca <- fix_missing_data(eca) #fix in stox
+source(paste(dir, "workarounds.R"))
+#eca <- fix_missing_data(eca) #fix in stox
 if (projectname=="ECA_torsk_2015"){ #must be preceeeded by fix missing data
 	eca <- fix_cod(eca)
 }
