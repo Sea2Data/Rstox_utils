@@ -5,7 +5,7 @@ outpath <- "/Users/a5362/code/github/Rstox_utils/Work/output"
 #sildeprosjekt: /delphi/Felles/alle/stox/ECA/2015/ECA_sild_2015. Legg til sild == '161724' i filter (annen kode for sild'g03)
 
 # Get ECA output using Rstox 1.5.2, which does not contain the hierarchy matrix, and has discrepancy between the defintion and values for covariate Season:
-# projectname <- "ECA_torsk_2015"
+#projectname <- "ECA_torsk_2015"
 projectname <- "ECA_sild_2015"
 baselineOutput <- getBaseline(projectname)
 eca <- baseline2eca(projectname)
@@ -20,7 +20,7 @@ eca$resources$covariateLink$season$Covariate <- paste0("Q", 1:4)
 
 #workarounds
 source(paste(dir, "workarounds.R", sep="/"))
-#eca <- fix_missing_data(eca) #fix in stox
+eca <- fix_missing_data(eca) #fix in stox
 if (projectname=="ECA_torsk_2015"){ #must be preceeeded by fix missing data
 	eca <- fix_cod(eca)
 }
@@ -30,6 +30,7 @@ eca <- rearrange_resources(eca)
 eca <- impute_catchcount(eca) #estimate (in stox?) from weight and count of subsample
 eca <- impute_indweight(eca) #fix in stox
 eca <- fix_otolithtypes(eca)
+eca <- set_platform_factor(eca)
 
 #define once stratumNeighbour gets populated by stox
 makeNeighbourLists <- fake_neighbourmatrix

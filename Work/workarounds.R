@@ -84,17 +84,17 @@ read_biotic_tables <- function(filename, coltypes=NULL){
 
 fix_missing_data <- function(ecaobj){
 	#mission <- read_biotic_tables("data/Mission.csv")
-	station <- read_biotic_tables("/Users/a5362/code/github/eca_testset_generation/data/Station.csv", paste(rep("c", 46), collapse="")) #coltypes forced because of unexpected type Oppdrag type.
+	#station <- read_biotic_tables("/Users/a5362/code/github/eca_testset_generation/data/Station.csv", paste(rep("c", 46), collapse="")) #coltypes forced because of unexpected type Oppdrag type.
 	#catch <- read_biotic_tables("data/Catch.csv")
 	#ind <- read_biotic_tables("data/Individual.csv")
 	#age <- read_biotic_tables("data/Age.csv")
 	
 	#add platfrom
-	vessel <- station[,c("serialno.St", "platform.St")]
-	vessel <- vessel[vessel$serialno.St %in% unlist(ecaobj$biotic$serialno),]
-	map <- data.frame(list(platform.St=unique(vessel$platform.St), vessel=rank(unique(vessel$platform.St))))
-	vessel <- merge(vessel, map, all.x=T)
-	ecaobj$biotic <- merge(ecaobj$biotic, vessel, by.x="serialno", by.y="serialno.St")
+	#vessel <- station[,c("serialno.St", "platform.St")]
+	#vessel <- vessel[vessel$serialno.St %in% unlist(ecaobj$biotic$serialno),]
+	#map <- data.frame(list(platform.St=unique(vessel$platform.St), vessel=rank(unique(vessel$platform.St))))
+	#vessel <- merge(vessel, map, all.x=T)
+	#ecaobj$biotic <- merge(ecaobj$biotic, vessel, by.x="serialno", by.y="serialno.St")
 	
 	#add spatial
 	map <-data.frame(list(area=unique(ecaobj$landing$fangsthomr)), spatfact=rank(unique(eca$landing$fangsthomr)))
@@ -109,6 +109,14 @@ fix_missing_data <- function(ecaobj){
 	ecaobj$covariateMatrixLanding$spatial <- ecaobj$landing$spatial
 	
 	return(ecaobj)
+}
+
+set_platform_factor <- function(ecaobj){
+  map <- data.frame(list(platform.St=unique(ecaobj$biotic$platform), platfact=rank(unique(ecaobj$biotic$platform))))
+  ecaobj$biotic <- merge(ecaobj$biotic, map, by.x="platform", by.y="platform.St", all.x=T)
+  ecaobj$biotic$platform <- ecaobj$biotic$platfact
+  ecaobj$biotic$platfact <- NULL
+  return(ecaobj)
 }
 
 fix_otolithtypes <- function(ecaobj){
