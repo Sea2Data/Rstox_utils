@@ -26,14 +26,21 @@ if (projectname=="ECA_torsk_2015"){ #must be preceeeded by fix missing data
 }
 eca <- drop_year(eca) #fix in stox
 eca <- aggregate_landings(eca) #renames rundvekt. Probably works if other issues are fixed, but still ned to rename somewhere.
-eca <- rearrange_resources(eca)
 
-eca <- impute_catchweight(eca) # filter in stox. (JIRA 150) Sjekk hva disse er (2015, snr: 39002-39080)
-eca <- estimate_catchcount(eca) #estimate in stox. (JIRA 150)
+#Fixed in baseline2ECA. Check and remove.
+eca <- rearrange_resources(eca) 
+
+# filter in stox. (JIRA 150) Sjekk hva disse er (2015, snr: 39002-39080)
+eca <- impute_catchweight(eca) 
+#estimate in stox. (JIRA 150)
+eca <- estimate_catchcount(eca) 
 
 #eca <- impute_indweight(eca) #fixed in AgeLength2WeightLength
+
 eca <- fix_otolithtypes(eca)
-eca <- set_platform_factor(eca) # treat as covariate in stox
+
+# Diskuter utforming av kovariatdefinisjon for platform. Edvin avklarer med Hanne at boat kan behandles som faktor (JIRA 151)
+eca <- set_platform_factor(eca) # treat as covariate in stox ?
 
 #define once stratumNeighbour gets populated by stox
 makeNeighbourLists <- fake_neighbourmatrix

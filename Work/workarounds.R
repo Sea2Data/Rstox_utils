@@ -70,12 +70,6 @@ rearrange_resources <- function(ecaobject){
 	return(ecaobject) 
 }
 
-rename_rundvekt <- function(ecaobject){
-	ecaobject$landing$liveweight <- ecaobject$landing$rundvekt
-	ecaobject$landing$rundvekt <- NULL
-	return(ecaobject)
-}
-
 aggregate_landings <- function(ecaobject){
 	ecaobject$landingAggregated <- aggregate(list("liveweight"=ecaobject$landing$rundvekt), by=list("season"=ecaobject$landing$season, "gearfactor"=ecaobject$landing$gearfactor, "spatial"=ecaobject$landing$spatial), FUN=sum)
 	return(ecaobject)
