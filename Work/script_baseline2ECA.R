@@ -27,10 +27,13 @@ if (projectname=="ECA_torsk_2015"){ #must be preceeeded by fix missing data
 eca <- drop_year(eca) #fix in stox
 eca <- aggregate_landings(eca) #renames rundvekt. Probably works if other issues are fixed, but still ned to rename somewhere.
 eca <- rearrange_resources(eca)
-eca <- impute_catchcount(eca) #estimate (in stox?) from weight and count of subsample
-eca <- impute_indweight(eca) #fix in stox
+
+eca <- impute_catchweight(eca) # filter in stox. (JIRA 150) Sjekk hva disse er (2015, snr: 39002-39080)
+eca <- estimate_catchcount(eca) #estimate in stox. (JIRA 150)
+
+#eca <- impute_indweight(eca) #fixed in AgeLength2WeightLength
 eca <- fix_otolithtypes(eca)
-eca <- set_platform_factor(eca)
+eca <- set_platform_factor(eca) # treat as covariate in stox
 
 #define once stratumNeighbour gets populated by stox
 makeNeighbourLists <- fake_neighbourmatrix
@@ -307,10 +310,14 @@ AgeLength2WeightLength <- function(AgeLength, eca){
 	for(var in toBeRemoved){
 		WeightLength$DataMatrix[[var]] <- NULL
 	}
+	
 	# Add the weight:
 	# Hard code the weight to KG, since it is in grams in StoX:
 	weightunit <- 1e-3
 	WeightLength$DataMatrix <- cbind(weightKG=eca$biotic$weight * weightunit, WeightLength$DataMatrix)
+	
+	# Remove missing ind weight
+	WeightLength$DataMatrix <- WeightLength$DataMatrix[!is.na(WeightLength$DataMatrix$weightKG),]
 	
 	# Detect columns of all zeros in the covariate matrix, and remove these columns along with the correponding columns in the meta vectors:
 	collapsed <- apply(WeightLength$CovariateMatrix, 2, function(x) all(x==0))
