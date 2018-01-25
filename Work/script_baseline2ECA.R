@@ -45,8 +45,6 @@ eca <- impute_catchweight(eca)
 #estimate in stox. (JIRA 150)
 eca <- estimate_catchcount(eca) 
 
-#eca <- impute_indweight(eca) #fixed in AgeLength2WeightLength
-
 eca <- fix_otolithtypes(eca)
 
 # Diskuter utforming av kovariatdefinisjon for platform. Edvin avklarer med Hanne at boat kan behandles som faktor (JIRA 151)
