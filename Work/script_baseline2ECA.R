@@ -8,7 +8,6 @@ outpath <- "/Users/a5362/code/github/Rstox_utils/Work/output"
 #outpath <- "~/Documents/Produktivt/Prosjekt/R-packages/Rstox_utils/output"
 #sildeprosjekt: /delphi/Felles/alle/stox/ECA/2015/ECA_sild_2015. Legg til sild == '161724' i filter (annen kode for sild'g03)
 
-# Get ECA output using Rstox 1.5.2, which does not contain the hierarchy matrix, and has discrepancy between the defintion and values for covariate Season:
 #projectname <- "ECA_torsk_2015"
 projectname <- "ECA_sild_2015"
 baselineOutput <- getBaseline(projectname)
@@ -19,43 +18,37 @@ eca <- baseline2eca(projectname)
 # workarounds
 # Should be eliminated (moved to stox-processes, baseline2eca or functions in this script)
 #
-# Fix the links in eca$resources$covariateLink$season:
-# Change the Season covariate from numeric to Q1, ..., Q4 (due to a bug in StoX):
-#eca$biotic$season <- paste0("Q", eca$biotic$season)
-#eca$landing$season <- paste0("Q", eca$landing$season)
-# Should they not be numeric 1-4 ?
+
+# Løses i stox (STOX-84)
 eca$resources$covariateLink$season$Covariate <- paste0("Q", 1:4)
 
 source(paste(dir, "workarounds.R", sep="/"))
 
 # replace by data filters in stox or extend reference lists
-# stations missing both area and position
+# e.g.: stations missing both area and position
+# 
 eca <- filter_missing_data(eca)
+eca <- impute_catchweight(eca) #Sjekk hva disse er (2015, snr: 39002-39080)
 
-#corrects formatting of covariates in eca$landing (and eca$biotic). Probably only needed for aggregate_landings to work, which should be tossed out anyway
-#eca <- fix_missing_data(eca) #fix in stox
+#estimate in stox. (STOX-150)
+eca <- estimate_catchcount(eca) 
+
+#hack for specific cod-set
 if (projectname=="ECA_torsk_2015"){ #must be preceeeded by fix missing data
 	eca <- fix_cod(eca)
 }
 
-#Fjern i fra baseline2ECA / stox
+#Ordne i defineTemporal STOX-153
 eca <- drop_year(eca) #fix in stox
 
-#eca <- aggregate_landings(eca) #renames rundvekt. Probably works if other issues are fixed, but still ned to rename somewhere.
-
-
-# Flytt til filter
-# filter in stox. (JIRA 150) Sjekk hva disse er (2015, snr: 39002-39080)
-eca <- impute_catchweight(eca) 
-#estimate in stox. (JIRA 151 ?)
-eca <- estimate_catchcount(eca) 
-
-# Koding og filtrering av otolitter må håndteres før use_otolit=TRUE can brukes
+# Koding og filtrering av otolitter må håndteres før use_otolit=TRUE can brukes.
+# ECA crasher om ikke otlittkolonne eskisterer avklar med Hanne
 # skriv om slik at vi kan utsette problemet
 eca <- fix_otolithtypes(eca)
 
-# Diskuter utforming av kovariatdefinisjon for platform. Edvin avklarer med Hanne at boat kan behandles som faktor (JIRA 151)
-eca <- set_platform_factor(eca) # treat as covariate in stox ?
+
+# Diskuter utforming av kovariatdefinisjon for platform. (STOX-150) Edvin avklarer med Hanne at boat kan behandles som faktor (JIRA 151)
+eca <- set_platform_factor(eca) # treat as covariate in stox!
 
 if(all(is.na(eca$covariateMatrixBiotic$spatial))){
 	stop("spatial can not all be na")	
