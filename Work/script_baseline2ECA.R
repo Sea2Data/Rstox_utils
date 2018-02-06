@@ -73,7 +73,7 @@ check_columns_present <- function(datamatrix, columns){
 check_none_missing <- function(datamatrix, columns){
 	errors <- ""
 	for (col in columns){
-		if (any(is.na(datamatrix[[col]]))){
+		if (any(is.na(datamatrix[,col]))){
 			errors <- paste(errors, "column", col, "has missing value.\n")
 		}
 	}
@@ -81,25 +81,121 @@ check_none_missing <- function(datamatrix, columns){
 		stop(errors)
 	}
 }
+check_cov_vs_info <- function(modelobj){
+  if (!("constant" %in% names(modelobj$CovariateMatrix)) | !("constant" %in% rownames(modelobj$info))){
+    stop("No constant column provided in covariate matrix or info matrix")
+  }
+  if (modelobj$info["constant","in.landings"]!=1 | modelobj$info["constant","in.slopeModel"]!=1 | modelobj$info["constant","random"]!=0 | modelobj$info["constant","CAR"]!=0 | modelobj$info["constant","continuous"]!=0){
+    stop("Constant covariate is not configured correctly")
+  }
+  for (co in names(modelobj$CovariateMatrix)){
+    if (!co %in% rownames(modelobj$info)){
+      stop(paste("Covariate", co, "not in info matrix"))
+    }
+    if (any(is.na(modelobj$CovariateMatrix[,co]))){
+      stop(paste("NAs for covariate", co))
+    }
+    ma <- max(modelobj$CovariateMatrix[,co])
+    mi <- min(modelobj$CovariateMatrix[,co])
+    num_unique <- length(unique(modelobj$CovariateMatrix[,co]))
+    
+    if (modelobj$info[co,"continuous"]==0 & ma > modelobj$info[co,"nlev"]){
+      stop(paste("Max value higher than nlev for covariate", co))
+    }
+    if (modelobj$info[co,"continuous"]==0 & mi < 1){
+      stop(paste("Min value lower than 1 for covariate", co))
+    }
+    if (modelobj$info[co,"CAR"]==1 & modelobj$info[co,"random"]!=1){
+      stop("CAR variable not designated as random effect.")
+    }
+    if (modelobj$info[co,"CAR"]==1 & modelobj$info[co,"random"]!=1){
+      stop("CAR variable not designated as random effect.")
+    }
+    if (modelobj$info[co,"continuous"]==1 & modelobj$info[co,"nlev"]!=1){
+      stop(paste("nlev wrongly configured for continuous variable", co))
+    }
+    if (modelobj$info[co,"interaction"]==1 & modelobj$info[co,"in.landings"]!=1){
+      stop(paste("Interaction specified for covariate that are not in landings", co))
+    }
+    if (modelobj$info[co,"random"]==0 & modelobj$info[co,"continuous"]==0 & num_unique!=modelobj$info[co,"nlev"]){
+      stop(paste("Not all values present for fixed covariate", co))
+    }
+  }
+}
+check_data_matrix <- function(modelobj){
+  if ("otolithtype" %in% names(modelobj$DataMatrix)){
+    check_none_missing(modelobj$DataMatrix, c("otolithtype"))
+  }
+  lastsample <- max(modelobj$DataMatrix$samplingID)
+  if (!lastsample==nrow(modelobj$CovariateMatrix)){
+    stop("sampling ids does not equals the number of rows in covariate matrix")
+  }
+  
+}
+#checks that specification of covariates are OK
+check_covariates <- function(modelobject){
+  check_cov_vs_info(modelobject)
+}
 
 #checks that agelenght is configured correctly
-checkAgeLength<-function(agelength){
+checkAgeLength<-function(agelength, num_tolerance = 1e-10){
 	check_columns_present(agelength$DataMatrix, c("age", "realage", "lengthCM", "samplingID", "partnumber", "partcount"))
 	check_none_missing(agelength$DataMatrix, c("lengthCM", "samplingID", "partnumber", "partcount"))
-	warning("implement check on missing values in covariates. Might need to look up info matrix (see doc)")
-	warning("implement check on fixed effects in landings, to be run on both models")
-	if ("otolithtype" %in% attributes(agelength$datamatrix)$names){
-		check_none_missing(agelength, c("otolithtype"))
+	check_data_matrix(agelength)
+	check_covariates(agelength)
+	if (any(is.na(agelength$AgeErrorMatrix)) || any(agelength$AgeErrorMatrix>1) || any(agelength$AgeErrorMatrix<0)){
+	  stop("Invalid values in age error matrix")
 	}
+	if (any(abs(colSums(agelength$AgeErrorMatrix)-1)>num_tolerance)){
+	  stop("Columns of age error matrix does not sum to 1")
+	}
+	
 }
 #checks that weightlenght is configured correctly
-checkWeightLength<-function(weightlength){
+checkWeightLength<-function(weightlength, landings){
 	check_columns_present(weightlength$DataMatrix, c("weightKG", "lengthCM", "samplingID", "partnumber", "partcount"))
 	check_none_missing(weightlength$DataMatrix, c("lengthCM", "samplingID", "partnumber", "partcount", "weightKG"))
-	warning("implement check on missing values in covariates. Might need to look up info matrix (see doc)")
-	if ("otolithtype" %in% attributes(weightlength$datamatrix)$names){
-		check_none_missing(weightlength, c("otolithtype"))
-	}
+	check_data_matrix(weightlength)
+	check_covariates(weightlength)
+}
+#checks that covariates are compatible between model and landings
+checkCovariateConsistency <- function(modelobj, landingscov){
+  
+  inlandings <- rownames(modelobj$info[modelobj$info[,"in.landings"]==1,])
+  if (any(!(inlandings %in% names(landingscov)))){
+    stop("some covariates labeled as in.landings are not found in corresponding covariate matrix in landings")
+  }
+  
+  landingscoovariates <- names(landingscov)[names(landingscov) %in% inlandings]
+  if (!all(inlandings==landingscoovariates)){
+    stop("Covariates are not ordered consistently in model and landings")
+  }
+  
+  #check that all level are present for all fixed effects
+  fixedeffects <- rownames(modelobj$info[modelobj$info[,"random"]==0,])
+  for (co in fixedeffects){
+    if (modelobj$info[co,"continuous"]==0){
+      num_unique <- length(unique(landingscov[,co]))
+      if (num_unique!=modelobj$info[co,"nlev"]){
+        stop(paste("Fixed effect", co, "does not have values for all corresponding landings"))
+      }
+    }
+  }
+  
+}
+#checks that landings are specified correctly
+checkLandings <- function(landings){
+  if (nrow(landings$AgeLengthCov) != nrow(landings$WeightLengthCov)){
+    stop("number of rows landings covariate matrices does not match")
+  }
+  if (nrow(landings$AgeLengthCov) != length(landings$LiveWeightKG)){
+    stop("length of weight vector does not match number of rows in covariate matrices in landings.")
+  }
+}
+checkGlobalParameters <- function(globalparameters){
+  if (is.na(globalparameters$lengthresCM)){
+    stop("Length resolution not set (lengthresCM)")
+  }
 }
 
 # Function used for combining hard coded parameter values and user defeined parameter values:
@@ -361,5 +457,9 @@ WeightLength <- AgeLength2WeightLength(AgeLength, eca)
 
 checkAgeLength(AgeLength)
 checkWeightLength(WeightLength)
+checkCovariateConsistency(AgeLength, Landings$AgeLengthCov)
+checkCovariateConsistency(WeightLength, Landings$WeightLengthCov)
+checkLandings(Landings)
+checkGlobalParameters(GlobalParameters)
 
 save(GlobalParameters, Landings, WeightLength, AgeLength, file=file.path(outpath, paste0(projectname, ".RData")))
