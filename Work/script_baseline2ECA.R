@@ -41,11 +41,7 @@ if (projectname=="ECA_torsk_2015"){ #must be preceeeded by fix missing data
 #Fjern i fra baseline2ECA / stox
 eca <- drop_year(eca) #fix in stox
 
-
 #eca <- aggregate_landings(eca) #renames rundvekt. Probably works if other issues are fixed, but still ned to rename somewhere.
-
-#Fixed in baseline2ECA. Check and remove.
-#eca <- rearrange_resources(eca) 
 
 
 # Flytt til filter
@@ -98,6 +94,7 @@ checkAgeLength<-function(agelength){
 	check_columns_present(agelength$DataMatrix, c("age", "realage", "lengthCM", "samplingID", "partnumber", "partcount"))
 	check_none_missing(agelength$DataMatrix, c("lengthCM", "samplingID", "partnumber", "partcount"))
 	warning("implement check on missing values in covariates. Might need to look up info matrix (see doc)")
+	warning("implement check on fixed effects in landings, to be run on both models")
 	if ("otolithtype" %in% attributes(agelength$datamatrix)$names){
 		check_none_missing(agelength, c("otolithtype"))
 	}
@@ -256,10 +253,10 @@ getAgeLengthBiotic <- function(eca, ecaParameters){
 	ord <- order(match(eca$stratumNeighbour[,1], eca$resources$covariateLink$spatial[,2]))
 	eca$stratumNeighbour <- eca$stratumNeighbour[ord, ]
 	temp <- lapply(eca$stratumNeighbour[,2], function(x) strsplit(x, ",")[[1]])
-	numNeighburs <- sapply(temp, length)
-	idNeighburs <- unlist(temp)
-	idNeighburs <- eca$resources$covariateLink$spatial[match(idNeighburs, eca$resources$covariateLink$spatial[, 2]), 1]
-	carneighbours <- list(numNeighburs=numNeighburs, idNeighburs=idNeighburs)
+	numNeighbours <- sapply(temp, length)
+	idNeighbours <- unlist(temp)
+	idNeighbours <- eca$resources$covariateLink$spatial[match(idNeighbours, eca$resources$covariateLink$spatial[, 2]), 1]
+	carneighbours <- list(numNeighbours=numNeighbours, idNeighbours=idNeighbours)
 	
 	info[eca$resources$covariateInfo$name, "CAR"] <- eca$resources$covariateInfo$CAR
 

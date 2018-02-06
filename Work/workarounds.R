@@ -8,6 +8,7 @@
 require(readr)
 
 drop_year <- function(ecaobj){
+  ecaobj$landingAggregated$year <- NULL
 	ecaobj$covariateMatrixBiotic$year <- NULL
 	ecaobj$covariateMatrixLanding$year <- NULL
 	ecaobj$resources$covariateDefinition$year <- NULL
@@ -60,14 +61,6 @@ fake_neighbourmatrix <- function(ecaobj){
 	map <- c(map, c(length(areas)-1,1))
 	
 	return(list(numNeighbours=num, idNeighbours=map))
-}
-
-rearrange_resources <- function(ecaobject){
-	ecaobject$ageError <- ecaobject$resources$ageError
-	ecaobject$resources$ageError <- NULL
-	ecaobject$stratumNeighbour <- ecaobject$resources$stratumNeighbour
-	ecaobject$resources$stratumNeighbour <- NULL
-	return(ecaobject) 
 }
 
 aggregate_landings <- function(ecaobject){

@@ -40,25 +40,5 @@ fit <- eca.estimate(newAgeLength,newWeightLength,Landings,GlobalParameters)
 ## Install new library
 pred <- eca.predict(newAgeLength,newWeightLength,Landings,GlobalParameters)
 
-sort.mat<-function(DataMatrix){
-  DataMatrix<-DataMatrix
-  DataMatrix$age<-as.integer(DataMatrix$age)
-  DataMatrix$otolithtype<-as.integer(DataMatrix$otolithtype)
-  haul<-DataMatrix$samplingID
-  no.age<-is.na(DataMatrix$age)
-  order<-order(haul,no.age)
-  DataMatrix<-DataMatrix[order,]
-  haul<-haul[order]
-  tab<-table(haul,DataMatrix$age,exclude=NULL)
-  nc<-ncol(tab)
-  num.noAge<-tab[-nrow(tab),nc]
-  nFishBoat<-table(haul)
-  haulstart<-match(unique(haul),haul)
-  start.noAge<-haulstart+nFishBoat-num.noAge-1
-  start.noAge[num.noAge==0]<-0
-  list(n.col.data=as.integer(ncol(DataMatrix)),DataMatrix=DataMatrix,num.noAge=as.integer(num.noAge),
-       nFishBoat=as.integer(nFishBoat),start.noAge=as.integer(start.noAge))
-}
-
 source(file.path(dir, "plot.R"))
 plot_pred_box(pred)
