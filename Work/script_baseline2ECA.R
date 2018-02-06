@@ -55,7 +55,10 @@ if(all(is.na(eca$covariateMatrixBiotic$spatial))){
 }
 #/workarounds
 
-# Functions:
+
+#
+# Tests for data format to be exported to ECA
+#
 
 #' checks that column names are present on datamatrix
 check_columns_present <- function(datamatrix, columns){
@@ -197,6 +200,10 @@ checkGlobalParameters <- function(globalparameters){
     stop("Length resolution not set (lengthresCM)")
   }
 }
+
+#
+# Functions for coverting data from stox-structure to ECA structure
+#
 
 # Function used for combining hard coded parameter values and user defeined parameter values:
 getHardCoded <- function(info){
@@ -455,11 +462,21 @@ AgeLength2WeightLength <- function(AgeLength, eca){
 }
 WeightLength <- AgeLength2WeightLength(AgeLength, eca)
 
+
+#
+# Run checks
+#
+
 checkAgeLength(AgeLength)
 checkWeightLength(WeightLength)
 checkCovariateConsistency(AgeLength, Landings$AgeLengthCov)
 checkCovariateConsistency(WeightLength, Landings$WeightLengthCov)
 checkLandings(Landings)
 checkGlobalParameters(GlobalParameters)
+
+
+#
+# save data
+#
 
 save(GlobalParameters, Landings, WeightLength, AgeLength, file=file.path(outpath, paste0(projectname, ".RData")))
