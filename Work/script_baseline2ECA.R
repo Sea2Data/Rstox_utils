@@ -41,9 +41,11 @@ if (projectname=="ECA_torsk_2015"){ #must be preceeeded by fix missing data
 #Fjern i fra baseline2ECA / stox
 eca <- drop_year(eca) #fix in stox
 
-# Skal eca$landingAggregated, eller eca$covariateMatrixLanding brukes til i getLandings ?
-# Om eca$landingAggregated må kovariatene ha annen type (num eller int, ikke faktor)
-eca <- fix_aggregate_landings(eca)
+
+#eca <- aggregate_landings(eca) #renames rundvekt. Probably works if other issues are fixed, but still ned to rename somewhere.
+
+#Fixed in baseline2ECA. Check and remove.
+#eca <- rearrange_resources(eca) 
 
 
 # Flytt til filter
@@ -250,6 +252,9 @@ getAgeLengthBiotic <- function(eca, ecaParameters){
 
 	# 4.2. CAR:
 	#carneighbours <- makeNeighbourLists(eca)
+	# Make sure the neighbours are ordered according to the 1:n values in the covariateLink:
+	ord <- order(match(eca$stratumNeighbour[,1], eca$resources$covariateLink$spatial[,2]))
+	eca$stratumNeighbour <- eca$stratumNeighbour[ord, ]
 	temp <- lapply(eca$stratumNeighbour[,2], function(x) strsplit(x, ",")[[1]])
 	numNeighburs <- sapply(temp, length)
 	idNeighburs <- unlist(temp)
