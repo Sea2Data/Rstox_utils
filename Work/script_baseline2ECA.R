@@ -1,7 +1,11 @@
 library(Rstox)
 options(java.parameters="-Xmx6g")
-dir <- "/Users/a5362/code/github/Rstox_utils/Work"
-outpath <- "/Users/a5362/code/github/Rstox_utils/Work/output"
+# Edvin:
+#dir <- "/Users/a5362/code/github/Rstox_utils/Work"
+#outpath <- "/Users/a5362/code/github/Rstox_utils/Work/output"
+# Arne Johannes:
+dir <- "~/Documents/Produktivt/Prosjekt/R-packages/Rstox_utils/Rstox_utils/Work"
+outpath <- "~/Documents/Produktivt/Prosjekt/R-packages/Rstox_utils/output"
 #sildeprosjekt: /delphi/Felles/alle/stox/ECA/2015/ECA_sild_2015. Legg til sild == '161724' i filter (annen kode for sild'g03)
 
 # Get ECA output using Rstox 1.5.2, which does not contain the hierarchy matrix, and has discrepancy between the defintion and values for covariate Season:
@@ -250,7 +254,13 @@ getAgeLengthBiotic <- function(eca, ecaParameters){
 	info[eca$resources$covariateInfo$name, "random"] <- eca$resources$covariateInfo$covType=="Random"
 
 	# 4.2. CAR:
-	carneighbours <- makeNeighbourLists(eca)
+	#carneighbours <- makeNeighbourLists(eca)
+	temp <- lapply(eca$stratumNeighbour[,2], function(x) strsplit(x, ",")[[1]])
+	numNeighburs <- sapply(temp, length)
+	idNeighburs <- unlist(temp)
+	idNeighburs <- eca$resources$covariateLink$spatial[match(idNeighburs, eca$resources$covariateLink$spatial[, 2]), 1]
+	carneighbours <- list(numNeighburs=numNeighburs, idNeighburs=idNeighburs)
+	
 	info[eca$resources$covariateInfo$name, "CAR"] <- eca$resources$covariateInfo$CAR
 
 	# 4.3. continuous:
