@@ -43,6 +43,8 @@ dir <- "~/Documents/Produktivt/Prosjekt/R-packages/Rstox/Rstox"
 #buildRstox(dir, version="1.8", Rversion="3.4.3", pckversion=list(data.table="1.10.4-3"), official=TRUE, check=TRUE)
 
 # Build 1.8.1:
-buildRstox(dir, version="1.8.1", Rversion="3.4.3", pckversion=list(data.table="1.10.4-3"), official=FALSE, check=FALSE)
+#buildRstox(dir, version="1.8.1", Rversion="3.4.3", pckversion=list(data.table="1.10.4-3"), official=FALSE, check=FALSE)
+
+buildRstox(dir, version="1.8.1", Rversion="3.4.3", pckversion=list(data.table="1.10.4-3"), official=FALSE, suggests="ggmap", check=FALSE)
 
 

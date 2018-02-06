@@ -1,7 +1,7 @@
 # Function used for building and testing the Rstox package. 
 # Use this in the continous development of Rstox. 
 # Rstox can also be built from the develop brach of Sea2Data/Rstox, but the function buildRstox() generates the README and DESCRIPTION file, treats dependencies and tests the package and examples if check=TRUE:
-buildRstox <- function(buildDir, pkgName="Rstox", version="1.0", Rversion="3.3.1", pckversion=list(), official=FALSE, check=FALSE, exportDir=NULL) {
+buildRstox <- function(buildDir, pkgName="Rstox", version="1.0", Rversion="3.3.1", pckversion=list(), official=FALSE, check=FALSE, exportDir=NULL, suggests=NULL) {
 	
 	########## Functions ##########
 	# Function used for writing the README file automatically, including package dependencies, R and Rstox version and release notes:
@@ -243,11 +243,15 @@ buildRstox <- function(buildDir, pkgName="Rstox", version="1.0", Rversion="3.3.1
 		cat(paste(imports, collapse=",\n		"), file=DESCRIPTIONfile, append=TRUE)
 		cat("", file=DESCRIPTIONfile, append=TRUE)
 	}
+	# Add also the suggests:
+	if(length(suggests)){
+		lapply(suggests, devtools::use_package, type="suggests", pkg=buildDir)
+	}
 	##########
 	
 	##### Run R cmd check with devtools: #####
 	if(check){
-		devtools::check(buildDir)
+		devtools::check(pkg=buildDir)
 	}
 	##########
 	
