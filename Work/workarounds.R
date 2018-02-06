@@ -16,14 +16,23 @@ drop_year <- function(ecaobj){
 	return(ecaobj)
 }
 
-impute_catchcount <- function(ecaobj){
-	s <- ecaobj$biotic$catchcount
-	s <- s[!is.na(s)]
-	
-	n <- sum(is.na(ecaobj$biotic$catchcount))
-	
-	ecaobj$biotic[is.na(ecaobj$biotic$catchcount),"catchcount"]<-sample(s, n, replace=T)
+estimate_catchcount <- function(ecaobj){
+  
+  missing <- is.na(ecaobj$biotic$catchcount)
+  
+  if (any(is.na(ecaobj$biotic[missing,"catchweight"])) | any(is.na(ecaobj$biotic[missing,"lengthsampleweight"])) | any(is.na(ecaobj$biotic[missing,"lengthsamplecount"]))){
+    stop("Could not estimate catchcount")
+  }
+  
+  ecaobj$biotic[missing,"catchcount"] <- eca$biotic[missing, "lengthsamplecount"] * eca$biotic[missing, "catchweight"] / eca$biotic[missing, "lengthsampleweight"]
+  
 	return(ecaobj)
+}
+
+impute_catchweight <- function(ecaobj){
+  missing <- is.na(ecaobj$biotic$catchweight)
+  ecaobj$biotic[missing,"catchweight"] <- sample(ecaobj$biotic[!missing, "catchweight"], sum(missing), replace=T)
+  return(ecaobj)
 }
 
 impute_indweight <- function(ecaobj){
@@ -61,14 +70,8 @@ rearrange_resources <- function(ecaobject){
 	return(ecaobject) 
 }
 
-rename_rundvekt <- function(ecaobject){
-	ecaobject$landing$liveweight <- ecaobject$landing$rundvekt
-	ecaobject$landing$rundvekt <- NULL
-	return(ecaobject)
-}
-
 aggregate_landings <- function(ecaobject){
-	ecaobject$landingAggregated <- aggregate(list("liveweight"=ecaobject$landing$rundvekt), by=list("season"=ecaobject$landing$season, "gearfactor"=ecaobject$landing$gearfactor, "spatial"=ecaobject$landing$spatial), FUN=sum)
+	ecaobject$landingAggregated <- aggregate(list("liveweight"=ecaobject$landing$rundvekt), by=list("season"=ecaobject$landing$season, "gearfactor"=ecaobject$landing$gearfactor, "spatial"=as.numeric(ecaobject$landing$spatial)), FUN=sum)
 	return(ecaobject)
 }
 

@@ -1,6 +1,7 @@
 library(eca)
 inpath <- "/Users/a5362/code/github/Rstox_utils/Work/output"
 tmppath <- "/Users/a5362/code/github/Rstox_utils/Work/tmp/ECAres"
+dir <- "/Users/a5362/code/github/Rstox_utils/Work"
 filename <- "ECA_sild_2015.RData"
 tmp <- load(file.path(inpath, filename))
 print(paste("Loaded from", filename, ":", tmp))
@@ -38,3 +39,6 @@ fit <- eca.estimate(newAgeLength,newWeightLength,Landings,GlobalParameters)
 ## Predict
 ## Install new library
 pred <- eca.predict(newAgeLength,newWeightLength,Landings,GlobalParameters)
+
+source(file.path(dir, "plot.R"))
+plot_pred_box(pred)

@@ -14,29 +14,49 @@ projectname <- "ECA_sild_2015"
 baselineOutput <- getBaseline(projectname)
 eca <- baseline2eca(projectname)
 
+
+#
+# workarounds
+# Should be eliminated (moved to stox-processes, baseline2eca or functions in this script)
+#
+# Fix the links in eca$resources$covariateLink$season:
 # Change the Season covariate from numeric to Q1, ..., Q4 (due to a bug in StoX):
 #eca$biotic$season <- paste0("Q", eca$biotic$season)
 #eca$landing$season <- paste0("Q", eca$landing$season)
 # Should they not be numeric 1-4 ?
-
-# Fix the links in eca$resources$covariateLink$season:
 eca$resources$covariateLink$season$Covariate <- paste0("Q", 1:4)
 
-#workarounds
 source(paste(dir, "workarounds.R", sep="/"))
-eca <- fix_missing_data(eca) #fix in stox
+
+#corrects formatting of covariates in eca$landing (and eca$biotic). Probably only needed for aggregate_landings to work, which should be tossed out anyway
+#eca <- fix_missing_data(eca) #fix in stox
 if (projectname=="ECA_torsk_2015"){ #must be preceeeded by fix missing data
 	eca <- fix_cod(eca)
 }
-eca <- drop_year(eca) #fix in stox
-eca <- aggregate_landings(eca) #renames rundvekt. Probably works if other issues are fixed, but still ned to rename somewhere.
-eca <- rearrange_resources(eca)
-eca <- impute_catchcount(eca) #estimate (in stox?) from weight and count of subsample
-eca <- impute_indweight(eca) #fix in stox
-eca <- fix_otolithtypes(eca)
-eca <- set_platform_factor(eca)
 
-#define once stratumNeighbour gets populated by stox
+#Fjern i fra baseline2ECA / stox
+eca <- drop_year(eca) #fix in stox
+
+# Skal eca$landingAggregated, eller eca$covariateMatrixLanding brukes til i getLandings ?
+# Om eca$landingAggregated må kovariatene ha annen type (num eller int, ikke faktor)
+eca <- aggregate_landings(eca) #renames rundvekt. Probably works if other issues are fixed, but still ned to rename somewhere.
+
+#Fixed in baseline2ECA. Check and remove.
+eca <- rearrange_resources(eca) 
+
+# filter in stox. (JIRA 150) Sjekk hva disse er (2015, snr: 39002-39080)
+eca <- impute_catchweight(eca) 
+#estimate in stox. (JIRA 150)
+eca <- estimate_catchcount(eca) 
+
+# Koding og filtrering av otolitter må håndteres før use_otolit=TRUE can brukes
+# skriv om slik at vi kan utsette problemet
+eca <- fix_otolithtypes(eca)
+
+# Diskuter utforming av kovariatdefinisjon for platform. Edvin avklarer med Hanne at boat kan behandles som faktor (JIRA 151)
+eca <- set_platform_factor(eca) # treat as covariate in stox ?
+
+#fix in baseline2eca, reformat eca$stratumNeighbour to fit specification from David
 makeNeighbourLists <- fake_neighbourmatrix
 
 if(all(is.na(eca$covariateMatrixBiotic$spatial))){
@@ -317,10 +337,14 @@ AgeLength2WeightLength <- function(AgeLength, eca){
 	for(var in toBeRemoved){
 		WeightLength$DataMatrix[[var]] <- NULL
 	}
+	
 	# Add the weight:
 	# Hard code the weight to KG, since it is in grams in StoX:
 	weightunit <- 1e-3
 	WeightLength$DataMatrix <- cbind(weightKG=eca$biotic$weight * weightunit, WeightLength$DataMatrix)
+	
+	# Remove missing ind weight
+	WeightLength$DataMatrix <- WeightLength$DataMatrix[!is.na(WeightLength$DataMatrix$weightKG),]
 	
 	# Detect columns of all zeros in the covariate matrix, and remove these columns along with the correponding columns in the meta vectors:
 	collapsed <- apply(WeightLength$CovariateMatrix, 2, function(x) all(x==0))
