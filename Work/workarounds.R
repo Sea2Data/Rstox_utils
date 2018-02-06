@@ -139,3 +139,15 @@ fix_cod <- function(ecaobj){
 	ecaobj$landing <- ecaobj$landing[as.numeric(ecaobj$landing$spatial)<=max(as.numeric(ecaobj$covariateMatrixBiotic$spatial)),]
 	return(ecaobj)
 }
+
+#Filters that need to be applied in data filtering
+filter_missing_data <- function(ecaobj){
+  ecaobj$covariateMatrixBiotic <- ecaobj$covariateMatrixBiotic[!is.na(ecaobj$covariateMatrixBiotic$spatial),]
+  ecaobj$biotic <- eca$biotic[!is.na(ecaobj$biotic$spatial),]
+  
+  warning("imputing gears in landings")
+  ecaobj$landing[is.na(ecaobj$landing$gearfactor), "gearfactor"] <- 2
+  ecaobj$covariateMatrixLanding[is.na(ecaobj$landing$gearfactor), "gearfactor"]<-2
+  
+  return(ecaobj)
+}

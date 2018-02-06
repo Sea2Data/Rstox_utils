@@ -24,6 +24,10 @@ eca$resources$covariateLink$season$Covariate <- paste0("Q", 1:4)
 
 source(paste(dir, "workarounds.R", sep="/"))
 
+# replace by data filters in stox or extend reference lists
+# stations missing both area and position
+eca <- filter_missing_data(eca)
+
 #corrects formatting of covariates in eca$landing (and eca$biotic). Probably only needed for aggregate_landings to work, which should be tossed out anyway
 #eca <- fix_missing_data(eca) #fix in stox
 if (projectname=="ECA_torsk_2015"){ #must be preceeeded by fix missing data
@@ -40,9 +44,10 @@ eca <- aggregate_landings(eca) #renames rundvekt. Probably works if other issues
 #Fixed in baseline2ECA. Check and remove.
 eca <- rearrange_resources(eca) 
 
+# Flytt til filter
 # filter in stox. (JIRA 150) Sjekk hva disse er (2015, snr: 39002-39080)
 eca <- impute_catchweight(eca) 
-#estimate in stox. (JIRA 150)
+#estimate in stox. (JIRA 151 ?)
 eca <- estimate_catchcount(eca) 
 
 # Koding og filtrering av otolitter må håndteres før use_otolit=TRUE can brukes
@@ -91,6 +96,7 @@ check_none_missing <- function(datamatrix, columns){
 checkAgeLength<-function(agelength){
 	check_columns_present(agelength$DataMatrix, c("age", "realage", "lengthCM", "samplingID", "partnumber", "partcount"))
 	check_none_missing(agelength$DataMatrix, c("lengthCM", "samplingID", "partnumber", "partcount"))
+	warning("implement check on missing values in covariates. Might need to look up info matrix (see doc)")
 	if ("otolithtype" %in% attributes(agelength$datamatrix)$names){
 		check_none_missing(agelength, c("otolithtype"))
 	}
@@ -99,6 +105,7 @@ checkAgeLength<-function(agelength){
 checkWeightLength<-function(weightlength){
 	check_columns_present(weightlength$DataMatrix, c("weightKG", "lengthCM", "samplingID", "partnumber", "partcount"))
 	check_none_missing(weightlength$DataMatrix, c("lengthCM", "samplingID", "partnumber", "partcount", "weightKG"))
+	warning("implement check on missing values in covariates. Might need to look up info matrix (see doc)")
 	if ("otolithtype" %in% attributes(weightlength$datamatrix)$names){
 		check_none_missing(weightlength, c("otolithtype"))
 	}
