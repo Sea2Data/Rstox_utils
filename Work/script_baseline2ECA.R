@@ -25,7 +25,7 @@ eca$resources$covariateLink$season$Covariate <- paste0("Q", 1:4)
 source(paste(dir, "workarounds.R", sep="/"))
 
 #corrects formatting of covariates in eca$landing (and eca$biotic). Probably only needed for aggregate_landings to work, which should be tossed out anyway
-eca <- fix_missing_data(eca) #fix in stox
+#eca <- fix_missing_data(eca) #fix in stox
 if (projectname=="ECA_torsk_2015"){ #must be preceeeded by fix missing data
 	eca <- fix_cod(eca)
 }
@@ -45,12 +45,14 @@ eca <- impute_catchweight(eca)
 #estimate in stox. (JIRA 150)
 eca <- estimate_catchcount(eca) 
 
+# Koding og filtrering av otolitter må håndteres før use_otolit=TRUE can brukes
+# skriv om slik at vi kan utsette problemet
 eca <- fix_otolithtypes(eca)
 
 # Diskuter utforming av kovariatdefinisjon for platform. Edvin avklarer med Hanne at boat kan behandles som faktor (JIRA 151)
 eca <- set_platform_factor(eca) # treat as covariate in stox ?
 
-#define once stratumNeighbour gets populated by stox
+#fix in baseline2eca, reformat eca$stratumNeighbour to fit specification from David
 makeNeighbourLists <- fake_neighbourmatrix
 
 if(all(is.na(eca$covariateMatrixBiotic$spatial))){
