@@ -75,6 +75,13 @@ aggregate_landings <- function(ecaobject){
 	return(ecaobject)
 }
 
+fix_aggregate_landings <- function(ecaobject){
+  ecaobject$landingAggregated$spatial <- as.numeric(ecaobject$landingAggregated$spatial)
+  ecaobject$landingAggregated$season <- as.numeric(ecaobject$landingAggregated$season)
+  ecaobject$landingAggregated$gearfactor <- as.numeric(ecaobject$landingAggregated$gearfactor)
+  return(ecaobject)
+}
+
 read_biotic_tables <- function(filename, coltypes=NULL){
 	loc <- default_locale()
 	tab <- read_delim(filename, delim="\t", col_names = TRUE,

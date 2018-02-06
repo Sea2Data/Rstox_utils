@@ -1,11 +1,11 @@
 library(Rstox)
 options(java.parameters="-Xmx6g")
 # Edvin:
-#dir <- "/Users/a5362/code/github/Rstox_utils/Work"
-#outpath <- "/Users/a5362/code/github/Rstox_utils/Work/output"
+dir <- "/Users/a5362/code/github/Rstox_utils/Work"
+outpath <- "/Users/a5362/code/github/Rstox_utils/Work/output"
 # Arne Johannes:
-dir <- "~/Documents/Produktivt/Prosjekt/R-packages/Rstox_utils/Rstox_utils/Work"
-outpath <- "~/Documents/Produktivt/Prosjekt/R-packages/Rstox_utils/output"
+#dir <- "~/Documents/Produktivt/Prosjekt/R-packages/Rstox_utils/Rstox_utils/Work"
+#outpath <- "~/Documents/Produktivt/Prosjekt/R-packages/Rstox_utils/output"
 #sildeprosjekt: /delphi/Felles/alle/stox/ECA/2015/ECA_sild_2015. Legg til sild == '161724' i filter (annen kode for sild'g03)
 
 # Get ECA output using Rstox 1.5.2, which does not contain the hierarchy matrix, and has discrepancy between the defintion and values for covariate Season:
@@ -43,10 +43,8 @@ eca <- drop_year(eca) #fix in stox
 
 # Skal eca$landingAggregated, eller eca$covariateMatrixLanding brukes til i getLandings ?
 # Om eca$landingAggregated må kovariatene ha annen type (num eller int, ikke faktor)
-eca <- aggregate_landings(eca) #renames rundvekt. Probably works if other issues are fixed, but still ned to rename somewhere.
+eca <- fix_aggregate_landings(eca)
 
-#Fixed in baseline2ECA. Check and remove.
-eca <- rearrange_resources(eca) 
 
 # Flytt til filter
 # filter in stox. (JIRA 150) Sjekk hva disse er (2015, snr: 39002-39080)
@@ -60,9 +58,6 @@ eca <- fix_otolithtypes(eca)
 
 # Diskuter utforming av kovariatdefinisjon for platform. Edvin avklarer med Hanne at boat kan behandles som faktor (JIRA 151)
 eca <- set_platform_factor(eca) # treat as covariate in stox ?
-
-#fix in baseline2eca, reformat eca$stratumNeighbour to fit specification from David
-makeNeighbourLists <- fake_neighbourmatrix
 
 if(all(is.na(eca$covariateMatrixBiotic$spatial))){
 	stop("spatial can not all be na")	
@@ -193,8 +188,8 @@ getLandings <- function(eca, ecaParameters){
 	### landingAggregated: ###
 	landingAggregated <- cbind(constant=1, eca$landingAggregated, midseason=sapply(getCovariateValue(eca$landingAggregated$season, eca, cov="season", type="landing"), getMidSeason))
 	
-	weight <- landingAggregated$liveweight
-	landingAggregated$liveweight <- NULL
+	weight <- landingAggregated$rundvekt
+	landingAggregated$rundvekt <- NULL
 	landingAgeLength <- landingAggregated
 	landingWeightLength <- landingAggregated
 	
