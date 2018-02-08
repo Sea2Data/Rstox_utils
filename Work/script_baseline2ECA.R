@@ -49,9 +49,6 @@ eca <- drop_year(eca) #fix in stox
 # Diskuter utforming av kovariatdefinisjon for platform. (STOX-150) Edvin avklarer med Hanne at boat kan behandles som faktor (JIRA 151)
 eca <- set_platform_factor(eca) # treat as covariate in stox!
 
-if(all(is.na(eca$covariateMatrixBiotic$spatial))){
-	stop("spatial can not all be na")	
-}
 #/workarounds
 
 
