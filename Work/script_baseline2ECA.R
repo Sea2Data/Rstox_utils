@@ -43,8 +43,7 @@ eca <- drop_year(eca) #fix in stox
 
 # Koding og filtrering av otolitter må håndteres før use_otolit=TRUE can brukes.
 # ECA crasher om ikke otlittkolonne eskisterer avklar med Hanne
-# skriv om slik at vi kan utsette problemet
-eca <- fix_otolithtypes(eca)
+# eca <- fix_otolithtypes(eca)
 
 
 # Diskuter utforming av kovariatdefinisjon for platform. (STOX-150) Edvin avklarer med Hanne at boat kan behandles som faktor (JIRA 151)
@@ -123,12 +122,22 @@ check_cov_vs_info <- function(modelobj){
     if (modelobj$info[co,"random"]==0 & modelobj$info[co,"continuous"]==0 & num_unique!=modelobj$info[co,"nlev"]){
       stop(paste("Not all values present for fixed covariate", co))
     }
+    if (modelobj$info[co,"CAR"]==1 & is.null(modelobj$CARNeighbours)){
+      stop(paste("CAR variable specified as", co, "but CARneighbours not specified"))
+    }
+    if (modelobj$info[co,"CAR"]==1 & (max(modelobj$CARNeighbours$idNeighbours)>modelobj$info[co,"nlev"] | max(modelobj$CARNeighbours$idNeighbours)<1)){
+      stop(paste("Neigbour matrix not consistent with nlev for CAR vairable", co))
+    }
+    if (modelobj$info[co,"CAR"]==1 & (any(modelobj$CARNeighbours$numNeighbours<1) | length(modelobj$CARNeighbours$numNeighbours) < modelobj$info[co,"nlev"])){
+      stop(paste("CAR variable specified as", co, "but some areas are missing neighbours"))
+    }
   }
 }
 check_data_matrix <- function(modelobj){
-  if ("otolithtype" %in% names(modelobj$DataMatrix)){
-    check_none_missing(modelobj$DataMatrix, c("otolithtype"))
-  }
+  #if ("otolithtype" %in% names(modelobj$DataMatrix)){
+  #  check_none_missing(modelobj$DataMatrix, c("otolithtype"))
+  #}
+  warning("Clarify need for otolithtype check with NR. rECA currently not behaving consistnently with documentation")
   lastsample <- max(modelobj$DataMatrix$samplingID)
   if (!lastsample==nrow(modelobj$CovariateMatrix)){
     stop("sampling ids does not equals the number of rows in covariate matrix")
@@ -152,7 +161,6 @@ checkAgeLength<-function(agelength, num_tolerance = 1e-10){
 	if (any(abs(colSums(agelength$AgeErrorMatrix)-1)>num_tolerance)){
 	  stop("Columns of age error matrix does not sum to 1")
 	}
-	
 }
 #checks that weightlenght is configured correctly
 checkWeightLength<-function(weightlength, landings){
