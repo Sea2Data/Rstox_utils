@@ -1,15 +1,15 @@
-plot_pred_hist <- function(pred){
+plot_pred_hist <- function(pred, title=""){
   caa <- apply(pred$TotalCount, c(2,3), sum)
   caa_kt <- caa/1e6
   par(mfcol=c(round(mage/2),2))
   mm <- max(caa_kt)+5
   bins <- seq(0,mm,5)
   for (i in 1:max(pred$AgeCategories)){
-    hist(caa_kt[i,], breaks=bins, xlab="posterior catch mFish", main=paste("age", pred$AgeCategories[i]), xlim=c(0,200))
+    hist(caa_kt[i,], breaks=bins, xlab="posterior catch mFish", main=paste("age", pred$AgeCategories[i]), xlim=c(0,200), main=title)
   }
   par(mfcol=c(1,1))
 }
-plot_pred_box <- function(pred){
+plot_pred_box <- function(pred, title=""){
   caa <- apply(pred$TotalCount, c(2,3), sum)
   caa_kt <- caa/1e6
   
@@ -20,7 +20,7 @@ plot_pred_box <- function(pred){
     age <- c(age, rep(pred$AgeCategories[i], length(caa_kt[i,])))
   }
   
-  boxplot(post~age, las=2, xlab="age", ylab="posterior catch Mfish")
+  boxplot(post~age, las=2, xlab="age", ylab="posterior catch Mfish", main=title)
 }
 
 

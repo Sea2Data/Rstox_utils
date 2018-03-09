@@ -23,7 +23,7 @@ GlobalParameters$seed <- 1234
 
 
 ## Select covariates - not use haulweight and boat now
-col <- 1:4
+col <- c(1,2,3,4)
 newAgeLength <- AgeLength
 newAgeLength$CovariateMatrix <- AgeLength$CovariateMatrix[,col]
 newAgeLength$info <- AgeLength$info[col,]
@@ -42,3 +42,22 @@ pred <- eca.predict(newAgeLength,newWeightLength,Landings,GlobalParameters)
 
 source(file.path(dir, "plot.R"))
 plot_pred_box(pred)
+
+season_plot_test <- function(){
+  #funker kun for s=1, hør med Hanne
+  par(mfrow=c(2,2))
+  for (s in unique(Landings$AgeLengthCov$season)){
+    print(paste0("Q", s))
+    valuename <- AgeLength$resources$covariateLink$season$Covariate[AgeLength$resources$covariateLink$season$Numeric==s]
+    sl <- Landings
+    keep_alc <- sl$AgeLengthCov$season==s
+    sl$WeightLengthCov <- sl$AgeLengthCov[keep_alc,]
+    sl$AgeLengthCov <- sl$WeightLengthCov[keep_alc,]
+    sl$LiveWeightKG <- sl$LiveWeightKG[keep_alc]
+    GlobalParameters$predictfile <- paste("predict",s,sep="_")
+    predsl <- eca.predict(newAgeLength,newWeightLength,sl,GlobalParameters)  
+    plot_pred_box(predsl, valuename)
+  }
+  par(mfrow=c(1,1))
+}
+
