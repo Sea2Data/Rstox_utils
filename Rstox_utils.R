@@ -51,7 +51,7 @@ buildRstox <- function(buildDir, pkgName="Rstox", version="1.0", Rversion="3.3.1
 		write("# Install from github using the devtools package:", READMEfile, append=TRUE)
 		write("# devtools::install_github(\"Sea2Data/Rstox\", ref=\"develop\")", READMEfile, append=TRUE)
 		write("", READMEfile, append=TRUE)
-		write("# R should be installed as the 64 bit version (and 64 bit version ONLY for Windows 10).", READMEfile, append=TRUE)
+		write("# R should be installed as the 64 bit version (and 64 bit version ONLY for Windows 10. To do this, uncheck the box \"32-bit Files\" when selecting components to install. If you are re-intalling an R that has both 32 and 64 bit, you will need to uninstall R first).", READMEfile, append=TRUE)
 		write("# On Windows systems with adminstrator requirements, it is recommended to install R in C:/users/<user>/documents/R.", READMEfile, append=TRUE)
 		write("", READMEfile, append=TRUE)
 		write("# Note that 64 bit Java is required to run Rstox", READMEfile, append=TRUE)
@@ -580,6 +580,11 @@ automatedRstoxTest <- function(dir, copyFromOriginal=TRUE, process=c("run", "dif
 		# Special diff of images:
 		imDiff(dir1=newOutput, dir2=latestOutput, diffdir=diffdir, progressFile=progressFile, cores=cores)
 	}
+	
+	write("\nPlease also run the example script on ftp://ftp.imr.no/StoX/Download/Rstox/Examples\n", file=progressFile, append=TRUE)
+	
+	# Copy the progress file to the current diff directory:
+	file.copy(progressFile, diffdir)
 }
 
 
