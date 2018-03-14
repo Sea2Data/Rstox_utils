@@ -5,6 +5,8 @@ Procedure for building Rstox releases. Alpha and beta versions are named by thre
 
 
 1. Make note of all changes in the NEWS file in the Rstox repository. Use one line per change and separate changes by one or more lines. Separate changes of different versions by lines such as "########## Version 1.7.1 (2017-12-01) ##########". For beta versions, copy all changes from the preceding alpha versions.
+
+Change also the line "# go to ftp://ftp.imr.no/StoX/Download/Rstox/Examples/Rstox-example_1.8.R." in the documentation of getNMDdata() to the path of the current example file.
 	
 
 2. Build Rstox using the script "build.R" in Rstox_utils (using the path to your local Rstox git repository as 'dir'). 
@@ -38,7 +40,7 @@ Procedure for building Rstox releases. Alpha and beta versions are named by thre
 	git push -u origin develop
 
 
-4. When approaching an alpha or beta release, run the test projects with diff to the previous version, using the script "Rstox_utils.R" in Rstox_utils. Resolve any unwanted changes and approve any accepted changes, rerun the autmated tests until satisfied. Report of the testing can be found in "~/workspace/stox/project/Test\ projects/Automated\ testing/Diff/progress.txt".
+4. When approaching an alpha or beta release, run the test projects with diff to the previous version, using the script "TestRstox.R" in Rstox_utils. Resolve any unwanted changes and approve any accepted changes, rerun the autmated tests until satisfied. Report of the testing can be found in "~/workspace/stox/project/Test\ projects/Automated\ testing/Diff/progress.txt".
 
 
 5. Merge develop with alpha and possibly further with master
