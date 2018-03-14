@@ -325,7 +325,7 @@ automatedRstoxTest <- function(dir, copyFromOriginal=TRUE, process=c("run", "dif
 	}
 	
 	# Function for running the r scripts of a project and copying the relevant output files to the "Output" directory:
-	runProject <- function(projectName, progressFile, outputDir){
+	runProject <- function(projectName, progressFile, outputDir, RstoxVersion){
 		# Get the path to the scripts to run:
 		r_script <- file.path(projectName, "output", "R", "r.R")
 		rreport_script <- file.path(projectName, "output", "R", "r-report.R")
@@ -335,6 +335,20 @@ automatedRstoxTest <- function(dir, copyFromOriginal=TRUE, process=c("run", "dif
 		# Run the scripts and print info to the progress file:
 		cat(paste0("Running project ", i, ": ", projectName, ":\n"))
 		write(paste0(now(TRUE), "Starting project ", i, ": ", projectName), progressFile, append=TRUE)
+		
+		# Run the baseline and baseline report (the latter with input=NULL):
+		# The parameter 'modelType', enabling reading Baseline Report, was introduced in 1.8.1:
+		if(RstoxVersion$Rstox > "1.8"){
+			write(paste0(now(TRUE), "Running Baseline and Baseline Report"), progressFile, append=TRUE)
+			baselineOutput <- getBaseline(projectName, exportCSV=TRUE, modelType="baseline")
+			baselineReportOutput <- getBaseline(projectName, exportCSV=TRUE, modelType="report", input=NULL)
+		}
+		else{
+			write(paste0(now(TRUE), "Running Baseline"), progressFile, append=TRUE)
+			baselineOutput <- getBaseline(projectName, exportCSV=TRUE)
+		}
+		
+		
 		write(paste0(now(TRUE), "Running r.R"), progressFile, append=TRUE)
 		if(file.exists(r_script)){
 			source(r_script)
@@ -348,27 +362,69 @@ automatedRstoxTest <- function(dir, copyFromOriginal=TRUE, process=c("run", "dif
 		closeProject(projectName)
 		
 		# Copy output files to the output directory:
-		outputRdatadir <- file.path(projectName, "output", "r", "data")
-		outputRreportdir <- file.path(projectName, "output", "r", "report")
-		# List the files:
-		datafiles <- list.files(outputRdatadir, full.names=TRUE)
-		datafiles <- datafiles[!file.info(datafiles)$isdir]
-		reportfiles <- list.files(outputRreportdir, full.names=TRUE)
-		reportfiles <- reportfiles[!file.info(reportfiles)$isdir]
-		# Copy and replace:
 		dir.create(outputDir, recursive=TRUE)
-		from <- c(datafiles, reportfiles)
-		to <- file.path(outputDir, basename(from))
+		output <- file.path(projectName, "output")
+		file.copy(output, outputDir, recursive=TRUE)
+		
+		##### 
+		##### outputDirs <- file.path(projectName, "output", c(outer(c("baseline", "r"), c("data", "report"), file.path)))
+		##### outputFiles <- unlist(lapply(outputDirs, files, full.names=TRUE))
+		##### 
+		##### 
+		
+		### outputRDataDir <- file.path(projectName, "output", "r", "data")
+		### outputRReportDir <- file.path(projectName, "output", "r", "report")
+		### # List the files:
+		### datafiles <- list.files(outputRDataDir, full.names=TRUE)
+		### datafiles <- datafiles[!file.info(datafiles)$isdir]
+		### reportfiles <- list.files(outputRReportDir, full.names=TRUE)
+		### reportfiles <- reportfiles[!file.info(reportfiles)$isdir]
+		# Copy and replace:
+		### from <- c(datafiles, reportfiles)
+		### to <- file.path(outputDir, basename(from))
+		##### from <- outputFiles
+		##### to <- file.path(outputDir, basename(from))
+		##### 
+		##### dir.create(outputDir, recursive=TRUE)
+		##### file.copy(from=from, to=to, overwrite=TRUE)
+		
+		# Save also the output from baseline and baseline report to an RData file:
+		save(baselineOutput, file=file.path(outputDir, "baselineOutput.RData"))
+		if(RstoxVersion$Rstox > "1.8"){
+			save(baselineReportOutput, file=file.path(outputDir, "baselineReportOutput.RData"))
+		}
+		
+		
+		
+		# Copy the project.xml file:
+		from <- getProjectPaths("Test_Rstox")$projectXML
+		to <- file.path(outputDir, "project.xml")
 		file.copy(from=from, to=to, overwrite=TRUE)
+		
 		cat("\n")
 	}
 	
-	# Functin for running diff between the previous and new output files:
+	# Function for running diff between the previous and new output files:
 	diffOutputfiles <- function(projectNames, dir1, dir2, diffdir, progressFile){
+		
+		# List all projects in the latest and new output directory:
+		dir1 <- file.path(dir1, basename(projectPaths))
+		dir2 <- file.path(dir2, basename(projectPaths))
+	
 		tempdiff <- file.path(path.expand(diffdir), "tempdiff.txt")
 		for(i in seq_along(dir1)){
-			# Run the UNIX diff command:
-			cmd <- paste(c("diff", "-r", shQuote(dir1[i]), shQuote(dir2[i]), paste0(">", shQuote(tempdiff))), collapse=" ")
+			# Platform dependent diff commands:
+			if(.Platform$OS.type == "windows"){
+				cmd <- paste(c("FC", shQuote(dir1[i]), shQuote(dir2[i]), paste0(">", shQuote(tempdiff))), collapse=" ")
+			}
+			else if(.Platform$OS.type == "unix"){
+				cmd <- paste(c("diff", "-r", shQuote(dir1[i]), shQuote(dir2[i]), paste0(">", shQuote(tempdiff))), collapse=" ")
+			}
+			else{
+				stop("Unknown system. Must be one of UNIX or Windows")
+			}
+	
+			# Run the diff as a system call and print to the temp file:
 			system(cmd)
 			# -x '*.bmp' -x '*.jpeg' -x '*.png' -x '*.tiff' -x '*.RData'
 			
@@ -377,7 +433,12 @@ automatedRstoxTest <- function(dir, copyFromOriginal=TRUE, process=c("run", "dif
 			write("************************************************************", file=progressFile, append=TRUE)
 			write(paste0("Diff for test project", projectNames[i]), file=progressFile, append=TRUE)
 			write("************************************************************", file=progressFile, append=TRUE)
-			write(diffinfo, file=progressFile, append=TRUE)
+			if(length(diffinfo)){
+				write(diffinfo, file=progressFile, append=TRUE)
+			}
+			else{
+				write("No difference", file=progressFile, append=TRUE)
+			}
 			write("", file=progressFile, append=TRUE)
 		}
 		write("", file=progressFile, append=TRUE)
@@ -523,13 +584,114 @@ automatedRstoxTest <- function(dir, copyFromOriginal=TRUE, process=c("run", "dif
 		write("************************************************************", file=progressFile, append=TRUE)
 	}
 	
+	diffBaseline <- function(dir, progressFile){
+		readBaselineFiles <- function(files){
+			# Read the files:
+			out <- lapply(files, function(x) read.csv(x, sep="\t", quote=NULL))
+			
+			# Get the names of the processes and data frames:
+			files_split <- strsplit(basename(files), "_")
+			dataFrameNames <- sapply(files_split, "[", -1)
+			processNames <- sapply(files_split, "[", 2)
+			
+			# Set the names of the data frames:
+			names(out) <- dataFrameNames
+			out <- split(out, processNames)
+			out
+		}
+		
+		all.equalRstoxStoX <- function(Rstox, StoX){
+			namesRstox <- names(Rstox)
+			namesStoX <- names(StoX)
+			commonDF <- intersect(namesRstox, namesStoX)
+			onlyInRstox <- setdiff(namesRstox, namesStoX)
+			onlyInStoX <- setdiff(namesStoX, namesRstox)
+			
+			# Inform files only present in one or the other:
+			if(length(onlyInRstox)){
+				write("Data frames only in Rstox: ", file=progressFile, append=TRUE)
+				lapply(onlyInRstox, write, file=progressFile, append=TRUE)
+			}
+			if(length(onlyInStoX)){
+				write("Data frames only in StoX: ", file=progressFile, append=TRUE)
+				lapply(onlyInStoX, write, file=progressFile, append=TRUE)
+			}
+			if(length(commonDF)){
+				write("Data frames common for Rstox and StoX: ", file=progressFile, append=TRUE)
+				lapply(commonDF, write, file=progressFile, append=TRUE)
+			}
+			
+			write_all.equal <- function(x, y, name, file){
+				d <- all.equal(x, y)
+				if(length(d)){
+					write("************************************************************", file=progressFile, append=TRUE)
+					write(paste0("Comparing the data frame ", name, " from Rstox and StoX"), file=progressFile, append=TRUE)
+					write(d, file=progressFile, append=TRUE)
+					write("************************************************************", file=progressFile, append=TRUE)
+				}
+				#else{
+				#	write("No difference", file=progressFile, append=TRUE)
+				#}
+			}
+		}
+		
+		
+		# Get the baseline and baseline report saved in RData files:
+		baselineOutputFiles <- file.path(dir, c("baselineOutput.RData", "baselineReportOutput.RData"))
+		present <- file.exists(baselineOutputFiles)
+		if(!any(present)){
+			return(NULL)
+		}
+		baselineOutputFiles <- baselineOutputFiles[present]
+		# Load the data to a list:
+		dataFromRstox <- lapply(baselineOutputFiles, function(x) mget(load(x)))
+		
+		# Read also the txt-files from baseline and baseline report:
+		baselineDirs <- file.path(dir, "baseline", c("data", "report"))
+		baselineFiles <- lapply(baselineDirs, list.files, recursive=TRUE, full.names=TRUE)
+		names(baselineFiles) <- c("baselineOutput", "baselineReportOutput")
+		# Read the data to a list:
+		
+		dataFromStoX <- lapply(baselineFiles, readBaselineFiles)
+		# Keep only the modelType present in the Rstox output file:
+		dataFromStoX <- dataFromStoX[names(dataFromRstox)]
+		
+		lapply(names(dataFromRstox), function(x) all.equalRstoxStoX(Rstox=dataFromRstox[[x]], StoX=dataFromStoX[[x]]))
+	}
+	
+	getLatestDir <- function(dir, Rstox){
+		All <- list.dirs(dir, recursive=FALSE)
+		# Get Rstox versions (requiring that the Rstox version is between the first and possibly second underscore, typically "Rstox_1.8.1"):
+		RstoxVersionS <- sapply(strsplit(basename(All), "_"), "[", 2)
+		# Select the latest:
+		before <- which(RstoxVersionS < Rstox)
+		if(length(before)==0){
+			warning(paste0("No directories with Rstox version before Rstox version ", Rstox))
+			return(NULL)
+		}
+		# Return the latest before the input Rstox version:
+		All[max(before)]
+	}
+	
+	deleteOutput <- function(dir){
+		unlink(file.path(dir, "output", "baseline"), recursive=TRUE, force=TRUE)
+		unlink(file.path(dir, "output", "r"), recursive=TRUE, force=TRUE)
+	}
+	
+	
 	# Name the folder for the output files by the time and Rstox version:
-	RstoxVersion <- sessionInfo()$otherPkgs$Rstox$Version
+	RstoxVersion <- getRstoxVersion()
+	RstoxVersionString <- paste(names(RstoxVersion), unlist(lapply(RstoxVersion, as.character)), sep="_", collapse="_")
+	
 	#folderName <- paste0("Rstox_", RstoxVersion, "_", now())
-	folderName <- paste0("Rstox_", RstoxVersion)
+	folderName <- paste0("Rstox_", RstoxVersion$Rstox)
+	
+	dir <- path.expand(dir)
+	
+	# Get the latest projects:
+	ProjectsDir_original <- getLatestDir(file.path(dir, "Projects_original"), RstoxVersion$Rstox)
 	
 	# Get paths to the original projects and previous output folders:
-	ProjectsDir_original <- file.path(dir, "Projects_original")
 	ProjectsList_original <- list.dirs(ProjectsDir_original, recursive=FALSE)
 	ProjectsDir <- file.path(dir, "Projects")
 	
@@ -538,9 +700,11 @@ automatedRstoxTest <- function(dir, copyFromOriginal=TRUE, process=c("run", "dif
 		unlink(ProjectsDir, recursive=TRUE, force=TRUE)
 		dir.create(ProjectsDir)
 		lapply(ProjectsList_original, file.copy, ProjectsDir, recursive=TRUE)
+		
+		# Then delete all output files for safety:
+		lapply(list.dirs(ProjectsDir, recursive=FALSE), deleteOutput)
 	}
 	
-	dir <- path.expand(dir)
 	# Get all project paths:
 	projectPaths <- list.dirs(ProjectsDir, recursive=FALSE)
 	
@@ -548,14 +712,14 @@ automatedRstoxTest <- function(dir, copyFromOriginal=TRUE, process=c("run", "dif
 	Output <- file.path(dir, "Output")
 	newOutput <- file.path(Output, folderName)
 	
-	# Get the lastest sub directory of the previously generate outputs:
-	oldOutputs <- list.dirs(Output, recursive=FALSE)
-	oldOutputs <- setdiff(oldOutputs, newOutput)
-	# Pick the latest output folder:
-	latestOutput <- tail(oldOutputs, 1)
+	
+	#oldOutputs <- list.dirs(Output, recursive=FALSE)
+	#oldOutputs <- setdiff(oldOutputs, newOutput)
+	## Pick the latest output folder:
+	#latestOutput <- tail(oldOutputs, 1)
 	# List all projects in the latest and new output directory:
 	newOutputList <- file.path(newOutput, basename(projectPaths))
-	latestOutputList <- file.path(latestOutput, basename(projectPaths))
+	#latestOutputList <- file.path(latestOutput, basename(projectPaths))
 	
 	# Then run through all projects, printing progress to a file:
 	suppressWarnings(dir.create(file.path(dir, "Diff")))
@@ -564,21 +728,35 @@ automatedRstoxTest <- function(dir, copyFromOriginal=TRUE, process=c("run", "dif
 	
 	if("run" %in% process){
 		for(i in seq_along(projectPaths)){
-			runProject(projectName=projectPaths[i], progressFile=progressFile, outputDir=newOutputList[i])
+			runProject(projectName=projectPaths[i], progressFile=progressFile, outputDir=newOutputList[i], RstoxVersion=RstoxVersion)
 		}
 	}
-	if("diff" %in% process){
-		diffdir <- path.expand(file.path(dir, "Diff", paste("Diff", basename(newOutput), basename(latestOutput), sep="_")))
-		suppressWarnings(dir.create(diffdir))
-		
+	
+	# Copy the projects that were run to a new folder in the Projects_original:
+	newProjectsDir_original <- file.path(dirname(ProjectsDir_original), RstoxVersionString)
+	dir.create(newProjectsDir_original)
+	ProjectsList <- list.dirs(ProjectsDir, recursive=FALSE)
+	lapply(ProjectsList, file.copy, newProjectsDir_original, recursive=TRUE)
+	
+	# Get the lastest sub directory of the previously generated outputs:
+	latestOutput <- getLatestDir(file.path(dir, "Output"), RstoxVersion$Rstox)
+	print(latestOutput)
+	
+	diffdir <- path.expand(file.path(dir, "Diff", paste("Diff", basename(newOutput), basename(latestOutput), sep="_")))
+	suppressWarnings(dir.create(diffdir))
+	
+	if("diff" %in% process && length(latestOutput)){
 		# Run the UNIX diff:
-		diffOutputfiles(projectName=projectPaths, dir1=newOutputList, dir2=latestOutputList, diffdir=diffdir, progressFile=progressFile)
+		diffOutputfiles(projectName=projectPaths, dir1=newOutput, dir2=latestOutput, diffdir=diffdir, progressFile=progressFile)
 		
 		# Special diff of RData files:
 		RDataDiff(dir1=newOutput, dir2=latestOutput, progressFile=progressFile)
 	
 		# Special diff of images:
 		imDiff(dir1=newOutput, dir2=latestOutput, diffdir=diffdir, progressFile=progressFile, cores=cores)
+		
+		# Diff also the baseline output and the files written by baseline:
+		diffBaseline(dir=newOutput, progressFile=progressFile)
 	}
 	
 	write("\nPlease also run the example script on ftp://ftp.imr.no/StoX/Download/Rstox/Examples\n", file=progressFile, append=TRUE)
