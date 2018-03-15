@@ -125,15 +125,6 @@ fix_otolithtypes <- function(ecaobj){
 	return(ecaobj)
 }
 
-fix_cod <- function(ecaobj){
-	#treat these covar as random for the cod set, as some of them ar missing from observations.
-	ecaobj$resources$covariateInfo[ecaobj$resources$covariateInfo$name %in% c("season", "gearfactor"), "covType"] <- "Random"
-	
-	#remove landings from non-coastal areas (for set with only prøvebåten)
-	ecaobj$landing <- ecaobj$landing[as.numeric(ecaobj$landing$spatial)<=max(as.numeric(ecaobj$covariateMatrixBiotic$spatial)),]
-	return(ecaobj)
-}
-
 #Filters that need to be applied in data filtering
 filter_missing_data <- function(ecaobj){
   ecaobj$covariateMatrixBiotic <- ecaobj$covariateMatrixBiotic[!is.na(ecaobj$covariateMatrixBiotic$spatial),]

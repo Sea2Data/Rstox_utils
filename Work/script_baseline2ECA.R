@@ -8,8 +8,8 @@ outpath <- "/Users/a5362/code/github/Rstox_utils/Work/output"
 #outpath <- "~/Documents/Produktivt/Prosjekt/R-packages/Rstox_utils/output"
 #sildeprosjekt: /delphi/Felles/alle/stox/ECA/2015/ECA_sild_2015. Legg til sild == '161724' i filter (annen kode for sild'g03)
 
-#projectname <- "ECA_torsk_2015"
-projectname <- "ECA_sild_2015"
+projectname <- "ECA_torsk_2015"
+#projectname <- "ECA_sild_2015"
 baselineOutput <- getBaseline(projectname)
 eca <- baseline2eca(projectname)
 
@@ -32,11 +32,6 @@ eca <- impute_catchweight(eca) #Sjekk hva disse er (2015, snr: 39002-39080)
 
 #estimate in stox. (STOX-150)
 eca <- estimate_catchcount(eca) 
-
-#hack for specific cod-set
-if (projectname=="ECA_torsk_2015"){ #must be preceeeded by fix missing data
-	eca <- fix_cod(eca)
-}
 
 #Ordne i defineTemporal STOX-153
 eca <- drop_year(eca) #fix in stox
@@ -125,15 +120,18 @@ check_cov_vs_info <- function(modelobj){
     if (modelobj$info[co,"CAR"]==1 & (max(modelobj$CARNeighbours$idNeighbours)>modelobj$info[co,"nlev"] | max(modelobj$CARNeighbours$idNeighbours)<1)){
       stop(paste("Neigbour matrix not consistent with nlev for CAR vairable", co))
     }
-    if (modelobj$info[co,"CAR"]==1 & (any(modelobj$CARNeighbours$numNeighbours<1) | length(modelobj$CARNeighbours$numNeighbours) < modelobj$info[co,"nlev"])){
+    if (modelobj$info[co,"CAR"]==1 & (any(modelobj$CARNeighbours$numNeighbours<1))){#unsure about this one | length(modelobj$CARNeighbours$numNeighbours) < modelobj$info[co,"nlev"])){
       stop(paste("CAR variable specified as", co, "but some areas are missing neighbours"))
     }
   }
+  warning("Add test on CAR to ensure that sufficient data is present.")
+  warning("Add test on CAR to ensure that all areas are represented.")
 }
 check_data_matrix <- function(modelobj){
   #if ("otolithtype" %in% names(modelobj$DataMatrix)){
   #  check_none_missing(modelobj$DataMatrix, c("otolithtype"))
   #}
+  warning("implement check for partno. For any value, alle lower positive integers should be present for same sampleID")
   warning("Clarify need for otolithtype check with NR. rECA currently not behaving consistnently with documentation")
   lastsample <- max(modelobj$DataMatrix$samplingID)
   if (!lastsample==nrow(modelobj$CovariateMatrix)){
@@ -351,11 +349,13 @@ getAgeLengthBiotic <- function(eca, ecaParameters){
 	# 4.2. CAR:
 	#carneighbours <- makeNeighbourLists(eca)
 	# Make sure the neighbours are ordered according to the 1:n values in the covariateLink:
-	ord <- order(match(eca$stratumNeighbour[,1], eca$resources$covariateLink$spatial[,2]))
-	eca$stratumNeighbour <- eca$stratumNeighbour[ord, ]
-	temp <- lapply(eca$stratumNeighbour[,2], function(x) strsplit(x, ",")[[1]])
-	numNeighbours <- sapply(temp, length)
-	idNeighbours <- unlist(temp)
+	ind <- match(as.numeric(names(eca$stratumNeighbour)), eca$resources$covariateLink$spatial[,2])
+	if (!all(sort(ind)==ind)){
+	  stop("covariate values are ordered differently in stratumneighbour and covariatelink spatial")
+	}
+	names(eca$stratumNeighbour) <- eca$resources$covariateLink$spatial[ind,1]
+	numNeighbours <- unlist(lapply(eca$stratumNeighbour, length), use.names = F)
+	idNeighbours <- unlist(eca$stratumNeighbour, use.names=F)
 	idNeighbours <- eca$resources$covariateLink$spatial[match(idNeighbours, eca$resources$covariateLink$spatial[, 2]), 1]
 	carneighbours <- list(numNeighbours=numNeighbours, idNeighbours=idNeighbours)
 	
