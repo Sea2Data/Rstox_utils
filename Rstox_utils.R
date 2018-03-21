@@ -366,6 +366,12 @@ automatedRstoxTest <- function(dir, copyFromOriginal=TRUE, process=c("run", "dif
 		output <- file.path(projectName, "output")
 		file.copy(output, outputDir, recursive=TRUE)
 		
+		# Delet trash:
+		trash <- list.dirs(outputDir)
+		trash <- trash[grep("trash", trash)]
+		unlink(trash, recursive=TRUE, force=TRUE)
+		
+		
 		##### 
 		##### outputDirs <- file.path(projectName, "output", c(outer(c("baseline", "r"), c("data", "report"), file.path)))
 		##### outputFiles <- unlist(lapply(outputDirs, files, full.names=TRUE))
@@ -399,7 +405,7 @@ automatedRstoxTest <- function(dir, copyFromOriginal=TRUE, process=c("run", "dif
 		# Copy the project.xml file:
 		from <- getProjectPaths("Test_Rstox")$projectXML
 		to <- file.path(outputDir, "project.xml")
-		file.copy(from=from, to=to, overwrite=TRUE)
+		file.copy(from=from, to=to, overwrite=TRUE, recursive=TRUE)
 		
 		cat("\n")
 	}
@@ -885,7 +891,7 @@ automatedRstoxTest <- function(dir, copyFromOriginal=TRUE, process=c("run", "dif
 	if(copyFromOriginal){
 		unlink(ProjectsDir, recursive=TRUE, force=TRUE)
 		dir.create(ProjectsDir)
-		lapply(ProjectsList_original, file.copy, ProjectsDir, recursive=TRUE)
+		lapply(ProjectsList_original, file.copy, ProjectsDir, overwrite=TRUE, recursive=TRUE)
 		
 		# Then delete all output files for safety:
 		lapply(list.dirs(ProjectsDir, recursive=FALSE), deleteOutput)
@@ -922,7 +928,7 @@ automatedRstoxTest <- function(dir, copyFromOriginal=TRUE, process=c("run", "dif
 	newProjectsDir_original <- file.path(dirname(ProjectsDir_original), folderName)
 	dir.create(newProjectsDir_original)
 	ProjectsList <- list.dirs(ProjectsDir, recursive=FALSE)
-	lapply(ProjectsList, file.copy, newProjectsDir_original, recursive=TRUE)
+	lapply(ProjectsList, file.copy, newProjectsDir_original, overwrite=TRUE, recursive=TRUE)
 	
 	# Get the lastest sub directory of the previously generated outputs:
 	latestOutput <- getLatestDir(file.path(dir, "Output"), RstoxVersion$Rstox)
@@ -978,7 +984,7 @@ automatedRstoxTest <- function(dir, copyFromOriginal=TRUE, process=c("run", "dif
 		write("\nPlease also run the example script on ftp://ftp.imr.no/StoX/Download/Rstox/Examples\n", file=progressFile, append=TRUE)
 	
 		# Copy the progress file to the current diff directory:
-		file.copy(progressFile, diffdir, overwrite=TRUE)
+		file.copy(progressFile, diffdir, recursive=TRUE, overwrite=TRUE)
 	}
 }
 
