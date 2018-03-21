@@ -12,7 +12,7 @@ library(tools)
 
 
 # Set the directory of the test projects in your local system:
-dir_Rstox <- "~/workspace/stox/project/Test projects/Automated testing"
+dir_Rstox <- "~/workspace/stox/project/Test projects/Automated testing_small"
 dir_Rstox_utils <- "~/Documents/Produktivt/Prosjekt/R-packages/Rstox_utils/Rstox_utils"
 source(file.path(dir_Rstox_utils, "Rstox_utils.R"))
 
@@ -52,19 +52,3 @@ source(file.path(dir_Rstox_utils, "Rstox_utils.R"))
 
 ##### Run the projects with Rstox 1.8.1 and diff with Rstox 1.7.2: #####
 system.time(automatedRstoxTest(dir_Rstox, copyFromOriginal=TRUE, process=c("run", "diff"), cores=2))
-
-
-
-
-
-
-
-
-
-
-
-
-~/workspace/stox/project/Test projects/Automated testing
-
-
-
