@@ -422,6 +422,7 @@ automatedRstoxTest <- function(dir, copyFromOriginal=TRUE, process=c("run", "dif
 			if(.Platform$OS.type == "windows"){
 				file1 <- gsub("/", "\\", file1, fixed=TRUE)
 				file2 <- gsub("/", "\\", file2, fixed=TRUE)
+				tempdiff <- gsub("/", "\\", tempdiff, fixed=TRUE)
 				
 				cmd <- paste(c(
 					"FC", 
@@ -878,7 +879,7 @@ automatedRstoxTest <- function(dir, copyFromOriginal=TRUE, process=c("run", "dif
 	
 	
 	
-	
+	browser()
 	# Name the folder for the output files by the time and Rstox version:
 	RstoxVersion <- getRstoxVersion()
 	folderName <- paste(names(RstoxVersion), unlist(lapply(RstoxVersion, as.character)), sep="_", collapse="_")
