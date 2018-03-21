@@ -420,6 +420,9 @@ automatedRstoxTest <- function(dir, copyFromOriginal=TRUE, process=c("run", "dif
 			
 			# Platform dependent diff commands:
 			if(.Platform$OS.type == "windows"){
+				file1 <- gsub("/", "\\", file1, fixed=TRUE)
+				file2 <- gsub("/", "\\", file2, fixed=TRUE)
+				
 				cmd <- paste(c(
 					"FC", 
 					shQuote(file1), 
@@ -499,6 +502,8 @@ automatedRstoxTest <- function(dir, copyFromOriginal=TRUE, process=c("run", "dif
 			onlyInSecond <- setdiff(files2, files1)
 			list(commonFiles=commonFiles, commonPaths1=commonPaths1, commonPaths2=commonPaths2, onlyInFirst=onlyInFirst, onlyInSecond=onlyInSecond)
 		}
+		
+		
 		
 		# Get matching and differing files:
 		files1 <- getFilesByExtOne(list.files(dir1, recursive=recursive), ext=ext)
@@ -938,11 +943,10 @@ automatedRstoxTest <- function(dir, copyFromOriginal=TRUE, process=c("run", "dif
 		diffdir <- path.expand(file.path(dir, "Diff", paste("Diff", basename(newOutput), basename(latestOutput), sep="_")))
 		suppressWarnings(dir.create(diffdir))
 		
-		
-		
-		
 		# Get all files common and different between the old and new run, separated into file types RData, image and text:
 		printHeader("1. Common and differing projects and files", progressFile)
+		print(newOutput)
+		print(latestOutput)
 		allFiles <- getAllFiles(newOutput, latestOutput)
 		
 		### # Run the UNIX diff:
