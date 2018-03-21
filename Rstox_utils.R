@@ -799,17 +799,22 @@ automatedRstoxTest <- function(dir, copyFromOriginal=TRUE, process=c("run", "dif
 		#StoXVersionsSplit <- as.numeric(strsplit(StoXVersions, ".", fixed=TRUE)[[1]])
 		#StoXVersionsSplit <- sum(StoXVersionsSplit * 10^(6 - 2 * seq_along(StoXVersionsSplit)))
 		
-		# Set the order of the folders:
-		o <- order(RstoxVersionsSplit, StoXVersionsSplit)
-		
-		# Select the latest:
 		before <- which(RstoxVersions < Rstox)
 		if(length(before)==0){
 			warning(paste0("No directories with Rstox version before Rstox version ", Rstox))
 			return(NULL)
 		}
+		
+		RstoxVersionsSplit <- RstoxVersionsSplit[before]
+		StoXVersionsSplit <- StoXVersionsSplit[before]
+		All <- All[before]
+		
+		# Set the order of the folders:
+		o <- order(RstoxVersionsSplit, StoXVersionsSplit)
+		
+		# Select the latest:
 		# Return the latest before the input Rstox version:
-		All[which.max(o[before])]
+		All[which.min(o)]
 	}
 	
 	deleteOutput <- function(dir){
@@ -894,7 +899,7 @@ automatedRstoxTest <- function(dir, copyFromOriginal=TRUE, process=c("run", "dif
 	ProjectsDir <- file.path(dir, "Projects")
 	
 	# First copy all files from ProjectsDir_original to ProjectsDir
-	if(copyFromOriginal){
+	if("run" %in% process && copyFromOriginal){
 		unlink(ProjectsDir, recursive=TRUE, force=TRUE)
 		dir.create(ProjectsDir)
 		lapply(ProjectsList_original, file.copy, ProjectsDir, overwrite=TRUE, recursive=TRUE)
@@ -931,10 +936,12 @@ automatedRstoxTest <- function(dir, copyFromOriginal=TRUE, process=c("run", "dif
 	}
 	
 	# Copy the projects that were run to a new folder in the Projects_original:
-	newProjectsDir_original <- file.path(dirname(ProjectsDir_original), folderName)
-	dir.create(newProjectsDir_original)
-	ProjectsList <- list.dirs(ProjectsDir, recursive=FALSE)
-	lapply(ProjectsList, file.copy, newProjectsDir_original, overwrite=TRUE, recursive=TRUE)
+	if("run" %in% process){
+		newProjectsDir_original <- file.path(dirname(ProjectsDir_original), folderName)
+		dir.create(newProjectsDir_original)
+		ProjectsList <- list.dirs(ProjectsDir, recursive=FALSE)
+		lapply(ProjectsList, file.copy, newProjectsDir_original, overwrite=TRUE, recursive=TRUE)
+	}
 	
 	# Get the lastest sub directory of the previously generated outputs:
 	latestOutput <- getLatestDir(file.path(dir, "Output"), RstoxVersion$Rstox)
