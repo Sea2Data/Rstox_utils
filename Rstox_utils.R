@@ -403,7 +403,7 @@ automatedRstoxTest <- function(dir, copyFromOriginal=TRUE, process=c("run", "dif
 		
 		
 		# Copy the project.xml file:
-		from <- getProjectPaths("Test_Rstox")$projectXML
+		from <- getProjectPaths(projectName)$projectXML
 		to <- file.path(outputDir, "project.xml")
 		file.copy(from=from, to=to, overwrite=TRUE)
 		
@@ -460,7 +460,8 @@ automatedRstoxTest <- function(dir, copyFromOriginal=TRUE, process=c("run", "dif
 			}
 	
 			# 2018-04-03 Added by Johnsen: Use sink() to get the output from the diff/fc:
-			sink(file=tempdiff, append=TRUE) ## Not sure if all messages should go to the same file. Arne JOhannes to decide
+			#sink(file=tempdiff, append=TRUE) ## Not sure if all messages should go to the same file. Arne Johannes to decide
+			sink(file=tempdiff, append=FALSE) ## Not sure if all messages should go to the same file. Arne Johannes to decide
 			system1(cmd)
 			# End writing to file
 			sink(type = "message")
@@ -705,7 +706,7 @@ automatedRstoxTest <- function(dir, copyFromOriginal=TRUE, process=c("run", "dif
 			out <- lapply(files, function(x) read.csv(x, sep="\t", stringsAsFactors=FALSE, na.strings="-", encoding="UTF-8", quote=NULL))
 			for(i in seq_along(out)){
 				if(length(out[[i]])>0 && head(out[[i]], 1) %in% c("true", "false")){
-				 	out[[i]] <- as.logical(out[[i]])
+				 	out[[i]] <- as.logical(toUpper(out[[i]]))
 				}
 			}
 			
