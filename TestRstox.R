@@ -43,12 +43,9 @@ source(file.path(dir_Rstox_utils, "Rstox_utils.R"))
 
 
 
-##### Install the latest develop version of Rstox: #####
-##### This is Rstox 1.8.1: #####
-# devtools::install_github("Sea2Data/Rstox", ref="develop")
+	##### Install the latest develop version of Rstox: #####
+	##### This is Rstox 1.8.1: #####
+	# devtools::install_github("Sea2Data/Rstox", ref="develop")
 
-
-
-
-##### Run the projects with Rstox 1.8.1 and diff with Rstox 1.7.2: #####
-system.time(automatedRstoxTest(dir_Rstox, copyFromOriginal=TRUE, process=c("run", "diff"), cores=2))
+	##### Run the projects with Rstox 1.8.1 and diff with Rstox 1.7.2: #####
+	system.time(automatedRstoxTest(dir_Rstox, copyFromOriginal=TRUE, process=c("run", "diff"), cores=2))

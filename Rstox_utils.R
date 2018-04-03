@@ -405,12 +405,13 @@ automatedRstoxTest <- function(dir, copyFromOriginal=TRUE, process=c("run", "dif
 		# Copy the project.xml file:
 		from <- getProjectPaths("Test_Rstox")$projectXML
 		to <- file.path(outputDir, "project.xml")
-		file.copy(from=from, to=to, overwrite=TRUE, recursive=TRUE)
+		file.copy(from=from, to=to, overwrite=TRUE)
 		
 		cat("\n")
 	}
 	
 	# Function for running diff between the previous and new output files:
+	# 'files' is a list as returned from the function getFilesByExt(), which uses getMatches() to return the following elements: 'commonFiles', 'commonPaths1', 'commonPaths2', 'onlyInFirst', 'onlyInSecond':
 	diffTextFiles <- function(files, progressFile){
 		
 		diffTextFilesOne <- function(file, dir1, dir2, progressFile){
@@ -418,17 +419,33 @@ automatedRstoxTest <- function(dir, copyFromOriginal=TRUE, process=c("run", "dif
 			file2 <- file.path(dir2, file)
 			tempdiff <- file.path(path.expand(diffdir), "tempdiff.txt")
 			
+			# 2018-04-03 Added by Johnsen: New function to be used with sink(). This is the only way of getting output from FC to file on Windows:
+			system1 = function(...) cat(base::system(..., intern = TRUE), sep = "\n")
+			
 			# Platform dependent diff commands:
 			if(.Platform$OS.type == "windows"){
 				file1 <- gsub("/", "\\", file1, fixed=TRUE)
 				file2 <- gsub("/", "\\", file2, fixed=TRUE)
 				tempdiff <- gsub("/", "\\", tempdiff, fixed=TRUE)
 				
+				# 2018-04-03 Added by Johnsen: Add backslach at the start of the path to get it working on Windows (UNIX accepts this):
+				file1 <- paste0("\\",file1) ## Espen include
+				file2 <- paste0("\\",file2) ## Espen include
+				tempdiff <- paste0("\\",tempdiff) ## Espen include
+			
+				# 2018-04-03 Added by Johnsen: Do not redirect the output to a file, but rather use sink() below instead:
 				cmd <- paste(c(
-					"FC", 
-					shQuote(file1), 
-					shQuote(file2), 
-					paste0(">", shQuote(tempdiff))), collapse=" ")
+					"fc", 
+					shQuote(file1,type="cmd2"), 
+					shQuote(file2,type="cmd2")), 
+					collapse=" ")
+				
+				
+				#cmd <- paste(c(
+				#	"FC", 
+				#	shQuote(file1, type="cmd2"), 
+				#	shQuote(file2, type="cmd2"), 
+				#	paste0(">", shQuote(tempdiff))), collapse=" ")
 			}
 			else if(.Platform$OS.type == "unix"){
 				cmd <- paste(c(
@@ -442,16 +459,25 @@ automatedRstoxTest <- function(dir, copyFromOriginal=TRUE, process=c("run", "dif
 				stop("Unknown system. Must be one of UNIX or Windows")
 			}
 	
-			# Run the diff as a system call and print to the temp file:
-			system(cmd)
-			# -x '*.bmp' -x '*.jpeg' -x '*.png' -x '*.tiff' -x '*.RData'
+			# 2018-04-03 Added by Johnsen: Use sink() to get the output from the diff/fc:
+			sink(file=tempdiff, append=TRUE) ## Not sure if all messages should go to the same file. Arne JOhannes to decide
+			system1(cmd)
+			# End writing to file
+			sink(type = "message")
+			sink()
+			
+			
+			### # Run the diff as a system call and print to the temp file:
+			### system(cmd)
+			### # -x '*.bmp' -x '*.jpeg' -x '*.png' -x '*.tiff' -x '*.RData'
 			
 			# Read the tempdiff file and append to the progress file:
 			diffinfo <- readLines(tempdiff)
+			ncharDiffInfo <- sum(nchar(diffinfo))
 			#write("\n\n********************", file=progressFile, append=TRUE)
 			
 			write("\n", file=progressFile, append=TRUE)
-			if(length(diffinfo)){
+			if(ncharDiffInfo > 0){
 				out <- pasteAndHash("(Code 2) Differences in the following text files", file1, "and", file2)
 				write(out, progressFile, append=TRUE)
 				write(paste0("\t", diffinfo), file=progressFile, append=TRUE)
@@ -599,8 +625,8 @@ automatedRstoxTest <- function(dir, copyFromOriginal=TRUE, process=c("run", "dif
 	}
 	
 	pasteAndHash <- function(...){
-		out <- paste("# ", c(...))
-		out <- paste(out, collapse="\n")
+		out <- paste0("# ", c(...))
+		out <- paste0(out, collapse="\n")
 		out
 	}
 		
@@ -835,7 +861,7 @@ automatedRstoxTest <- function(dir, copyFromOriginal=TRUE, process=c("run", "dif
 		}
 		
 		if(length(x$commonFiles)){
-			toWrite <- paste0("# ", type, " common for both direcories\n# ", x$dir1, "\n# ", x$dir2, ":\n", paste("\t", x$commonFiles, collapse="\n"), "\n")
+			toWrite <- paste0("# ", type, " common for both direcories\n# ", x$dir1, "\n# and\n# ", x$dir2, ":\n", paste("\t", x$commonFiles, collapse="\n"), "\n")
 			write(toWrite, file=progressFile, append=TRUE)
 		}
 		if(length(x$onlyInFirst)){
@@ -884,7 +910,6 @@ automatedRstoxTest <- function(dir, copyFromOriginal=TRUE, process=c("run", "dif
 	
 	
 	
-	browser()
 	# Name the folder for the output files by the time and Rstox version:
 	RstoxVersion <- getRstoxVersion()
 	folderName <- paste(names(RstoxVersion), unlist(lapply(RstoxVersion, as.character)), sep="_", collapse="_")
