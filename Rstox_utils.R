@@ -412,9 +412,9 @@ automatedRstoxTest <- function(dir, copyFromOriginal=TRUE, process=c("run", "dif
 	
 	# Function for running diff between the previous and new output files:
 	# 'files' is a list as returned from the function getFilesByExt(), which uses getMatches() to return the following elements: 'commonFiles', 'commonPaths1', 'commonPaths2', 'onlyInFirst', 'onlyInSecond':
-	diffTextFiles <- function(files, progressFile){
+	diffTextFiles <- function(files, progressFile, diffdir){
 		
-		diffTextFilesOne <- function(file, dir1, dir2, progressFile){
+		diffTextFilesOne <- function(file, dir1, dir2, progressFile, diffdir){
 			file1 <- file.path(dir1, file)
 			file2 <- file.path(dir2, file)
 			tempdiff <- file.path(path.expand(diffdir), "tempdiff.txt")
@@ -493,7 +493,7 @@ automatedRstoxTest <- function(dir, copyFromOriginal=TRUE, process=c("run", "dif
 	
 		# Compare text files:
 		printProjectName(files, progressFile)
-		out <- lapply(files$commonFiles, diffTextFilesOne, dir1=files$dir1, dir2=files$dir2, progressFile=progressFile)
+		out <- lapply(files$commonFiles, diffTextFilesOne, dir1=files$dir1, dir2=files$dir2, progressFile=progressFile, diffdir=diffdir)
 		write("\n", file=progressFile, append=TRUE)
 		
 		
@@ -545,8 +545,8 @@ automatedRstoxTest <- function(dir, copyFromOriginal=TRUE, process=c("run", "dif
 	}
 	
 	# Function to check diffs between images, and printing the diffs to file:
-	imDiff <- function(files, progressFile, cores=1){
-		imDiffOne <- function(file, dir1, dir2, diffdir, progressFile){
+	imDiff <- function(files, progressFile, diffdir, cores=1){
+		imDiffOne <- function(file, dir1, dir2, progressFile, diffdir){
 			# Get the read and write functions:
 			validExt <- list(png="png", jpeg=c("jpg", "jpeg"), tiff=c("tif", "tiff"))
 			ext <- tools::file_ext(file)
@@ -615,7 +615,7 @@ automatedRstoxTest <- function(dir, copyFromOriginal=TRUE, process=c("run", "dif
 		#papply(images$commonFiles, imDiffOne, dir1=images$dir1, dir2=images$dir2, diffdir=diffdir, progressFile=progressFile, cores=cores)
 		
 		printProjectName(files, progressFile)
-		out <- lapply(files$commonFiles, imDiffOne, dir1=files$dir1, dir2=files$dir2, progressFile=progressFile)
+		out <- lapply(files$commonFiles, imDiffOne, dir1=files$dir1, dir2=files$dir2, progressFile=progressFile, diffdir=diffdir)
 		write("\n", file=progressFile, append=TRUE)
 		
 		#out <- lapply(files$commonFiles, imDiffOne, dir1=files$dir1, dir2=files$dir2, progressFile=progressFile)
@@ -1000,7 +1000,7 @@ automatedRstoxTest <- function(dir, copyFromOriginal=TRUE, process=c("run", "dif
 		#write("Comapring image files", file=progressFile, append=TRUE)
 		#write("************************************************************", file=progressFile, append=TRUE)
 		#imDiff(dir1=newOutput, dir2=latestOutput, diffdir=diffdir, progressFile=progressFile, cores=cores)
-		lapply(allFiles$imageFiles, imDiff, progressFile=progressFile)
+		lapply(allFiles$imageFiles, imDiff, progressFile=progressFile, diffdir=diffdir)
 	
 		# Diff text files:
 		printHeader("4. Comapring text files", progressFile)
@@ -1008,7 +1008,7 @@ automatedRstoxTest <- function(dir, copyFromOriginal=TRUE, process=c("run", "dif
 		#write("Comapring text tiles", file=progressFile, append=TRUE)
 		#write("************************************************************", file=progressFile, append=TRUE)
 		#diffBaseline(dir=newOutput, progressFile=progressFile)
-		lapply(allFiles$textFiles, diffTextFiles, progressFile=progressFile)
+		lapply(allFiles$textFiles, diffTextFiles, progressFile=progressFile, diffdir=diffdir)
 	
 		# Diff also the baseline output and the files written by baseline:
 		printHeader("5. Comapring Rstox and StoX baseline output", progressFile)
