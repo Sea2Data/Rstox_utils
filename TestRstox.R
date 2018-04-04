@@ -12,7 +12,8 @@ library(tools)
 
 
 # Set the directory of the test projects in your local system:
-dir_Rstox <- "~/workspace/stox/project/Test projects/Automated testing_small"
+# Note that this path MUST be a path without spaces, and that the project names also need to be without spaces, for the automated testing to funciton on Windows. Unless, "Status 1" errors will occur when the FC command is used.
+dir_Rstox <- "~/workspace/stox/project/Test projects/Automated_testing_small"
 dir_Rstox_utils <- "~/Documents/Produktivt/Prosjekt/R-packages/Rstox_utils/Rstox_utils"
 source(file.path(dir_Rstox_utils, "Rstox_utils.R"))
 
