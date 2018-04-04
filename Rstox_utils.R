@@ -683,7 +683,10 @@ automatedRstoxTest <- function(dir, copyFromOriginal=TRUE, process=c("run", "dif
 					"assign(\"tempenvironment1\", new.env(), envir=.GlobalEnv)",
 					"assign(\"tempenvironment2\", new.env(), envir=.GlobalEnv)",
 					"x1 <- load(file1, envir=tempenvironment1)",
-					"x2 <- load(file2, envir=tempenvironment2)")
+					"x2 <- load(file2, envir=tempenvironment2)", 
+					"str(tempenvironment1[[x1]])", 
+					"str(tempenvironment2[[x2]])"
+					)
 				
 				out <- paste(out, "# Inspect the differences by using the following code:", sep="\n")
 				out <- paste(out, paste0("\t", c(howToInspect), collapse="\n"), sep="\n")
@@ -897,7 +900,7 @@ automatedRstoxTest <- function(dir, copyFromOriginal=TRUE, process=c("run", "dif
 				x$dir1, 
 				"# and", 
 				paste0(x$dir2, ":"), 
-				paste("\t", x$commonFiles, collapse="\n"), 
+				paste0("\t", x$commonFiles, collapse="\n"), 
 				""), collapse="\n")
 			write(toWrite, file=progressFile, append=TRUE)
 		}
@@ -907,7 +910,7 @@ automatedRstoxTest <- function(dir, copyFromOriginal=TRUE, process=c("run", "dif
 			toWrite <- paste0(c(
 				paste0("# ", type, " only present in the directory"), 
 				paste0(x$dir1, ":"), 
-				paste("\t", x$onlyInFirst, collapse="\n"), 
+				paste0("\t", x$onlyInFirst, collapse="\n"), 
 				""), collapse="\n")
 						
 			write(toWrite, file=progressFile, append=TRUE)
@@ -917,7 +920,7 @@ automatedRstoxTest <- function(dir, copyFromOriginal=TRUE, process=c("run", "dif
 			toWrite <- paste0(c(
 				paste0("# ", type, " only present in the directory"), 
 				paste0(x$dir2, ":"), 
-				paste("\t", x$onlyInSecond, collapse="\n"), 
+				paste0("\t", x$onlyInSecond, collapse="\n"), 
 				""), collapse="\n")
 			write(toWrite, file=progressFile, append=TRUE)
 		}
