@@ -283,7 +283,7 @@ buildRstox <- function(buildDir, pkgName="Rstox", version="1.0", Rversion="3.3.1
 
 
 # Function for running all test projects and comparing outputs with previous outputs:
-automatedRstoxTest <- function(dir, copyFromOriginal=TRUE, process=c("run", "diff"), cores=1){
+automatedRstoxTest <- function(dir, copyFromOriginal=TRUE, process=c("run", "diff"), cores=1, nlines=-1L){
 	
 	# Function borrowed from the TSD package (parallel version of lapply):
 	papply <- function(X, FUN, ..., cores=1, outfile="", msg="Processing... "){
@@ -410,11 +410,26 @@ automatedRstoxTest <- function(dir, copyFromOriginal=TRUE, process=c("run", "dif
 		cat("\n")
 	}
 	
+	# Convert to all forward- or all backslashed:
+	# Forwardslash should work on all systems, so the default is back=FALSE:
+	setSlashes <- function(x, back=FALSE, platform=NULL){
+		if(identical(platform, "windows")){
+			back <- TRUE
+		}
+		if(back){
+			gsub("/", "\\", x, fixed=TRUE)
+		}
+		else{
+			gsub("\\", "/", x, fixed=TRUE)
+		}
+	}
+	
+	
 	# Function for running diff between the previous and new output files:
 	# 'files' is a list as returned from the function getFilesByExt(), which uses getMatches() to return the following elements: 'commonFiles', 'commonPaths1', 'commonPaths2', 'onlyInFirst', 'onlyInSecond':
-	diffTextFiles <- function(files, progressFile, diffdir){
+	diffTextFiles <- function(files, progressFile, diffdir, nlines=-1L){
 		
-		diffTextFilesOne <- function(file, dir1, dir2, progressFile, diffdir){
+		diffTextFilesOne <- function(file, dir1, dir2, progressFile, diffdir, nlines){
 			file1 <- file.path(dir1, file)
 			file2 <- file.path(dir2, file)
 			tempdiff <- file.path(path.expand(diffdir), "tempdiff.txt")
@@ -424,20 +439,21 @@ automatedRstoxTest <- function(dir, copyFromOriginal=TRUE, process=c("run", "dif
 			
 			# Platform dependent diff commands:
 			if(.Platform$OS.type == "windows"){
-				file1 <- gsub("/", "\\", file1, fixed=TRUE)
-				file2 <- gsub("/", "\\", file2, fixed=TRUE)
-				tempdiff <- gsub("/", "\\", tempdiff, fixed=TRUE)
+				# No longer needed
+				#file1 <- gsub("/", "\\", file1, fixed=TRUE)
+				#file2 <- gsub("/", "\\", file2, fixed=TRUE)
+				#tempdiff <- gsub("/", "\\", tempdiff, fixed=TRUE)
 				
-				# 2018-04-03 Added by Johnsen: Add backslach at the start of the path to get it working on Windows (UNIX accepts this):
-				file1 <- paste0("\\",file1) ## Espen include
-				file2 <- paste0("\\",file2) ## Espen include
-				tempdiff <- paste0("\\",tempdiff) ## Espen include
+				## # 2018-04-03 Added by Johnsen: Add backslach at the start of the path to get it working on Windows (UNIX accepts this):
+				## file1 <- paste0("\\",file1) ## Espen include
+				## file2 <- paste0("\\",file2) ## Espen include
+				## tempdiff <- paste0("\\",tempdiff) ## Espen include
 			
 				# 2018-04-03 Added by Johnsen: Do not redirect the output to a file, but rather use sink() below instead:
 				cmd <- paste(c(
 					"fc", 
-					shQuote(file1,type="cmd2"), 
-					shQuote(file2,type="cmd2")), 
+					shQuote(file1, type="cmd2"), 
+					shQuote(file2, type="cmd2")), 
 					collapse=" ")
 				
 				
@@ -473,12 +489,11 @@ automatedRstoxTest <- function(dir, copyFromOriginal=TRUE, process=c("run", "dif
 			### # -x '*.bmp' -x '*.jpeg' -x '*.png' -x '*.tiff' -x '*.RData'
 			
 			# Read the tempdiff file and append to the progress file:
-			diffinfo <- readLines(tempdiff)
+			diffinfo <- readLines(tempdiff, n=nlines)
 			ncharDiffInfo <- sum(nchar(diffinfo))
 			noDiffWindows <- length(grep("no differences encountered", diffinfo))
 			#write("\n\n********************", file=progressFile, append=TRUE)
 			
-			write("\n", file=progressFile, append=TRUE)
 			if(ncharDiffInfo == 0 || noDiffWindows){
 				out <- paste0(c("# (Code 0) No differences in the following text files", file1, "# and", file2), collapse="\n")
 				write(out, progressFile, append=TRUE)
@@ -492,16 +507,11 @@ automatedRstoxTest <- function(dir, copyFromOriginal=TRUE, process=c("run", "dif
 	
 		# Compare text files:
 		printProjectName(files, progressFile)
-		out <- lapply(files$commonFiles, diffTextFilesOne, dir1=files$dir1, dir2=files$dir2, progressFile=progressFile, diffdir=diffdir)
-		write("\n", file=progressFile, append=TRUE)
 		
+		write("{", file=progressFile, append=TRUE)
+		out <- lapply(files$commonFiles, diffTextFilesOne, dir1=files$dir1, dir2=files$dir2, progressFile=progressFile, diffdir=diffdir, nlines=nlines)
+		write("}", file=progressFile, append=TRUE)
 		
-		
-		#out <- lapply(files$commonFiles, diffTextFilesOne, dir1=files$dir1, dir2=files$dir2, progressFile=progressFile)
-		#write("\n\n********************", file=progressFile, append=TRUE)
-		#write(paste0("***** ", files$projectName, " *****"), file=progressFile, append=TRUE)
-		#write(unlist(out), file=progressFile, append=TRUE)
-		#write("********************", file=progressFile, append=TRUE)
 		
 		return(NULL)
 	}
@@ -540,6 +550,11 @@ automatedRstoxTest <- function(dir, copyFromOriginal=TRUE, process=c("run", "dif
 		out$dir1 <- dir1
 		out$dir2 <- dir2
 		out$projectName <- basename(dir2)
+		
+		# Set all slashes to the appropriate direction:
+		#out <- lapply(out, setSlashes, platform = .Platform$OS.type)
+		out <- lapply(out, setSlashes)
+		
 		out
 	}
 	
@@ -568,8 +583,6 @@ automatedRstoxTest <- function(dir, copyFromOriginal=TRUE, process=c("run", "dif
 			x1 <- readFun(file1)
 			x2 <- readFun(file2)
 				
-			write("", file=progressFile, append=TRUE)
-			
 			if(!all(x1==x2)){
 				x12 <- x1 - x2
 				# Modify the diff image to fit the [0, 1] range, and set all identical values to 0:
@@ -608,19 +621,12 @@ automatedRstoxTest <- function(dir, copyFromOriginal=TRUE, process=c("run", "dif
 				write(out, progressFile, append=TRUE)
 			}
 		}
-		# Get the images to compare:
-		#images <- getFilesByExt(dir1=dir1, dir2=dir2, ext=c("png", "jpg", "jpeg", "tif", "tiff"))
-		# Compare images:
-		#papply(images$commonFiles, imDiffOne, dir1=images$dir1, dir2=images$dir2, diffdir=diffdir, progressFile=progressFile, cores=cores)
-		printProjectName(files, progressFile)
-		out <- lapply(files$commonFiles, imDiffOne, dir1=files$dir1, dir2=files$dir2, progressFile=progressFile, diffdir=diffdir)
-		write("\n", file=progressFile, append=TRUE)
 		
-		#out <- lapply(files$commonFiles, imDiffOne, dir1=files$dir1, dir2=files$dir2, progressFile=progressFile)
-		#write("\n\n********************", file=progressFile, append=TRUE)
-		#write(paste0("***** ", files$projectName, " *****"), file=progressFile, append=TRUE)
-		#papply(files$commonFiles, imDiffOne, dir1=files$dir1, dir2=files$dir2, diffdir=diffdir, progressFile=progressFile, cores=cores)
-		#write("********************", file=progressFile, append=TRUE)
+		printProjectName(files, progressFile)
+		
+		write("{", file=progressFile, append=TRUE)
+		out <- lapply(files$commonFiles, imDiffOne, dir1=files$dir1, dir2=files$dir2, progressFile=progressFile, diffdir=diffdir)
+		write("}", file=progressFile, append=TRUE)
 	}
 	
 	pasteAndHash <- function(...){
@@ -658,8 +664,8 @@ automatedRstoxTest <- function(dir, copyFromOriginal=TRUE, process=c("run", "dif
 			nodiff <- unlist(lapply(diffs, isTRUE))
 			
 			
-			# Print infor also for no differences:
-			write("", file=progressFile, append=TRUE)
+			# Print info also for no differences:
+			write("\n", file=progressFile, append=TRUE)
 			out <- paste0(c("# (Code 0) No differences in the following RData files: ", file1, "# and", file2), collapse="\n")
 			
 			# Print info about different names:
@@ -678,8 +684,8 @@ automatedRstoxTest <- function(dir, copyFromOriginal=TRUE, process=c("run", "dif
 				out <- paste0(c("# (Code 2) Non-identical objects in the following RData files: ", file1, "# and", file2), collapse="\n")
 				
 				howToInspect <- c(
-					paste0("file1 <- \"", file.path(dir1, file), "\""),
-					paste0("file2 <- \"", file.path(dir2, file), "\""),
+					paste0("file1 <- \"", setSlashes(file1), "\""),
+					paste0("file2 <- \"", setSlashes(file2), "\""),
 					"assign(\"tempenvironment1\", new.env(), envir=.GlobalEnv)",
 					"assign(\"tempenvironment2\", new.env(), envir=.GlobalEnv)",
 					"x1 <- load(file1, envir=tempenvironment1)",
@@ -693,17 +699,6 @@ automatedRstoxTest <- function(dir, copyFromOriginal=TRUE, process=c("run", "dif
 			
 				out <- paste(out, paste0(c(objectList), collapse="\n"), sep="\n")
 				out <- paste(out, unlist(lapply(diffs[!nodiff], function(x) paste("\t", x, collapse="\n"))), sep="\n")
-				
-				
-				
-				
-				#out <- c(
-				#	out, 
-				#	paste("# Non-identical objects in files", file1, file2, objectList, sep="\n# "), 
-				#	#paste0("Non-identical objects in files ", file1, " and ", file2, "(", paste0(x1[!nodiff], collapse=", "), "):"), 
-				#	unlist(lapply(diffs[!nodiff], function(x) paste("\t", x))), 
-				#	""
-				#	)
 			}
 			write(unlist(out), file=progressFile, append=TRUE)
 		}
@@ -712,43 +707,45 @@ automatedRstoxTest <- function(dir, copyFromOriginal=TRUE, process=c("run", "dif
 		printProjectName(files, progressFile)
 		#write("\n\n********************", file=progressFile, append=TRUE)
 		#write(paste0("***** ", files$projectName, " *****"), file=progressFile, append=TRUE)
+		
+		write("{", file=progressFile, append=TRUE)
 		out <- lapply(seq_along(files$commonFiles), diffRData, files=files, progressFile=progressFile)
-		write("\n\n", file=progressFile, append=TRUE)
+		write("}", file=progressFile, append=TRUE)
 	}
 	
 	
 	
 	diffBaseline <- function(dir, progressFile){
-		readBaselineFiles <- function(files){
-			
-			string2logical <- function(x){
-				if(length(x)>0 && any(x %in% c("true", "false"))){
-				 	x <- as.logical(x)
+		
+		# The function readBaselineFiles() was introduced in Rstox 1.8.1:
+		if(RstoxVersion$Rstox <= "1.8"){
+			readBaselineFiles <- function(files){
+				# Function for converting string to logical:
+				string2logical <- function(x){
+					if(length(x)>0 && any(x %in% c("true", "false"))){
+					 	x <- as.logical(x)
+					}
+					x
 				}
-				x
+	
+				# Read the files:
+				out <- lapply(files, function(x) read.csv(x, sep="\t", stringsAsFactors=FALSE, na.strings="-", encoding="UTF-8", quote=NULL))
+				for(i in seq_along(out)){
+					out[[i]] <- lapply(out[[i]], string2logical)
+					out[[i]] <- as.data.frame(out[[i]], stringsAsFactors=FALSE)
+				}
+	
+				# Get the names of the processes and data frames:
+				files_split <- strsplit(basename(files), "_")
+				dataFrameNames <- sapply(lapply(files_split, "[", -1), paste, collapse="_")
+				processNames <- sapply(files_split, "[", 2)
+	
+				# Set the names of the data frames:
+				names(out) <- dataFrameNames
+				out <- split(out, processNames)
+				out <- lapply(out, function(x) if(length(x)==1) x[[1]] else x)
+				out
 			}
-			
-			# Read the files:
-			out <- lapply(files, function(x) read.csv(x, sep="\t", stringsAsFactors=FALSE, na.strings="-", encoding="UTF-8", quote=NULL))
-			for(i in seq_along(out)){
-				#if(length(out[[i]])>0 && head(out[[i]], 1) %in% c("true", "false")){
-				out[[i]] <- lapply(out[[i]], string2logical)
-				out[[i]] <- as.data.frame(out[[i]], stringsAsFactors=FALSE)
-				#if(length(out[[i]])>0 && out[[i]] %in% c("true", "false")){
-				# 	out[[i]] <- as.logical(toUpper(out[[i]]))
-				#}
-			}
-			
-			# Get the names of the processes and data frames:
-			files_split <- strsplit(basename(files), "_")
-			dataFrameNames <- sapply(lapply(files_split, "[", -1), paste, collapse="_")
-			processNames <- sapply(files_split, "[", 2)
-			
-			# Set the names of the data frames:
-			names(out) <- dataFrameNames
-			out <- split(out, processNames)
-			out <- lapply(out, function(x) if(length(x)==1) x[[1]] else x)
-			out
 		}
 		
 		all.equalRstoxStoX <- function(Rstox, StoX, name, progressFile){
@@ -756,7 +753,48 @@ automatedRstoxTest <- function(dir, copyFromOriginal=TRUE, process=c("run", "dif
 				d <- all.equal(x[[name]], y[[name]])
 				if(!isTRUE(d)){
 					write(paste0("\n\n# (Code 2) Differences in output from process ", name, " from Rstox and StoX"), file=progressFile, append=TRUE)
+					
+					
 					write(paste("\t", d), file=progressFile, append=TRUE)
+					
+					if(is.data.frame(x[[name]])){
+						write(paste("# Data frame", name, "from Rstox"), file=progressFile, append=TRUE)
+						suppressWarnings(write.table(paste("\t", head(x[[name]])), file=progressFile, append=TRUE))
+						write(paste("# Data frame", name, "from StoX"), file=progressFile, append=TRUE)
+						suppressWarnings(write.table(paste("\t", head(y[[name]])), file=progressFile, append=TRUE))
+					}
+					else{
+						
+						writeTwoTables <- function(i, x, y, name, progressFile){
+							write(paste("# Data frame", name, "from Rstox"), file=progressFile, append=TRUE)
+							suppressWarnings(write.table(head(x[[name]][[i]]), file=progressFile, append=TRUE))
+							write(paste("# Data frame", name, "from StoX"), file=progressFile, append=TRUE)
+							suppressWarnings(write.table(head(y[[name]][[i]]), file=progressFile, append=TRUE))
+						}
+						
+						
+						lapply(seq_along(x[[name]]), writeTwoTables, x=x, y=y, name=name, progressFile=progressFile)
+					}
+					
+					if(RstoxVersion$Rstox > "1.8"){
+						#howToInspect <- c(
+						#	paste0("file1 <- \"", setSlashes(file1), "\""),
+						#	paste0("file2 <- \"", setSlashes(file2), "\""),
+						#	"assign(\"tempenvironment1\", new.env(), envir=.GlobalEnv)",
+						#	"assign(\"tempenvironment2\", new.env(), envir=.GlobalEnv)",
+						#	"x1 <- load(file1, envir=tempenvironment1)",
+						#	"x2 <- load(file2, envir=tempenvironment2)", 
+						#	"str(tempenvironment1[[x1]])", 
+						#	"str(tempenvironment2[[x2]])"
+						#	)
+					    #
+					    #
+						#out <- paste(out, "# Inspect the differences by using the following code:", sep="\n")
+						#out <- paste(out, paste0("\t", c(howToInspect), collapse="\n"), sep="\n")
+					}
+		
+					
+					
 				}
 				else{
 					write(paste0("\n\n# (Code 0) No differences in output from process ", name, " from Rstox and StoX"), file=progressFile, append=TRUE)
@@ -775,6 +813,10 @@ automatedRstoxTest <- function(dir, copyFromOriginal=TRUE, process=c("run", "dif
 			write(paste0("\n### MODEL TYPE: ", name, "\n"), file=progressFile, append=TRUE)
 			
 			# Inform files only present in one or the other:
+			if(length(commonDF)){
+				write("# Data frames common for Rstox and StoX: ", file=progressFile, append=TRUE)
+				lapply(paste("\t", commonDF), write, file=progressFile, append=TRUE)
+			}
 			if(length(onlyInRstox)){
 				write("# Data frames only in Rstox: ", file=progressFile, append=TRUE)
 				lapply(paste("\t", onlyInRstox), write, file=progressFile, append=TRUE)
@@ -782,10 +824,6 @@ automatedRstoxTest <- function(dir, copyFromOriginal=TRUE, process=c("run", "dif
 			if(length(onlyInStoX)){
 				write("# Data frames only in StoX: ", file=progressFile, append=TRUE)
 				lapply(paste("\t", onlyInStoX), write, file=progressFile, append=TRUE)
-			}
-			if(length(commonDF)){
-				write("# Data frames common for Rstox and StoX: ", file=progressFile, append=TRUE)
-				lapply(paste("\t", commonDF), write, file=progressFile, append=TRUE)
 			}
 			
 			# Compare each data frame og the project:¨
@@ -828,16 +866,13 @@ automatedRstoxTest <- function(dir, copyFromOriginal=TRUE, process=c("run", "dif
 		dataFromRstox <- lapply(dataFromRstox, function(x) lapply(x, sortByName))
 		dataFromStoX <- lapply(dataFromStoX, function(x) lapply(x, sortByName))
 		
+		#write("\n", file=progressFile, append=TRUE)
 		printProjectName(list(projectName=basename(dir)), progressFile)
+		
+		write("{", file=progressFile, append=TRUE)
 		lapply(names(dataFromRstox), function(x) all.equalRstoxStoX(Rstox=dataFromRstox[[x]], StoX=dataFromStoX[[x]], name=x, progressFile=progressFile))
-		write("\n\n", file=progressFile, append=TRUE)
-		
-		
-		
-		#write("\n\n********************", file=progressFile, append=TRUE)
-		#write(paste0("***** ", basename(dir), " *****"), file=progressFile, append=TRUE)
-		#lapply(names(dataFromRstox), function(x) all.equalRstoxStoX(Rstox=dataFromRstox[[x]], StoX=dataFromStoX[[x]], progressFile=progressFile))
-		#write("********************", file=progressFile, append=TRUE)
+		write("}", file=progressFile, append=TRUE)
+		#write("\n", file=progressFile, append=TRUE)
 	}
 	
 	getLatestDir <- function(dir, Rstox){
@@ -854,10 +889,6 @@ automatedRstoxTest <- function(dir, copyFromOriginal=TRUE, process=c("run", "dif
 		RstoxVersionsSplit <- sapply(RstoxVersionsSplit, function(x) sum(x * 10^(6 - 2 * seq_along(x))))
 		StoXVersionsSplit <- lapply(strsplit(StoXVersions, ".", fixed=TRUE), as.numeric)
 		StoXVersionsSplit <- sapply(StoXVersionsSplit, function(x) sum(x * 10^(6 - 2 * seq_along(x))))
-		#RstoxVersionsSplit <- as.numeric(strsplit(RstoxVersions, ".", fixed=TRUE)[[1]])
-		#RstoxVersionsSplit <- sum(RstoxVersionsSplit * 10^(6 - 2 * seq_along(RstoxVersionsSplit)))
-		#StoXVersionsSplit <- as.numeric(strsplit(StoXVersions, ".", fixed=TRUE)[[1]])
-		#StoXVersionsSplit <- sum(StoXVersionsSplit * 10^(6 - 2 * seq_along(StoXVersionsSplit)))
 		
 		before <- which(RstoxVersions < Rstox)
 		if(length(before)==0){
@@ -926,7 +957,7 @@ automatedRstoxTest <- function(dir, copyFromOriginal=TRUE, process=c("run", "dif
 		}
 	}
 	
-	getAllFiles <- function(dir1, dir2){
+	getAllFiles <- function(dir1, dir2, progressFile){
 		# Get the projects of the first and second directory (including common and different projects):
 		projects <- getFilesByExt(dir1, dir2, recursive=FALSE)
 		
@@ -978,7 +1009,7 @@ automatedRstoxTest <- function(dir, copyFromOriginal=TRUE, process=c("run", "dif
 	# First copy all files from ProjectsDir_original to ProjectsDir
 	if("run" %in% process && copyFromOriginal){
 		unlink(ProjectsDir, recursive=TRUE, force=TRUE)
-		dir.create(ProjectsDir)
+		suppressWarnings(dir.create(ProjectsDir))
 		lapply(ProjectsList_original, file.copy, ProjectsDir, overwrite=TRUE, recursive=TRUE)
 		
 		# Then delete all output files for safety:
@@ -993,17 +1024,12 @@ automatedRstoxTest <- function(dir, copyFromOriginal=TRUE, process=c("run", "dif
 	newOutput <- file.path(Output, folderName)
 	
 	
-	#oldOutputs <- list.dirs(Output, recursive=FALSE)
-	#oldOutputs <- setdiff(oldOutputs, newOutput)
-	## Pick the latest output folder:
-	#latestOutput <- tail(oldOutputs, 1)
 	# List all projects in the latest and new output directory:
 	newOutputList <- file.path(newOutput, basename(projectPaths))
-	#latestOutputList <- file.path(latestOutput, basename(projectPaths))
 	
 	# Then run through all projects, printing progress to a file:
 	suppressWarnings(dir.create(file.path(dir, "Diff")))
-	progressFile <- file.path(dir, "Diff", "progress.txt")
+	progressFile <- file.path(dir, "Diff", "progress.R")
 	unlink(progressFile)
 	
 	if("run" %in% process){
@@ -1015,7 +1041,7 @@ automatedRstoxTest <- function(dir, copyFromOriginal=TRUE, process=c("run", "dif
 	# Copy the projects that were run to a new folder in the Projects_original:
 	if("run" %in% process){
 		newProjectsDir_original <- file.path(dirname(ProjectsDir_original), folderName)
-		dir.create(newProjectsDir_original)
+		suppressWarnings(dir.create(newProjectsDir_original))
 		ProjectsList <- list.dirs(ProjectsDir, recursive=FALSE)
 		lapply(ProjectsList, file.copy, newProjectsDir_original, overwrite=TRUE, recursive=TRUE)
 	}
@@ -1026,54 +1052,48 @@ automatedRstoxTest <- function(dir, copyFromOriginal=TRUE, process=c("run", "dif
 	
 	if("diff" %in% process && length(latestOutput)){
 		diffdir <- path.expand(file.path(dir, "Diff", paste("Diff", basename(newOutput), basename(latestOutput), sep="_")))
+		setSlashes(diffdir)
 		suppressWarnings(dir.create(diffdir))
 		
 		# Get all files common and different between the old and new run, separated into file types RData, image and text:
 		printHeader("1. Common and differing projects and files", progressFile)
-		print(newOutput)
-		print(latestOutput)
-		allFiles <- getAllFiles(newOutput, latestOutput)
+		write("{", file=progressFile, append=TRUE)
+		#print(newOutput)
+		#print(latestOutput)
+		allFiles <- getAllFiles(newOutput, latestOutput, progressFile)
+		write("}", file=progressFile, append=TRUE)
 		
-		### # Run the UNIX diff:
-		### diffTextFiles(projectName=projectPaths, dir1=newOutput, dir2=latestOutput, diffdir=diffdir, progressFile=progressFile)
 		
 		# Special diff of RData files:
 		printHeader("2. Comapring RData files", progressFile)
-		#write("************************************************************", file=progressFile, append=TRUE)
-		#write("Comapring RData files", file=progressFile, append=TRUE)
-		#write("************************************************************", file=progressFile, append=TRUE)
-		#RDataDiff(dir1=newOutput, dir2=latestOutput, progressFile=progressFile)
+		write("\n{", file=progressFile, append=TRUE)
 		lapply(allFiles$RDataFiles, RDataDiff, progressFile=progressFile)
-	
+		write("}", file=progressFile, append=TRUE)
+		
 		# Special diff of images:
 		printHeader("3. Comapring image files", progressFile)
-		#write("************************************************************", file=progressFile, append=TRUE)
-		#write("Comapring image files", file=progressFile, append=TRUE)
-		#write("************************************************************", file=progressFile, append=TRUE)
-		#imDiff(dir1=newOutput, dir2=latestOutput, diffdir=diffdir, progressFile=progressFile, cores=cores)
+		write("{", file=progressFile, append=TRUE)
 		lapply(allFiles$imageFiles, imDiff, progressFile=progressFile, diffdir=diffdir)
-	
+		write("}", file=progressFile, append=TRUE)
+		
 		# Diff text files:
 		printHeader("4. Comapring text files", progressFile)
-		#write("************************************************************", file=progressFile, append=TRUE)
-		#write("Comapring text tiles", file=progressFile, append=TRUE)
-		#write("************************************************************", file=progressFile, append=TRUE)
-		#diffBaseline(dir=newOutput, progressFile=progressFile)
-		lapply(allFiles$textFiles, diffTextFiles, progressFile=progressFile, diffdir=diffdir)
-	
+		write("{", file=progressFile, append=TRUE)
+		lapply(allFiles$textFiles, diffTextFiles, progressFile=progressFile, diffdir=diffdir, nlines=nlines)
+		write("}", file=progressFile, append=TRUE)
+		
 		# Diff also the baseline output and the files written by baseline:
 		printHeader("5. Comapring Rstox and StoX baseline output", progressFile)
-		#write("************************************************************", file=progressFile, append=TRUE)
-		#write("Comapring baseline output and the files written by baseline", file=progressFile, append=TRUE)
-		#write("************************************************************", file=progressFile, append=TRUE)
-		#diffBaseline(dir=newOutput, progressFile=progressFile)
+		write("{", file=progressFile, append=TRUE)
 		lapply(newOutputList, diffBaseline, progressFile=progressFile)
-	
+		write("}", file=progressFile, append=TRUE)
+		
 		
 		write("\nPlease also run the example script on ftp://ftp.imr.no/StoX/Download/Rstox/Examples\n", file=progressFile, append=TRUE)
 	
 		# Copy the progress file to the current diff directory:
 		file.copy(progressFile, diffdir, recursive=TRUE, overwrite=TRUE)
+		unlink(progressFile, force=TRUE)
 	}
 }
 
