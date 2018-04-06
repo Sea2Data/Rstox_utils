@@ -6,6 +6,7 @@ library(png)
 library(jpeg)
 library(tiff)
 library(tools)
+library(R.utils)
 
 # Source the utility functions:
 #source("https://raw.githubusercontent.com/Sea2Data/Rstox_utils/master/Rstox_utils.R")
@@ -68,6 +69,7 @@ library(png)
 library(jpeg)
 library(tiff)
 library(tools)
+library(R.utils)
 
 # Source the utility functions:
 #source("https://raw.githubusercontent.com/Sea2Data/Rstox_utils/master/Rstox_utils.R")

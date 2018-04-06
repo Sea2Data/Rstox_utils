@@ -453,40 +453,64 @@ automatedRstoxTest <- function(dir, copyFromOriginal=TRUE, process=c("run", "dif
 	
 	getLatestDir <- function(dir){
 		
-		current <- paste(unlist(lapply(getRstoxVersion(), as.character)), collapse="_")
+		version2numeric <- function(x){
+			x <- lapply(strsplit(x, ".", fixed=TRUE), as.numeric)
+			x <- sapply(x, function(y) sum(y * 10^(6 - 2 * seq_along(y))))
+			x
+		}
+		
+		current <- lapply(getRstoxVersion(), as.character)
+		currentRstox <- version2numeric(current$Rstox)
+		currentStoXLib <- version2numeric(current$StoXLib)
+		current <- 10^10 * currentRstox + currentStoXLib
 		
 		All <- list.dirs(dir, recursive=FALSE)
 		if(length(All)==0){
 			warning(paste0("No projects in the test folder '", dir, "'"))
 		}
 		
-		# Get Rstox versions (requiring that the Rstox version is between the first and possibly second underscore, typically "Rstox_1.8.1"):
 		RstoxVersions <- sapply(strsplit(basename(All), "_"), "[", 2)
-		StoXVersions <- sapply(strsplit(basename(All), "_"), "[", 4)
-		Versions <- paste(RstoxVersions, StoXVersions, sep="_")
-		before <- which(Versions < current)
-		if(length(before)==0){
-			warning(paste0("No directories with Rstox version before Rstox_StoXLib version ", current))
-			return(NULL)
-		}
+		StoXLibVersions <- sapply(strsplit(basename(All), "_"), "[", 4)
+		RstoxVersions <- version2numeric(RstoxVersions)
+		StoXLibVersions <- version2numeric(StoXLibVersions)
+		Versions <- 10^10 * RstoxVersions + StoXLibVersions
 		
-		# Split by dots, and convert to a ranking number:
-		RstoxVersionsSplit <- lapply(strsplit(RstoxVersions, ".", fixed=TRUE), as.numeric)
-		RstoxVersionsSplit <- sapply(RstoxVersionsSplit, function(x) sum(x * 10^(6 - 2 * seq_along(x))))
-		StoXVersionsSplit <- lapply(strsplit(StoXVersions, ".", fixed=TRUE), as.numeric)
-		StoXVersionsSplit <- sapply(StoXVersionsSplit, function(x) sum(x * 10^(6 - 2 * seq_along(x))))
+		All[max(which(Versions < current))]
 		
-		
-		RstoxVersionsSplit <- RstoxVersionsSplit[before]
-		StoXVersionsSplit <- StoXVersionsSplit[before]
-		All <- All[before]
-		
-		# Set the order of the folders:
-		o <- order(RstoxVersionsSplit, StoXVersionsSplit)
-		
-		# Select the latest:
-		# Return the latest before the input Rstox version:
-		All[which.max(o)]
+		### current <- paste(unlist(lapply(getRstoxVersion(), as.character)), collapse="_")
+		### 
+		### All <- list.dirs(dir, recursive=FALSE)
+		### if(length(All)==0){
+		### 	warning(paste0("No projects in the test folder '", dir, "'"))
+		### }
+		### 
+		### # Get Rstox versions (requiring that the Rstox version is between the first and possibly second underscore, typically "Rstox_1.8.1"):
+		### RstoxVersions <- sapply(strsplit(basename(All), "_"), "[", 2)
+		### StoXVersions <- sapply(strsplit(basename(All), "_"), "[", 4)
+		### Versions <- paste(RstoxVersions, StoXVersions, sep="_")
+		### before <- which(Versions < current)
+		### if(length(before)==0){
+		### 	warning(paste0("No directories with Rstox version before Rstox_StoXLib version ", current))
+		### 	return(NULL)
+		### }
+		### 
+		### # Split by dots, and convert to a ranking number:
+		### RstoxVersionsSplit <- lapply(strsplit(RstoxVersions, ".", fixed=TRUE), as.numeric)
+		### RstoxVersionsSplit <- sapply(RstoxVersionsSplit, function(x) sum(x * 10^(6 - 2 * seq_along(x))))
+		### StoXVersionsSplit <- lapply(strsplit(StoXVersions, ".", fixed=TRUE), as.numeric)
+		### StoXVersionsSplit <- sapply(StoXVersionsSplit, function(x) sum(x * 10^(6 - 2 * seq_along(x))))
+		### 
+		### 
+		### RstoxVersionsSplit <- RstoxVersionsSplit[before]
+		### StoXVersionsSplit <- StoXVersionsSplit[before]
+		### All <- All[before]
+		### 
+		### # Set the order of the folders:
+		### o <- order(RstoxVersionsSplit, StoXVersionsSplit)
+		### 
+		### # Select the latest:
+		### # Return the latest before the input Rstox version:
+		### All[which.max(o)]
 	}
 	
 	# Function for running the r scripts of a project and copying the relevant output files to the "Output" directory:
@@ -853,7 +877,12 @@ automatedRstoxTest <- function(dir, copyFromOriginal=TRUE, process=c("run", "dif
 			### # -x '*.bmp' -x '*.jpeg' -x '*.png' -x '*.tiff' -x '*.RData'
 			
 			# Read the tempdiff file and append to the progress file:
-			diffinfo <- readLines(tempdiff, n=nlines)
+			if(nlines>0){
+				diffinfo <- c(readLines(tempdiff, n=nlines), "...", paste0("(Number of lines differing: ", R.utils::countLines(tempdiff), ")"))
+			}
+			else{
+				diffinfo <- readLines(tempdiff)
+			}
 			ncharDiffInfo <- sum(nchar(diffinfo))
 			noDiffWindows <- length(grep("no differences encountered", diffinfo))
 			#write("\n\n********************", file=progressFile, append=TRUE)
@@ -1109,8 +1138,10 @@ automatedRstoxTest <- function(dir, copyFromOriginal=TRUE, process=c("run", "dif
 		# Add indentation corresponding to the curly brackets:
 		l <- readLines(progressFile)
 		n <- double(length(l))
-		n[which(startsWith(l, "{")) + 1] <- 1
-		n[which(startsWith(l, "}"))] <- -1
+		atStart <- which(startsWith(l, "{")) + 1
+		atEnd <- which(startsWith(l, "}"))
+		n[atStart] <- n[atStart]  + 1
+		n[atEnd] <- n[atEnd] -1
 		tabs <- strrep("\t", cumsum(n))
 		l <- paste0(tabs, l)
 		writeLines(l, progressFile)
