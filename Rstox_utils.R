@@ -445,8 +445,8 @@ automatedRstoxTest <- function(dir, copyFromOriginal=TRUE, process=c("run", "dif
 		out$projectName <- basename(dir2)
 		
 		# Set all slashes to the appropriate direction:
-		#out <- lapply(out, setSlashes, platform = .Platform$OS.type)
-		out <- lapply(out, setSlashes)
+		out <- lapply(out, setSlashes, platform = .Platform$OS.type)
+		#out <- lapply(out, setSlashes)
 		
 		out
 	}
