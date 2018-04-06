@@ -480,6 +480,7 @@ automatedRstoxTest <- function(dir, copyFromOriginal=TRUE, process=c("run", "dif
 			All[max(which(Versions < current))]
 		}
 		else{
+			warning(paste0("No directories with Rstox version before Rstox_StoXLib version ", current))
 			NULL
 		}
 		
