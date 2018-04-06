@@ -484,6 +484,7 @@ automatedRstoxTest <- function(dir, copyFromOriginal=TRUE, process=c("run", "dif
 			NULL
 		}
 		
+		#
 		
 		### current <- paste(unlist(lapply(getRstoxVersion(), as.character)), collapse="_")
 		### 
