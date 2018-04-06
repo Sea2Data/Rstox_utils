@@ -285,6 +285,50 @@ buildRstox <- function(buildDir, pkgName="Rstox", version="1.0", Rversion="3.3.1
 # Function for running all test projects and comparing outputs with previous outputs:
 automatedRstoxTest <- function(dir, copyFromOriginal=TRUE, process=c("run", "diff"), cores=1, nlines=-1L){
 	
+	# The function readBaselineFiles() was introduced in Rstox 1.8.1:
+	if(getRstoxVersion()$Rstox <= "1.8"){
+		readBaselineFiles <- function(x){
+			# Return NULL if no files are given:
+			if(length(x)){
+				return(NULL)
+			}
+			
+			# Function for converting string to logical:
+			string2logical <- function(y){
+				string2logicalOne <- function(z){
+					if(length(z)>0 && any(z %in% c("true", "false"))){
+					 	z <- as.logical(z)
+					}
+					z
+				}
+				as.data.frame(lapply(y, string2logicalOne), stringsAsFactors=FALSE)
+			}
+
+			# Read the files:
+			if("textConnection" %in% class(x)){
+				out <- read.csv(x, sep="\t", stringsAsFactors=FALSE, na.strings="-", encoding="UTF-8", quote=NULL)
+				out <- string2logical(out)
+			}
+			else{
+				out <- lapply(x, function(y) read.csv(y, sep="\t", stringsAsFactors=FALSE, na.strings="-", encoding="UTF-8", quote=NULL))
+				for(i in seq_along(out)){
+					out[[i]] <- string2logical(out[[i]])
+				}
+
+				# Get the names of the processes and data frames:
+				x_split <- strsplit(basename(x), "_")
+				dataFrameNames <- sapply(lapply(x_split, "[", -1), paste, collapse="_")
+				processNames <- sapply(x_split, "[", 2)
+
+				# Set the names of the data frames:
+				names(out) <- dataFrameNames
+				out <- split(out, processNames)
+				out <- lapply(out, function(y) if(length(y)==1) y[[1]] else y)
+			}
+			out
+		}
+	}
+	
 	# Function borrowed from the TSD package (parallel version of lapply):
 	papply <- function(X, FUN, ..., cores=1, outfile="", msg="Processing... "){
 		availableCores <- parallel::detectCores()
@@ -324,8 +368,132 @@ automatedRstoxTest <- function(dir, copyFromOriginal=TRUE, process=c("run", "dif
 		out
 	}
 	
+	# Order the sub data frames:
+	sortByName <- function(x){
+		if(length(x)){
+			x[order(names(x))]
+		}
+		else{
+			x
+		}
+	}
+	
+	deleteOutput <- function(dir){
+		unlink(file.path(dir, "output", "baseline"), recursive=TRUE, force=TRUE)
+		unlink(file.path(dir, "output", "r"), recursive=TRUE, force=TRUE)
+	}
+	
+	pasteAndHash <- function(...){
+		out <- paste0("# ", c(...))
+		out <- paste0(out, collapse="\n")
+		out
+	}
+	
+	pasteWithLineShift <- function(...){
+		out <- paste0("# ", c(...))
+		out <- paste0(out, collapse="\n")
+		out
+	}
+		
+	# Convert to all forward- or all backslashed:
+	# Forwardslash should work on all systems, so the default is back=FALSE:
+	setSlashes <- function(x, back=FALSE, platform=NULL){
+		if(identical(platform, "windows")){
+			back <- TRUE
+		}
+		if(back){
+			gsub("/", "\\", x, fixed=TRUE)
+		}
+		else{
+			gsub("\\", "/", x, fixed=TRUE)
+		}
+	}
+	
+	# Function for getting the common files:
+	getFilesByExt <- function(dir1, dir2, ext=NULL, recursive=TRUE, ignore.case=TRUE){
+		# Function for getting all image files in a vector of files (returning a list with names corresponding to the file extensions):
+		getFilesByExtOne <- function(x, ext=NULL){
+			if(length(ext)){
+				fileext <- tools::file_ext(x)
+				if(ignore.case){
+					x <- x[tolower(fileext) %in% tolower(ext)]
+				}
+				else{
+					x <- x[fileext %in% ext]
+				}
+			}
+			x
+		}
+		getMatches <- function(files1, files2, dir1, dir2){
+			commonFiles <- intersect(files1, files2)
+			commonPaths1 <- file.path(dir1, files1)
+			commonPaths2 <- file.path(dir2, files2)
+			onlyInFirst <- setdiff(files1, files2)
+			onlyInSecond <- setdiff(files2, files1)
+			list(commonFiles=commonFiles, commonPaths1=commonPaths1, commonPaths2=commonPaths2, onlyInFirst=onlyInFirst, onlyInSecond=onlyInSecond)
+		}
+		
+		
+		
+		# Get matching and differing files:
+		files1 <- getFilesByExtOne(list.files(dir1, recursive=recursive), ext=ext)
+		files2 <- getFilesByExtOne(list.files(dir2, recursive=recursive), ext=ext)
+		out <- getMatches(files1, files2, dir1, dir2)
+		# Add the input directories:
+		out$dir1 <- dir1
+		out$dir2 <- dir2
+		out$projectName <- basename(dir2)
+		
+		# Set all slashes to the appropriate direction:
+		#out <- lapply(out, setSlashes, platform = .Platform$OS.type)
+		out <- lapply(out, setSlashes)
+		
+		out
+	}
+	
+	getLatestDir <- function(dir){
+		
+		current <- paste(unlist(lapply(getRstoxVersion(), as.character)), collapse="_")
+		
+		All <- list.dirs(dir, recursive=FALSE)
+		if(length(All)==0){
+			warning(paste0("No projects in the test folder '", dir, "'"))
+		}
+		
+		# Get Rstox versions (requiring that the Rstox version is between the first and possibly second underscore, typically "Rstox_1.8.1"):
+		RstoxVersions <- sapply(strsplit(basename(All), "_"), "[", 2)
+		StoXVersions <- sapply(strsplit(basename(All), "_"), "[", 4)
+		Versions <- paste(RstoxVersions, StoXVersions, sep="_")
+		before <- which(Versions < current)
+		if(length(before)==0){
+			warning(paste0("No directories with Rstox version before Rstox_StoXLib version ", current))
+			return(NULL)
+		}
+		
+		# Split by dots, and convert to a ranking number:
+		RstoxVersionsSplit <- lapply(strsplit(RstoxVersions, ".", fixed=TRUE), as.numeric)
+		RstoxVersionsSplit <- sapply(RstoxVersionsSplit, function(x) sum(x * 10^(6 - 2 * seq_along(x))))
+		StoXVersionsSplit <- lapply(strsplit(StoXVersions, ".", fixed=TRUE), as.numeric)
+		StoXVersionsSplit <- sapply(StoXVersionsSplit, function(x) sum(x * 10^(6 - 2 * seq_along(x))))
+		
+		
+		RstoxVersionsSplit <- RstoxVersionsSplit[before]
+		StoXVersionsSplit <- StoXVersionsSplit[before]
+		All <- All[before]
+		
+		# Set the order of the folders:
+		o <- order(RstoxVersionsSplit, StoXVersionsSplit)
+		
+		# Select the latest:
+		# Return the latest before the input Rstox version:
+		All[which.max(o)]
+	}
+	
 	# Function for running the r scripts of a project and copying the relevant output files to the "Output" directory:
-	runProject <- function(projectName, progressFile, outputDir, RstoxVersion){
+	runProject <- function(projectName, progressFile, outputDir){
+		
+		RstoxVersion <- getRstoxVersion()
+		
 		# Get the path to the scripts to run:
 		r_script <- file.path(projectName, "output", "R", "r.R")
 		rreport_script <- file.path(projectName, "output", "R", "r-report.R")
@@ -385,19 +553,84 @@ automatedRstoxTest <- function(dir, copyFromOriginal=TRUE, process=c("run", "dif
 		cat("\n")
 	}
 	
-	# Convert to all forward- or all backslashed:
-	# Forwardslash should work on all systems, so the default is back=FALSE:
-	setSlashes <- function(x, back=FALSE, platform=NULL){
-		if(identical(platform, "windows")){
-			back <- TRUE
+	printProjectName <- function(x, progressFile){
+		toWrite <- paste0("\n##### PROJECT: ", x$projectName, ": #####")
+		write(toWrite, file=progressFile, append=TRUE)
+	}
+	
+	reportFilesIntersects <- function(x, type="Projects", addProjectName=FALSE){
+		if(addProjectName){
+			printProjectName(x, progressFile)
+			#toWrite <- paste0("##### ", x$projectName, ": #####")
+			#write(toWrite, file=progressFile, append=TRUE)
 		}
-		if(back){
-			gsub("/", "\\", x, fixed=TRUE)
+		
+		if(length(x$commonFiles)){
+			toWrite <- paste0(c(
+				paste0("# ", type, " common for both directories"), 
+				x$dir1, 
+				"# and", 
+				paste0(x$dir2, ":"), 
+				paste0("\t", x$commonFiles, collapse="\n"), 
+				""), collapse="\n")
+			write(toWrite, file=progressFile, append=TRUE)
 		}
-		else{
-			gsub("\\", "/", x, fixed=TRUE)
+		if(length(x$onlyInFirst)){
+			#toWrite <- paste0("# ", type, " only present in the directory\n# ", x$dir1, ":\n", paste("\t", x$onlyInFirst, collapse="\n"), "\n")
+			
+			toWrite <- paste0(c(
+				paste0("# ", type, " only present in the directory"), 
+				paste0(x$dir1, ":"), 
+				paste0("\t", x$onlyInFirst, collapse="\n"), 
+				""), collapse="\n")
+						
+			write(toWrite, file=progressFile, append=TRUE)
+		}
+		if(length(x$onlyInSecond)){
+			#toWrite <- paste0("# ", type, " only present in the directory\n# ", x$dir2, ":\n", paste("\t", x$onlyInSecond, collapse="\n"), "\n")
+			toWrite <- paste0(c(
+				paste0("# ", type, " only present in the directory"), 
+				paste0(x$dir2, ":"), 
+				paste0("\t", x$onlyInSecond, collapse="\n"), 
+				""), collapse="\n")
+			write(toWrite, file=progressFile, append=TRUE)
 		}
 	}
+	
+	printHeader <- function(header, progressFile, w=60){
+		ncharHeader <- nchar(header)
+		nstars <- (w - ncharHeader - 2) / 2
+		hash <- paste(rep("#", w), collapse="")
+		hash1 <- paste(rep("#", ceiling(nstars)), collapse="")
+		hash2 <- paste(rep("#", floor(nstars)), collapse="")
+		header <- paste(hash1, header, hash2)
+		header <- paste("", "", hash, header, hash, "", sep="\n")
+		# Print to file:
+		write(header, file=progressFile, append=TRUE)
+	}
+	
+	getAllFiles <- function(dir1, dir2, progressFile){
+		# Get the projects of the first and second directory (including common and different projects):
+		projects <- getFilesByExt(dir1, dir2, recursive=FALSE)
+		
+		printHeader("Projects", progressFile, w=30)
+		reportFilesIntersects(projects, type="Projects")
+		
+		# Get the different files per project, in a list, for clarity:
+		RDataFiles <- lapply(seq_along(projects$commonFiles), function(i) getFilesByExt(dir1=projects$commonPaths1[i], dir2=projects$commonPaths2[i], ext="RData"))
+		imageFiles <- lapply(seq_along(projects$commonFiles), function(i) getFilesByExt(dir1=projects$commonPaths1[i], dir2=projects$commonPaths2[i], ext=c("png", "jpg", "jpeg", "tif", "tiff")))
+		textFiles <- lapply(seq_along(projects$commonFiles), function(i) getFilesByExt(dir1=projects$commonPaths1[i], dir2=projects$commonPaths2[i], ext=c("txt", "xml")))
+		
+		printHeader("RData files", progressFile, w=30)
+		lapply(RDataFiles, reportFilesIntersects, type="RData files", addProjectName=TRUE)
+		printHeader("Image files", progressFile, w=30)
+		lapply(imageFiles, reportFilesIntersects, type="Image files", addProjectName=TRUE)
+		printHeader("Text files", progressFile, w=30)
+		lapply(textFiles, reportFilesIntersects, type="Text files", addProjectName=TRUE)
+		
+		list(RDataFiles=RDataFiles, imageFiles=imageFiles, textFiles=textFiles)
+	}
+	
 	
 	# Function for running diff between the previous and new output files:
 	# 'files' is a list as returned from the function getFilesByExt(), which uses getMatches() to return the following elements: 'commonFiles', 'commonPaths1', 'commonPaths2', 'onlyInFirst', 'onlyInSecond':
@@ -491,48 +724,6 @@ automatedRstoxTest <- function(dir, copyFromOriginal=TRUE, process=c("run", "dif
 		return(NULL)
 	}
 	
-	# Function for getting the common files:
-	getFilesByExt <- function(dir1, dir2, ext=NULL, recursive=TRUE, ignore.case=TRUE){
-		# Function for getting all image files in a vector of files (returning a list with names corresponding to the file extensions):
-		getFilesByExtOne <- function(x, ext=NULL){
-			if(length(ext)){
-				fileext <- tools::file_ext(x)
-				if(ignore.case){
-					x <- x[tolower(fileext) %in% tolower(ext)]
-				}
-				else{
-					x <- x[fileext %in% ext]
-				}
-			}
-			x
-		}
-		getMatches <- function(files1, files2, dir1, dir2){
-			commonFiles <- intersect(files1, files2)
-			commonPaths1 <- file.path(dir1, files1)
-			commonPaths2 <- file.path(dir2, files2)
-			onlyInFirst <- setdiff(files1, files2)
-			onlyInSecond <- setdiff(files2, files1)
-			list(commonFiles=commonFiles, commonPaths1=commonPaths1, commonPaths2=commonPaths2, onlyInFirst=onlyInFirst, onlyInSecond=onlyInSecond)
-		}
-		
-		
-		
-		# Get matching and differing files:
-		files1 <- getFilesByExtOne(list.files(dir1, recursive=recursive), ext=ext)
-		files2 <- getFilesByExtOne(list.files(dir2, recursive=recursive), ext=ext)
-		out <- getMatches(files1, files2, dir1, dir2)
-		# Add the input directories:
-		out$dir1 <- dir1
-		out$dir2 <- dir2
-		out$projectName <- basename(dir2)
-		
-		# Set all slashes to the appropriate direction:
-		#out <- lapply(out, setSlashes, platform = .Platform$OS.type)
-		out <- lapply(out, setSlashes)
-		
-		out
-	}
-	
 	# Function to check diffs between images, and printing the diffs to file:
 	imDiff <- function(files, progressFile, diffdir, cores=1){
 		imDiffOne <- function(file, dir1, dir2, progressFile, diffdir){
@@ -606,18 +797,6 @@ automatedRstoxTest <- function(dir, copyFromOriginal=TRUE, process=c("run", "dif
 		write("}", file=progressFile, append=TRUE)
 	}
 	
-	pasteAndHash <- function(...){
-		out <- paste0("# ", c(...))
-		out <- paste0(out, collapse="\n")
-		out
-	}
-	
-	pasteWithLineShift <- function(...){
-		out <- paste0("# ", c(...))
-		out <- paste0(out, collapse="\n")
-		out
-	}
-		
 	RDataDiff <- function(files, progressFile){
 		diffRData <- function(i, files, progressFile){
 			all.equalOne <- function(name, progressFile){
@@ -692,57 +871,9 @@ automatedRstoxTest <- function(dir, copyFromOriginal=TRUE, process=c("run", "dif
 		write("}", file=progressFile, append=TRUE)
 	}
 	
-	
-	
 	diffBaseline <- function(dir, progressFile){
-		# Order the sub data frames:
-		sortByName <- function(x){
-			if(length(x)){
-				x[order(names(x))]
-			}
-			else{
-				x
-			}
-		}
 		
-		# The function readBaselineFiles() was introduced in Rstox 1.8.1:
-		if(RstoxVersion$Rstox <= "1.8"){
-			readBaselineFiles <- function(x){
-				# Function for converting string to logical:
-				string2logical <- function(y){
-					string2logicalOne <- function(z){
-						if(length(z)>0 && any(z %in% c("true", "false"))){
-						 	z <- as.logical(z)
-						}
-						z
-					}
-					as.data.frame(lapply(y, string2logicalOne), stringsAsFactors=FALSE)
-				}
-	
-				# Read the files:
-				if("textConnection" %in% class(x)){
-					out <- read.csv(x, sep="\t", stringsAsFactors=FALSE, na.strings="-", encoding="UTF-8", quote=NULL)
-					out <- string2logical(out)
-				}
-				else{
-					out <- lapply(x, function(y) read.csv(y, sep="\t", stringsAsFactors=FALSE, na.strings="-", encoding="UTF-8", quote=NULL))
-					for(i in seq_along(out)){
-						out[[i]] <- string2logical(out[[i]])
-					}
-	
-					# Get the names of the processes and data frames:
-					x_split <- strsplit(basename(x), "_")
-					dataFrameNames <- sapply(lapply(x_split, "[", -1), paste, collapse="_")
-					processNames <- sapply(x_split, "[", 2)
-	
-					# Set the names of the data frames:
-					names(out) <- dataFrameNames
-					out <- split(out, processNames)
-					out <- lapply(out, function(y) if(length(y)==1) y[[1]] else y)
-				}
-				out
-			}
-		}
+		RstoxVersion <- getRstoxVersion()
 		
 		all.equalRstoxStoX <- function(Rstox, StoX, name, progressFile){
 			write_all.equal <- function(name, x, y, progressFile){
@@ -816,7 +947,6 @@ automatedRstoxTest <- function(dir, copyFromOriginal=TRUE, process=c("run", "dif
 		baselineOutputFiles <- baselineOutputFiles[present]
 		
 		# Load the data to a list:
-		
 		### readBaselineOutputFiles <- function(x){
 		### 	mget(load(x))$outputData
 		### }
@@ -832,11 +962,8 @@ automatedRstoxTest <- function(dir, copyFromOriginal=TRUE, process=c("run", "dif
 		# Read the data to a list:
 		dataFromStoX <- lapply(baselineFiles, readBaselineFiles)
 		
-		
-		
 		# Keep only the modelType present in the Rstox output file:
 		dataFromStoX <- dataFromStoX[names(dataFromRstox)]
-		
 		
 		# Sort the data by name
 		dataFromRstox <- lapply(dataFromRstox, function(x) lapply(x, sortByName))
@@ -867,126 +994,6 @@ automatedRstoxTest <- function(dir, copyFromOriginal=TRUE, process=c("run", "dif
 		#write("\n", file=progressFile, append=TRUE)
 	}
 	
-	getLatestDir <- function(dir){
-		
-		current <- paste(unlist(getRstoxVersion()), collapse="_")
-		
-		All <- list.dirs(dir, recursive=FALSE)
-		if(length(All)==0){
-			warning(paste0("No projects in the test folder '", dir, "'"))
-		}
-		
-		# Get Rstox versions (requiring that the Rstox version is between the first and possibly second underscore, typically "Rstox_1.8.1"):
-		RstoxVersions <- sapply(strsplit(basename(All), "_"), "[", 2)
-		StoXVersions <- sapply(strsplit(basename(All), "_"), "[", 4)
-		Versions <- paste(RstoxVersions, StoXVersions, sep="_")
-		before <- which(Versions < current)
-		if(length(before)==0){
-			warning(paste0("No directories with Rstox version before Rstox_StoXLib version ", current))
-			return(NULL)
-		}
-		
-		# Split by dots, and convert to a ranking number:
-		RstoxVersionsSplit <- lapply(strsplit(RstoxVersions, ".", fixed=TRUE), as.numeric)
-		RstoxVersionsSplit <- sapply(RstoxVersionsSplit, function(x) sum(x * 10^(6 - 2 * seq_along(x))))
-		StoXVersionsSplit <- lapply(strsplit(StoXVersions, ".", fixed=TRUE), as.numeric)
-		StoXVersionsSplit <- sapply(StoXVersionsSplit, function(x) sum(x * 10^(6 - 2 * seq_along(x))))
-		
-		
-		RstoxVersionsSplit <- RstoxVersionsSplit[before]
-		StoXVersionsSplit <- StoXVersionsSplit[before]
-		All <- All[before]
-		
-		# Set the order of the folders:
-		o <- order(RstoxVersionsSplit, StoXVersionsSplit)
-		
-		# Select the latest:
-		# Return the latest before the input Rstox version:
-		All[which.max(o)]
-	}
-	
-	deleteOutput <- function(dir){
-		unlink(file.path(dir, "output", "baseline"), recursive=TRUE, force=TRUE)
-		unlink(file.path(dir, "output", "r"), recursive=TRUE, force=TRUE)
-	}
-	
-	printProjectName <- function(x, progressFile){
-		toWrite <- paste0("\n##### PROJECT: ", x$projectName, ": #####")
-		write(toWrite, file=progressFile, append=TRUE)
-	}
-	
-	reportFilesIntersects <- function(x, type="Projects", addProjectName=FALSE){
-		if(addProjectName){
-			printProjectName(x, progressFile)
-			#toWrite <- paste0("##### ", x$projectName, ": #####")
-			#write(toWrite, file=progressFile, append=TRUE)
-		}
-		
-		if(length(x$commonFiles)){
-			toWrite <- paste0(c(
-				paste0("# ", type, " common for both directories"), 
-				x$dir1, 
-				"# and", 
-				paste0(x$dir2, ":"), 
-				paste0("\t", x$commonFiles, collapse="\n"), 
-				""), collapse="\n")
-			write(toWrite, file=progressFile, append=TRUE)
-		}
-		if(length(x$onlyInFirst)){
-			#toWrite <- paste0("# ", type, " only present in the directory\n# ", x$dir1, ":\n", paste("\t", x$onlyInFirst, collapse="\n"), "\n")
-			
-			toWrite <- paste0(c(
-				paste0("# ", type, " only present in the directory"), 
-				paste0(x$dir1, ":"), 
-				paste0("\t", x$onlyInFirst, collapse="\n"), 
-				""), collapse="\n")
-						
-			write(toWrite, file=progressFile, append=TRUE)
-		}
-		if(length(x$onlyInSecond)){
-			#toWrite <- paste0("# ", type, " only present in the directory\n# ", x$dir2, ":\n", paste("\t", x$onlyInSecond, collapse="\n"), "\n")
-			toWrite <- paste0(c(
-				paste0("# ", type, " only present in the directory"), 
-				paste0(x$dir2, ":"), 
-				paste0("\t", x$onlyInSecond, collapse="\n"), 
-				""), collapse="\n")
-			write(toWrite, file=progressFile, append=TRUE)
-		}
-	}
-	
-	getAllFiles <- function(dir1, dir2, progressFile){
-		# Get the projects of the first and second directory (including common and different projects):
-		projects <- getFilesByExt(dir1, dir2, recursive=FALSE)
-		
-		printHeader("Projects", progressFile, w=30)
-		reportFilesIntersects(projects, type="Projects")
-		
-		# Get the different files per project, in a list, for clarity:
-		RDataFiles <- lapply(seq_along(projects$commonFiles), function(i) getFilesByExt(dir1=projects$commonPaths1[i], dir2=projects$commonPaths2[i], ext="RData"))
-		imageFiles <- lapply(seq_along(projects$commonFiles), function(i) getFilesByExt(dir1=projects$commonPaths1[i], dir2=projects$commonPaths2[i], ext=c("png", "jpg", "jpeg", "tif", "tiff")))
-		textFiles <- lapply(seq_along(projects$commonFiles), function(i) getFilesByExt(dir1=projects$commonPaths1[i], dir2=projects$commonPaths2[i], ext=c("txt", "xml")))
-		
-		printHeader("RData files", progressFile, w=30)
-		lapply(RDataFiles, reportFilesIntersects, type="RData files", addProjectName=TRUE)
-		printHeader("Image files", progressFile, w=30)
-		lapply(imageFiles, reportFilesIntersects, type="Image files", addProjectName=TRUE)
-		printHeader("Text files", progressFile, w=30)
-		lapply(textFiles, reportFilesIntersects, type="Text files", addProjectName=TRUE)
-		
-		list(RDataFiles=RDataFiles, imageFiles=imageFiles, textFiles=textFiles)
-	}
-	
-	printHeader <- function(header, progressFile, w=60){
-		ncharHeader <- nchar(header)
-		nstars <- (w - ncharHeader - 2) / 2
-		hash <- paste(rep("#", w), collapse="")
-		hash1 <- paste(rep("#", ceiling(nstars)), collapse="")
-		hash2 <- paste(rep("#", floor(nstars)), collapse="")
-		header <- paste(hash1, header, hash2)
-		header <- paste("", "", hash, header, hash, "", sep="\n")
-		# Print to file:
-		write(header, file=progressFile, append=TRUE)
-	}
 	
 	
 	
@@ -1031,7 +1038,7 @@ automatedRstoxTest <- function(dir, copyFromOriginal=TRUE, process=c("run", "dif
 	
 	if("run" %in% process){
 		for(i in seq_along(projectPaths)){
-			runProject(projectName=projectPaths[i], progressFile=progressFile, outputDir=newOutputList[i], RstoxVersion=RstoxVersion)
+			runProject(projectName=projectPaths[i], progressFile=progressFile, outputDir=newOutputList[i])
 		}
 	}
 	
