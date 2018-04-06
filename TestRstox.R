@@ -97,3 +97,78 @@ source(file.path(dir_Rstox_utils, "Rstox_utils.R"))
 
 	##### Run the projects with Rstox 1.8.1 and diff with Rstox 1.7.2: #####
 	system.time(automatedRstoxTest(dir_Rstox, copyFromOriginal=TRUE, process=c("run", "diff"), nlines=100))
+
+
+
+
+
+
+
+
+
+
+
+
+
+##### Create and install the package stox in R: #####
+
+##### Load required packages: #####
+library(Rstox)
+library(png)
+library(jpeg)
+library(tiff)
+library(tools)
+library(R.utils)
+
+# Source the utility functions:
+source("https://raw.githubusercontent.com/Sea2Data/Rstox_utils/master/Rstox_utils.R")
+
+# Set the directory of the test projects in your local system:
+if(.Platform$OS.type == "windows"){
+	root <- "\\\\delphi"
+}
+else{
+	root <- "/Volumes"
+}
+
+dir_Rstox <- file.path(root, "pc_prog/S2D/stox/StoX_version_test/Automated_testing/Mac_OS_10.12.4")
+
+
+
+dir_Rstox <- "/Volumes/pc_prog/S2D/stox/StoX_version_test/Automated_testing/Mac_OS_10.12.4"
+
+
+dir_Rstox <- "\\\\delphi/pc_prog/S2D/stox/StoX_version_test/Automated_testing/Mac_OS_10.12.4"
+
+
+
+##########################################
+########## RESTART R/Rstudio!!! ##########
+##########################################
+
+###### Install Rstox_1.8: #####
+install.packages("ftp://ftp.imr.no/StoX/Download/Rstox/Rstox_1.8.tar.gz", repos=NULL)
+
+###### Run the projects with Rstox 1.8 and diff with Rstox 1.7.2: #####
+system.time(automatedRstoxTest(dir_Rstox, copyFromOriginal=TRUE, process=c("run", "diff"), cores=2))
+
+
+##########################################
+########## RESTART R/Rstudio!!! ##########
+##########################################
+
+##### Install the latest develop version of Rstox: #####
+### This is Rstox 1.8.1: #####
+# devtools::install_github("Sea2Data/Rstox", ref="develop")
+
+##### Run the projects with Rstox 1.8.1 and diff with Rstox 1.7.2: #####
+system.time(automatedRstoxTest(dir_Rstox, copyFromOriginal=TRUE, process=c("run", "diff"), nlines=100))
+
+
+
+
+
+
+
+
+
