@@ -1086,6 +1086,9 @@ automatedRstoxTest <- function(dir, copyFromOriginal=TRUE, process=c("run", "dif
 	unlink(progressFile)
 	
 	if("run" %in% process){
+		if(length(projectPaths)==0){
+			stop("'Projects' folder empty or invalid")
+		}
 		for(i in seq_along(projectPaths)){
 			runProject(projectName=projectPaths[i], progressFile=progressFile, outputDir=newOutputList[i])
 		}
