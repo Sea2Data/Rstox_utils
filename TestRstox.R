@@ -131,14 +131,8 @@ else{
 	root <- "/Volumes"
 }
 
-dir_Rstox <- file.path(root, "pc_prog/S2D/stox/StoX_version_test/Automated_testing/Mac_OS_10.12.4")
+dir_Rstox <- file.path(root, "pc_prog/S2D/stox/StoX_version_test/Automated_testing", getPlatformID())
 
-
-
-dir_Rstox <- "/Volumes/pc_prog/S2D/stox/StoX_version_test/Automated_testing/Mac_OS_10.12.4"
-
-
-dir_Rstox <- "\\\\delphi/pc_prog/S2D/stox/StoX_version_test/Automated_testing/Mac_OS_10.12.4"
 
 
 

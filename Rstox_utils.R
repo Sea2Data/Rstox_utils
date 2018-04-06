@@ -282,6 +282,11 @@ buildRstox <- function(buildDir, pkgName="Rstox", version="1.0", Rversion="3.3.1
 }
 
 
+getPlatformID <- function(var="release"){
+	paste(.Platform$OS.type, var, paste(strsplit(Sys.info()[var], " ", fixed=TRUE)[[1]], collapse="_"), sep="_")
+}
+
+
 # Function for running all test projects and comparing outputs with previous outputs:
 automatedRstoxTest <- function(dir, copyFromOriginal=TRUE, process=c("run", "diff"),  nlines=-1L){
 	
