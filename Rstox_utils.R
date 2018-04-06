@@ -460,6 +460,7 @@ automatedRstoxTest <- function(dir, copyFromOriginal=TRUE, process=c("run", "dif
 		}
 		
 		current <- lapply(getRstoxVersion(), as.character)
+		currentString <- paste(current, sep="_", collapse="_")
 		currentRstox <- version2numeric(current$Rstox)
 		currentStoXLib <- version2numeric(current$StoXLib)
 		current <- 10^10 * currentRstox + currentStoXLib
@@ -480,7 +481,7 @@ automatedRstoxTest <- function(dir, copyFromOriginal=TRUE, process=c("run", "dif
 			All[max(which(Versions < current))]
 		}
 		else{
-			warning(paste0("No directories with Rstox version before Rstox_StoXLib version ", current))
+			warning(paste0("No directories with Rstox version before Rstox_StoXLib version ", currentString))
 			NULL
 		}
 		
@@ -567,7 +568,7 @@ automatedRstoxTest <- function(dir, copyFromOriginal=TRUE, process=c("run", "dif
 		output <- file.path(projectName, "output")
 		file.copy(output, outputDir, recursive=TRUE)
 		
-		# Delet trash:
+		# Delete trash:
 		trash <- list.dirs(outputDir)
 		trash <- trash[grep("trash", trash)]
 		unlink(trash, recursive=TRUE, force=TRUE)
@@ -886,12 +887,11 @@ automatedRstoxTest <- function(dir, copyFromOriginal=TRUE, process=c("run", "dif
 			### # -x '*.bmp' -x '*.jpeg' -x '*.png' -x '*.tiff' -x '*.RData'
 			
 			# Read the tempdiff file and append to the progress file:
-			if(nlines>0){
-				diffinfo <- c(readLines(tempdiff, n=nlines), "...", paste0("(Number of lines differing: ", R.utils::countLines(tempdiff), ")"))
+			diffinfo <- readLines(tempdiff, n=nlines)
+			if(nlines>0 && length(diffinfo)>1){
+				diffinfo <- c(diffinfo, "...", paste0("(Number of lines differing: ", R.utils::countLines(tempdiff), ")"))
 			}
-			else{
-				diffinfo <- readLines(tempdiff)
-			}
+			
 			ncharDiffInfo <- sum(nchar(diffinfo))
 			noDiffWindows <- length(grep("no differences encountered", diffinfo))
 			#write("\n\n********************", file=progressFile, append=TRUE)
