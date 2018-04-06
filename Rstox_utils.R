@@ -818,8 +818,8 @@ automatedRstoxTest <- function(dir, copyFromOriginal=TRUE, process=c("run", "dif
 	diffTextFiles <- function(files, progressFile, diffdir, nlines=-1L){
 		
 		diffTextFilesOne <- function(file, dir1, dir2, progressFile, diffdir, nlines){
-			file1 <- file.path(dir1, file)
-			file2 <- file.path(dir2, file)
+			file1 <- setSlashes(file.path(dir1, file), platform = .Platform$OS.type)
+			file2 <- setSlashes(file.path(dir2, file), platform = .Platform$OS.type)
 			tempdiff <- file.path(path.expand(diffdir), "tempdiff.txt")
 			
 			# 2018-04-03 Added by Johnsen: New function to be used with sink(). This is the only way of getting output from FC to file on Windows:
