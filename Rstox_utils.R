@@ -304,7 +304,7 @@ automatedRstoxTest <- function(dir, copyFromOriginal=TRUE, process=c("run", "dif
 	# Set the directory of the test projects:
 	root <- root[[.Platform$OS.type]]
 	if(length(root)==0){
-		stop(paste0("The OS.type ", .Platform$OS.type, " does not match any of the names of 'root' (", paste(names(root), collapse=", "), ")")
+		stop(paste0("The OS.type ", .Platform$OS.type, " does not match any of the names of 'root' (", paste(names(root), collapse=", "), ")"))
 	}
 	#root <- ifelse(.Platform$OS.type == "windows", "\\\\delphi", "/Volumes")
 	# There should be one directory per system, named by the output of getPlatformID():
