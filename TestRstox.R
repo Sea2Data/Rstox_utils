@@ -12,7 +12,7 @@ install.packages("ftp://ftp.imr.no/StoX/Download/Rstox/Rstox_1.8.tar.gz", repos=
 ###### Run the projects with Rstox 1.8 and diff with Rstox 1.7.2: #####
 source("https://raw.githubusercontent.com/Sea2Data/Rstox_utils/master/Rstox_utils.R")
 
-system.time(automatedRstoxTest(dir_Rstox, copyFromOriginal=TRUE, process=c("run", "diff"), nlines=100))
+system.time(automatedRstoxTest(copyFromOriginal=TRUE, process=c("run", "diff"), nlines=100))
 
 
 #################################

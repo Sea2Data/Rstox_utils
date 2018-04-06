@@ -288,7 +288,8 @@ getPlatformID <- function(var="release"){
 
 
 # Function for running all test projects and comparing outputs with previous outputs:
-automatedRstoxTest <- function(dir, copyFromOriginal=TRUE, process=c("run", "diff"),  nlines=-1L, root=list(windows="\\\\delphi", unix="/Volumes"), path="pc_prog/S2D/stox/StoX_version_test/Automated_testing"){
+automatedRstoxTest <- function(copyFromOriginal=TRUE, process=c("run", "diff"),  nlines=-1L, root=list(windows="\\\\delphi", unix="/Volumes"), path="pc_prog/S2D/stox/StoX_version_test/Automated_testing"){
+#automatedRstoxTest <- function(dir, copyFromOriginal=TRUE, process=c("run", "diff"),  nlines=-1L, root=list(windows="\\\\delphi", unix="/Volumes"), path="pc_prog/S2D/stox/StoX_version_test/Automated_testing"){
 	
 	# Load Rstox:
 	library(Rstox)
@@ -308,7 +309,7 @@ automatedRstoxTest <- function(dir, copyFromOriginal=TRUE, process=c("run", "dif
 	}
 	#root <- ifelse(.Platform$OS.type == "windows", "\\\\delphi", "/Volumes")
 	# There should be one directory per system, named by the output of getPlatformID():
-	dir_Rstox <- file.path(root, path, getPlatformID())
+	dir <- file.path(root, path, getPlatformID())
 	
 	
 	# The function readBaselineFiles() was introduced in Rstox 1.8.1:
