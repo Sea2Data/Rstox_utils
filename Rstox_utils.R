@@ -283,13 +283,13 @@ buildRstox <- function(buildDir, pkgName="Rstox", version="1.0", Rversion="3.3.1
 
 
 # Function for running all test projects and comparing outputs with previous outputs:
-automatedRstoxTest <- function(dir, copyFromOriginal=TRUE, process=c("run", "diff"), cores=1, nlines=-1L){
+automatedRstoxTest <- function(dir, copyFromOriginal=TRUE, process=c("run", "diff"),  nlines=-1L){
 	
 	# The function readBaselineFiles() was introduced in Rstox 1.8.1:
 	if(getRstoxVersion()$Rstox <= "1.8"){
 		readBaselineFiles <- function(x){
 			# Return NULL if no files are given:
-			if(length(x)){
+			if(length(x)==0){
 				return(NULL)
 			}
 			
@@ -554,6 +554,7 @@ automatedRstoxTest <- function(dir, copyFromOriginal=TRUE, process=c("run", "dif
 	}
 	
 	printProjectName <- function(x, progressFile){
+		cat(x$projectName, "...", "\n", sep="")
 		toWrite <- paste0("\n##### PROJECT: ", x$projectName, ": #####")
 		write(toWrite, file=progressFile, append=TRUE)
 	}
@@ -598,6 +599,10 @@ automatedRstoxTest <- function(dir, copyFromOriginal=TRUE, process=c("run", "dif
 	}
 	
 	printHeader <- function(header, progressFile, w=60){
+		# Print to console
+		cat("\n", header, "...", "\n", sep="")
+		
+		# Prepare for printing to file:
 		ncharHeader <- nchar(header)
 		nstars <- (w - ncharHeader - 2) / 2
 		hash <- paste(rep("#", w), collapse="")
@@ -631,6 +636,158 @@ automatedRstoxTest <- function(dir, copyFromOriginal=TRUE, process=c("run", "dif
 		list(RDataFiles=RDataFiles, imageFiles=imageFiles, textFiles=textFiles)
 	}
 	
+	
+	RDataDiff <- function(files, progressFile){
+		diffRData <- function(i, files, progressFile){
+			all.equalOne <- function(name, progressFile){
+				#write(paste0("\tObject: ", name), file=progressFile, append=TRUE)
+				all.equal(tempenvironment1[[name]], tempenvironment2[[name]])
+			}
+			
+			file <- files$commonFiles[i]
+			dir1 <- files$dir1
+			dir2 <- files$dir2
+			#write(paste0("File: ", file), file=progressFile, append=TRUE)
+			# Read the files and diff:
+			file1 <- file.path(dir1, file)
+			file2 <- file.path(dir2, file)
+			assign("tempenvironment1", new.env(), envir=.GlobalEnv)
+			assign("tempenvironment2", new.env(), envir=.GlobalEnv)
+			x1 <- load(file1, envir=tempenvironment1)
+			x2 <- load(file2, envir=tempenvironment2)
+			
+			
+			diffs <- lapply(x1, all.equalOne, progressFile=progressFile)
+			nodiff <- unlist(lapply(diffs, isTRUE))
+			
+			
+			# Print info also for no differences:
+			write("{", file=progressFile, append=TRUE)
+			out <- paste0(c("# (Code 0) No differences in the following RData files: ", file1, "# and", file2), collapse="\n")
+			
+			# Print info about different names:
+			if(!all.equal(x1, x2)){
+				objectList1 <- paste0("# OBJECTS: ", paste0(x1, collapse=", "), ":")
+				objectList2 <- paste0("# OBJECTS: ", paste0(x2, collapse=", "), ":")
+				out <- paste0(c("# (Code 1) Non-identical object NAMES in the following RData files: ", file1, objectList1, "# and", file2, objectList2), collapse="\n")
+				#out <- paste("# ", c("Non-identical object NAMES in files", file1, objectList1, "and", file2, objectList2))
+				#out <- paste(out, collapse="\n# ")
+			}
+			
+			# Print info about different objects:
+			if(!all(nodiff)){
+				objectList <- paste0("# OBJECTS: ", paste0(x1[!nodiff], collapse=", "), ":")
+				
+				out <- paste0(c("# (Code 2) Non-identical objects in the following RData files: ", file1, "# and", file2), collapse="\n")
+				
+				howToInspect <- c(
+					paste0("file1 <- \"", setSlashes(file1), "\""),
+					paste0("file2 <- \"", setSlashes(file2), "\""),
+					"assign(\"tempenvironment1\", new.env(), envir=.GlobalEnv)",
+					"assign(\"tempenvironment2\", new.env(), envir=.GlobalEnv)",
+					"x1 <- load(file1, envir=tempenvironment1)",
+					"x2 <- load(file2, envir=tempenvironment2)", 
+					"str(tempenvironment1[[x1]])", 
+					"str(tempenvironment2[[x2]])"
+					)
+				
+				out <- paste(out, "# Inspect the differences by using the following code:", sep="\n")
+				out <- paste(out, paste0("\t", c(howToInspect), collapse="\n"), sep="\n")
+			
+				out <- paste(out, paste0(c(objectList), collapse="\n"), sep="\n")
+				out <- paste(out, unlist(lapply(diffs[!nodiff], function(x) paste("\t", x, collapse="\n"))), sep="\n")
+			}
+			write(unlist(out), file=progressFile, append=TRUE)
+			write("}\n", file=progressFile, append=TRUE)
+		}
+	
+		# Compare images:
+		printProjectName(files, progressFile)
+		#write("\n\n********************", file=progressFile, append=TRUE)
+		#write(paste0("***** ", files$projectName, " *****"), file=progressFile, append=TRUE)
+		
+		write("{", file=progressFile, append=TRUE)
+		out <- lapply(seq_along(files$commonFiles), diffRData, files=files, progressFile=progressFile)
+		write("}", file=progressFile, append=TRUE)
+	}
+	
+	# Function to check diffs between images, and printing the diffs to file:
+	imDiff <- function(files, progressFile, diffdir){
+		imDiffOne <- function(file, dir1, dir2, progressFile, diffdir){
+			
+			if(length(file)==0){
+				write("No images", progressFile, append=TRUE)
+			}
+			
+			# Get the read and write functions:
+			validExt <- list(png="png", jpeg=c("jpg", "jpeg"), tiff=c("tif", "tiff"))
+			ext <- tools::file_ext(file)
+			if(ext %in% validExt$png){
+				readFun <- png::readPNG
+				writeFun <- png::writePNG
+			}
+			else if(ext %in% validExt$jpeg){
+				readFun <- jpeg::readJPEG
+				writeFun <- jpeg::writeJPEG
+			}
+			else if(ext %in% validExt$tiff){
+				readFun <- tiff::readTIFF
+				writeFun <- tiff::writeTIFF
+			}
+		
+			# Read the files and diff:
+			file1 <- file.path(dir1, file)
+			file2 <- file.path(dir2, file)
+			x1 <- readFun(file1)
+			x2 <- readFun(file2)
+				
+			write("{", file=progressFile, append=TRUE)
+			if(!all(x1==x2)){
+				x12 <- x1 - x2
+				# Modify the diff image to fit the [0, 1] range, and set all identical values to 0:
+				#x12 <- (x12 + 1) / 2
+				# Take the absolute difference and invert:
+				x12 <- 1 - abs(x12)
+				#x12[x1 == x2] <- 1
+			
+				# Paste together the first the diff and the second image:
+				dimx <- dim(x12)
+				out <- array(double(3 * prod(dimx)), dim=c(dimx[1], 3 * dimx[2], dimx[3]))
+				out[, seq_len(dimx[2]),] <- x1
+				out[, seq_len(dimx[2]) + dimx[2],] <- x12
+				out[, seq_len(dimx[2]) + 2 * dimx[2],] <- x2
+				# Reset the alpha-channel, if present, assuming constant alpha throughout the image:
+				if(dimx[3]==4){
+					out[,,4] <- x1[1,1,4]
+				}
+				
+				# Write to file if differing:
+				thisdiffdir <- file.path(diffdir, basename(dir1))
+				outfile <- file.path(thisdiffdir, basename(file))
+				suppressWarnings(dir.create(thisdiffdir))
+				writeFun(out, outfile)
+				# Write a log to the progressFile:
+				
+				
+				out <- paste0(c("# (Code 2) Differences in the following images", file1, "# and", file2, paste0("# See an image with the current to the left, the diff in the middle, and the previous image to the right in the file \"", outfile, "\"")), collapse="\n")
+				write(out, progressFile, append=TRUE)
+				
+				
+				#write(paste0("(Code 2) Images\n\t", file1, " and\n\t", file2, "\ndiffer. See an image with the current to the left, the diff in the middle, and the previous image to the right in the file \n\t", outfile, "\n"), progressFile, append=TRUE)
+			}
+			else{
+				out <- paste0(c("# (Code 0) No differences in the following images", file1, "# and", file2), collapse="\n")
+				write(out, progressFile, append=TRUE)
+			}
+			write("}\n", file=progressFile, append=TRUE)
+		}
+		
+		printProjectName(files, progressFile)
+		
+		write("{", file=progressFile, append=TRUE)
+		out <- lapply(files$commonFiles, imDiffOne, dir1=files$dir1, dir2=files$dir2, progressFile=progressFile, diffdir=diffdir)
+		write("}", file=progressFile, append=TRUE)
+	}
 	
 	# Function for running diff between the previous and new output files:
 	# 'files' is a list as returned from the function getFilesByExt(), which uses getMatches() to return the following elements: 'commonFiles', 'commonPaths1', 'commonPaths2', 'onlyInFirst', 'onlyInSecond':
@@ -722,153 +879,6 @@ automatedRstoxTest <- function(dir, copyFromOriginal=TRUE, process=c("run", "dif
 		write("}", file=progressFile, append=TRUE)
 		
 		return(NULL)
-	}
-	
-	# Function to check diffs between images, and printing the diffs to file:
-	imDiff <- function(files, progressFile, diffdir, cores=1){
-		imDiffOne <- function(file, dir1, dir2, progressFile, diffdir){
-			# Get the read and write functions:
-			validExt <- list(png="png", jpeg=c("jpg", "jpeg"), tiff=c("tif", "tiff"))
-			ext <- tools::file_ext(file)
-			if(ext %in% validExt$png){
-				readFun <- png::readPNG
-				writeFun <- png::writePNG
-			}
-			else if(ext %in% validExt$jpeg){
-				readFun <- jpeg::readJPEG
-				writeFun <- jpeg::writeJPEG
-			}
-			else if(ext %in% validExt$tiff){
-				readFun <- tiff::readTIFF
-				writeFun <- tiff::writeTIFF
-			}
-		
-			# Read the files and diff:
-			file1 <- file.path(dir1, file)
-			file2 <- file.path(dir2, file)
-			x1 <- readFun(file1)
-			x2 <- readFun(file2)
-				
-			write("{", file=progressFile, append=TRUE)
-			if(!all(x1==x2)){
-				x12 <- x1 - x2
-				# Modify the diff image to fit the [0, 1] range, and set all identical values to 0:
-				#x12 <- (x12 + 1) / 2
-				# Take the absolute difference and invert:
-				x12 <- 1 - abs(x12)
-				#x12[x1 == x2] <- 1
-			
-				# Paste together the first the diff and the second image:
-				dimx <- dim(x12)
-				out <- array(double(3 * prod(dimx)), dim=c(dimx[1], 3 * dimx[2], dimx[3]))
-				out[, seq_len(dimx[2]),] <- x1
-				out[, seq_len(dimx[2]) + dimx[2],] <- x12
-				out[, seq_len(dimx[2]) + 2 * dimx[2],] <- x2
-				# Reset the alpha-channel, if present, assuming constant alpha throughout the image:
-				if(dimx[3]==4){
-					out[,,4] <- x1[1,1,4]
-				}
-				
-				# Write to file if differing:
-				thisdiffdir <- file.path(diffdir, basename(dir1))
-				outfile <- file.path(thisdiffdir, basename(file))
-				suppressWarnings(dir.create(thisdiffdir))
-				writeFun(out, outfile)
-				# Write a log to the progressFile:
-				
-				
-				out <- paste0(c("# (Code 2) Differences in the following images", file1, "# and", file2, paste0("# See an image with the current to the left, the diff in the middle, and the previous image to the right in the file \"", outfile, "\"")), collapse="\n")
-				write(out, progressFile, append=TRUE)
-				
-				
-				#write(paste0("(Code 2) Images\n\t", file1, " and\n\t", file2, "\ndiffer. See an image with the current to the left, the diff in the middle, and the previous image to the right in the file \n\t", outfile, "\n"), progressFile, append=TRUE)
-			}
-			else{
-				out <- paste0(c("# (Code 0) No differences in the following images", file1, "# and", file2), collapse="\n")
-				write(out, progressFile, append=TRUE)
-			}
-			write("}\n", file=progressFile, append=TRUE)
-		}
-		
-		printProjectName(files, progressFile)
-		
-		write("{", file=progressFile, append=TRUE)
-		out <- lapply(files$commonFiles, imDiffOne, dir1=files$dir1, dir2=files$dir2, progressFile=progressFile, diffdir=diffdir)
-		write("}", file=progressFile, append=TRUE)
-	}
-	
-	RDataDiff <- function(files, progressFile){
-		diffRData <- function(i, files, progressFile){
-			all.equalOne <- function(name, progressFile){
-				#write(paste0("\tObject: ", name), file=progressFile, append=TRUE)
-				all.equal(tempenvironment1[[name]], tempenvironment2[[name]])
-			}
-			
-			file <- files$commonFiles[i]
-			dir1 <- files$dir1
-			dir2 <- files$dir2
-			#write(paste0("File: ", file), file=progressFile, append=TRUE)
-			# Read the files and diff:
-			file1 <- file.path(dir1, file)
-			file2 <- file.path(dir2, file)
-			assign("tempenvironment1", new.env(), envir=.GlobalEnv)
-			assign("tempenvironment2", new.env(), envir=.GlobalEnv)
-			x1 <- load(file1, envir=tempenvironment1)
-			x2 <- load(file2, envir=tempenvironment2)
-			
-			
-			diffs <- lapply(x1, all.equalOne, progressFile=progressFile)
-			nodiff <- unlist(lapply(diffs, isTRUE))
-			
-			
-			# Print info also for no differences:
-			write("{", file=progressFile, append=TRUE)
-			out <- paste0(c("# (Code 0) No differences in the following RData files: ", file1, "# and", file2), collapse="\n")
-			
-			# Print info about different names:
-			if(!all.equal(x1, x2)){
-				objectList1 <- paste0("# OBJECTS: ", paste0(x1, collapse=", "), ":")
-				objectList2 <- paste0("# OBJECTS: ", paste0(x2, collapse=", "), ":")
-				out <- paste0(c("# (Code 1) Non-identical object NAMES in the following RData files: ", file1, objectList1, "# and", file2, objectList2), collapse="\n")
-				#out <- paste("# ", c("Non-identical object NAMES in files", file1, objectList1, "and", file2, objectList2))
-				#out <- paste(out, collapse="\n# ")
-			}
-			
-			# Print info about different objects:
-			if(!all(nodiff)){
-				objectList <- paste0("# OBJECTS: ", paste0(x1[!nodiff], collapse=", "), ":")
-				
-				out <- paste0(c("# (Code 2) Non-identical objects in the following RData files: ", file1, "# and", file2), collapse="\n")
-				
-				howToInspect <- c(
-					paste0("file1 <- \"", setSlashes(file1), "\""),
-					paste0("file2 <- \"", setSlashes(file2), "\""),
-					"assign(\"tempenvironment1\", new.env(), envir=.GlobalEnv)",
-					"assign(\"tempenvironment2\", new.env(), envir=.GlobalEnv)",
-					"x1 <- load(file1, envir=tempenvironment1)",
-					"x2 <- load(file2, envir=tempenvironment2)", 
-					"str(tempenvironment1[[x1]])", 
-					"str(tempenvironment2[[x2]])"
-					)
-				
-				out <- paste(out, "# Inspect the differences by using the following code:", sep="\n")
-				out <- paste(out, paste0("\t", c(howToInspect), collapse="\n"), sep="\n")
-			
-				out <- paste(out, paste0(c(objectList), collapse="\n"), sep="\n")
-				out <- paste(out, unlist(lapply(diffs[!nodiff], function(x) paste("\t", x, collapse="\n"))), sep="\n")
-			}
-			write(unlist(out), file=progressFile, append=TRUE)
-			write("}\n", file=progressFile, append=TRUE)
-		}
-	
-		# Compare images:
-		printProjectName(files, progressFile)
-		#write("\n\n********************", file=progressFile, append=TRUE)
-		#write(paste0("***** ", files$projectName, " *****"), file=progressFile, append=TRUE)
-		
-		write("{", file=progressFile, append=TRUE)
-		out <- lapply(seq_along(files$commonFiles), diffRData, files=files, progressFile=progressFile)
-		write("}", file=progressFile, append=TRUE)
 	}
 	
 	diffBaseline <- function(dir, progressFile){
