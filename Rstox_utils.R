@@ -475,6 +475,7 @@ automatedRstoxTest <- function(dir, copyFromOriginal=TRUE, process=c("run", "dif
 		StoXLibVersions <- version2numeric(StoXLibVersions)
 		Versions <- 10^10 * RstoxVersions + StoXLibVersions
 		
+		# There has to be at least one previous version:
 		if(any(Versions < current)){
 			All[max(which(Versions < current))]
 		}
