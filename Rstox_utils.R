@@ -475,7 +475,13 @@ automatedRstoxTest <- function(dir, copyFromOriginal=TRUE, process=c("run", "dif
 		StoXLibVersions <- version2numeric(StoXLibVersions)
 		Versions <- 10^10 * RstoxVersions + StoXLibVersions
 		
-		All[max(which(Versions < current))]
+		if(any(Versions < current)){
+			All[max(which(Versions < current))]
+		}
+		else{
+			NULL
+		}
+		
 		
 		### current <- paste(unlist(lapply(getRstoxVersion(), as.character)), collapse="_")
 		### 
@@ -1053,6 +1059,7 @@ automatedRstoxTest <- function(dir, copyFromOriginal=TRUE, process=c("run", "dif
 	if("run" %in% process && copyFromOriginal){
 		unlink(ProjectsDir, recursive=TRUE, force=TRUE)
 		suppressWarnings(dir.create(ProjectsDir))
+		cat("Copying projects from \"", dirname(head(ProjectsList_original, 1)), "\" to ", ProjectsDir, "\n", sep="")
 		lapply(ProjectsList_original, file.copy, ProjectsDir, overwrite=TRUE, recursive=TRUE)
 		
 		# Then delete all output files for safety:
