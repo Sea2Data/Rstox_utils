@@ -26,7 +26,9 @@ devtools::install_github("Sea2Data/Rstox", ref="develop")
 
 ##### Run the projects with Rstox 1.8.1 and diff with Rstox 1.7.2: #####
 source("https://raw.githubusercontent.com/Sea2Data/Rstox_utils/master/Rstox_utils.R")
-system.time(automatedRstoxTest(dir_Rstox, copyFromOriginal=TRUE, process=c("run", "diff"), nlines=100))
+
+# Approximately 1 hour on cabeled network, 4 on VPN:
+system.time(automatedRstoxTest(copyFromOriginal=TRUE, process=c("run", "diff"), nlines=100))
 
 
 
