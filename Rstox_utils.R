@@ -338,12 +338,12 @@ getLatestDir <- function(dir, op="<"){
 
 
 
-copyLatest <- function(from, to, toCopy=c("Projects_original", "Output", "Diff"), overwrite=TRUE, msg=FALSE, ...){
+copyLatest <- function(from, to, toCopy=c("Projects_original", "Output", "Diff"), overwrite=TRUE, msg=FALSE, op="<"){
 	from <- getTestFolderStructure(path.expand(from))
 	to <- getTestFolderStructure(path.expand(to))
 	
-	copyLatestOne <- function(folder, from, to, overwrite=TRUE, msg=FALSE, ...){
-		from <- getLatestDir(from[[folder]], ...)
+	copyLatestOne <- function(folder, from, to, overwrite=TRUE, msg=FALSE, op=op){
+		from <- getLatestDir(from[[folder]], op=op)
 		if(length(from)){
 			temp <- file.copy(from, to[[folder]], recursive=TRUE, overwrite=overwrite)
 			if(msg){
@@ -357,12 +357,32 @@ copyLatest <- function(from, to, toCopy=c("Projects_original", "Output", "Diff")
 		}
 	}
 	
-	invisible(lapply(toCopy, copyLatestOne, from, to, overwrite=overwrite, msg=msg, ...))
+	invisible(lapply(toCopy, copyLatestOne, from, to, overwrite=overwrite, msg=msg, op=op))
+}
+
+
+getServerPath <- function(root=list(windows="\\\\delphi", unix="/Volumes"), path="pc_prog/S2D/stox/StoX_version_test/Automated_testing"){
+	root <- root[[.Platform$OS.type]]
+	if(length(root)==0){
+		stop(paste0("The OS.type ", .Platform$OS.type, " does not match any of the names of 'root' (", paste(names(root), collapse=", "), ")"))
+	}
+	# There should be one directory per system, named by the output of getPlatformID():
+	server <- file.path(root, path, getPlatformID())
+	if(!file.exists(server)){
+		warning(paste0("The server location ", server, " does not exist. Please create it manually for the given platform ID (obtained by getPlatformID()): ", getPlatformID()))
+	}
+	server
+}
+
+
+copyCurrentToServer <- function(dir, root=list(windows="\\\\delphi", unix="/Volumes"), path="pc_prog/S2D/stox/StoX_version_test/Automated_testing", toCopy=c("Projects_original", "Output", "Diff"), overwrite=TRUE, msg=FALSE){
+	server <- getServerPath()
+	copyLatest(dir, server, toCopy=toCopy, overwrite=overwrite, msg=msg, op="<=")
 }
 
 
 # Function for running all test projects and comparing outputs with previous outputs:
-automatedRstoxTest <- function(dir, server=list(root=list(windows="\\\\delphi", unix="/Volumes"), path="pc_prog/S2D/stox/StoX_version_test/Automated_testing"), copyFromOriginal=TRUE, process=c("run", "diff"),  nlines=-1L){
+automatedRstoxTest <- function(dir, root=list(windows="\\\\delphi", unix="/Volumes"), path="pc_prog/S2D/stox/StoX_version_test/Automated_testing", copyFromOriginal=TRUE, process=c("run", "diff"),  nlines=-1L){
 #automatedRstoxTest <- function(dir, copyFromOriginal=TRUE, process=c("run", "diff"),  nlines=-1L, root=list(windows="\\\\delphi", unix="/Volumes"), path="pc_prog/S2D/stox/StoX_version_test/Automated_testing"){
 	
 	# Load Rstox:
@@ -1047,14 +1067,16 @@ automatedRstoxTest <- function(dir, server=list(root=list(windows="\\\\delphi", 
 	}
 	
 	
+	
 	# Set the directory of the test projects:
-	server$root <- server$root[[.Platform$OS.type]]
-	if(length(server$root)==0){
-		stop(paste0("The OS.type ", .Platform$OS.type, " does not match any of the names of 'root' (", paste(names(server$root), collapse=", "), ")"))
-	}
-	#root <- ifelse(.Platform$OS.type == "windows", "\\\\delphi", "/Volumes")
-	# There should be one directory per system, named by the output of getPlatformID():
-	server <- file.path(server$root, server$path, getPlatformID())
+	server <- getServerPath(root=root, path=path)
+	#root <- root[[.Platform$OS.type]]
+	#if(length(root)==0){
+	#	stop(paste0("The OS.type ", .Platform$OS.type, " does not match any of the names of 'root' (", paste(names(root), collapse=", "), ")"))
+	#}
+	##root <- ifelse(.Platform$OS.type == "windows", "\\\\delphi", "/Volumes")
+	## There should be one directory per system, named by the output of getPlatformID():
+	#server <- file.path(root, path, getPlatformID())
 	
 	# Make sure the paths are expanded:
 	server <- path.expand(server)
@@ -1123,7 +1145,7 @@ automatedRstoxTest <- function(dir, server=list(root=list(windows="\\\\delphi", 
 		lapply(ProjectsList, file.copy, newProjectsDir_original, overwrite=TRUE, recursive=TRUE)
 		
 		# Also delete the projects in "Projects":
-		unlink(ProjectsDir, recursive=TRUE, force=TRUE)
+		#unlink(ProjectsDir, recursive=TRUE, force=TRUE)
 	}
 	
 	# Get the lastest sub directory of the previously generated outputs:
