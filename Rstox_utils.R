@@ -1049,7 +1049,7 @@ automatedRstoxTest <- function(dir, server=list(root=list(windows="\\\\delphi", 
 	
 	# Set the directory of the test projects:
 	server$root <- server$root[[.Platform$OS.type]]
-	if(length(root)==0){
+	if(length(server$root)==0){
 		stop(paste0("The OS.type ", .Platform$OS.type, " does not match any of the names of 'root' (", paste(names(server$root), collapse=", "), ")"))
 	}
 	#root <- ifelse(.Platform$OS.type == "windows", "\\\\delphi", "/Volumes")
