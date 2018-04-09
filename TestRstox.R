@@ -1,4 +1,9 @@
-# Script for automatic testing of Rstox on a selection of test projects. First working version completed on 2018-04-06:
+# Script for automatic testing of Rstox on a selection of test projects. First working version completed on 2018-04-09:
+
+
+# Define the path to the directory holding the automated testing:
+local_dir <- "~/workspace/stox/project/Test projects/Automated_testing"
+
 
 ###############################
 ########## Rstox_1.8 ##########
@@ -37,4 +42,10 @@ system.time(automatedRstoxTest(copyFromOriginal=TRUE, process=c("run", "diff"), 
 
 
 
+local_dir <- "~/workspace/stox/project/Test projects/Automated_testing_small-kopi"
 
+system.time(automatedRstoxTest(local_dir, root=list(windows="\\\\delphi", unix="/Volumes"), path="pc_prog/S2D/stox/StoX_version_test/Automated_testing_small", copyFromOriginal=TRUE, process=c("run", "diff"),  nlines=100))
+	
+	
+	
+	

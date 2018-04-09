@@ -286,9 +286,31 @@ getPlatformID <- function(var="release"){
 	paste(.Platform$OS.type, var, paste(strsplit(Sys.info()[var], " ", fixed=TRUE)[[1]], collapse="_"), sep="_")
 }
 
+copyLatest <- function(from, to, toCopy=c("Projects_original", "Output", "Diff"), overwrite=TRUE, msg=FALSE, ...){
+	from <- getTestFolderStructure(path.expand(from))
+	to <- getTestFolderStructure(path.expand(to))
+	
+	copyLatestOne <- function(folder, from, to, overwrite=TRUE, msg=FALSE, ...){
+		from <- getLatestDir(from[[folder]], ...)
+		if(length(from)){
+			temp <- file.copy(from, to[[folder]], recursive=TRUE, overwrite=overwrite)
+			if(msg){
+				if(temp){
+					cat("Copyied", from, "to", to[[folder]], "\n")
+				}
+				else{
+					warning("The folder", to[[folder]], "already exists. Use overwrite=TRUE to overwrite from", from)
+				}
+			}
+		}
+	}
+	
+	invisible(lapply(toCopy, copyLatestOne, from, to, overwrite=overwrite, msg=msg, ...))
+}
+
 
 # Function for running all test projects and comparing outputs with previous outputs:
-automatedRstoxTest <- function(copyFromOriginal=TRUE, process=c("run", "diff"),  nlines=-1L, root=list(windows="\\\\delphi", unix="/Volumes"), path="pc_prog/S2D/stox/StoX_version_test/Automated_testing"){
+automatedRstoxTest <- function(local_dir, root=list(windows="\\\\delphi", unix="/Volumes"), path="pc_prog/S2D/stox/StoX_version_test/Automated_testing", copyFromOriginal=TRUE, process=c("run", "diff"),  nlines=-1L){
 #automatedRstoxTest <- function(dir, copyFromOriginal=TRUE, process=c("run", "diff"),  nlines=-1L, root=list(windows="\\\\delphi", unix="/Volumes"), path="pc_prog/S2D/stox/StoX_version_test/Automated_testing"){
 	
 	# Load Rstox:
@@ -301,16 +323,13 @@ automatedRstoxTest <- function(copyFromOriginal=TRUE, process=c("run", "diff"), 
 	library(tools)
 	library(R.utils)
 	
-	
-	# Set the directory of the test projects:
-	root <- root[[.Platform$OS.type]]
-	if(length(root)==0){
-		stop(paste0("The OS.type ", .Platform$OS.type, " does not match any of the names of 'root' (", paste(names(root), collapse=", "), ")"))
+	getTestFolderStructure <- function(x){
+		list(
+			Projects_original = file.path(x, "Projects_original"), 
+			Projects = file.path(x, "Projects"), 
+			Output = file.path(x, "Output"), 
+			Diff = file.path(x, "Diff"))
 	}
-	#root <- ifelse(.Platform$OS.type == "windows", "\\\\delphi", "/Volumes")
-	# There should be one directory per system, named by the output of getPlatformID():
-	dir <- file.path(root, path, getPlatformID())
-	
 	
 	# The function readBaselineFiles() was introduced in Rstox 1.8.1:
 	if(getRstoxVersion()$Rstox <= "1.8"){
@@ -331,11 +350,12 @@ automatedRstoxTest <- function(copyFromOriginal=TRUE, process=c("run", "diff"), 
 				as.data.frame(lapply(y, string2logicalOne), stringsAsFactors=FALSE)
 			}
 
-			# Read the files:
+			# Read one text connection:
 			if("textConnection" %in% class(x)){
 				out <- read.csv(x, sep="\t", stringsAsFactors=FALSE, na.strings="-", encoding="UTF-8", quote=NULL)
 				out <- string2logical(out)
 			}
+			# Read the files:
 			else{
 				out <- lapply(x, function(y) read.csv(y, sep="\t", stringsAsFactors=FALSE, na.strings="-", encoding="UTF-8", quote=NULL))
 				for(i in seq_along(out)){
@@ -344,9 +364,11 @@ automatedRstoxTest <- function(copyFromOriginal=TRUE, process=c("run", "diff"), 
 
 				# Get the names of the processes and data frames:
 				x_split <- strsplit(basename(x), "_")
+				#dataFrameNames <- sapply(lapply(x_split, "[", -1), paste, collapse="_")
+				#processNames <- sapply(x_split, "[", 2)
 				dataFrameNames <- sapply(lapply(x_split, "[", -1), paste, collapse="_")
-				processNames <- sapply(x_split, "[", 2)
-
+				processNames <- sapply(x_split, function(y) paste(y[seq(2, length(y)-2)], sep="_"))
+				
 				# Set the names of the data frames:
 				names(out) <- dataFrameNames
 				out <- split(out, processNames)
@@ -478,7 +500,7 @@ automatedRstoxTest <- function(copyFromOriginal=TRUE, process=c("run", "diff"), 
 		out
 	}
 	
-	getLatestDir <- function(dir){
+	getLatestDir <- function(dir, op="<"){
 		
 		version2numeric <- function(x){
 			x <- lapply(strsplit(x, ".", fixed=TRUE), as.numeric)
@@ -504,50 +526,14 @@ automatedRstoxTest <- function(copyFromOriginal=TRUE, process=c("run", "diff"), 
 		Versions <- 10^10 * RstoxVersions + StoXLibVersions
 		
 		# There has to be at least one previous version:
-		if(any(Versions < current)){
-			All[max(which(Versions < current))]
+		latest <- do.call(op, list(Versions, current))
+		if(!any(is.na(latest)) && any(latest)){
+			All[max(which(latest))]
 		}
 		else{
-			warning(paste0("No directories with Rstox version before Rstox_StoXLib version ", currentString))
+			warning(paste0("No directories with Rstox version before Rstox_StoXLib version \"", currentString, "\" in the directory \"", dir, "\""))
 			NULL
 		}
-		
-		#
-		
-		### current <- paste(unlist(lapply(getRstoxVersion(), as.character)), collapse="_")
-		### 
-		### All <- list.dirs(dir, recursive=FALSE)
-		### if(length(All)==0){
-		### 	warning(paste0("No projects in the test folder '", dir, "'"))
-		### }
-		### 
-		### # Get Rstox versions (requiring that the Rstox version is between the first and possibly second underscore, typically "Rstox_1.8.1"):
-		### RstoxVersions <- sapply(strsplit(basename(All), "_"), "[", 2)
-		### StoXVersions <- sapply(strsplit(basename(All), "_"), "[", 4)
-		### Versions <- paste(RstoxVersions, StoXVersions, sep="_")
-		### before <- which(Versions < current)
-		### if(length(before)==0){
-		### 	warning(paste0("No directories with Rstox version before Rstox_StoXLib version ", current))
-		### 	return(NULL)
-		### }
-		### 
-		### # Split by dots, and convert to a ranking number:
-		### RstoxVersionsSplit <- lapply(strsplit(RstoxVersions, ".", fixed=TRUE), as.numeric)
-		### RstoxVersionsSplit <- sapply(RstoxVersionsSplit, function(x) sum(x * 10^(6 - 2 * seq_along(x))))
-		### StoXVersionsSplit <- lapply(strsplit(StoXVersions, ".", fixed=TRUE), as.numeric)
-		### StoXVersionsSplit <- sapply(StoXVersionsSplit, function(x) sum(x * 10^(6 - 2 * seq_along(x))))
-		### 
-		### 
-		### RstoxVersionsSplit <- RstoxVersionsSplit[before]
-		### StoXVersionsSplit <- StoXVersionsSplit[before]
-		### All <- All[before]
-		### 
-		### # Set the order of the folders:
-		### o <- order(RstoxVersionsSplit, StoXVersionsSplit)
-		### 
-		### # Select the latest:
-		### # Return the latest before the input Rstox version:
-		### All[which.max(o)]
 	}
 	
 	# Function for running the r scripts of a project and copying the relevant output files to the "Output" directory:
@@ -943,6 +929,8 @@ automatedRstoxTest <- function(copyFromOriginal=TRUE, process=c("run", "diff"), 
 		out <- lapply(files$commonFiles, diffTextFilesOne, dir1=files$dir1, dir2=files$dir2, progressFile=progressFile, diffdir=diffdir, nlines=nlines)
 		write("}", file=progressFile, append=TRUE)
 		
+		unlink(tempdiff)
+		
 		return(NULL)
 	}
 	
@@ -958,32 +946,13 @@ automatedRstoxTest <- function(copyFromOriginal=TRUE, process=c("run", "diff"), 
 				if(!isTRUE(d)){
 					Code <- 2
 					write(paste0("# (Code 2) Differences in output from process ", name, " from Rstox and StoX"), file=progressFile, append=TRUE)
-					
 					write(paste("\t", d), file=progressFile, append=TRUE)
-					
-					# if(is.data.frame(x[[name]])){
-					# 	write(paste("# Data frame", name, "from Rstox"), file=progressFile, append=TRUE)
-					# 	suppressWarnings(write.table(paste("\t", head(x[[name]])), file=progressFile, append=TRUE))
-					# 	write(paste("# Data frame", name, "from StoX"), file=progressFile, append=TRUE)
-					# 	suppressWarnings(write.table(paste("\t", head(y[[name]])), file=progressFile, append=TRUE))
-					# }
-					# else{
-					# 	writeTwoTables <- function(i, x, y, name, progressFile){
-					# 		write(paste("# Data frame", name, "from Rstox"), file=progressFile, append=TRUE)
-					# 		suppressWarnings(write.table(head(x[[name]][[i]]), file=progressFile, append=TRUE))
-					# 		write(paste("# Data frame", name, "from StoX"), file=progressFile, append=TRUE)
-					# 		suppressWarnings(write.table(head(y[[name]][[i]]), file=progressFile, append=TRUE))
-					# 	}
-					# 	lapply(seq_along(x[[name]]), writeTwoTables, x=x, y=y, name=name, progressFile=progressFile)
-					# }
 				}
 				else{
 					write(paste0("# (Code 0) No differences in output from process ", name, " from Rstox and StoX"), file=progressFile, append=TRUE)
 				}
 				write("}\n", file=progressFile, append=TRUE)
-				#else{
-				#	write("No difference", file=progressFile, append=TRUE)
-				#}
+				
 				Code
 			}
 			
@@ -1070,20 +1039,37 @@ automatedRstoxTest <- function(copyFromOriginal=TRUE, process=c("run", "diff"), 
 	}
 	
 	
+	# Set the directory of the test projects:
+	root <- root[[.Platform$OS.type]]
+	if(length(root)==0){
+		stop(paste0("The OS.type ", .Platform$OS.type, " does not match any of the names of 'root' (", paste(names(root), collapse=", "), ")"))
+	}
+	#root <- ifelse(.Platform$OS.type == "windows", "\\\\delphi", "/Volumes")
+	# There should be one directory per system, named by the output of getPlatformID():
+	dir <- file.path(root, path, getPlatformID())
 	
+	# Make sure the paths are expanded:
+	dir <- path.expand(dir)
+	local_dir <- path.expand(local_dir)
+	
+	dirList <- getTestFolderStructure(dir)
+	local_dirList <- getTestFolderStructure(local_dir)
 	
 	# Name the folder for the output files by the time and Rstox version:
 	RstoxVersion <- getRstoxVersion()
 	folderName <- paste(names(RstoxVersion), unlist(lapply(RstoxVersion, as.character)), sep="_", collapse="_")
 	
-	dir <- path.expand(dir)
+	# 1. Copy the latest original projects, outputs and diffs in the server to the local directory:
+	copyLatest(dir, local_dir)
+	
+	
 	
 	# Get the latest projects:
-	ProjectsDir_original <- getLatestDir(file.path(dir, "Projects_original"))
+	ProjectsDir_original <- getLatestDir(dir$Projects_original)
 	
 	# Get paths to the original projects and previous output folders:
 	ProjectsList_original <- list.dirs(ProjectsDir_original, recursive=FALSE)
-	ProjectsDir <- file.path(dir, "Projects")
+	ProjectsDir <- dir$Projects
 	
 	# First copy all files from ProjectsDir_original to ProjectsDir
 	if("run" %in% process && copyFromOriginal){
@@ -1100,7 +1086,7 @@ automatedRstoxTest <- function(copyFromOriginal=TRUE, process=c("run", "diff"), 
 	projectPaths <- list.dirs(ProjectsDir, recursive=FALSE)
 	
 	# Get the outputs directory and the sub directory of the new outputs:
-	Output <- file.path(dir, "Output")
+	Output <- dir$Output
 	newOutput <- file.path(Output, folderName)
 	
 	
@@ -1108,8 +1094,8 @@ automatedRstoxTest <- function(copyFromOriginal=TRUE, process=c("run", "diff"), 
 	newOutputList <- file.path(newOutput, basename(projectPaths))
 	
 	# Then run through all projects, printing progress to a file:
-	suppressWarnings(dir.create(file.path(dir, "Diff")))
-	progressFile <- file.path(dir, "Diff", "progress.R")
+	suppressWarnings(dir.create(dir$Diff))
+	progressFile <- file.path(dir$Diff, "progress.R")
 	unlink(progressFile)
 	
 	if("run" %in% process){
@@ -1127,14 +1113,18 @@ automatedRstoxTest <- function(copyFromOriginal=TRUE, process=c("run", "diff"), 
 		suppressWarnings(dir.create(newProjectsDir_original))
 		ProjectsList <- list.dirs(ProjectsDir, recursive=FALSE)
 		lapply(ProjectsList, file.copy, newProjectsDir_original, overwrite=TRUE, recursive=TRUE)
+		
+		# Also delete the projects in "Projects":
+		unlink(ProjectsDir, recursive=TRUE, force=TRUE)
 	}
 	
 	# Get the lastest sub directory of the previously generated outputs:
-	latestOutput <- getLatestDir(file.path(dir, "Output"))
+	latestOutput <- getLatestDir(dir$Output)
 	
 	
 	if("diff" %in% process && length(latestOutput)){
-		diffdir <- path.expand(file.path(dir, "Diff", paste("Diff", basename(newOutput), basename(latestOutput), sep="_")))
+		#diffdir <- path.expand(file.path(dir, "Diff", paste("Diff", basename(newOutput), basename(latestOutput), sep="_")))
+		diffdir <- path.expand(file.path(dir$Diff, paste(basename(newOutput), basename(latestOutput), sep="_")))
 		setSlashes(diffdir)
 		suppressWarnings(dir.create(diffdir))
 		
@@ -1191,5 +1181,4 @@ automatedRstoxTest <- function(copyFromOriginal=TRUE, process=c("run", "diff"), 
 		unlink(progressFile, force=TRUE)
 	}
 }
-
 
