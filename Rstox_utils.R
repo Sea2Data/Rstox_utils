@@ -302,6 +302,9 @@ getLatestDir <- function(dir, op="<"){
 		x
 	}
 	
+	if(length(dir)==0){
+		return(NULL)
+	}
 	current <- lapply(getRstoxVersion(), as.character)
 	currentString <- paste(current, sep="_", collapse="_")
 	currentRstox <- version2numeric(current$Rstox)
@@ -314,6 +317,9 @@ getLatestDir <- function(dir, op="<"){
 	}
 	
 	RstoxVersions <- sapply(strsplit(basename(All), "_"), "[", 2)
+	if(length(RstoxVersions)==0){
+		return(NULL)
+	}
 	StoXLibVersions <- sapply(strsplit(basename(All), "_"), "[", 4)
 	RstoxVersions <- version2numeric(RstoxVersions)
 	StoXLibVersions <- version2numeric(StoXLibVersions)
@@ -322,11 +328,11 @@ getLatestDir <- function(dir, op="<"){
 	# There has to be at least one previous version:
 	latest <- do.call(op, list(Versions, current))
 	if(!any(is.na(latest)) && any(latest)){
-		All[max(which(latest))]
+		return(All[max(which(latest))])
 	}
 	else{
 		warning(paste0("No directories with Rstox version before Rstox_StoXLib version \"", currentString, "\" in the directory \"", dir, "\""))
-		NULL
+		return(NULL)
 	}
 }
 
@@ -342,7 +348,7 @@ copyLatest <- function(from, to, toCopy=c("Projects_original", "Output", "Diff")
 			temp <- file.copy(from, to[[folder]], recursive=TRUE, overwrite=overwrite)
 			if(msg){
 				if(temp){
-					cat("Copyied", from, "to", to[[folder]], "\n")
+					cat("Copied", from, "to", to[[folder]], "\n")
 				}
 				else{
 					warning("The folder", to[[folder]], "already exists. Use overwrite=TRUE to overwrite from", from)
@@ -1062,16 +1068,17 @@ automatedRstoxTest <- function(local_dir, root=list(windows="\\\\delphi", unix="
 	folderName <- paste(names(RstoxVersion), unlist(lapply(RstoxVersion, as.character)), sep="_", collapse="_")
 	
 	# 1. Copy the latest original projects, outputs and diffs in the server to the local directory:
+	cat("Copying original projects from \"", dir, "\" to ", local_dir, "\n", sep="")
 	copyLatest(dir, local_dir)
 	
 	
 	
 	# Get the latest projects:
-	ProjectsDir_original <- getLatestDir(dir$Projects_original)
+	ProjectsDir_original <- getLatestDir(dirList$Projects_original)
 	
 	# Get paths to the original projects and previous output folders:
 	ProjectsList_original <- list.dirs(ProjectsDir_original, recursive=FALSE)
-	ProjectsDir <- dir$Projects
+	ProjectsDir <- dirList$Projects
 	
 	# First copy all files from ProjectsDir_original to ProjectsDir
 	if("run" %in% process && copyFromOriginal){
@@ -1088,7 +1095,7 @@ automatedRstoxTest <- function(local_dir, root=list(windows="\\\\delphi", unix="
 	projectPaths <- list.dirs(ProjectsDir, recursive=FALSE)
 	
 	# Get the outputs directory and the sub directory of the new outputs:
-	Output <- dir$Output
+	Output <- dirList$Output
 	newOutput <- file.path(Output, folderName)
 	
 	
@@ -1096,8 +1103,8 @@ automatedRstoxTest <- function(local_dir, root=list(windows="\\\\delphi", unix="
 	newOutputList <- file.path(newOutput, basename(projectPaths))
 	
 	# Then run through all projects, printing progress to a file:
-	suppressWarnings(dir.create(dir$Diff))
-	progressFile <- file.path(dir$Diff, "progress.R")
+	suppressWarnings(dir.create(dirList$Diff))
+	progressFile <- file.path(dirList$Diff, "progress.R")
 	unlink(progressFile)
 	
 	if("run" %in% process){
@@ -1121,12 +1128,12 @@ automatedRstoxTest <- function(local_dir, root=list(windows="\\\\delphi", unix="
 	}
 	
 	# Get the lastest sub directory of the previously generated outputs:
-	latestOutput <- getLatestDir(dir$Output)
+	latestOutput <- getLatestDir(dirList$Output)
 	
 	
 	if("diff" %in% process && length(latestOutput)){
 		#diffdir <- path.expand(file.path(dir, "Diff", paste("Diff", basename(newOutput), basename(latestOutput), sep="_")))
-		diffdir <- path.expand(file.path(dir$Diff, paste(basename(newOutput), basename(latestOutput), sep="_")))
+		diffdir <- path.expand(file.path(dirList$Diff, paste(basename(newOutput), basename(latestOutput), sep="_")))
 		setSlashes(diffdir)
 		suppressWarnings(dir.create(diffdir))
 		
