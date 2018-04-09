@@ -348,7 +348,6 @@ copyLatest <- function(from, to, toCopy=c("Diff", "Output", "Projects_original")
 	to <- getTestFolderStructure(path.expand(to))
 	
 	copyLatestOne <- function(folder, from, to, overwrite=TRUE, msg=FALSE, op=op, n=1){
-		browser()
 		from <- getLatestDir(from[[folder]], op=op, n=n)
 		if(length(from)){
 			temp <- file.copy(from, to[[folder]], recursive=TRUE, overwrite=overwrite)
