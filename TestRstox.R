@@ -42,9 +42,9 @@ system.time(automatedRstoxTest(copyFromOriginal=TRUE, process=c("run", "diff"), 
 
 
 
-local_dir <- "~/workspace/stox/project/Test projects/Automated_testing_small-kopi"
+dir <- "~/workspace/stox/project/Test projects/Automated_testing_small-kopi"
 
-system.time(automatedRstoxTest(local_dir=local_dir, root=list(windows="\\\\delphi", unix="/Volumes"), path="pc_prog/S2D/stox/StoX_version_test/Automated_testing_small", copyFromOriginal=TRUE, process=c("run", "diff"),  nlines=100))
+system.time(automatedRstoxTest(dir=dir, server=list(root=list(windows="\\\\delphi", unix="/Volumes"), path="pc_prog/S2D/stox/StoX_version_test/Automated_testing_small"), copyFromOriginal=TRUE, process=c("run", "diff"),  nlines=100))
 	
 	
 	

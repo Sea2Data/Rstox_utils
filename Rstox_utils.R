@@ -362,7 +362,7 @@ copyLatest <- function(from, to, toCopy=c("Projects_original", "Output", "Diff")
 
 
 # Function for running all test projects and comparing outputs with previous outputs:
-automatedRstoxTest <- function(local_dir, root=list(windows="\\\\delphi", unix="/Volumes"), path="pc_prog/S2D/stox/StoX_version_test/Automated_testing", copyFromOriginal=TRUE, process=c("run", "diff"),  nlines=-1L){
+automatedRstoxTest <- function(dir, server=list(root=list(windows="\\\\delphi", unix="/Volumes"), path="pc_prog/S2D/stox/StoX_version_test/Automated_testing"), copyFromOriginal=TRUE, process=c("run", "diff"),  nlines=-1L){
 #automatedRstoxTest <- function(dir, copyFromOriginal=TRUE, process=c("run", "diff"),  nlines=-1L, root=list(windows="\\\\delphi", unix="/Volumes"), path="pc_prog/S2D/stox/StoX_version_test/Automated_testing"){
 	
 	# Load Rstox:
@@ -1048,28 +1048,27 @@ automatedRstoxTest <- function(local_dir, root=list(windows="\\\\delphi", unix="
 	
 	
 	# Set the directory of the test projects:
-	root <- root[[.Platform$OS.type]]
+	server$root <- server$root[[.Platform$OS.type]]
 	if(length(root)==0){
-		stop(paste0("The OS.type ", .Platform$OS.type, " does not match any of the names of 'root' (", paste(names(root), collapse=", "), ")"))
+		stop(paste0("The OS.type ", .Platform$OS.type, " does not match any of the names of 'root' (", paste(names(server$root), collapse=", "), ")"))
 	}
 	#root <- ifelse(.Platform$OS.type == "windows", "\\\\delphi", "/Volumes")
 	# There should be one directory per system, named by the output of getPlatformID():
-	dir <- file.path(root, path, getPlatformID())
+	server <- file.path(server$root, server$path, getPlatformID())
 	
 	# Make sure the paths are expanded:
+	server <- path.expand(server)
 	dir <- path.expand(dir)
-	local_dir <- path.expand(local_dir)
 	
 	dirList <- getTestFolderStructure(dir)
-	local_dirList <- getTestFolderStructure(local_dir)
 	
 	# Name the folder for the output files by the time and Rstox version:
 	RstoxVersion <- getRstoxVersion()
 	folderName <- paste(names(RstoxVersion), unlist(lapply(RstoxVersion, as.character)), sep="_", collapse="_")
 	
 	# 1. Copy the latest original projects, outputs and diffs in the server to the local directory:
-	cat("Copying original projects from \"", dir, "\" to ", local_dir, "\n", sep="")
-	copyLatest(dir, local_dir)
+	cat("Copying original projects from \"", server, "\" to ", dir, "\n", sep="")
+	copyLatest(server, dir)
 	
 	
 	
