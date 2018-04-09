@@ -382,14 +382,14 @@ getServerPath <- function(root=list(windows="\\\\delphi", unix="/Volumes"), path
 
 
 copyCurrentToServer <- function(dir, root=list(windows="\\\\delphi", unix="/Volumes"), path="pc_prog/S2D/stox/StoX_version_test/Automated_testing", toCopy=c("Diff", "Output", "Projects_original"), overwrite=TRUE, msg=FALSE, n=1){
-	server <- getServerPath()
+	server <- getServerPath(root=root, path=path)
 	copyLatest(dir, server, toCopy=toCopy, overwrite=overwrite, msg=msg, op="<=", n=n)
 }
 
 
 # Function for running all test projects and comparing outputs with previous outputs:
-automatedRstoxTest <- function(dir, root=list(windows="\\\\delphi", unix="/Volumes"), path="pc_prog/S2D/stox/StoX_version_test/Automated_testing", copyFromOriginal=TRUE, process=c("run", "diff"),  nlines=-1L){
-#automatedRstoxTest <- function(dir, copyFromOriginal=TRUE, process=c("run", "diff"),  nlines=-1L, root=list(windows="\\\\delphi", unix="/Volumes"), path="pc_prog/S2D/stox/StoX_version_test/Automated_testing"){
+automatedRstoxTest <- function(dir, root=list(windows="\\\\delphi", unix="/Volumes"), path="pc_prog/S2D/stox/StoX_version_test/Automated_testing", copyFromServer=TRUE, process=c("run", "diff"),  nlines=-1L){
+#automatedRstoxTest <- function(dir, copyFromServer=TRUE, process=c("run", "diff"),  nlines=-1L, root=list(windows="\\\\delphi", unix="/Volumes"), path="pc_prog/S2D/stox/StoX_version_test/Automated_testing"){
 	
 	# Load image packages:
 	library(png)
@@ -1093,9 +1093,10 @@ automatedRstoxTest <- function(dir, root=list(windows="\\\\delphi", unix="/Volum
 	folderName <- paste(names(RstoxVersion), unlist(lapply(RstoxVersion, as.character)), sep="_", collapse="_")
 	
 	# 1. Copy the latest original projects, outputs and diffs in the server to the local directory:
-	cat("Copying original projects from \"", server, "\" to ", dir, "\n", sep="")
-	copyLatest(server, dir)
-	
+	if("run" %in% process && copyFromServer){
+		cat("Copying original projects from \"", server, "\" to ", dir, "\n", sep="")
+		copyLatest(server, dir)
+	}
 	
 	
 	# Get the latest projects:
@@ -1106,7 +1107,7 @@ automatedRstoxTest <- function(dir, root=list(windows="\\\\delphi", unix="/Volum
 	ProjectsDir <- dirList$Projects
 	
 	# First copy all files from ProjectsDir_original to ProjectsDir
-	if("run" %in% process && copyFromOriginal){
+	if("run" %in% process){
 		unlink(ProjectsDir, recursive=TRUE, force=TRUE)
 		suppressWarnings(dir.create(ProjectsDir))
 		cat("Copying projects from \"", dirname(head(ProjectsList_original, 1)), "\" to ", ProjectsDir, "\n", sep="")
