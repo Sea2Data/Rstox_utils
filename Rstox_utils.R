@@ -294,7 +294,7 @@ getTestFolderStructure <- function(x){
 		Diff = file.path(x, "Diff"))
 }
 
-getLatestDir <- function(dir, op="<"){
+getLatestDir <- function(dir, op="<", n=1){
 	
 	version2numeric <- function(x){
 		x <- lapply(strsplit(x, ".", fixed=TRUE), as.numeric)
@@ -328,7 +328,8 @@ getLatestDir <- function(dir, op="<"){
 	# There has to be at least one previous version:
 	latest <- do.call(op, list(Versions, current))
 	if(!any(is.na(latest)) && any(latest)){
-		return(All[max(which(latest))])
+		#return(All[max(which(latest))])
+		return(All[tail(sort(which(latest)), n)])
 	}
 	else{
 		warning(paste0("No directories with Rstox version before Rstox_StoXLib version \"", currentString, "\" in the directory \"", dir, "\""))
@@ -338,12 +339,13 @@ getLatestDir <- function(dir, op="<"){
 
 
 
-copyLatest <- function(from, to, toCopy=c("Projects_original", "Output", "Diff"), overwrite=TRUE, msg=FALSE, op="<"){
+copyLatest <- function(from, to, toCopy=c("Projects_original", "Output", "Diff"), overwrite=TRUE, msg=FALSE, op="<", n=1){
 	from <- getTestFolderStructure(path.expand(from))
 	to <- getTestFolderStructure(path.expand(to))
 	
-	copyLatestOne <- function(folder, from, to, overwrite=TRUE, msg=FALSE, op=op){
-		from <- getLatestDir(from[[folder]], op=op)
+	copyLatestOne <- function(folder, from, to, overwrite=TRUE, msg=FALSE, op=op, n=1){
+		browser()
+		from <- getLatestDir(from[[folder]], op=op, n=n)
 		if(length(from)){
 			temp <- file.copy(from, to[[folder]], recursive=TRUE, overwrite=overwrite)
 			if(msg){
@@ -357,7 +359,7 @@ copyLatest <- function(from, to, toCopy=c("Projects_original", "Output", "Diff")
 		}
 	}
 	
-	invisible(lapply(toCopy, copyLatestOne, from, to, overwrite=overwrite, msg=msg, op=op))
+	invisible(lapply(toCopy, copyLatestOne, from, to, overwrite=overwrite, msg=msg, op=op, n=n))
 }
 
 
@@ -375,9 +377,9 @@ getServerPath <- function(root=list(windows="\\\\delphi", unix="/Volumes"), path
 }
 
 
-copyCurrentToServer <- function(dir, root=list(windows="\\\\delphi", unix="/Volumes"), path="pc_prog/S2D/stox/StoX_version_test/Automated_testing", toCopy=c("Projects_original", "Output", "Diff"), overwrite=TRUE, msg=FALSE){
+copyCurrentToServer <- function(dir, root=list(windows="\\\\delphi", unix="/Volumes"), path="pc_prog/S2D/stox/StoX_version_test/Automated_testing", toCopy=c("Projects_original", "Output", "Diff"), overwrite=TRUE, msg=FALSE, n=1){
 	server <- getServerPath()
-	copyLatest(dir, server, toCopy=toCopy, overwrite=overwrite, msg=msg, op="<=")
+	copyLatest(dir, server, toCopy=toCopy, overwrite=overwrite, msg=msg, op="<=", n=n)
 }
 
 
