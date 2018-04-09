@@ -294,6 +294,44 @@ getTestFolderStructure <- function(x){
 		Diff = file.path(x, "Diff"))
 }
 
+getLatestDir <- function(dir, op="<"){
+	
+	version2numeric <- function(x){
+		x <- lapply(strsplit(x, ".", fixed=TRUE), as.numeric)
+		x <- sapply(x, function(y) sum(y * 10^(6 - 2 * seq_along(y))))
+		x
+	}
+	
+	current <- lapply(getRstoxVersion(), as.character)
+	currentString <- paste(current, sep="_", collapse="_")
+	currentRstox <- version2numeric(current$Rstox)
+	currentStoXLib <- version2numeric(current$StoXLib)
+	current <- 10^10 * currentRstox + currentStoXLib
+	
+	All <- list.dirs(dir, recursive=FALSE)
+	if(length(All)==0){
+		warning(paste0("No projects in the test folder '", dir, "'"))
+	}
+	
+	RstoxVersions <- sapply(strsplit(basename(All), "_"), "[", 2)
+	StoXLibVersions <- sapply(strsplit(basename(All), "_"), "[", 4)
+	RstoxVersions <- version2numeric(RstoxVersions)
+	StoXLibVersions <- version2numeric(StoXLibVersions)
+	Versions <- 10^10 * RstoxVersions + StoXLibVersions
+	
+	# There has to be at least one previous version:
+	latest <- do.call(op, list(Versions, current))
+	if(!any(is.na(latest)) && any(latest)){
+		All[max(which(latest))]
+	}
+	else{
+		warning(paste0("No directories with Rstox version before Rstox_StoXLib version \"", currentString, "\" in the directory \"", dir, "\""))
+		NULL
+	}
+}
+
+
+
 copyLatest <- function(from, to, toCopy=c("Projects_original", "Output", "Diff"), overwrite=TRUE, msg=FALSE, ...){
 	from <- getTestFolderStructure(path.expand(from))
 	to <- getTestFolderStructure(path.expand(to))
@@ -498,42 +536,6 @@ automatedRstoxTest <- function(local_dir, root=list(windows="\\\\delphi", unix="
 		#out <- lapply(out, setSlashes)
 		
 		out
-	}
-	
-	getLatestDir <- function(dir, op="<"){
-		
-		version2numeric <- function(x){
-			x <- lapply(strsplit(x, ".", fixed=TRUE), as.numeric)
-			x <- sapply(x, function(y) sum(y * 10^(6 - 2 * seq_along(y))))
-			x
-		}
-		
-		current <- lapply(getRstoxVersion(), as.character)
-		currentString <- paste(current, sep="_", collapse="_")
-		currentRstox <- version2numeric(current$Rstox)
-		currentStoXLib <- version2numeric(current$StoXLib)
-		current <- 10^10 * currentRstox + currentStoXLib
-		
-		All <- list.dirs(dir, recursive=FALSE)
-		if(length(All)==0){
-			warning(paste0("No projects in the test folder '", dir, "'"))
-		}
-		
-		RstoxVersions <- sapply(strsplit(basename(All), "_"), "[", 2)
-		StoXLibVersions <- sapply(strsplit(basename(All), "_"), "[", 4)
-		RstoxVersions <- version2numeric(RstoxVersions)
-		StoXLibVersions <- version2numeric(StoXLibVersions)
-		Versions <- 10^10 * RstoxVersions + StoXLibVersions
-		
-		# There has to be at least one previous version:
-		latest <- do.call(op, list(Versions, current))
-		if(!any(is.na(latest)) && any(latest)){
-			All[max(which(latest))]
-		}
-		else{
-			warning(paste0("No directories with Rstox version before Rstox_StoXLib version \"", currentString, "\" in the directory \"", dir, "\""))
-			NULL
-		}
 	}
 	
 	# Function for running the r scripts of a project and copying the relevant output files to the "Output" directory:
