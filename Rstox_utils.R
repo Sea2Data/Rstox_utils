@@ -282,6 +282,10 @@ buildRstox <- function(buildDir, pkgName="Rstox", version="1.0", Rversion="3.3.1
 }
 
 
+# Load Rstox:
+library(Rstox)
+
+
 getPlatformID <- function(var="release"){
 	paste(.Platform$OS.type, var, paste(strsplit(Sys.info()[var], " ", fixed=TRUE)[[1]], collapse="_"), sep="_")
 }
@@ -339,7 +343,7 @@ getLatestDir <- function(dir, op="<", n=1){
 
 
 
-copyLatest <- function(from, to, toCopy=c("Projects_original", "Output", "Diff"), overwrite=TRUE, msg=FALSE, op="<", n=1){
+copyLatest <- function(from, to, toCopy=c("Diff", "Output", "Projects_original"), overwrite=TRUE, msg=FALSE, op="<", n=1){
 	from <- getTestFolderStructure(path.expand(from))
 	to <- getTestFolderStructure(path.expand(to))
 	
@@ -377,7 +381,7 @@ getServerPath <- function(root=list(windows="\\\\delphi", unix="/Volumes"), path
 }
 
 
-copyCurrentToServer <- function(dir, root=list(windows="\\\\delphi", unix="/Volumes"), path="pc_prog/S2D/stox/StoX_version_test/Automated_testing", toCopy=c("Projects_original", "Output", "Diff"), overwrite=TRUE, msg=FALSE, n=1){
+copyCurrentToServer <- function(dir, root=list(windows="\\\\delphi", unix="/Volumes"), path="pc_prog/S2D/stox/StoX_version_test/Automated_testing", toCopy=c("Diff", "Output", "Projects_original"), overwrite=TRUE, msg=FALSE, n=1){
 	server <- getServerPath()
 	copyLatest(dir, server, toCopy=toCopy, overwrite=overwrite, msg=msg, op="<=", n=n)
 }
@@ -387,8 +391,6 @@ copyCurrentToServer <- function(dir, root=list(windows="\\\\delphi", unix="/Volu
 automatedRstoxTest <- function(dir, root=list(windows="\\\\delphi", unix="/Volumes"), path="pc_prog/S2D/stox/StoX_version_test/Automated_testing", copyFromOriginal=TRUE, process=c("run", "diff"),  nlines=-1L){
 #automatedRstoxTest <- function(dir, copyFromOriginal=TRUE, process=c("run", "diff"),  nlines=-1L, root=list(windows="\\\\delphi", unix="/Volumes"), path="pc_prog/S2D/stox/StoX_version_test/Automated_testing"){
 	
-	# Load Rstox:
-	library(Rstox)
 	# Load image packages:
 	library(png)
 	library(jpeg)
