@@ -286,6 +286,14 @@ getPlatformID <- function(var="release"){
 	paste(.Platform$OS.type, var, paste(strsplit(Sys.info()[var], " ", fixed=TRUE)[[1]], collapse="_"), sep="_")
 }
 
+getTestFolderStructure <- function(x){
+	list(
+		Projects_original = file.path(x, "Projects_original"), 
+		Projects = file.path(x, "Projects"), 
+		Output = file.path(x, "Output"), 
+		Diff = file.path(x, "Diff"))
+}
+
 copyLatest <- function(from, to, toCopy=c("Projects_original", "Output", "Diff"), overwrite=TRUE, msg=FALSE, ...){
 	from <- getTestFolderStructure(path.expand(from))
 	to <- getTestFolderStructure(path.expand(to))
@@ -322,14 +330,6 @@ automatedRstoxTest <- function(local_dir, root=list(windows="\\\\delphi", unix="
 	# Load utilities packages:
 	library(tools)
 	library(R.utils)
-	
-	getTestFolderStructure <- function(x){
-		list(
-			Projects_original = file.path(x, "Projects_original"), 
-			Projects = file.path(x, "Projects"), 
-			Output = file.path(x, "Output"), 
-			Diff = file.path(x, "Diff"))
-	}
 	
 	# The function readBaselineFiles() was introduced in Rstox 1.8.1:
 	if(getRstoxVersion()$Rstox <= "1.8"){
