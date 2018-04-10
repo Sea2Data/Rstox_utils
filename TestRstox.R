@@ -35,19 +35,13 @@ devtools::install_github("Sea2Data/Rstox", ref="develop")
 source("https://raw.githubusercontent.com/Sea2Data/Rstox_utils/master/Rstox_utils.R")
 
 system.time(automatedRstoxTest(dir=dir, copyFromServer=TRUE, process=c("run", "diff"), nlines=100))
+#     user   system  elapsed 
+# 2044.219  394.894 4639.868 
 
 
 
 
 
-
-source("https://raw.githubusercontent.com/Sea2Data/Rstox_utils/master/Rstox_utils.R")
-
-
-dir <- "~/workspace/stox/project/Test projects/Automated_testing_small-kopi"
-
-system.time(automatedRstoxTest(dir=dir, root=list(windows="\\\\delphi", unix="/Volumes"), path="pc_prog/S2D/stox/StoX_version_test/Automated_testing_small", copyFromOriginal=TRUE, process=c("run", "diff"),  nlines=100))
-
-copyCurrentToServer(dir, root=list(windows="\\\\delphi", unix="/Volumes"), path="pc_prog/S2D/stox/StoX_version_test/Automated_testing_small", toCopy=c("Diff", "Output", "Projects_original"), msg=TRUE)
+copyCurrentToServer(dir, root=list(windows="\\\\delphi", unix="/Volumes"), path="pc_prog/S2D/stox/StoX_version_test/Automated_testing", toCopy=c("Diff", "Output", "Projects_original"), msg=TRUE, n=2)
 
 	

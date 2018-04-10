@@ -352,13 +352,14 @@ copyLatest <- function(from, to, toCopy=c("Diff", "Output", "Projects_original")
 	copyLatestOne <- function(folder, from, to, overwrite=TRUE, msg=FALSE, op=op, n=1){
 		from <- getLatestDir(from[[folder]], op=op, n=n)
 		if(length(from)){
-			temp <- file.copy(from, to[[folder]], recursive=TRUE, overwrite=overwrite)
-			if(msg){
-				if(temp){
+			# Check for the existence of the folder (as opposed to using 'overwrite' in file.copy(), which copies all files which do not exist in the destination).
+			if(file.exists(to[[folder]]) && !overwrite){
+				warning("The folder", to[[folder]], "already exists and was not overwritten. Use overwrite=TRUE to overwrite from", from)
+			}
+			else{
+				temp <- file.copy(from, to[[folder]], recursive=TRUE, overwrite=overwrite)
+				if(msg){
 					cat("Copied", from, "to", to[[folder]], "\n")
-				}
-				else{
-					warning("The folder", to[[folder]], "already exists. Use overwrite=TRUE to overwrite from", from)
 				}
 			}
 		}
@@ -382,7 +383,7 @@ getServerPath <- function(root=list(windows="\\\\delphi", unix="/Volumes"), path
 }
 
 
-copyCurrentToServer <- function(dir, root=list(windows="\\\\delphi", unix="/Volumes"), path="pc_prog/S2D/stox/StoX_version_test/Automated_testing", toCopy=c("Diff", "Output", "Projects_original"), overwrite=TRUE, msg=FALSE, n=1){
+copyCurrentToServer <- function(dir, root=list(windows="\\\\delphi", unix="/Volumes"), path="pc_prog/S2D/stox/StoX_version_test/Automated_testing", toCopy=c("Diff", "Output", "Projects_original"), overwrite=FALSE, msg=FALSE, n=1){
 	server <- getServerPath(root=root, path=path)
 	copyLatest(dir, server, toCopy=toCopy, overwrite=overwrite, msg=msg, op="<=", n=n)
 }
@@ -937,6 +938,8 @@ automatedRstoxTest <- function(dir, root=list(windows="\\\\delphi", unix="/Volum
 			if(nlines>0 && length(diffinfo)>1){
 				diffinfo <- c(diffinfo, "...", paste0("(Number of lines differing: ", R.utils::countLines(tempdiff), ")"))
 			}
+			# Add the command used:
+			diffinfo <- c(diffinfo, paste0("Command used to generate diff: ", cmd))
 			
 			ncharDiffInfo <- sum(nchar(diffinfo))
 			noDiffWindows <- length(grep("no differences encountered", diffinfo))
@@ -1091,14 +1094,14 @@ automatedRstoxTest <- function(dir, root=list(windows="\\\\delphi", unix="/Volum
 	dir <- path.expand(dir)
 	
 	dirList <- getTestFolderStructure(dir)
+	# Create the folder structure if missing:
+	lapply(dirList, dir.create, showWarnings=FALSE)
 	
 	# Name the folder for the output files by the time and Rstox version:
 	RstoxVersion <- getRstoxVersion()
 	folderName <- paste(names(RstoxVersion), unlist(lapply(RstoxVersion, as.character)), sep="_", collapse="_")
 	
 	# 1. Copy the latest original projects, outputs and diffs in the server to the local directory:
-	print(dirList)
-	
 	if("run" %in% process && copyFromServer){
 		cat("Copying original projects from \"", server, "\" to ", dir, "\n", sep="")
 		copyLatest(server, dir)
@@ -1107,7 +1110,6 @@ automatedRstoxTest <- function(dir, root=list(windows="\\\\delphi", unix="/Volum
 	
 	# Get the latest projects:
 	ProjectsDir_original <- getLatestDir(dirList$Projects_original)
-	print(ProjectsDir_original)
 	
 	# Get paths to the original projects and previous output folders:
 	ProjectsList_original <- list.dirs(ProjectsDir_original, recursive=FALSE)
