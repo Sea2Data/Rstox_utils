@@ -71,7 +71,9 @@ buildRstox <- function(buildDir, pkgName="Rstox", version="1.0", Rversion="3.3.1
 		write("# \tsudo ln -s $(/usr/libexec/java_home)/jre/lib/server/libjvm.dylib /usr/local/lib", READMEfile, append=TRUE)
 		write("# \tsudo R CMD javareconf", READMEfile, append=TRUE)
 		write("# Open R (close and then open if already open) and install rJava:", READMEfile, append=TRUE)
-		write("# \tinstall.packages('rJava', type='source')", READMEfile, append=TRUE)
+		#write("# \tinstall.packages('rJava', type='source')", READMEfile, append=TRUE)
+		write("# \tinstall.packages('rJava', type=\"binary\")", READMEfile, append=TRUE)
+		write("# If this fails, try installing from source instead using install.packages('rJava', type='source')", READMEfile, append=TRUE)
 		write("# Then the installed Rstox should work.", READMEfile, append=TRUE)
 		
 		# Write release notes:
@@ -1103,6 +1105,7 @@ automatedRstoxTest <- function(dir, root=list(windows="\\\\delphi", unix="/Volum
 	
 	# Get the latest projects:
 	ProjectsDir_original <- getLatestDir(dirList$Projects_original)
+	print(ProjectsDir_original)
 	
 	# Get paths to the original projects and previous output folders:
 	ProjectsList_original <- list.dirs(ProjectsDir_original, recursive=FALSE)
