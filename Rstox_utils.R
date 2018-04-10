@@ -951,6 +951,10 @@ automatedRstoxTest <- function(dir, root=list(windows="\\\\delphi", unix="/Volum
 				write(paste0("\t", diffinfo), file=progressFile, append=TRUE)
 			}
 			write("}\n", file=progressFile, append=TRUE)
+			
+			if(file.exists(tempdiff)){
+				unlink(tempdiff)
+			}
 		}
 	
 		# Compare text files:
@@ -960,9 +964,6 @@ automatedRstoxTest <- function(dir, root=list(windows="\\\\delphi", unix="/Volum
 		out <- lapply(files$commonFiles, diffTextFilesOne, dir1=files$dir1, dir2=files$dir2, progressFile=progressFile, diffdir=diffdir, nlines=nlines)
 		write("}", file=progressFile, append=TRUE)
 		
-		if(file.exists(tempdiff)){
-			unlink(tempdiff)
-		}
 		
 		return(NULL)
 	}
