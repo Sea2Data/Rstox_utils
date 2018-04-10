@@ -2,7 +2,7 @@
 
 
 # Define the path to the directory holding the automated testing:
-local_dir <- "~/workspace/stox/project/Test projects/Automated_testing"
+dir <- "~/workspace/stox/project/Test projects/Automated_testing"
 
 
 ###############################
@@ -17,7 +17,9 @@ install.packages("ftp://ftp.imr.no/StoX/Download/Rstox/Rstox_1.8.tar.gz", repos=
 ###### Run the projects with Rstox 1.8 and diff with Rstox 1.7.2: #####
 source("https://raw.githubusercontent.com/Sea2Data/Rstox_utils/master/Rstox_utils.R")
 
-system.time(automatedRstoxTest(copyFromServer=TRUE, process=c("run", "diff"), nlines=100))
+system.time(automatedRstoxTest(dir=dir, copyFromServer=TRUE, process=c("run", "diff"), nlines=100))
+#     user   system  elapsed 
+# 1156.712  271.704 3834.652 
 
 
 #################################
@@ -32,8 +34,7 @@ devtools::install_github("Sea2Data/Rstox", ref="develop")
 ##### Run the projects with Rstox 1.8.1 and diff with Rstox 1.7.2: #####
 source("https://raw.githubusercontent.com/Sea2Data/Rstox_utils/master/Rstox_utils.R")
 
-# Approximately 1 hour on cabeled network, 4 on VPN:
-system.time(automatedRstoxTest(copyFromServer=TRUE, process=c("run", "diff"), nlines=100))
+system.time(automatedRstoxTest(dir=dir, copyFromServer=TRUE, process=c("run", "diff"), nlines=100))
 
 
 
