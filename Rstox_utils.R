@@ -1097,6 +1097,8 @@ automatedRstoxTest <- function(dir, root=list(windows="\\\\delphi", unix="/Volum
 	folderName <- paste(names(RstoxVersion), unlist(lapply(RstoxVersion, as.character)), sep="_", collapse="_")
 	
 	# 1. Copy the latest original projects, outputs and diffs in the server to the local directory:
+	print(dirList)
+	
 	if("run" %in% process && copyFromServer){
 		cat("Copying original projects from \"", server, "\" to ", dir, "\n", sep="")
 		copyLatest(server, dir)
