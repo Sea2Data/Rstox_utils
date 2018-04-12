@@ -390,7 +390,7 @@ copyCurrentToServer <- function(dir, root=list(windows="\\\\delphi", unix="/Volu
 
 
 # Function for running all test projects and comparing outputs with previous outputs:
-automatedRstoxTest <- function(dir, root=list(windows="\\\\delphi", unix="/Volumes"), path="pc_prog/S2D/stox/StoXAutoTest", copyFromServer=TRUE, process=c("run", "diff"),  nlines=-1L){
+automatedRstoxTest <- function(dir, root=list(windows="\\\\delphi", unix="/Volumes"), path="pc_prog/S2D/stox/StoXAutoTest", copyFromServer=TRUE, process=c("run", "diff"),  diffs=c("Rdata", "images", "text", "baseline"), nlines=-1L){
 #automatedRstoxTest <- function(dir, copyFromServer=TRUE, process=c("run", "diff"),  nlines=-1L, root=list(windows="\\\\delphi", unix="/Volumes"), path="pc_prog/S2D/stox/StoXAutoTest"){
 	
 	# Load image packages:
@@ -1040,7 +1040,7 @@ automatedRstoxTest <- function(dir, root=list(windows="\\\\delphi", unix="/Volum
 		# Due to a fundamental problem of interpreting the process name from the baseline and baseline report output csv files (ProcessName_OutputType_Level.txt), where _Level may be missing, and any user introduced "_" in the process names will make the interpretation ambigous, we group the processes according to the first element of the process name after separating by underscore. This is done to allow comparison between Rstox and StoX:
 		
 		cropProcessName <- function(x){
-			#browser()
+			browser()
 			x_names <- names(x)
 			x_names <- strsplit(x_names, "_")
 			x_names <- sapply(x_names, head, 1)
@@ -1198,28 +1198,36 @@ automatedRstoxTest <- function(dir, root=list(windows="\\\\delphi", unix="/Volum
 		
 		
 		# Special diff of RData files:
-		printHeader("2. Comapring RData files", progressFile)
-		write("\n{", file=progressFile, append=TRUE)
-		lapply(allFiles$RDataFiles, RDataDiff, progressFile=progressFile)
-		write("}", file=progressFile, append=TRUE)
+		if("Rdata" %in% diffs){
+			printHeader("2. Comapring RData files", progressFile)
+			write("\n{", file=progressFile, append=TRUE)
+			lapply(allFiles$RDataFiles, RDataDiff, progressFile=progressFile)
+			write("}", file=progressFile, append=TRUE)
+		}
 		
 		# Special diff of images:
-		printHeader("3. Comapring image files", progressFile)
-		write("{", file=progressFile, append=TRUE)
-		lapply(allFiles$imageFiles, imDiff, progressFile=progressFile, diffdir=diffdir)
-		write("}", file=progressFile, append=TRUE)
+		if("images" %in% diffs){
+			printHeader("3. Comapring image files", progressFile)
+			write("{", file=progressFile, append=TRUE)
+			lapply(allFiles$imageFiles, imDiff, progressFile=progressFile, diffdir=diffdir)
+			write("}", file=progressFile, append=TRUE)
+		}
 		
 		# Diff text files:
-		printHeader("4. Comapring text files", progressFile)
-		write("{", file=progressFile, append=TRUE)
-		lapply(allFiles$textFiles, diffTextFiles, progressFile=progressFile, diffdir=diffdir, nlines=nlines)
-		write("}", file=progressFile, append=TRUE)
+		if("text" %in% diffs){
+			printHeader("4. Comapring text files", progressFile)
+			write("{", file=progressFile, append=TRUE)
+			lapply(allFiles$textFiles, diffTextFiles, progressFile=progressFile, diffdir=diffdir, nlines=nlines)
+			write("}", file=progressFile, append=TRUE)
+		}
 		
 		# Diff also the baseline output and the files written by baseline:
-		printHeader("5. Comapring Rstox and StoX baseline output", progressFile)
-		write("{", file=progressFile, append=TRUE)
-		lapply(newOutputList, diffBaseline, progressFile=progressFile)
-		write("}", file=progressFile, append=TRUE)
+		if("baseline" %in% diffs){
+			printHeader("5. Comapring Rstox and StoX baseline output", progressFile)
+			write("{", file=progressFile, append=TRUE)
+			lapply(newOutputList, diffBaseline, progressFile=progressFile)
+			write("}", file=progressFile, append=TRUE)
+		}
 		
 		
 		write("\nPlease also run the example script on ftp://ftp.imr.no/StoX/Download/Rstox/Examples\n", file=progressFile, append=TRUE)
