@@ -1,5 +1,10 @@
 # Script for automatic testing of Rstox on a selection of test projects. First working version completed on 2018-04-09:
 
+# Certain rules apply for the test projects:
+# 1. There cannot be any spaces (" ") in the project paths
+# 2. There cannot be any underscores ("_") in the process names
+
+
 # Load image packages:
 install.packages("png", "jpeg", "tiff", "tools", "R.utils")
 
