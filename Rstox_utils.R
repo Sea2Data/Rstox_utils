@@ -983,7 +983,7 @@ automatedRstoxTest <- function(dir, root=list(windows="\\\\delphi", unix="/Volum
 				if(any(c(nlinesFile1, nlinesFile2) > nlines)){
 					out <- c(
 						out, 
-						"\t..."
+						"\t...", 
 						paste0("\tNumber of lines exceeding 'nlines' (", nlines, ") in the files ", file1, " (", nlinesFile1, ") and ", file2, " (", nlinesFile2, ")"), 
 						paste0(
 							"\tInspect changes more closely by the following command in the ", 
