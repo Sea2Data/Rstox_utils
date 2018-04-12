@@ -6,7 +6,7 @@
 
 
 # Load image packages:
-install.packages("png", "jpeg", "tiff", "tools", "R.utils")
+# install.packages("png", "jpeg", "tiff", "tools", "R.utils")
 
 
 # Define the path to the directory holding the automated testing:
