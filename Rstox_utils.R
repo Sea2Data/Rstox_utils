@@ -354,7 +354,7 @@ copyLatest <- function(from, to, toCopy=c("Diff", "Output", "Projects_original")
 		if(length(from)){
 			# Check for the existence of the folder (as opposed to using 'overwrite' in file.copy(), which copies all files which do not exist in the destination).
 			if(file.exists(to[[folder]]) && !overwrite){
-				warning("The folder", to[[folder]], "already exists and was not overwritten. Use overwrite=TRUE to overwrite from", from)
+				warning(paste0("The folder ", to[[folder]], " already exists and was not overwritten. Use overwrite=TRUE to overwrite from ", from))
 			}
 			else{
 				temp <- file.copy(from, to[[folder]], recursive=TRUE, overwrite=overwrite)
@@ -390,7 +390,7 @@ copyCurrentToServer <- function(dir, root=list(windows="\\\\delphi", unix="/Volu
 
 
 # Function for running all test projects and comparing outputs with previous outputs:
-automatedRstoxTest <- function(dir, root=list(windows="\\\\delphi", unix="/Volumes"), path="pc_prog/S2D/stox/StoXAutoTest", copyFromServer=TRUE, process=c("run", "diff"),  diffs=c("Rdata", "images", "text", "baseline"), nlines=-1L){
+automatedRstoxTest <- function(dir, root=list(windows="\\\\delphi", unix="/Volumes"), path="pc_prog/S2D/stox/StoXAutoTest", copyFromServer=TRUE, process=c("run", "diff"),  diffs=c("Rdata", "images", "text", "baseline"), nlines=50){
 #automatedRstoxTest <- function(dir, copyFromServer=TRUE, process=c("run", "diff"),  nlines=-1L, root=list(windows="\\\\delphi", unix="/Volumes"), path="pc_prog/S2D/stox/StoXAutoTest"){
 	
 	# Load image packages:
@@ -872,7 +872,7 @@ automatedRstoxTest <- function(dir, root=list(windows="\\\\delphi", unix="/Volum
 	
 	# Function for running diff between the previous and new output files:
 	# 'files' is a list as returned from the function getFilesByExt(), which uses getMatches() to return the following elements: 'commonFiles', 'commonPaths1', 'commonPaths2', 'onlyInFirst', 'onlyInSecond':
-	diffTextFiles <- function(files, progressFile, diffdir, nlines=-1L){
+	diffTextFiles <- function(files, progressFile, diffdir, nlines=50){
 		
 		diffTextFilesOne <- function(file, dir1, dir2, progressFile, diffdir, nlines){
 			file1 <- setSlashes(file.path(dir1, file), platform = .Platform$OS.type)
@@ -895,12 +895,18 @@ automatedRstoxTest <- function(dir, root=list(windows="\\\\delphi", unix="/Volum
 				## tempdiff <- paste0("\\",tempdiff) ## Espen include
 			
 				# 2018-04-03 Added by Johnsen: Do not redirect the output to a file, but rather use sink() below instead:
-				cmd <- paste(c(
-					"fc", 
-					shQuote(file1, type="cmd2"), 
-					shQuote(file2, type="cmd2")), 
-					collapse=" ")
+				cmd <- paste0(
+					c(
+						"fc /LB",
+						nlines, 
+						" ",
+						shQuote(file1, type="cmd2"), 
+						" ",
+						shQuote(file2, type="cmd2")
+					)
+				)
 				
+				inspect <- cmd
 				
 				#cmd <- paste(c(
 				#	"FC", 
@@ -909,12 +915,37 @@ automatedRstoxTest <- function(dir, root=list(windows="\\\\delphi", unix="/Volum
 				#	paste0(">", shQuote(tempdiff))), collapse=" ")
 			}
 			else if(.Platform$OS.type == "unix"){
-				cmd <- paste(c(
-					"diff", 
-					"-r", 
-					shQuote(file1), 
-					shQuote(file2), 
-					paste0(">", shQuote(tempdiff))), collapse=" ")
+				### cmd <- paste(c(
+				### 	"diff", 
+				### 	#"-r", 
+				### 	shQuote(file1), 
+				### 	shQuote(file2), 
+				### 	#paste0(">", shQuote(tempdiff))), collapse=" "
+				### )
+				cmd <- paste0(
+					c(
+						"diff <(head -n ", 
+						nlines, 
+						" ", 
+						shQuote(file1), 
+						") <(head -n ", 
+						nlines, 
+						" ", 
+						shQuote(file2), 
+						")" 
+					)
+				)
+				
+				inspect <- paste0(
+					c(
+						"diff ", 
+						shQuote(file1), 
+						" ", 
+						shQuote(file2)
+					)
+				)
+				
+				
 			}
 			else{
 				stop("Unknown system. Must be one of UNIX or Windows")
@@ -934,28 +965,78 @@ automatedRstoxTest <- function(dir, root=list(windows="\\\\delphi", unix="/Volum
 			### # -x '*.bmp' -x '*.jpeg' -x '*.png' -x '*.tiff' -x '*.RData'
 			
 			# Read the tempdiff file and append to the progress file:
-			diffinfo <- readLines(tempdiff, n=nlines)
-			if(nlines>0 && length(diffinfo)>1){
-				diffinfo <- c(diffinfo, "...", paste0("(Number of lines differing: ", R.utils::countLines(tempdiff), ")"))
-			}
-			# Add the command used:
-			diffinfo <- c(diffinfo, paste0("Command used to generate diff: ", cmd))
-			
-			ncharDiffInfo <- sum(nchar(diffinfo))
+			#diffinfo <- readLines(tempdiff, n=nlines)
+			diffinfo <- readLines(tempdiff)
+			# Determine whether the tempdiff reported any diffs
+			noDiffUnix <- sum(nchar(diffinfo)) <= 1
 			noDiffWindows <- length(grep("no differences encountered", diffinfo))
-			#write("\n\n********************", file=progressFile, append=TRUE)
 			
 			write("{", file=progressFile, append=TRUE)
-			if(ncharDiffInfo == 0 || noDiffWindows){
+			if(noDiffUnix || noDiffWindows){
 				out <- paste0(c("# (Code 0) No differences in the following text files", file1, "# and", file2), collapse="\n")
 				write(out, progressFile, append=TRUE)
 			}
 			else{
 				out <- paste0(c("# (Code 2) Differences in the following text files", file1, "# and", file2), collapse="\n")
+				out <- c(out, paste0("\t", diffinfo))
+				
+				if(any(c(nlinesFile1, nlinesFile2) > nlines)){
+					out <- c(
+						out, 
+						"\t..."
+						paste0("\tNumber of lines exceeding 'nlines' (", nlines, ") in the files ", file1, " (", nlinesFile1, ") and ", file2, " (", nlinesFile2, ")"), 
+						paste0(
+							"\tInspect changes more closely by the following command in the ", 
+							if(.Platform$OS.type == "windows") " CMD app on Windows, possibly changing the number immediately following fc /LB: " else " Terminal on Mac: ", 
+							inspect
+						)
+					)
+				}
+				
+				
 				write(out, progressFile, append=TRUE)
-				write(paste0("\t", diffinfo), file=progressFile, append=TRUE)
 			}
 			write("}\n", file=progressFile, append=TRUE)
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			#
+			#nlinesFile1 <- R.utils::countLines(file1)
+			#nlinesFile2 <- R.utils::countLines(file2)
+			#if(nlinesFile1 != nlinesFile2){
+			#	diffinfo <- c(
+			#		paste0("# Number of lines differ in files ", file1, " (", nlinesFile1, ") and ", file2, " (", nlinesFile2, ")"), 
+			#		diffinfo)
+			#}
+			#
+			#
+			#if(any(c(nlinesFile1, nlinesFile2) > nlines) && length(diffinfo)>1){
+			#	diffinfo <- c(diffinfo, "...", paste0("(Number of lines differing: ", R.utils::countLines(tempdiff), ")"))
+			#}
+			## Add the command used:
+			#diffinfo <- c(diffinfo, paste0("Command used to generate diff: ", cmd))
+			#
+			##write("\n\n********************", file=progressFile, append=TRUE)
+			#
+			#write("{", file=progressFile, append=TRUE)
+			#if(noDiffUnix || noDiffWindows){
+			#	out <- paste0(c("# (Code 0) No differences in the following text files", file1, "# and", file2), collapse="\n")
+			#	write(out, progressFile, append=TRUE)
+			#}
+			#else{
+			#	out <- paste0(c("# (Code 2) Differences in the following text files", file1, "# and", file2), collapse="\n")
+			#	write(out, progressFile, append=TRUE)
+			#	write(paste0("\t", diffinfo), file=progressFile, append=TRUE)
+			#}
+			#write("}\n", file=progressFile, append=TRUE)
 			
 			if(file.exists(tempdiff)){
 				unlink(tempdiff)

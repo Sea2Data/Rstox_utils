@@ -42,7 +42,7 @@ devtools::install_github("Sea2Data/Rstox", ref="develop")
 ##### Run the projects with Rstox 1.8.1 and diff with Rstox 1.7.2: #####
 source("https://raw.githubusercontent.com/Sea2Data/Rstox_utils/master/Rstox_utils.R")
 
-system.time(automatedRstoxTest(dir=dir, copyFromServer=TRUE, process=c("run", "diff"), nlines=100))
+system.time(automatedRstoxTest(dir=dir, copyFromServer=FALSE, process=c("run", "diff"), nlines=100))
 #     user   system  elapsed 
 # 2044.219  394.894 4639.868 
 
