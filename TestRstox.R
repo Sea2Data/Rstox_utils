@@ -1,5 +1,8 @@
 # Script for automatic testing of Rstox on a selection of test projects. First working version completed on 2018-04-09:
 
+# Load image packages:
+install.packages("png", "jpeg", "tiff", "tools", "R.utils")
+
 
 # Define the path to the directory holding the automated testing:
 dir <- "~/workspace/stox/project/Test projects/Automated_testing"
