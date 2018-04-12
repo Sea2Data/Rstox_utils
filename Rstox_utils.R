@@ -1033,9 +1033,16 @@ automatedRstoxTest <- function(dir, root=list(windows="\\\\delphi", unix="/Volum
 		### readBaselineOutputFiles <- function(x){
 		### 	mget(load(x))$outputData
 		### }
+		browser()
 		
 		dataFromRstox <- unlist(lapply(baselineOutputFiles, function(x) mget(load(x))), recursive=FALSE)
 		dataFromRstox <- lapply(dataFromRstox, "[[", "outputData")
+		# Due to a fundamental problem of interpreting the process name from the baseline and baseline report output csv files (ProcessName_OutputType_Level.txt), where _Level may be missing, and any user introduced "_" in the process names will make the interpretation ambigous, we group the processes according to the first element of the process name after separating by underscore. This is done to allow comparison between Rstox and StoX:
+		dataFromRstox_names <- names(dataFromRstox)
+		dataFromRstox_names <- strsplit(dataFromRstox_names, "_")
+		dataFromRstox_names <- sapply(dataFromRstox_names, head, 1)
+		names(dataFromRstox) <- dataFromRstox_names
+		dataFromRstox_names <- split(dataFromRstox_names, names(dataFromRstox))
 		
 		# Read also the txt-files from baseline and baseline report:
 		baselineDirs <- file.path(dir, "output", "baseline", c("data", "report"))
