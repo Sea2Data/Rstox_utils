@@ -1040,12 +1040,15 @@ automatedRstoxTest <- function(dir, root=list(windows="\\\\delphi", unix="/Volum
 		# Due to a fundamental problem of interpreting the process name from the baseline and baseline report output csv files (ProcessName_OutputType_Level.txt), where _Level may be missing, and any user introduced "_" in the process names will make the interpretation ambigous, we group the processes according to the first element of the process name after separating by underscore. This is done to allow comparison between Rstox and StoX:
 		
 		cropProcessName <- function(x){
-			browser()
+			if(length(x)==0){
+				return(x)
+			}
 			x_names <- names(x)
 			x_names <- strsplit(x_names, "_")
 			x_names <- sapply(x_names, head, 1)
 			#names(x) <- x_names
 			x <- split(x, x_names)
+			x
 			#x <- lapply(x, "[[", 1)
 			#x <- lapply(x, function(y) if(is.list(y) && !is.data.frame(y)) unlist(y, recursive=FALSE) else y)
 		}
