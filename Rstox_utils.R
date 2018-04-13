@@ -877,6 +877,26 @@ automatedRstoxTest <- function(dir, root=list(windows="\\\\delphi", unix="/Volum
 		diffTextFilesOne <- function(file, dir1, dir2, progressFile, diffdir, nlines){
 			file1 <- setSlashes(file.path(dir1, file), platform = .Platform$OS.type)
 			file2 <- setSlashes(file.path(dir2, file), platform = .Platform$OS.type)
+			nlinesFile1 <- R.utils::countLines(file1)
+			nlinesFile2 <- R.utils::countLines(file2)
+			# Write tepmorary files with less lines:
+			tempfile1 <- file.path(tempdir(), "tempfile1")
+			tempfile2 <- file.path(tempdir(), "tempfile2")
+			if(nlinesFile1 > nlines){
+				temp <- readLines(file1, n=nlines)
+				writeLines(temp, tempfile1)
+			}
+			else{
+				tempfile1 <- file1
+			}
+			if(nlinesFile2 > nlines){
+				temp <- readLines(file2, n=nlines)
+				writeLines(temp, tempfile2)
+			}
+			else{
+				tempfile2 <- file2
+			}
+			
 			tempdiff <- file.path(path.expand(diffdir), "tempdiff.txt")
 			
 			# 2018-04-03 Added by Johnsen: New function to be used with sink(). This is the only way of getting output from FC to file on Windows:
@@ -900,13 +920,22 @@ automatedRstoxTest <- function(dir, root=list(windows="\\\\delphi", unix="/Volum
 						"fc /LB",
 						nlines, 
 						" ",
+						shQuote(tempfile1, type="cmd2"), 
+						" ",
+						shQuote(tempfile2, type="cmd2")
+					)
+				)
+				
+				inspect <- paste0(
+					c(
+						"fc /LB",
+						nlines, 
+						" ",
 						shQuote(file1, type="cmd2"), 
 						" ",
 						shQuote(file2, type="cmd2")
 					)
 				)
-				
-				inspect <- cmd
 				
 				#cmd <- paste(c(
 				#	"FC", 
@@ -922,27 +951,33 @@ automatedRstoxTest <- function(dir, root=list(windows="\\\\delphi", unix="/Volum
 				### 	shQuote(file2), 
 				### 	#paste0(">", shQuote(tempdiff))), collapse=" "
 				### )
+				
+				
+				
+				### cmd <- paste0(
+				### 	"diff <(head -n ", 
+				### 	nlines, 
+				### 	" ", 
+				### 	shQuote(tempfile1), 
+				### 	") <(head -n ", 
+				### 	nlines, 
+				### 	" ", 
+				### 	shQuote(tempfile2), 
+				### 	")" 
+				### )
+				
 				cmd <- paste0(
-					c(
-						"diff <(head -n ", 
-						nlines, 
-						" ", 
-						shQuote(file1), 
-						") <(head -n ", 
-						nlines, 
-						" ", 
-						shQuote(file2), 
-						")" 
-					)
+					"diff ", 
+					shQuote(tempfile1), 
+					" ", 
+					shQuote(tempfile2)
 				)
 				
 				inspect <- paste0(
-					c(
-						"diff ", 
-						shQuote(file1), 
-						" ", 
-						shQuote(file2)
-					)
+					"diff ", 
+					shQuote(file1), 
+					" ", 
+					shQuote(file2)
 				)
 				
 				
@@ -950,7 +985,7 @@ automatedRstoxTest <- function(dir, root=list(windows="\\\\delphi", unix="/Volum
 			else{
 				stop("Unknown system. Must be one of UNIX or Windows")
 			}
-	
+			
 			# 2018-04-03 Added by Johnsen: Use sink() to get the output from the diff/fc:
 			#sink(file=tempdiff, append=TRUE) ## Not sure if all messages should go to the same file. Arne Johannes to decide
 			sink(file=tempdiff, append=FALSE) ## Not sure if all messages should go to the same file. Arne Johannes to decide
@@ -984,10 +1019,11 @@ automatedRstoxTest <- function(dir, root=list(windows="\\\\delphi", unix="/Volum
 					out <- c(
 						out, 
 						"\t...", 
-						paste0("\tNumber of lines exceeding 'nlines' (", nlines, ") in the files ", file1, " (", nlinesFile1, ") and ", file2, " (", nlinesFile2, ")"), 
+						paste0("\tNumber of lines exceeding 'nlines' (", nlines, ") in the files ", file1, " (", nlinesFile1, ") and/or ", file2, " (", nlinesFile2, ")"), 
 						paste0(
-							"\tInspect changes more closely by the following command in the ", 
-							if(.Platform$OS.type == "windows") " CMD app on Windows, possibly changing the number immediately following fc /LB: " else " Terminal on Mac: ", 
+							"\tInspect the full diff by the following command in the ", 
+							if(.Platform$OS.type == "windows") " CMD app on Windows, increasing the number immediately following fc /LB (which \"Sets the maximum consecutive mismatches to the specified
+            number of lines\"): " else " Terminal on Mac: ", 
 							inspect
 						)
 					)
