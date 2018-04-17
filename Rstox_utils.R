@@ -900,7 +900,6 @@ automatedRstoxTest <- function(dir, root=list(windows="\\\\delphi", unix="/Volum
 			
 			tempdiff <- file.path(path.expand(diffdir), "tempdiff.txt")
 			
-			browser()
 			# 2018-04-03 Added by Johnsen: New function to be used with sink(). This is the only way of getting output from FC to file on Windows:
 			system1 = function(...) cat(base::system(..., intern = TRUE), sep = "\n")
 			
@@ -985,9 +984,6 @@ automatedRstoxTest <- function(dir, root=list(windows="\\\\delphi", unix="/Volum
 			}
 			
 			
-			browser()
-			print(cmd)
-			print("cmd")
 			
 			# 2018-04-03 Added by Johnsen: Use sink() to get the output from the diff/fc:
 			#sink(file=tempdiff, append=TRUE) ## Not sure if all messages should go to the same file. Arne Johannes to decide
