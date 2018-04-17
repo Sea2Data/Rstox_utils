@@ -986,6 +986,9 @@ automatedRstoxTest <- function(dir, root=list(windows="\\\\delphi", unix="/Volum
 				stop("Unknown system. Must be one of UNIX or Windows")
 			}
 			
+			print(cmd)
+			print("cmd")
+			
 			# 2018-04-03 Added by Johnsen: Use sink() to get the output from the diff/fc:
 			#sink(file=tempdiff, append=TRUE) ## Not sure if all messages should go to the same file. Arne Johannes to decide
 			sink(file=tempdiff, append=FALSE) ## Not sure if all messages should go to the same file. Arne Johannes to decide
@@ -1319,7 +1322,7 @@ automatedRstoxTest <- function(dir, root=list(windows="\\\\delphi", unix="/Volum
 		
 		# Special diff of RData files:
 		if("Rdata" %in% diffs){
-			printHeader("2. Comapring RData files", progressFile)
+			printHeader("2. Comparing RData files", progressFile)
 			write("\n{", file=progressFile, append=TRUE)
 			lapply(allFiles$RDataFiles, RDataDiff, progressFile=progressFile)
 			write("}", file=progressFile, append=TRUE)
@@ -1327,7 +1330,7 @@ automatedRstoxTest <- function(dir, root=list(windows="\\\\delphi", unix="/Volum
 		
 		# Special diff of images:
 		if("images" %in% diffs){
-			printHeader("3. Comapring image files", progressFile)
+			printHeader("3. Comparing image files", progressFile)
 			write("{", file=progressFile, append=TRUE)
 			lapply(allFiles$imageFiles, imDiff, progressFile=progressFile, diffdir=diffdir)
 			write("}", file=progressFile, append=TRUE)
@@ -1335,7 +1338,7 @@ automatedRstoxTest <- function(dir, root=list(windows="\\\\delphi", unix="/Volum
 		
 		# Diff text files:
 		if("text" %in% diffs){
-			printHeader("4. Comapring text files", progressFile)
+			printHeader("4. Comparing text files", progressFile)
 			write("{", file=progressFile, append=TRUE)
 			lapply(allFiles$textFiles, diffTextFiles, progressFile=progressFile, diffdir=diffdir, nlines=nlines)
 			write("}", file=progressFile, append=TRUE)
@@ -1343,7 +1346,7 @@ automatedRstoxTest <- function(dir, root=list(windows="\\\\delphi", unix="/Volum
 		
 		# Diff also the baseline output and the files written by baseline:
 		if("baseline" %in% diffs){
-			printHeader("5. Comapring Rstox and StoX baseline output", progressFile)
+			printHeader("5. Comparing Rstox and StoX baseline output", progressFile)
 			write("{", file=progressFile, append=TRUE)
 			lapply(newOutputList, diffBaseline, progressFile=progressFile)
 			write("}", file=progressFile, append=TRUE)
