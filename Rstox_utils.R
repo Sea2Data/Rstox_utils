@@ -918,25 +918,21 @@ automatedRstoxTest <- function(dir, root=list(windows="\\\\delphi", unix="/Volum
 			
 				# 2018-04-03 Added by Johnsen: Do not redirect the output to a file, but rather use sink() below instead:
 				cmd <- paste0(
-					c(
-						"fc /LB",
-						nlines, 
-						" ",
-						shQuote(tempfile1, type="cmd2"), 
-						" ",
-						shQuote(tempfile2, type="cmd2")
-					)
+					"fc /LB",
+					nlines, 
+					" ",
+					shQuote(tempfile1, type="cmd2"), 
+					" ",
+					shQuote(tempfile2, type="cmd2")
 				)
 				
 				inspect <- paste0(
-					c(
-						"fc /LB",
-						nlines, 
-						" ",
-						shQuote(file1, type="cmd2"), 
-						" ",
-						shQuote(file2, type="cmd2")
-					)
+					"fc /LB",
+					nlines, 
+					" ",
+					shQuote(file1, type="cmd2"), 
+					" ",
+					shQuote(file2, type="cmd2")
 				)
 				
 				#cmd <- paste(c(
