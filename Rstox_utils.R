@@ -899,6 +899,7 @@ automatedRstoxTest <- function(dir, root=list(windows="\\\\delphi", unix="/Volum
 			
 			tempdiff <- file.path(path.expand(diffdir), "tempdiff.txt")
 			
+			browser()
 			# 2018-04-03 Added by Johnsen: New function to be used with sink(). This is the only way of getting output from FC to file on Windows:
 			system1 = function(...) cat(base::system(..., intern = TRUE), sep = "\n")
 			
@@ -986,6 +987,8 @@ automatedRstoxTest <- function(dir, root=list(windows="\\\\delphi", unix="/Volum
 				stop("Unknown system. Must be one of UNIX or Windows")
 			}
 			
+			
+			browser()
 			print(cmd)
 			print("cmd")
 			
