@@ -287,6 +287,7 @@ buildRstox <- function(buildDir, pkgName="Rstox", version="1.0", Rversion="3.3.1
 # Load Rstox:
 library(Rstox)
 
+print(123)
 
 getPlatformID <- function(var="release"){
 	paste(.Platform$OS.type, var, paste(strsplit(Sys.info()[var], " ", fixed=TRUE)[[1]], collapse="_"), sep="_")
