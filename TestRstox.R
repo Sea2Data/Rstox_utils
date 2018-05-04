@@ -21,6 +21,8 @@ dir <- "~/workspace/stox/project/Test projects/Automated_testing"
 
 ###### Install Rstox_1.8: #####
 install.packages("ftp://ftp.imr.no/StoX/Download/Rstox/Rstox_1.8.tar.gz", repos=NULL)
+# Load Rstox:
+library(Rstox)
 
 ###### Run the projects with Rstox 1.8 and diff with Rstox 1.7.2: #####
 source("https://raw.githubusercontent.com/Sea2Data/Rstox_utils/master/Rstox_utils.R")
@@ -38,6 +40,8 @@ system.time(automatedRstoxTest(dir=dir, copyFromServer=TRUE, process=c("run", "d
 
 ##### Install the latest develop version of Rstox: #####
 devtools::install_github("Sea2Data/Rstox", ref="develop")
+# Load Rstox:
+library(Rstox)
 
 ##### Run the projects with Rstox 1.8.1 and diff with Rstox 1.7.2: #####
 source("https://raw.githubusercontent.com/Sea2Data/Rstox_utils/master/Rstox_utils.R")

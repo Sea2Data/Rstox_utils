@@ -4,7 +4,9 @@ Procedure for building Rstox releases. Alpha and beta versions are named by thre
 0. Make changes to the source code.
 
 
-1. Make note of all changes in the NEWS file in the Rstox repository. Use one line per change and separate changes by one or more lines. Separate changes of different versions by lines such as "########## Version 1.7.1 (2017-12-01) ##########". For beta versions, copy all changes from the preceding alpha versions.
+1. Make note of all changes in the NEWS file in the Rstox repository. Use one line per change and separate changes by one or more lines. Separate changes of different versions by lines such as "########## Version 1.7.1 (2017-12-01) ##########". 
+
+!!! For beta versions, copy all changes from the preceding alpha versions. !!!
 
 Change also the line "# go to ftp://ftp.imr.no/StoX/Download/Rstox/Examples/Rstox-example_1.8.R." in the documentation of getNMDdata() to the path of the current example file.
 	
@@ -114,7 +116,7 @@ Change also the line "# go to ftp://ftp.imr.no/StoX/Download/Rstox/Examples/Rsto
 
 9. Put the release on the ftp server:
 
-	8-alpha. Put the alpha release on the ftp server:
+	9-alpha. Put the alpha release on the ftp server:
 	
 		- Create a new folder in ftp://ftp.imr.no/StoX/Download/Rstox/Versions/Alpha/ named by the alpha release, e.g., "Rstox_1.7.2". 
 	
@@ -122,7 +124,7 @@ Change also the line "# go to ftp://ftp.imr.no/StoX/Download/Rstox/Examples/Rsto
 	
 		- Unzip the tar.gz file, and copy the README tile to the folder.
 
-	8-beta. Put the beta release on the ftp server:
+	9-beta. Put the beta release on the ftp server:
 	
 		- Create a new folder in ftp://ftp.imr.no/StoX/Download/Rstox/Versions/ named by the previous beta release, e.g., "Rstox_1.7". 
 	
@@ -141,8 +143,8 @@ Change also the line "# go to ftp://ftp.imr.no/StoX/Download/Rstox/Examples/Rsto
 	
 	- Run step 6-beta.
 	
-	- Rerun step 7.
+	- Rerun step 7 and 8.
 	
-	- Run step 8-beta.
+	- Run step 9-beta.
 
 

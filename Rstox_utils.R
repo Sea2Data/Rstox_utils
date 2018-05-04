@@ -79,7 +79,7 @@ buildRstox <- function(buildDir, pkgName="Rstox", version="1.0", Rversion="3.3.1
 		# Write release notes:
 		write("", READMEfile, append=TRUE)
 		write("", READMEfile, append=TRUE)
-		write("# Release notes:", READMEfile, append=TRUE)
+		write(paste0("# Release notes Rstox_", version, ":"), READMEfile, append=TRUE)
 	
 		# Read the changes:
 		l <- readLines(NEWSfile)
@@ -101,6 +101,17 @@ buildRstox <- function(buildDir, pkgName="Rstox", version="1.0", Rversion="3.3.1
 		hasText <- which(nchar(thisl)>1)
 		thisl[hasText] <- paste0("# ", seq_along(hasText), ". ", thisl[hasText])
 		write(thisl, READMEfile, append=TRUE)
+		
+		if(official){
+			NEWSlink <- "https://github.com/Sea2Data/Rstox/blob/master/NEWS"
+		}
+		else{
+			NEWSlink <- "https://github.com/Sea2Data/Rstox/blob/alpha/NEWS"
+		}
+		
+		write("", READMEfile, append=TRUE)
+		write(paste0("# For historical release notes see ", NEWSlink), READMEfile, append=TRUE)
+	
 	}
 	
 	# Functions used for extracting the imports in Rstox, in order to inform about these in the README file. This will not be needed once the package is on CRAN:
@@ -283,9 +294,6 @@ buildRstox <- function(buildDir, pkgName="Rstox", version="1.0", Rversion="3.3.1
 	##########
 }
 
-
-# Load Rstox:
-library(Rstox)
 
 
 getPlatformID <- function(var="release"){
@@ -587,14 +595,18 @@ automatedRstoxTest <- function(dir, root=list(windows="\\\\delphi", unix="/Volum
 		
 		# Run the baseline and baseline report (the latter with input=NULL):
 		# The parameter 'modelType', enabling reading Baseline Report, was introduced in 1.8.1:
+		# 2018-04-19 Added saveProject() since we wish to pick up changes in the project.xml files:
 		if(RstoxVersion$Rstox > "1.8"){
 			write(paste0(now(TRUE), "Running Baseline and Baseline Report"), progressFile, append=TRUE)
 			baselineOutput <- getBaseline(projectName, exportCSV=TRUE, modelType="baseline", input=NULL, drop=FALSE)
+			saveProject(projectName)
 			baselineReportOutput <- getBaseline(projectName, exportCSV=TRUE, modelType="report", input=NULL, drop=FALSE)
+			saveProject(projectName)
 		}
 		else{
 			write(paste0(now(TRUE), "Running Baseline"), progressFile, append=TRUE)
 			baselineOutput <- getBaseline(projectName, exportCSV=TRUE, input=NULL, drop=FALSE)
+			saveProject(projectName)
 		}
 		
 		
@@ -611,6 +623,7 @@ automatedRstoxTest <- function(dir, root=list(windows="\\\\delphi", unix="/Volum
 		closeProject(projectName)
 		
 		# Copy output files to the output directory:
+		unlink(outputDir, recursive=TRUE, force=TRUE)
 		suppressWarnings(dir.create(outputDir, recursive=TRUE))
 		output <- file.path(projectName, "output")
 		file.copy(output, outputDir, recursive=TRUE)
@@ -1303,6 +1316,7 @@ automatedRstoxTest <- function(dir, root=list(windows="\\\\delphi", unix="/Volum
 		#diffdir <- path.expand(file.path(dir, "Diff", paste("Diff", basename(newOutput), basename(latestOutput), sep="_")))
 		diffdir <- path.expand(file.path(dirList$Diff, paste(basename(newOutput), basename(latestOutput), sep="_")))
 		setSlashes(diffdir)
+		unlink(diffdir, recursive=TRUE, force=TRUE)
 		suppressWarnings(dir.create(diffdir))
 		
 		# Get all files common and different between the old and new run, separated into file types RData, image and text:

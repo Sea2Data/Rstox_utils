@@ -47,6 +47,18 @@ source(file.path(dir_Rstox_utils, "Rstox_utils.R"))
 # Build 1.8.1:
 #buildRstox(dir_Rstox, version="1.8.1", Rversion="3.4.3", pckversion=list(data.table="1.10.4-3"), official=FALSE, check=FALSE)
 
-buildRstox(dir_Rstox, version="1.8.1", Rversion="3.4.3", pckversion=list(data.table="1.10.4-3"), official=FALSE, suggests=c("ggmap", "ncdf4", "pgirmess"), check=FALSE)
+#buildRstox(dir_Rstox, version="1.8.1", Rversion="3.4.3", pckversion=list(data.table="1.10.4-3"), official=FALSE, suggests=c("ggmap", "ncdf4", "pgirmess"), check=FALSE)
+
+# Build 1.9:
+# buildRstox(dir_Rstox, version="1.9", Rversion="3.4.3", pckversion=list(data.table="1.10.4-3"), official=TRUE, suggests=c("ggmap", "ncdf4", "pgirmess"), check=FALSE)
+
+
+# Build 1.9.1:
+
+buildRstox(dir_Rstox, version="1.9.1", Rversion="3.4.3", pckversion=list(data.table="1.10.4-3"), official=FALSE, suggests=c("ggmap", "ncdf4", "pgirmess"), check=FALSE)
+
+
+
+
 
 
