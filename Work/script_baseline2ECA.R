@@ -296,160 +296,12 @@ getLandings <- function(eca, ecaParameters){
 	return(landings)
 }
 
-# Function for converting to the input format required by ECA (this is the main function):
-getAgeLengthBiotic_old <- function(eca, ecaParameters){
-	
-	### 1. DataMatrix: ###
-	getnames <- c("age", "yearday", "length", "serialno", "samplenumber", "catchcount", if(ecaParameters$use_otolithtype) "otolithtype")
-	usenames <- c("age", "realage", "lengthCM", "samplingID", "partnumber", "partcount", if(ecaParameters$use_otolithtype) "otolithtype")
-	
-	DataMatrix <- getVar(eca$biotic, getnames)
-	names(DataMatrix) <- usenames
-
-	# Estimate the real age by use of the hatchDaySlashMonth:
-	numDaysOfYear <- 365
-	DataMatrix$realage <- DataMatrix$age + (DataMatrix$realage - getMidSeason(ecaParameters$hatchDaySlashMonth)) / numDaysOfYear
-	
-	
-	### 2. CovariateMatrix: ###
-	# Ad first the samplingID to the object eca$covariateMatrixBiotic:
-	CovariateMatrix <- eca$covariateMatrixBiotic
-	# Add samplingID, which will be removed at the end:
-	CovariateMatrix$samplingID <- DataMatrix$samplingID
-	# Add boat and haul size:
-	if(ecaParameters$includeHaulcount){
-		# Aggregate the catchcount for all values of samplenumber:
-		haulcount <- by(eca$biotic, eca$biotic$serialno, function(x) sum(by(x$catchcount, x$samplenumber, head, 1)))
-		CovariateMatrix$haulcount <- haulcount[match(eca$biotic$serialno, names(haulcount))]
-	}
-	if(ecaParameters$includeBoat){
-		CovariateMatrix$boat <- eca$biotic$platform
-	}
-	CovariateMatrix <- CovariateMatrix[!duplicated(CovariateMatrix$samplingID),]
-
-	# Add the first column, which is only of zeros:
-	CovariateMatrix <- cbind(constant=1, CovariateMatrix)
-
-	# Convert to 1, 2, 3, and implement an automatic function for this later:
-	DataMatrix$samplingID <- match(DataMatrix$samplingID, CovariateMatrix$samplingID)
-	CovariateMatrix$samplingID <- NULL
-	
-	### 4. info: ###
-	ncov <- length(names(CovariateMatrix))
-	infonames <- c("random", "CAR", "continuous", "in.landings", "nlev", "interaction", "in.slopeModel")
-	ninfo <- length(infonames)
-	info <- array(0L, dim=c(ncov, ninfo))
-	#info <- info + seq_along(info)
-	colnames(info) <- infonames
-	rownames(info) <- names(CovariateMatrix)
-
-	# 4.1. random: 
-	info[eca$resources$covariateInfo$name, "random"] <- eca$resources$covariateInfo$covType=="Random"
-
-	# 4.2. CAR:
-	#carneighbours <- makeNeighbourLists(eca)
-	# Make sure the neighbours are ordered according to the 1:n values in the covariateLink:
-	ind <- match(as.numeric(names(eca$stratumNeighbour)), eca$resources$covariateLink$spatial[,2])
-	if (!all(sort(ind)==ind)){
-	  stop("covariate values are ordered differently in stratumneighbour and covariatelink spatial")
-	}
-	names(eca$stratumNeighbour) <- eca$resources$covariateLink$spatial[ind,1]
-	numNeighbours <- unlist(lapply(eca$stratumNeighbour, length), use.names = F)
-	idNeighbours <- unlist(eca$stratumNeighbour, use.names=F)
-	idNeighbours <- eca$resources$covariateLink$spatial[match(idNeighbours, eca$resources$covariateLink$spatial[, 2]), 1]
-	carneighbours <- list(numNeighbours=numNeighbours, idNeighbours=idNeighbours)
-	
-	info[eca$resources$covariateInfo$name, "CAR"] <- eca$resources$covariateInfo$CAR
-
-	# 4.3. continuous:
-	if(length(ecaParameters$continuous)){
-		info[names(ecaParameters$continuous), "continuous"] <- unlist(ecaParameters$continuous)
-	}
-
-	# 4.4. in.landings:
-	info[rownames(info), "in.landings"] <- as.integer(rownames(info) %in% names(eca$landingAggregated))
-	info["constant", "in.landings"] <- 1
-
-	# 4.5. interaction:
-	if(length(ecaParameters$interaction)){
-		info[names(ecaParameters$interaction), "interaction"] <- unlist(ecaParameters$interaction)
-	}
-
-	# 4.6. include.slope:
-	if(length(ecaParameters$in.slopeModel)){
-		info[names(ecaParameters$in.slopeModel), "in.slopeModel"] <- unlist(ecaParameters$in.slopeModel)
-	}
-	
-	info <- getHardCoded(info)
-	# 4.7. nlev:
-	info[rownames(info), "nlev"] <- apply(CovariateMatrix, 2, function(x) max(x))
-	# Continuous covariates should have only one level:
-	info[info[, "continuous"]==1, "nlev"] <- 1
-	
-	# random covariates should have levels equal to max of landing and max of observations (not sure if the latter is necessary
-	if (sum(info[, "random"]==1 & info[, "in.landings"]==1)>0){
-		for (n in rownames(info)){
-			if (info[n, "random"]==1 & info[n, "in.landings"]==1){
-				info[n,"nlev"] <- max(eca$landingAggregated[[n]], CovariateMatrix[[n]])				
-			}
-		}
-	}
-
-
-	### 5. parameters: ###
-		
-	# Group the parameters into a list:
-	parameters <- list()
-		
-	### Return a list of the data: ###
-	agelength <- list(DataMatrix=DataMatrix, CovariateMatrix=CovariateMatrix, CARNeighbours=carneighbours, AgeErrorMatrix=eca$ageError, info=info, parameters=parameters, resources=eca$resources)
-	if (ecaParameters$use_otolithtype){
-		agelength$ClassificationErrorVector=eca$otholiterror
-	}
-	return(agelength)
-}
-# Generate also the weight-length list:
-AgeLength2WeightLength_old <- function(AgeLength, eca){
-	# Declare the output:
-	WeightLength <- AgeLength
-	# Remove the ages:
-	toBeRemoved <- c("age", "realage")
-	for(var in toBeRemoved){
-		WeightLength$DataMatrix[[var]] <- NULL
-	}
-	
-	# Add the weight:
-	# Hard code the weight to KG, since it is in grams in StoX:
-	weightunit <- 1e-3
-	WeightLength$DataMatrix <- cbind(weightKG=eca$biotic$weight * weightunit, WeightLength$DataMatrix)
-	
-	# Remove missing ind weight
-	WeightLength$DataMatrix <- WeightLength$DataMatrix[!is.na(WeightLength$DataMatrix$weightKG),]
-	
-	##### WHY WAS THIS PUT IN???? REMOVING COVARIATES SEEMS LIKE SOMETHING THAT SHOULD HAPPEN AT AN EARLIER STAGE #####
-	# Detect columns of all zeros in the covariate matrix, and remove these columns along with the correponding columns in the meta vectors:
-	collapsed <- apply(WeightLength$CovariateMatrix, 2, function(x) all(x==0))
-	if(any(collapsed)){
-		# Remove from CovariateMatrix:
-		WeightLength$CovariateMatrix <- WeightLength$CovariateMatrix[, !collapsed, drop=FALSE]
-		# Remove from meta vectors$:
-		WeightLength$info <- WeightLength$info[!collapsed, , drop=FALSE]
-	}
-	
-	# Return the WeightLength data:
-	WeightLength$AgeErrorMatrix <- NULL
-	
-	WeightLength
-}
-
-
 
 #################################################################################################################################
 ########## New functions as of 2018-05-07 (extracting DataMatrix separately for LengthGivenAge and WeightGivenLength): ##########
 #################################################################################################################################
-
 # Funciton for extracting the DataMatrix for the given variable ("age" or "weight", length is requested in both):
-getDataMatrix <- function(eca, var="age", ecaParameters){
+getDataMatrixANDCovariateMatrix <- function(eca, var="age", ecaParameters){
 	
 	# Define variables to include in the DataMatrix, where the variable specified in the input 'var' is included:
 	getnames <- c("yearday", "length", "serialno", "samplenumber", "catchcount", if(ecaParameters$use_otolithtype) "otolithtype")
@@ -461,12 +313,7 @@ getDataMatrix <- function(eca, var="age", ecaParameters){
 	DataMatrix <- getVar(eca$biotic, getnames)
 	names(DataMatrix) <- usenames
 
-	return(DataMatrix)
-}
-
-# Funciton for extracting the CovariateMatrix given the DataMatrix:
-getCovariateMatrix <- function(eca, DataMatrix, ecaParameters){
-	# Ad first the samplingID to the object eca$covariateMatrixBiotic:
+	# Add first the samplingID to the object eca$covariateMatrixBiotic:
 	CovariateMatrix <- eca$covariateMatrixBiotic
 	# Add samplingID, which will be removed at the end:
 	CovariateMatrix$samplingID <- DataMatrix$samplingID
@@ -476,34 +323,36 @@ getCovariateMatrix <- function(eca, DataMatrix, ecaParameters){
 		haulcount <- by(eca$biotic, eca$biotic$serialno, function(x) sum(by(x$catchcount, x$samplenumber, head, 1)))
 		CovariateMatrix$haulcount <- haulcount[match(eca$biotic$serialno, names(haulcount))]
 	}
+	
+	# 2018-05-08: Maybe move this to StoX and defining it as the other covariates.
 	if(ecaParameters$includeBoat){
 		CovariateMatrix$boat <- eca$biotic$platform
 	}
 	CovariateMatrix <- CovariateMatrix[!duplicated(CovariateMatrix$samplingID),]
 
-	# Add the first column, which is only of zeros:
+	# Add the first column, which is only of ones:
 	CovariateMatrix <- cbind(constant=1, CovariateMatrix)
 
 	# Convert to 1, 2, 3, and implement an automatic function for this later:
 	DataMatrix$samplingID <- match(DataMatrix$samplingID, CovariateMatrix$samplingID)
 	CovariateMatrix$samplingID <- NULL
 	
-	return(CovariateMatrix)
+	return(list(DataMatrix=DataMatrix, CovariateMatrix=CovariateMatrix))
 }
 
-# Funciton for extracting the CARNeighbours and Info:
+# Funciton for extracting the CARNeighbours and info:
 getInfo<- function(eca, CovariateMatrix, ecaParameters){
-	### 3. Info: ###
+	### 3. info: ###
 	ncov <- length(names(CovariateMatrix))
 	Infonames <- c("random", "CAR", "continuous", "in.landings", "nlev", "interaction", "in.slopeModel")
 	nInfo <- length(Infonames)
-	Info <- array(0L, dim=c(ncov, nInfo))
-	#Info <- Info + seq_along(Info)
-	colnames(Info) <- Infonames
-	rownames(Info) <- names(CovariateMatrix)
+	info <- array(0L, dim=c(ncov, nInfo))
+	#info <- info + seq_along(info)
+	colnames(info) <- Infonames
+	rownames(info) <- names(CovariateMatrix)
 	
 	# 3.1. random: 
-	Info[eca$resources$covariateInfo$name, "random"] <- eca$resources$covariateInfo$covType=="Random"
+	info[eca$resources$covariateInfo$name, "random"] <- eca$resources$covariateInfo$covType=="Random"
 
 	# 3.2. CAR:
 	# Make sure the neighbours are ordered according to the 1:n values in the covariateLink:
@@ -517,45 +366,45 @@ getInfo<- function(eca, CovariateMatrix, ecaParameters){
 	idNeighbours <- eca$resources$covariateLink$spatial[match(idNeighbours, eca$resources$covariateLink$spatial[, 2]), 1]
 	CARNeighbours <- list(numNeighbours=numNeighbours, idNeighbours=idNeighbours)
 	
-	Info[eca$resources$covariateInfo$name, "CAR"] <- eca$resources$covariateInfo$CAR
+	info[eca$resources$covariateInfo$name, "CAR"] <- eca$resources$covariateInfo$CAR
 
 	# 3.3. continuous:
 	if(length(ecaParameters$continuous)){
-		Info[names(ecaParameters$continuous), "continuous"] <- unlist(ecaParameters$continuous)
+		info[names(ecaParameters$continuous), "continuous"] <- unlist(ecaParameters$continuous)
 	}
 
 	# 3.4. in.landings:
-	Info[rownames(Info), "in.landings"] <- as.integer(rownames(Info) %in% names(eca$landingAggregated))
-	Info["constant", "in.landings"] <- 1
+	info[rownames(info), "in.landings"] <- as.integer(rownames(info) %in% names(eca$landingAggregated))
+	info["constant", "in.landings"] <- 1
 
 	# 3.5. interaction:
 	if(length(ecaParameters$interaction)){
-		Info[names(ecaParameters$interaction), "interaction"] <- unlist(ecaParameters$interaction)
+		info[names(ecaParameters$interaction), "interaction"] <- unlist(ecaParameters$interaction)
 	}
 
 	# 3.6. include.slope:
 	if(length(ecaParameters$in.slopeModel)){
-		Info[names(ecaParameters$in.slopeModel), "in.slopeModel"] <- unlist(ecaParameters$in.slopeModel)
+		info[names(ecaParameters$in.slopeModel), "in.slopeModel"] <- unlist(ecaParameters$in.slopeModel)
 	}
 	
-	Info <- getHardCoded(Info)
+	info <- getHardCoded(info)
 	# 3.7. nlev:
-	Info[rownames(Info), "nlev"] <- apply(CovariateMatrix, 2, function(x) max(x))
+	info[rownames(info), "nlev"] <- apply(CovariateMatrix, 2, function(x) max(x))
 	# Continuous covariates should have only one level:
-	Info[Info[, "continuous"]==1, "nlev"] <- 1
+	info[info[, "continuous"]==1, "nlev"] <- 1
 	
 	# random covariates should have levels equal to max of landing and max of observations (not sure if the latter is necessary
-	if (sum(Info[, "random"]==1 & Info[, "in.landings"]==1)>0){
-		for (n in rownames(Info)){
-			if (Info[n, "random"]==1 & Info[n, "in.landings"]==1){
-				Info[n,"nlev"] <- max(eca$landingAggregated[[n]], CovariateMatrix[[n]])				
+	if (sum(info[, "random"]==1 & info[, "in.landings"]==1)>0){
+		for (n in rownames(info)){
+			if (info[n, "random"]==1 & info[n, "in.landings"]==1){
+				info[n,"nlev"] <- max(eca$landingAggregated[[n]], CovariateMatrix[[n]])				
 			}
 		}
 	}
 	
 	return(
 		list(
-			Info = Info, 
+			info = info, 
 			CARNeighbours = CARNeighbours
 		)
 	)
@@ -572,25 +421,31 @@ getLengthGivenAge_Biotic <- function(eca, ecaParameters){
 	eca$covariateMatrixBiotic <- eca$covariateMatrixBiotic[valid, , drop=FALSE]
 	
 	### 1. DataMatrix: ###
-	DataMatrix <- getDataMatrix(eca, var=var, ecaParameters)
+	temp <- getDataMatrixANDCovariateMatrix(eca, var=var, ecaParameters)
+	DataMatrix <- temp$DataMatrix
+	CovariateMatrix <- temp$CovariateMatrix
+	
+	
+	#DataMatrix <- getDataMatrix(eca, var=var, ecaParameters)
 	
 	# Estimate the real age by use of the hatchDaySlashMonth:
 	numDaysOfYear <- 365
 	DataMatrix$realage <- DataMatrix$age + (DataMatrix$realage - getMidSeason(ecaParameters$hatchDaySlashMonth)) / numDaysOfYear
 	
 	### 2. CovariateMatrix: ###
-	CovariateMatrix <- getCovariateMatrix(eca, DataMatrix, ecaParameters)
+	#CovariateMatrix <- getCovariateMatrix(eca, DataMatrix, ecaParameters)
 	
-	### 3. Info: ### 
-	Info <- getInfo(eca, CovariateMatrix, ecaParameters)
+	### 3. info: ### 
+	info <- getInfo(eca, CovariateMatrix, ecaParameters)
+	
 	
 	### Return a list of the data: ###
 	out <- list(
 		DataMatrix = DataMatrix, 
 		CovariateMatrix = CovariateMatrix, 
-		CARNeighbours = Info$CARNeighbours, 
+		CARNeighbours = info$CARNeighbours, 
 		AgeErrorMatrix = eca$ageError, 
-		info = Info$info, 
+		info = info$info, 
 		resources = eca$resources
 	)
 	if (ecaParameters$use_otolithtype){
@@ -610,24 +465,29 @@ getWeightGivenLength_Biotic <- function(eca, ecaParameters){
 	eca$covariateMatrixBiotic <- eca$covariateMatrixBiotic[valid, , drop=FALSE]
 	
 	### 1. DataMatrix: ###
-	DataMatrix <- getDataMatrix(eca, var=var, ecaParameters)
+	temp <- getDataMatrixANDCovariateMatrix(eca, var=var, ecaParameters)
+	DataMatrix <- temp$DataMatrix
+	CovariateMatrix <- temp$CovariateMatrix
+	
+	
+	#DataMatrix <- getDataMatrix(eca, var=var, ecaParameters)
 	# Hard code the weight to KG, since it is in grams in StoX:
 	weightunit <- 1e-3
 	DataMatrix <- cbind(weightKG=eca$biotic$weight * weightunit, DataMatrix)
 	
 	### 2. CovariateMatrix: ###
-	CovariateMatrix <- getCovariateMatrix(eca, DataMatrix, ecaParameters)
+	#CovariateMatrix <- getCovariateMatrix(eca, DataMatrix, ecaParameters)
 	
-	### 3. Info: ### 
-	Info <- getInfo(eca, CovariateMatrix, ecaParameters)
+	### 3. info: ### 
+	info <- getInfo(eca, CovariateMatrix, ecaParameters)
 	
 	### Return a list of the data: ###
 	out <- list(
 		DataMatrix = DataMatrix, 
 		CovariateMatrix = CovariateMatrix, 
-		CARNeighbours = Info$CARNeighbours, 
+		CARNeighbours = info$CARNeighbours, 
 		#AgeErrorMatrix = eca$ageError, # This is not needed for WeightGivenLength
-		info = Info$info, 
+		info = info$info, 
 		resources = eca$resources
 	)
 	if (ecaParameters$use_otolithtype){
