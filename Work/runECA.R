@@ -1,17 +1,19 @@
 library(eca)
 inpath <- "/Users/a5362/code/github/Rstox_utils/Work/output"
-tmppath <- "/Users/a5362/code/github/Rstox_utils/Work/tmp/ECAres"
+tmppath <- "/Users/a5362/code/github/Rstox_utils/Work/tmp"
 dir <- "/Users/a5362/code/github/Rstox_utils/Work"
 filename <- "ECA_sild_2015.RData"
 tmp <- load(file.path(inpath, filename))
 print(paste("Loaded from", filename, ":", tmp))
 
+setwd(tmppath)
+
 ## Add extra information in GlobalParameters
 GlobalParameters$maxlength <- max(AgeLength$DataMatrix$lengthCM,na.rm=T)
 GlobalParameters$caa.burnin <- 0
-GlobalParameters$resultdir <- tmppath
-GlobalParameters$fitfile <- "fit"
-GlobalParameters$predictfile <- "predict"
+GlobalParameters$resultdir <- "ECAres"
+GlobalParameters$fitfile <- "ff"
+GlobalParameters$predictfile <- "pp"
 GlobalParameters$minage <- 1
 GlobalParameters$maxage <- 20
 GlobalParameters$delta.age <- 0.001
@@ -23,7 +25,7 @@ GlobalParameters$seed <- 1234
 
 
 ## Select covariates - not use haulweight and boat now
-col <- c(1,2,3,4)
+col <- c(1,2,4)
 newAgeLength <- AgeLength
 warning("Fix part.year")
 newAgeLength$DataMatrix$part.year <- newAgeLength$DataMatrix$realage - newAgeLength$DataMatrix$age
@@ -35,12 +37,16 @@ newWeightLength$CovariateMatrix <- WeightLength$CovariateMatrix[,col]
 newWeightLength$info <- WeightLength$info[col,]
 
 
+newLandings <- Landings
+newLandings$AgeLengthCov$midseason<-newLandings$AgeLengthCov$midseason/365
+newLandings$WeightLengthCov$midseason<-newLandings$WeightLengthCov$midseason/365
+
 ## Estimate model
-fit <- eca.estimate(newAgeLength,newWeightLength,Landings,GlobalParameters)
+fit <- eca.estimate(newAgeLength,newWeightLength,newLandings,GlobalParameters)
 
 ## Predict
 ## Install new library
-pred <- eca.predict(newAgeLength,newWeightLength,Landings,GlobalParameters)
+pred <- eca.predict(newAgeLength,newWeightLength,newLandings,GlobalParameters)
 
 source(file.path(dir, "plot.R"))
 plot_pred_box(pred)
