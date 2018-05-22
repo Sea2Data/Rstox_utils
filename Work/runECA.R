@@ -36,10 +36,19 @@ newWeightLength <- WeightLength
 newWeightLength$CovariateMatrix <- WeightLength$CovariateMatrix[,col]
 newWeightLength$info <- WeightLength$info[col,]
 
-
+warning("Fix midseason")
 newLandings <- Landings
 newLandings$AgeLengthCov$midseason<-newLandings$AgeLengthCov$midseason/365
 newLandings$WeightLengthCov$midseason<-newLandings$WeightLengthCov$midseason/365
+
+#experiment to check gearfactor
+#newAgeLength$info["gearfactor", "nlev"]<-2
+#newWeightLength$info["gearfactor", "nlev"]<-2
+#f <- newLandings$AgeLengthCov$gearfactor>2 | newLandings$WeightLengthCov$gearfactor>2
+#newLandings$AgeLengthCov <- newLandings$AgeLengthCov[!f,]
+#newLandings$WeightLengthCov <- newLandings$WeightLengthCov[!f,]
+#newLandings$LiveWeightKG <- newLandings$LiveWeightKG[!f]
+
 
 ## Estimate model
 fit <- eca.estimate(newAgeLength,newWeightLength,newLandings,GlobalParameters)
