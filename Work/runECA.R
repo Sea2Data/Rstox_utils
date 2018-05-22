@@ -25,6 +25,8 @@ GlobalParameters$seed <- 1234
 ## Select covariates - not use haulweight and boat now
 col <- c(1,2,3,4)
 newAgeLength <- AgeLength
+warning("Fix part.year")
+newAgeLength$DataMatrix$part.year <- newAgeLength$DataMatrix$realage - newAgeLength$DataMatrix$age
 newAgeLength$CovariateMatrix <- AgeLength$CovariateMatrix[,col]
 newAgeLength$info <- AgeLength$info[col,]
 

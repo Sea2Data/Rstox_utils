@@ -1,11 +1,11 @@
 library(Rstox)
 options(java.parameters="-Xmx6g")
 # Edvin:
-#dir <- "/Users/a5362/code/github/Rstox_utils/Work"
-#outpath <- "/Users/a5362/code/github/Rstox_utils/Work/output"
+dir <- "/Users/a5362/code/github/Rstox_utils/Work"
+outpath <- "/Users/a5362/code/github/Rstox_utils/Work/output"
 # Arne Johannes:
-dir <- "~/Documents/Produktivt/Prosjekt/R-packages/Rstox_utils/Rstox_utils/Work"
-outpath <- "~/Documents/Produktivt/Prosjekt/R-packages/Rstox_utils/output"
+#dir <- "~/Documents/Produktivt/Prosjekt/R-packages/Rstox_utils/Rstox_utils/Work"
+#outpath <- "~/Documents/Produktivt/Prosjekt/R-packages/Rstox_utils/output"
 #sildeprosjekt: /delphi/Felles/alle/stox/ECA/2015/ECA_sild_2015. Legg til sild == '161724' i filter (annen kode for sild'g03)
 
 #projectname <- "ECA_torsk_2015"
@@ -131,11 +131,23 @@ check_data_matrix <- function(modelobj){
   #if ("otolithtype" %in% names(modelobj$DataMatrix)){
   #  check_none_missing(modelobj$DataMatrix, c("otolithtype"))
   #}
-  warning("implement check for partno. For any value, alle lower positive integers should be present for same sampleID")
+  
+  #check partnumber
+  pn_lt_one <- modelobj$DataMatrix[modelobj$DataMatrix$partnumber>1,]
+  if (nrow(pn_lt_one)>0){
+    partns <- unique(pn_lt_one$partnumber)
+    for (n in partns){
+      sid_l <- modelobj$DataMatrix[modelobj$DataMatrix$partnumber==(n-1),]
+      sid_e <- modelobj$DataMatrix[modelobj$DataMatrix$partnumber==n,]
+      if (!all(sid_e$samplingID %in% sid_l$samplingID)){
+        stop("Partnumber larger than one given without corresponding samplingID for partnumber-1.")    
+      }
+    }
+  }
   warning("Clarify need for otolithtype check with NR. rECA currently not behaving consistnently with documentation")
   lastsample <- max(modelobj$DataMatrix$samplingID)
   if (!lastsample==nrow(modelobj$CovariateMatrix)){
-    stop("sampling ids does not equals the number of rows in covariate matrix")
+    stop("sampling ids does not equal the number of rows in covariate matrix")
   }
   
 }
@@ -431,6 +443,7 @@ getLengthGivenAge_Biotic <- function(eca, ecaParameters){
 	# Estimate the real age by use of the hatchDaySlashMonth:
 	numDaysOfYear <- 365
 	DataMatrix$realage <- DataMatrix$age + (DataMatrix$realage - getMidSeason(ecaParameters$hatchDaySlashMonth)) / numDaysOfYear
+	DataMatrix$realage
 	
 	### 2. CovariateMatrix: ###
 	#CovariateMatrix <- getCovariateMatrix(eca, DataMatrix, ecaParameters)
