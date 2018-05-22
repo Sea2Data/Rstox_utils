@@ -131,19 +131,7 @@ check_data_matrix <- function(modelobj){
   #if ("otolithtype" %in% names(modelobj$DataMatrix)){
   #  check_none_missing(modelobj$DataMatrix, c("otolithtype"))
   #}
-  
-  #check partnumber
-  pn_lt_one <- modelobj$DataMatrix[modelobj$DataMatrix$partnumber>1,]
-  if (nrow(pn_lt_one)>0){
-    partns <- unique(pn_lt_one$partnumber)
-    for (n in partns){
-      sid_l <- modelobj$DataMatrix[modelobj$DataMatrix$partnumber==(n-1),]
-      sid_e <- modelobj$DataMatrix[modelobj$DataMatrix$partnumber==n,]
-      if (!all(sid_e$samplingID %in% sid_l$samplingID)){
-        stop("Partnumber larger than one given without corresponding samplingID for partnumber-1.")    
-      }
-    }
-  }
+
   warning("Clarify need for otolithtype check with NR. rECA currently not behaving consistnently with documentation")
   lastsample <- max(modelobj$DataMatrix$samplingID)
   if (!lastsample==nrow(modelobj$CovariateMatrix)){
