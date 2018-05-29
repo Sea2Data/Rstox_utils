@@ -8,8 +8,8 @@ outpath <- "/Users/a5362/code/github/Rstox_utils/Work/output"
 #outpath <- "~/Documents/Produktivt/Prosjekt/R-packages/Rstox_utils/output"
 #sildeprosjekt: /delphi/Felles/alle/stox/ECA/2015/ECA_sild_2015. Legg til sild == '161724' i filter (annen kode for sild'g03)
 
-#projectname <- "ECA_torsk_2015"
-projectname <- "ECA_sild_2015"
+projectname <- "ECA_torsk_2015"
+#projectname <- "ECA_sild_2015"
 baselineOutput <- getBaseline(projectname)
 eca <- baseline2eca(projectname)
 
@@ -120,7 +120,7 @@ check_cov_vs_info <- function(modelobj){
     if (modelobj$info[co,"CAR"]==1 & (max(modelobj$CARNeighbours$idNeighbours)>modelobj$info[co,"nlev"] | max(modelobj$CARNeighbours$idNeighbours)<1)){
       stop(paste("Neigbour matrix not consistent with nlev for CAR vairable", co))
     }
-    if (modelobj$info[co,"CAR"]==1 & (any(modelobj$CARNeighbours$numNeighbours<1) | length(modelobj$CARNeighbours$numNeighbours) < modelobj$info[co,"nlev"])){
+    if (modelobj$info[co,"CAR"]==1 & length(modelobj$CARNeighbours$numNeighbours) < modelobj$info[co,"nlev"]){
       stop(paste("CAR variable specified as", co, "but some areas are missing neighbours"))
     }
     if (modelobj$info[co,"CAR"]==1 & sum(modelobj$CARNeighbours$numNeighbours) != length(modelobj$CARNeighbours$idNeighbours)){
@@ -254,7 +254,6 @@ getMidSeason <- function(x, tz="UTC", format="%d/%m/%Y"){
   yearday <- x$yday
   # Trick to get one day for "01/01-02/01"
   yearday[1] <- yearday[1] + 1
-  yearday <- getYearDay(x, tz, format)
   mean(yearday)
 }
 
