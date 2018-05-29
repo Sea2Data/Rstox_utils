@@ -25,21 +25,14 @@ GlobalParameters$seed <- 1234
 
 
 ## Select covariates - not use haulweight and boat now
-col <- c(1,2,4)
+col <- c(1,2,3,4)
 newAgeLength <- AgeLength
-warning("Fix part.year")
-newAgeLength$DataMatrix$part.year <- newAgeLength$DataMatrix$realage - newAgeLength$DataMatrix$age
 newAgeLength$CovariateMatrix <- AgeLength$CovariateMatrix[,col]
 newAgeLength$info <- AgeLength$info[col,]
 
 newWeightLength <- WeightLength
 newWeightLength$CovariateMatrix <- WeightLength$CovariateMatrix[,col]
 newWeightLength$info <- WeightLength$info[col,]
-
-warning("Fix midseason")
-newLandings <- Landings
-newLandings$AgeLengthCov$midseason<-newLandings$AgeLengthCov$midseason/365
-newLandings$WeightLengthCov$midseason<-newLandings$WeightLengthCov$midseason/365
 
 #experiment to check gearfactor
 #newAgeLength$info["gearfactor", "nlev"]<-2
@@ -51,11 +44,11 @@ newLandings$WeightLengthCov$midseason<-newLandings$WeightLengthCov$midseason/365
 
 
 ## Estimate model
-fit <- eca.estimate(newAgeLength,newWeightLength,newLandings,GlobalParameters)
+fit <- eca.estimate(newAgeLength,newWeightLength,Landings,GlobalParameters)
 
 ## Predict
 ## Install new library
-pred <- eca.predict(newAgeLength,newWeightLength,newLandings,GlobalParameters)
+pred <- eca.predict(newAgeLength,newWeightLength,Landings,GlobalParameters)
 
 source(file.path(dir, "plot.R"))
 plot_pred_box(pred)

@@ -146,7 +146,7 @@ check_covariates <- function(modelobject){
 
 #checks that agelenght is configured correctly
 checkAgeLength<-function(agelength, num_tolerance = 1e-10){
-	check_columns_present(agelength$DataMatrix, c("age", "realage", "lengthCM", "samplingID", "partnumber", "partcount"))
+	check_columns_present(agelength$DataMatrix, c("age", "realage", "part.year", "lengthCM", "samplingID", "partnumber", "partcount"))
 	check_none_missing(agelength$DataMatrix, c("lengthCM", "samplingID", "partnumber", "partcount"))
 	check_data_matrix(agelength)
 	check_covariates(agelength)
@@ -189,6 +189,14 @@ checkCovariateConsistency <- function(modelobj, landingscov){
   }
   
 }
+
+#checks formatting on landing cov-matrices
+check_landings_cov <- function(cov){
+  if (!all(cov$midseason>0 & cov$midseason<=1)){
+    stop("midseason must be in <0,1]")
+  }
+}
+
 #checks that landings are specified correctly
 checkLandings <- function(landings){
   if (nrow(landings$AgeLengthCov) != nrow(landings$WeightLengthCov)){
@@ -197,7 +205,10 @@ checkLandings <- function(landings){
   if (nrow(landings$AgeLengthCov) != length(landings$LiveWeightKG)){
     stop("length of weight vector does not match number of rows in covariate matrices in landings.")
   }
+  check_landings_cov(landings$AgeLengthCov)
+  check_landings_cov(landings$WeightLengthCov)
 }
+
 checkGlobalParameters <- function(globalparameters){
   if (is.na(globalparameters$lengthresCM)){
     stop("Length resolution not set (lengthresCM)")
@@ -236,14 +247,14 @@ getHardCoded <- function(info){
 	return(info)
 }
 
-# Function extracting the mid of a season. Use this in sapply():
 getMidSeason <- function(x, tz="UTC", format="%d/%m/%Y"){
-	x <- as.Date(strsplit(x, "-")[[1]], "%d/%m")
-	x <- as.POSIXlt(x, tz=tz, format=format)
-	yearday <- x$yday
-	# Trick to get one day for "01/01-02/01"
-	yearday[1] <- yearday[1] + 1
-	mean(yearday)
+  x <- as.Date(strsplit(x, "-")[[1]], "%d/%m")
+  x <- as.POSIXlt(x, tz=tz, format=format)
+  yearday <- x$yday
+  # Trick to get one day for "01/01-02/01"
+  yearday[1] <- yearday[1] + 1
+  yearday <- getYearDay(x, tz, format)
+  mean(yearday)
 }
 
 # Function used for extracting the correct covariate value from the inidces used in the covariate matrix passed to ECA:
@@ -284,8 +295,10 @@ getGlobalParameters <- function (eca, ecaParameters){
 getLandings <- function(eca, ecaParameters){
 	
 	### landingAggregated: ###
+  numDaysOfYear <- 365
 	landingAggregated <- cbind(constant=1, eca$landingAggregated, midseason=sapply(getCovariateValue(eca$landingAggregated$season, eca, cov="season", type="landing"), getMidSeason))
-	
+	landingAggregated$midseason <- landingAggregated$midseason / numDaysOfYear
+	  
 	weight <- landingAggregated$rundvekt
 	landingAggregated$rundvekt <- NULL
 	landingAgeLength <- landingAggregated
@@ -432,6 +445,7 @@ getLengthGivenAge_Biotic <- function(eca, ecaParameters){
 	numDaysOfYear <- 365
 	DataMatrix$realage <- DataMatrix$age + (DataMatrix$realage - getMidSeason(ecaParameters$hatchDaySlashMonth)) / numDaysOfYear
 	DataMatrix$realage
+	DataMatrix$part.year <- DataMatrix$realage - DataMatrix$age
 	
 	### 2. CovariateMatrix: ###
 	#CovariateMatrix <- getCovariateMatrix(eca, DataMatrix, ecaParameters)
