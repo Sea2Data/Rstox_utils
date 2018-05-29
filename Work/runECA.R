@@ -38,23 +38,22 @@ newWeightLength$info <- WeightLength$info[col,]
 fit <- eca.estimate(newAgeLength,newWeightLength,Landings,GlobalParameters)
 
 ## Predict
-## Install new library
 pred <- eca.predict(newAgeLength,newWeightLength,Landings,GlobalParameters)
 
 source(file.path(dir, "plot.R"))
 plot_pred_box(pred)
 
 season_plot_test <- function(){
-  #funker kun for s=1, hør med Hanne
   par(mfrow=c(2,2))
   for (s in unique(Landings$AgeLengthCov$season)){
     print(paste0("Q", s))
     valuename <- AgeLength$resources$covariateLink$season$Covariate[AgeLength$resources$covariateLink$season$Numeric==s]
     sl <- Landings
     keep_alc <- sl$AgeLengthCov$season==s
-    sl$WeightLengthCov <- sl$AgeLengthCov[keep_alc,]
-    sl$AgeLengthCov <- sl$WeightLengthCov[keep_alc,]
+    sl$AgeLengthCov <- sl$AgeLengthCov[keep_alc,]
+    sl$WeightLengthCov <- sl$WeightLengthCov[keep_alc,]
     sl$LiveWeightKG <- sl$LiveWeightKG[keep_alc]
+    print(sl)
     GlobalParameters$predictfile <- paste("predict",s,sep="_")
     predsl <- eca.predict(newAgeLength,newWeightLength,sl,GlobalParameters)  
     plot_pred_box(predsl, valuename)
