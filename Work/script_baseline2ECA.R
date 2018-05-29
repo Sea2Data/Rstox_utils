@@ -120,19 +120,20 @@ check_cov_vs_info <- function(modelobj){
     if (modelobj$info[co,"CAR"]==1 & (max(modelobj$CARNeighbours$idNeighbours)>modelobj$info[co,"nlev"] | max(modelobj$CARNeighbours$idNeighbours)<1)){
       stop(paste("Neigbour matrix not consistent with nlev for CAR vairable", co))
     }
-    if (modelobj$info[co,"CAR"]==1 & (any(modelobj$CARNeighbours$numNeighbours<1))){#unsure about this one | length(modelobj$CARNeighbours$numNeighbours) < modelobj$info[co,"nlev"])){
+    if (modelobj$info[co,"CAR"]==1 & (any(modelobj$CARNeighbours$numNeighbours<1) | length(modelobj$CARNeighbours$numNeighbours) < modelobj$info[co,"nlev"])){
       stop(paste("CAR variable specified as", co, "but some areas are missing neighbours"))
     }
+    if (modelobj$info[co,"CAR"]==1 & sum(modelobj$CARNeighbours$numNeighbours) != length(modelobj$CARNeighbours$idNeighbours)){
+      stop(paste("CAR variable specified as", co, "numNeigbours is not consistent with idNeigbours"))
+    }
   }
-  warning("Add test on CAR to ensure that sufficient data is present.")
-  warning("Add test on CAR to ensure that all areas are represented.")
 }
 check_data_matrix <- function(modelobj){
   #if ("otolithtype" %in% names(modelobj$DataMatrix)){
   #  check_none_missing(modelobj$DataMatrix, c("otolithtype"))
   #}
 
-  warning("Clarify need for otolithtype check with NR. rECA currently not behaving consistnently with documentation")
+  warning("Clarify need for otolithtype check with NR. rECA currently not behaving consistnently with documentation. OK to run caa-analysis with all otolithtypes NA, but crashes if column is missing")
   lastsample <- max(modelobj$DataMatrix$samplingID)
   if (!lastsample==nrow(modelobj$CovariateMatrix)){
     stop("sampling ids does not equal the number of rows in covariate matrix")
