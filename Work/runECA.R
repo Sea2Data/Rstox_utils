@@ -11,7 +11,7 @@ setwd(tmppath)
 ## Add extra information in GlobalParameters
 GlobalParameters$maxlength <- max(AgeLength$DataMatrix$lengthCM,na.rm=T)
 GlobalParameters$caa.burnin <- 0
-GlobalParameters$resultdir <- "ECAres"
+GlobalParameters$resultdir <- "ECAres" #Note, must be relative path
 GlobalParameters$fitfile <- "ff"
 GlobalParameters$predictfile <- "pp"
 GlobalParameters$minage <- 1
