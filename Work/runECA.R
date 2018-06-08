@@ -1,7 +1,10 @@
 library(eca)
-inpath <- "/Users/a5362/code/github/Rstox_utils/Work/output"
-tmppath <- "/Users/a5362/code/github/Rstox_utils/Work/tmp/ECAres"
-dir <- "/Users/a5362/code/github/Rstox_utils/Work"
+#inpath <- "/Users/a5362/code/github/Rstox_utils/Work/output"
+#tmppath <- "/Users/a5362/code/github/Rstox_utils/Work/tmp/ECAres"
+#dir <- "/Users/a5362/code/github/Rstox_utils/Work"
+dir <- "~/Documents/Produktivt/Prosjekt/R-packages/Rstox_utils/Rstox_utils/Work"
+inpath <- file.path(dir, "output")
+tmppath <- file.path(dir, "tmp", "ECAres")
 filename <- "ECA_sild_2015.RData"
 tmp <- load(file.path(inpath, filename))
 print(paste("Loaded from", filename, ":", tmp))

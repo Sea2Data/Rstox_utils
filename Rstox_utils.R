@@ -200,8 +200,10 @@ buildRstox <- function(buildDir, pkgName="Rstox", version="1.0", Rversion="3.3.1
 		"		NMD_data_types = c(\"echosounder\", \"biotic\", \"landing\"), ",
 		"		StoX_data_types = c(\"acoustic\", \"biotic\", \"landing\"), ",
 		"		StoX_data_type_keys = c(acoustic=\"echosounder_dataset\", biotic=\"missions xmlns\", landing=\"Sluttseddel\"), ",
-		"		model_types = c(\"AcousticTrawl\", \"SweptAreaLength\", \"SweptAreaTotal\"), ",
-		"		processLevels = c(\"bootstrap\", \"bootstrapImpute\")",
+		"		project_types = c(\"AcousticTrawl\", \"SweptAreaLength\", \"SweptAreaTotal\"), ",
+		"		processLevels = c(\"bootstrap\", \"bootstrapImpute\"), ",
+		"		modelTypeJavaNames = c(\"baseline\", \"baseline-report\", \"r\", \"r-report\", \"name\"), ",
+		"		modelTypeJavaFuns = c(\"getBaseline\", \"getBaselineReport\", \"getRModel\", \"getRModelReport\", \"getProjectName\")",
 		"		)",
 		"	assign(\"Definitions\", Definitions, envir=get(\"RstoxEnv\"))",
 		"	assign(\"Projects\", list(), envir=get(\"RstoxEnv\"))",
@@ -213,7 +215,7 @@ buildRstox <- function(buildDir, pkgName="Rstox", version="1.0", Rversion="3.3.1
 	onAttachText = paste(
 		".onAttach <- function(libname, pkgname){",
 		"	",
-		paste0("	packageStartupMessage(\"", pkgName, "_", version, "\n**********\nIf problems with Java Memory such as java.lang.OutOfMemoryError occurs, try increasing the Java memory by running setJavaMemory(4e9), and possibly using an even higher value than 4 gigabytes\n**********\n\", appendLF=FALSE)"),
+		paste0("	packageStartupMessage(\"", pkgName, "_", version, "\n**********\nIf problems with Java Memory such as java.lang.OutOfMemoryError occurs, try increasing the Java memory by running setJavaMemory(4e9), and possibly using an even higher value than 4 gigabytes (but not as large as the total system memory)\n**********\n\", appendLF=FALSE)"),
 	"}", sep="\n")
 	write(onAttachText, onAttachFile)
 	##########
