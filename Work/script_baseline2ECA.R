@@ -1,15 +1,15 @@
 library(Rstox)
 options(java.parameters="-Xmx6g")
 # Edvin:
-#dir <- "/Users/a5362/code/github/Rstox_utils/Work"
-#outpath <- "/Users/a5362/code/github/Rstox_utils/Work/output"
+dir <- "/Users/a5362/code/github/Rstox_utils/Work"
+outpath <- "/Users/a5362/code/github/Rstox_utils/Work/output"
 # Arne Johannes:
-dir <- "~/Documents/Produktivt/Prosjekt/R-packages/Rstox_utils/Rstox_utils/Work"
-outpath <- "~/Documents/Produktivt/Prosjekt/R-packages/Rstox_utils/output"
+#dir <- "~/Documents/Produktivt/Prosjekt/R-packages/Rstox_utils/Rstox_utils/Work"
+#outpath <- "~/Documents/Produktivt/Prosjekt/R-packages/Rstox_utils/output"
 #sildeprosjekt: /delphi/Felles/alle/stox/ECA/2015/ECA_sild_2015. Legg til sild == '161724' i filter (annen kode for sild'g03)
 
-#projectname <- "ECA_torsk_2015"
-projectname <- "ECA_sild_2015"
+projectname <- "ECA_torsk_2015"
+#projectname <- "ECA_sild_2015"
 baselineOutput <- getBaseline(projectname)
 eca <- baseline2eca(projectname)
 
@@ -120,22 +120,23 @@ check_cov_vs_info <- function(modelobj){
     if (modelobj$info[co,"CAR"]==1 & (max(modelobj$CARNeighbours$idNeighbours)>modelobj$info[co,"nlev"] | max(modelobj$CARNeighbours$idNeighbours)<1)){
       stop(paste("Neigbour matrix not consistent with nlev for CAR vairable", co))
     }
-    if (modelobj$info[co,"CAR"]==1 & (any(modelobj$CARNeighbours$numNeighbours<1))){#unsure about this one | length(modelobj$CARNeighbours$numNeighbours) < modelobj$info[co,"nlev"])){
-      stop(paste("CAR variable specified as", co, "but some areas are missing neighbours"))
+    if (modelobj$info[co,"CAR"]==1 & (any(modelobj$CARNeighbours$numNeighbours<1) | length(modelobj$CARNeighbours$numNeighbours) < modelobj$info[co,"nlev"])){
+      stop(paste("CAR variable specified as", co, "but some areas are missing neighbours in the data."))
+    }
+    if (modelobj$info[co,"CAR"]==1 & sum(modelobj$CARNeighbours$numNeighbours) != length(modelobj$CARNeighbours$idNeighbours)){
+      stop(paste("CAR variable specified as", co, "numNeigbours is not consistent with idNeigbours"))
     }
   }
-  warning("Add test on CAR to ensure that sufficient data is present.")
-  warning("Add test on CAR to ensure that all areas are represented.")
 }
 check_data_matrix <- function(modelobj){
   #if ("otolithtype" %in% names(modelobj$DataMatrix)){
   #  check_none_missing(modelobj$DataMatrix, c("otolithtype"))
   #}
-  warning("implement check for partno. For any value, alle lower positive integers should be present for same sampleID")
-  warning("Clarify need for otolithtype check with NR. rECA currently not behaving consistnently with documentation")
+
+  warning("Clarify need for otolithtype check with NR. rECA currently not behaving consistnently with documentation. OK to run caa-analysis with all otolithtypes NA, but crashes if column is missing")
   lastsample <- max(modelobj$DataMatrix$samplingID)
   if (!lastsample==nrow(modelobj$CovariateMatrix)){
-    stop("sampling ids does not equals the number of rows in covariate matrix")
+    stop("sampling ids does not equal the number of rows in covariate matrix")
   }
   
 }
@@ -146,7 +147,7 @@ check_covariates <- function(modelobject){
 
 #checks that agelenght is configured correctly
 checkAgeLength<-function(agelength, num_tolerance = 1e-10){
-	check_columns_present(agelength$DataMatrix, c("age", "realage", "lengthCM", "samplingID", "partnumber", "partcount"))
+	check_columns_present(agelength$DataMatrix, c("age", "realage", "part.year", "lengthCM", "samplingID", "partnumber", "partcount"))
 	check_none_missing(agelength$DataMatrix, c("lengthCM", "samplingID", "partnumber", "partcount"))
 	check_data_matrix(agelength)
 	check_covariates(agelength)
@@ -189,6 +190,14 @@ checkCovariateConsistency <- function(modelobj, landingscov){
   }
   
 }
+
+#checks formatting on landing cov-matrices
+check_landings_cov <- function(cov){
+  if (!all(cov$midseason>0 & cov$midseason<=1)){
+    stop("midseason must be in <0,1]")
+  }
+}
+
 #checks that landings are specified correctly
 checkLandings <- function(landings){
   if (nrow(landings$AgeLengthCov) != nrow(landings$WeightLengthCov)){
@@ -197,7 +206,10 @@ checkLandings <- function(landings){
   if (nrow(landings$AgeLengthCov) != length(landings$LiveWeightKG)){
     stop("length of weight vector does not match number of rows in covariate matrices in landings.")
   }
+  check_landings_cov(landings$AgeLengthCov)
+  check_landings_cov(landings$WeightLengthCov)
 }
+
 checkGlobalParameters <- function(globalparameters){
   if (is.na(globalparameters$lengthresCM)){
     stop("Length resolution not set (lengthresCM)")
@@ -236,14 +248,13 @@ getHardCoded <- function(info){
 	return(info)
 }
 
-# Function extracting the mid of a season. Use this in sapply():
 getMidSeason <- function(x, tz="UTC", format="%d/%m/%Y"){
-	x <- as.Date(strsplit(x, "-")[[1]], "%d/%m")
-	x <- as.POSIXlt(x, tz=tz, format=format)
-	yearday <- x$yday
-	# Trick to get one day for "01/01-02/01"
-	yearday[1] <- yearday[1] + 1
-	mean(yearday)
+  x <- as.Date(strsplit(x, "-")[[1]], "%d/%m")
+  x <- as.POSIXlt(x, tz=tz, format=format)
+  yearday <- x$yday
+  # Trick to get one day for "01/01-02/01"
+  yearday[1] <- yearday[1] + 1
+  mean(yearday)
 }
 
 # Function used for extracting the correct covariate value from the inidces used in the covariate matrix passed to ECA:
@@ -284,8 +295,10 @@ getGlobalParameters <- function (eca, ecaParameters){
 getLandings <- function(eca, ecaParameters){
 	
 	### landingAggregated: ###
+  numDaysOfYear <- 365
 	landingAggregated <- cbind(constant=1, eca$landingAggregated, midseason=sapply(getCovariateValue(eca$landingAggregated$season, eca, cov="season", type="landing"), getMidSeason))
-	
+	landingAggregated$midseason <- landingAggregated$midseason / numDaysOfYear
+	  
 	weight <- landingAggregated$rundvekt
 	landingAggregated$rundvekt <- NULL
 	landingAgeLength <- landingAggregated
@@ -431,6 +444,8 @@ getLengthGivenAge_Biotic <- function(eca, ecaParameters){
 	# Estimate the real age by use of the hatchDaySlashMonth:
 	numDaysOfYear <- 365
 	DataMatrix$realage <- DataMatrix$age + (DataMatrix$realage - getMidSeason(ecaParameters$hatchDaySlashMonth)) / numDaysOfYear
+	DataMatrix$realage
+	DataMatrix$part.year <- DataMatrix$realage - DataMatrix$age
 	
 	### 2. CovariateMatrix: ###
 	#CovariateMatrix <- getCovariateMatrix(eca, DataMatrix, ecaParameters)
