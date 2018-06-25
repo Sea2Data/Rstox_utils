@@ -210,6 +210,7 @@ plot_measurement_comp <- function(catchsample, individual){
 # Funksjoner for Landings
 #
 
+# artssammensetning, produkttyper for manglende rundvekter, kvotetyper, nasjonskoder, manglende regmerker
 
 #
 # Test-eksempler
