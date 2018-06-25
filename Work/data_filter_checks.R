@@ -1,6 +1,64 @@
 library(Rstox)
 default_blankcode="<>"
 
+#
+# Diverse plot for å vise prøveheterogenitet og enkle feilsjekker som bør håndteres med datafiltrering, datakorreksjon eller datakonvertering.
+#
+
+#
+# Funksjoner for biotic
+#
+
+#' Composition of length measurements for samples
+#' @param catchsample
+#' @param title title for plot
+#' @param xlab label for x axis
+#' @param blankcode code for NA / not registered
+#' @param cex.names expansion factor for bar labels
+plot_length_measurements <- function(catchsample, title="lengdemål", xlab="# fangstprøver", blankcode=default_blankcode, cex.names=0.8){
+  tt <- as.character(catchsample$lengthmeasurement)
+  tt[is.na(tt)]<-""
+  tt <- table(tt)
+  tt <- sort(tt, decreasing=T)
+  
+  labels <- getNMDinfo("Lengthmeasurementtype")
+  labels <- labels[labels$name %in% names(tt),c("name", "description")]
+  labels <- labels[match(labels$name, names(tt)),]
+  
+  names(tt)[names(tt)==""] <- blankcode
+  labels[labels$name=="","name"] <- blankcode
+  
+  barplot(tt, xlab=xlab, names=paste(labels$description, " (", names(tt), ")", sep=""), horiz = T, las=1, main=title, cex.names = cex.names)
+}
+
+#' Composition of product types samples
+plot_product_types <- function(catchsample, title="produkttyper", xlab="# fangstprøver", blankcode=default_blankcode, cex.names=0.8){
+  tt <- as.character(catchsample$samplemeasurement)
+  tt[is.na(tt)]<-""
+  tt <- table(tt)
+  tt <- sort(tt, decreasing=T)
+  
+  labels <- getNMDinfo("Vektmetode")
+  labels <- labels[labels$name %in% names(tt),c("name", "description")]
+  labels <- labels[match(labels$name, names(tt)),]
+  
+  names(tt)[names(tt)==""] <- blankcode
+  labels[labels$name=="","name"] <- blankcode
+  
+  barplot(tt, xlab=xlab, names=paste(labels$description, " (", names(tt), ")", sep=""), horiz = T, las=1, main=title, cex.names = cex.names)
+}
+
+#' Weight length relations in the data set
+plot_age_length <- function(individual, xlab="alder", ylab="lengde", title="Alle individer"){
+  plot(individual$age, individual$length, xlab=xlab, ylab=ylab, main=title)
+}
+
+#' Age length relations in the data set
+plot_weight_length <- function(individual, xlab="vekt", ylab="lengde", title="Alle individer"){
+  plot(individual$weight, individual$length, xlab=xlab, ylab=ylab, main=title)
+}
+
+
 #' Composition of sample types (Fangstnivå: prøvetype) in data
 #' @param catchsample
 #' @param title title for plot
@@ -134,6 +192,24 @@ plot_sample_comp <- function(station, catchsample){
   par(old.par)
 }
 
+plot_measurement_comp <- function(catchsample, individual){
+  old.par <- par(no.readonly = T)
+  par(mfrow=c(2,2))
+  par(mar=c(5.1,7,4.1,2.1))
+  plot_product_types(catchsample)
+  par(mar=c(5.1,14,4.1,2.1))
+  plot_length_measurements(catchsample)
+  par(mar=c(5.1, 4.1,4.1,2.1))
+  plot_weight_length(individual)
+  par(mar=c(5.1,4.1,4.1,2.1))
+  plot_age_length(individual)
+  par(old.par)
+}
+
+#
+# Funksjoner for Landings
+#
+
 
 #
 # Test-eksempler
@@ -158,7 +234,9 @@ runbl <- function(){
 ex <- function(baselineOutput){
   stations <- baselineOutput$outputData$FilterBiotic$FilterBiotic_BioticData_FishStation.txt
   catchsample <- baselineOutput$outputData$FilterBiotic$FilterBiotic_BioticData_CatchSample.txt
-  plot_sample_comp(stations, catchsample)  
+  individual <- baselineOutput$outputData$FilterBiotic$FilterBiotic_BioticData_Individual.txt
+  plot_sample_comp(stations, catchsample) 
+  plot_measurement_comp(catchsample, individual)
 }
 baselineOutput <- runbl()
 ex(baselineOutput)
