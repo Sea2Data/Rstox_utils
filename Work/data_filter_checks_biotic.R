@@ -1,12 +1,10 @@
 library(Rstox)
+library(MASS)
+library(RColorBrewer)
 default_blankcode="<>"
 
 #
 # Diverse plot for å vise prøveheterogenitet og enkle feilsjekker som bør håndteres med datafiltrering, datakorreksjon eller datakonvertering.
-#
-
-#
-# Funksjoner for biotic
 #
 
 #' Composition of length measurements for samples
@@ -250,7 +248,7 @@ plot_sample_comp <- function(catchsample, individual){
   par(mar=c(5.1,14,4.1,2.1))
   plot_length_measurements(catchsample, xlab="# fangstprøver m/ind")
   par(mar=c(5.1, 4.1,4.1,2.1))
-  plot_weight_length(individual, title="Alle ind. 1% ekstr, obs", alpha=0.01, density=T)
+  plot_weight_length(individual, title="Alle ind. 1% ekstr. obs", alpha=0.01, density=T)
   par(old.par)
 }
 
@@ -267,12 +265,6 @@ plot_measurement_comp <- function(station, catchsample, individual){
   plot_station_types(station)
   par(old.par)
 }
-
-#
-# Funksjoner for Landings
-#
-
-# artssammensetning, produkttyper for manglende rundvekter, kvotetyper, nasjonskoder fartøy, nasjonskoder landet
 
 #
 # Test-eksempler
@@ -301,5 +293,5 @@ ex <- function(baselineOutput){
   plot_measurement_comp(station, catchsample, individual)
   plot_sample_comp(catchsample, individual) 
 }
-#baselineOutput <- runbl()
+baselineOutput <- runbl()
 ex(baselineOutput)
