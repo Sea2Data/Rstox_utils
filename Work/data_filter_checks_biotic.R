@@ -76,7 +76,6 @@ plot_individuals <- function(catchsample, individual, has_a_name="alder", has_i_
 
 #' Weight length relations in the data set
 plot_age_length <- function(individual, xlab="alder", ylab="lengde", title="Alle individer"){
-  
   plot(individual$age, individual$length, xlab=xlab, ylab=ylab, main=title, pch=".")
 }
 
@@ -88,7 +87,7 @@ plot_age_length <- function(individual, xlab="alder", ylab="lengde", title="Alle
 #' @param density logical: if T, data points will be overlayed with density plot for densest 1-alpha fraction
 #' @param alpha see density
 plot_weight_length <- function(individual, xlab="vekt", ylab="lengde", title="Alle individer", density=T, alpha=0.01){
-  plot(individual$weight, individual$length, xlab=xlab, ylab=ylab, main=title, pch=".")
+  plot(individual$weight, individual$length, xlab=xlab, ylab=ylab, main=title, pch=4)
   
   if (density){
     m<-kde2d(individual$weight, individual$length, n=100)
