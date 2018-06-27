@@ -126,6 +126,19 @@ plot_quoata <- function(seddel, xlab="# sluttsedler", title="Kvotetyper", quota_
   legend("topright", fill=c(quota_normal, quota_special), legend=c(quota_normal_name, quota_special_name))
 }
 
+plot_overwiew <- function(fisk, seddel){
+  par.old <- par(no.readonly = T)
+  par(mfrow=c(2,2))
+  plot_speccat(fisk)
+  plot_fart_land(seddel)
+  plot_mottak_land(seddel)
+  plot_ecozone(seddel)
+  plot_gear(seddel)
+  plot_quoata(seddel)
+  plot_missing(fisk)
+  par(par.old)
+}
+
 #
 # Test-eksempler
 #
@@ -144,19 +157,6 @@ runbl <- function(){
   projectname <- "ECA_sild_2015"
   return(getBaseline(projectname))
   
-}
-
-plot_overwiew <- function(fisk, seddel){
-  par.old <- par(no.readonly = T)
-  par(mfrow=c(2,2))
-  plot_speccat(fisk)
-  plot_fart_land(seddel)
-  plot_mottak_land(seddel)
-  plot_ecozone(seddel)
-  plot_gear(seddel)
-  plot_quoata(seddel)
-  plot_missing(fisk)
-  par(par.old)
 }
 
 ex <- function(baselineOutput){
