@@ -71,12 +71,13 @@ plot_gear_season_area <- function(eca, titletext="Prøvetaking redskap/sesong - 
   plot.new()
   grid.table(descr, theme=t1, cols=colnames(landed), rows=rownames(landed))
   title(titletext)
+  dev.flush()
   return(descr)
 }
 
 plot_cell_landings <- function(eca, xlab="Redskap/sesong/område", ylab="landet (kt)", titletext="Landinger", legendtitle="aldersprøver", colgood="green4", colok="green2", colbarely="yellow", colbad="orange", colempty="gray", colwrong="white", gooddesc="> 1 fartøy", okdesc="> 1 fangst", barelydesc="> 0 fangst", baddesc="0 prøver"){
   
-  m <- get_g_s_a_frame(eca)
+  mm <- get_g_s_a_frame(eca)
   mm<-mm[order(mm$landed_kt, decreasing = T),]
   mm$col <- NA
 
@@ -87,16 +88,16 @@ plot_cell_landings <- function(eca, xlab="Redskap/sesong/område", ylab="landet 
   mm[mm$landed_kt>0 &  mm$vessels ==1 & mm$hauls>1,"col"]<-colok
   mm[mm$landed_kt>0 &  mm$vessels >1 &  mm$hauls>1,"col"]<-colgood
   
-  barplot(mm$landed_kt, col=mm$col, xlab=xlab, ylab=ylab, main=titletext)
+  barplot(mm$landed_kt, col=mm$col, xlab=xlab, ylab=ylab, main=titletext, border = NA)
   legend("topright", legend=c(gooddesc, okdesc, barelydesc, baddesc), fill=c(colgood, colok, colbarely, colbad), title = legendtitle)
 }
 
 plot_cell_coverage <- function(eca, xlab="prøvetaking i celle", ylab="Andel landet i celle (vekt-%)", titletext="Dekning aldersdata celler\n(redskap/sesong/område)", colgood="green4", colok="green2", colbarely="yellow", colbad="orange", colempty="gray", colwrong="white", gooddesc="> 1 fartøy", okdesc="> 1 fangst", barelydesc="> 0 fangst", baddesc="0 prøver"){
   
-  m <- get_g_s_a_frame(eca)
+  mm <- get_g_s_a_frame(eca)
   mm<-mm[order(mm$landed_kt, decreasing = T),]
   mm$col <- NA
-  m$desc <- NA
+  mm$desc <- NA
 
   mm[mm$landed_kt==0 & mm$vessels >0,"col"]<-colwrong
   mm[mm$landed_kt==0 & mm$vessels >0,"descr"]<-""
@@ -111,7 +112,7 @@ plot_cell_coverage <- function(eca, xlab="prøvetaking i celle", ylab="Andel lan
   mm[mm$landed_kt>0 &  mm$vessels >1 &  mm$hauls>1,"col"]<-colgood
   mm[mm$landed_kt>0 &  mm$vessels >1 &  mm$hauls>1,"descr"]<-gooddesc
     
-  tot <- aggregate(list(landed_fr=mm$landed_fr), by=list(samples=mm$col, desc=mm$desc), FUN=sum)
+  tot <- aggregate(list(landed_fr=mm$landed_fr), by=list(samples=mm$col, desc=mm$descr), FUN=sum)
   tot <- tot[order(tot$landed_fr, decreasing=T),]
   
   barplot(tot$landed_fr*100, col=tot$sample, xlab=xlab, ylab=ylab, names=tot$desc, main=titletext)
@@ -124,8 +125,8 @@ plot_sampling_prop <- function(eca, xlab="Landet landet i celle (kt)", ylab="Fan
 }
 
 #' @param eca
-#' @param indparameter the parameter for which data needs to be available
-plot_fixed_effect_coverage <- function(eca, indparameter="age", titletext="Samples for fixed effects", okcol="green", wrongcol="white", undersampledcol="red"){
+#' @param indparameter the parameters for which data needs to be available
+plot_fixed_effect_coverage <- function(eca, indparameters=c("age"), titletext="Samples for fixed effects", okcol="green", wrongcol="white", undersampledcol="red"){
   fe <- eca$resources$covariateInfo[eca$resources$covariateInfo$covType=="Fixed", "name"]
   
   if (any(is.na(eca$biotic[,fe]) | any(is.na(eca$landing[,fe])))){
@@ -136,20 +137,25 @@ plot_fixed_effect_coverage <- function(eca, indparameter="age", titletext="Sampl
   names(a)=fe
   aggland <- aggregate(list(landed_kt=eca$landing$rundvekt), by=a, FUN=sum)
   
-  samples <- eca$biotic[!is.na(eca$biotic[[indparameter]]),]
+  samples <- eca$biotic
+  for (p in indparameters){
+    samples <- samples[!is.na(samples[[p]]),]    
+  }
+
+  
   a <- lapply(fe, FUN=function(x){samples[[x]]})
   names(a)=fe
-  aggsamp <- aggregate(list(samples=samples$serialno), by=a, FUN=function(x){length(unique(x))})
+  aggsamp <- aggregate(list(catchsamples=samples$serialno), by=a, FUN=function(x){length(unique(x))})
   
   agg <- merge(aggsamp, aggland, by=fe, all=T)
   agg$landed_kt[is.na(agg$landed_kt)] <- rep(0, sum(is.na(agg$landed_kt)))
-  agg$samples[is.na(agg$samples)] <- rep(0, sum(is.na(agg$samples)))
+  agg$catchsamples[is.na(agg$catchsamples)] <- rep(0, sum(is.na(agg$catchsamples)))
   
-  agg <- agg[order(agg$samples),]
+  agg <- agg[order(agg$catchsamples),]
   
   color <- rep(okcol, nrow(agg))
-  color[agg$samples==0 & agg$landed_kt>0] <- undersampledcol
-  color[agg$samples>0 & agg$landed_kt==0] <- wrongcol
+  color[agg$catchsamples==0 & agg$landed_kt>0] <- undersampledcol
+  color[agg$catchsamples>0 & agg$landed_kt==0] <- wrongcol
   
   t1 <- ttheme_default(core=list(
     bg_params = list(fill=color)
@@ -158,7 +164,7 @@ plot_fixed_effect_coverage <- function(eca, indparameter="age", titletext="Sampl
   plot.new()
   grid.table(agg, theme=t1, rows=NULL)
   title(titletext)
-  
+  dev.flush()
 }
 
 #
@@ -176,7 +182,8 @@ plot_sampling_diagnostics <- function(eca){
 
 plot_model_diagnostics <- function(eca){
   # check that all fixed effect are sampled at all levels
-  plot_fixed_effect_coverage(eca)
+  plot_fixed_effect_coverage(eca, indparameters=c("age", "length"), titletext = "Age samples for fixed effects")
+  plot_fixed_effect_coverage(eca, indparameters=c("weight", "length"), titletext = "Weight samples for fixed effects")
 }
 
 
@@ -207,5 +214,5 @@ ex <- function(eca){
   plot_sampling_diagnostics(eca)
   plot_model_diagnostics(eca)
 }
-eca <- runbl()
+#eca <- runbl()
 ex(eca)
