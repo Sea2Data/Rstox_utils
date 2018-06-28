@@ -144,7 +144,7 @@ plot_overwiew <- function(fisk, seddel){
 #
 
 runbl <- function(){
-  options(java.parameters="-Xmx6g")
+  options(java.parameters="-Xmx8g")
   # Edvin:
   dir <- "/Users/a5362/code/github/Rstox_utils/Work"
   outpath <- "/Users/a5362/code/github/Rstox_utils/Work/output"
