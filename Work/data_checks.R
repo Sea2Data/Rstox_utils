@@ -1,6 +1,5 @@
 library(Rstox)
-library(grid)
-library(gridExtra)
+library(plotrix)
 # We need to implement reports that users can use to decide on data filtration and model parameters.
 # Breakdown on samples pr. area and gear, etc.
 # We should have a look at current eca reports for that purpose
@@ -62,16 +61,17 @@ plot_gear_season_area <- function(eca, titletext="Prøvetaking redskap/sesong - 
   descr <- descr[rowSums(landed)>0 | rowSums(aged)>0,colSums(landed)>0 | colSums(aged)>0]
   col <- col[rowSums(landed)>0 | rowSums(aged)>0,colSums(landed)>0 | colSums(aged)>0]
   landed <- landed[rowSums(landed)>0 | rowSums(aged)>0,colSums(landed)>0 | colSums(aged)>0]
-  names(descr) <- names(landed)
+  colnames(descr) <- colnames(landed)
+  rownames(descr) <- rownames(landed)
+
+  #deal with sizing and such when output device is clear
+  plot(1:100, axes = FALSE, xlab = "", ylab = "", type = "n", main=titletext)
+  addtable2plot(x = "topleft", table = descr,
+                bty = "o", display.rownames = TRUE, display.colnames = TRUE,
+                hlines = TRUE, vlines = TRUE,
+                bg = col,
+                xjust = 2, yjust = 1, cex=0.5)
   
-  t1 <- ttheme_default(core=list(
-    bg_params = list(fill=col)
-  ))
-  
-  plot.new()
-  grid.table(descr, theme=t1, cols=colnames(landed), rows=rownames(landed))
-  title(titletext)
-  dev.flush()
   return(descr)
 }
 
@@ -157,14 +157,12 @@ plot_fixed_effect_coverage <- function(eca, indparameters=c("age"), titletext="S
   color[agg$catchsamples==0 & agg$landed_kt>0] <- undersampledcol
   color[agg$catchsamples>0 & agg$landed_kt==0] <- wrongcol
   
-  t1 <- ttheme_default(core=list(
-    bg_params = list(fill=color)
-  ))
-  
-  plot.new()
-  grid.table(agg, theme=t1, rows=NULL)
-  title(titletext)
-  dev.flush()
+  plot(1:10, axes = FALSE, xlab = "", ylab = "", type = "n", main=titletext)
+  addtable2plot(x = "topleft", table = agg,
+                bty = "o", display.rownames = FALSE,
+                hlines = TRUE, vlines = TRUE,
+                bg = color,
+                xjust = 2, yjust = 1)
 }
 
 #
@@ -206,6 +204,7 @@ runbl <- function(){
   #projectname <- "ECA_sild_2015"
   baselineOutput <- getBaseline(projectname)
   eca <- baseline2eca(projectname)
+  eca$resources$covariateInfo[4,"covType"]<-"Random"
   return(eca)
 }
 
@@ -214,5 +213,5 @@ ex <- function(eca){
   plot_sampling_diagnostics(eca)
   plot_model_diagnostics(eca)
 }
-#eca <- runbl()
+eca <- runbl()
 ex(eca)
