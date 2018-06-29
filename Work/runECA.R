@@ -25,7 +25,7 @@ GlobalParameters$seed <- 1234
 
 
 ## Select covariates - not use haulweight and boat now
-col <- c(1,2,3,4)
+col <- c(1,2,3)
 newAgeLength <- AgeLength
 newAgeLength$CovariateMatrix <- AgeLength$CovariateMatrix[,col]
 newAgeLength$info <- AgeLength$info[col,]

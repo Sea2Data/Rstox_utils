@@ -23,6 +23,26 @@ plot_pred_box <- function(pred, title=""){
   boxplot(post~age, las=2, xlab="age", ylab="posterior catch Mfish", main=title)
 }
 
+plot_pred_ci <- function(pred, title="", alpha=.1){
+  caa <- apply(pred$TotalCount, c(2,3), sum)
+  caa_kt <- caa/1e6
+  
+  post <- c()
+  upper <- c()
+  lower <- c()
+  age <- c()
+  for (i in 1:length(pred$AgeCategories)){
+    post <- c(post, caa_kt[i,])
+    upper <- quantile(caa_kt[i,], 1-(alpha/2.0))
+    lower <- quantile(caa_kt[i,], (alpha/2.0))
+    age <- c(age, rep(pred$AgeCategories[i], length(caa_kt[i,])))
+  }
+  plot(age, sapply(upper, min), las=2, xlab="age", ylab="posterior catch Mfish", main=title)
+  points(age, sapply(lower, min))
+  
+  #boxplot(post~age, las=2, xlab="age", ylab="posterior catch Mfish", main=title)
+}
+
 
 #plots needed:
 # from raw data age length and length weight plots to determine applicability to species
