@@ -1,6 +1,9 @@
 library(eca)
 
+#
 # workarounds
+#
+
 inpath <- "/Users/a5362/code/github/Rstox_utils/Work/output"
 tmppath <- "/Users/a5362/code/github/Rstox_utils/Work/tmp"
 dir <- "/Users/a5362/code/github/Rstox_utils/Work"
@@ -34,8 +37,9 @@ fix_in_prep_weightlength <- function(WeightLength){
   return(newWeightLength)
 }
 
-
-#/workarounds
+#
+# /workarounds
+#
 
 warning("remember to clean run parameters from prep_ECA, write doc for runECA")
 
