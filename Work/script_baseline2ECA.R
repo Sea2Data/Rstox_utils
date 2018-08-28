@@ -19,8 +19,6 @@ eca <- baseline2eca(projectname)
 # Should be eliminated (moved to stox-processes, baseline2eca or functions in this script)
 #
 
-# Løses i stox (STOX-84)
-eca$resources$covariateLink$season$Covariate <- paste0("Q", 1:4)
 
 source(paste(dir, "workarounds.R", sep="/"))
 
@@ -30,11 +28,8 @@ source(paste(dir, "workarounds.R", sep="/"))
 eca <- filter_missing_data(eca)
 eca <- impute_catchweight(eca) #Sjekk hva disse er (2015, snr: 39002-39080)
 
-#estimate in stox. (STOX-150)
+#estimate in in prepECA, redefine function
 eca <- estimate_catchcount(eca) 
-
-#Ordne i defineTemporal STOX-153
-eca <- drop_year(eca) #fix in stox
 
 # Koding og filtrering av otolitter må håndteres før use_otolit=TRUE can brukes.
 # ECA crasher om ikke otlittkolonne eskisterer avklar med Hanne
@@ -296,7 +291,8 @@ getLandings <- function(eca, ecaParameters){
 	
 	### landingAggregated: ###
   numDaysOfYear <- 365
-	landingAggregated <- cbind(constant=1, eca$landingAggregated, midseason=sapply(getCovariateValue(eca$landingAggregated$season, eca, cov="season", type="landing"), getMidSeason))
+  warning("Place responsibility for midSeason")
+	landingAggregated <- cbind(constant=1, eca$landingAggregated, midseason=sapply(getCovariateValue(eca$landingAggregated$temporal, eca, cov="temporal", type="landing"), getMidSeason))
 	landingAggregated$midseason <- landingAggregated$midseason / numDaysOfYear
 	  
 	weight <- landingAggregated$rundvekt
