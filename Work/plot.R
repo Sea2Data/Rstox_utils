@@ -43,6 +43,24 @@ plot_pred_ci <- function(pred, title="", alpha=.1){
   #boxplot(post~age, las=2, xlab="age", ylab="posterior catch Mfish", main=title)
 }
 
+season_plot_test <- function(){
+  par(mfrow=c(2,2))
+  for (s in unique(Landings$AgeLengthCov$season)){
+    print(paste0("Q", s))
+    valuename <- AgeLength$resources$covariateLink$season$Covariate[AgeLength$resources$covariateLink$season$Numeric==s]
+    sl <- Landings
+    keep_alc <- sl$AgeLengthCov$season==s
+    sl$AgeLengthCov <- sl$AgeLengthCov[keep_alc,]
+    sl$WeightLengthCov <- sl$WeightLengthCov[keep_alc,]
+    sl$LiveWeightKG <- sl$LiveWeightKG[keep_alc]
+    print(sl)
+    GlobalParameters$predictfile <- paste("predict",s,sep="_")
+    predsl <- eca.predict(newAgeLength,newWeightLength,sl,GlobalParameters)  
+    plot_pred_box(predsl, valuename)
+  }
+  par(mfrow=c(1,1))
+}
+
 
 #plots needed:
 # from raw data age length and length weight plots to determine applicability to species

@@ -1,62 +1,93 @@
 library(eca)
+
+# workarounds
 inpath <- "/Users/a5362/code/github/Rstox_utils/Work/output"
 tmppath <- "/Users/a5362/code/github/Rstox_utils/Work/tmp"
 dir <- "/Users/a5362/code/github/Rstox_utils/Work"
-filename <- "ECA_torsk_2015.RData"
-tmp <- load(file.path(inpath, filename))
-print(paste("Loaded from", filename, ":", tmp))
 
 setwd(tmppath)
 
 ## Add extra information in GlobalParameters
-GlobalParameters$maxlength <- max(AgeLength$DataMatrix$lengthCM,na.rm=T)
-GlobalParameters$caa.burnin <- 0
-GlobalParameters$resultdir <- "ECAres" #Note, must be relative path
-GlobalParameters$fitfile <- "ff"
-GlobalParameters$predictfile <- "pp"
-GlobalParameters$minage <- 1
-GlobalParameters$maxage <- 20
-GlobalParameters$delta.age <- 0.001
-GlobalParameters$age.error <- FALSE
-GlobalParameters$lgamodel <- "log-linear"
-GlobalParameters$CC <- FALSE
-GlobalParameters$CCerror <- FALSE
-GlobalParameters$seed <- 1234
+#sett i prepECA
+set_in_prep <- function(GlobalParameters, maxl){
+  GlobalParameters$resultdir <- "ECAres" #Note, must be relative path
+  GlobalParameters$maxlength <- maxl
+  GlobalParameters$minage <- 1
+  GlobalParameters$maxage <- 20
+  GlobalParameters$delta.age <- 0.001
+  GlobalParameters$age.error <- FALSE
+  return(GlobalParameters)  
+}
+
+colsel <- c(1,2,3)
+fix_in_prep_agelength<-function(AgeLength){
+  ## Select covariates - not use haulweight and boat now
+  newAgeLength <- AgeLength
+  newAgeLength$CovariateMatrix <- AgeLength$CovariateMatrix[,colsel]
+  newAgeLength$info <- AgeLength$info[colsel,]
+  return(newAgeLength)  
+}
+fix_in_prep_weightlength <- function(WeightLength){
+  newWeightLength <- WeightLength
+  newWeightLength$CovariateMatrix <- WeightLength$CovariateMatrix[,colsel]
+  newWeightLength$info <- WeightLength$info[colsel,]
+  return(newWeightLength)
+}
 
 
-## Select covariates - not use haulweight and boat now
-col <- c(1,2,3)
-newAgeLength <- AgeLength
-newAgeLength$CovariateMatrix <- AgeLength$CovariateMatrix[,col]
-newAgeLength$info <- AgeLength$info[col,]
+#/workarounds
 
-newWeightLength <- WeightLength
-newWeightLength$CovariateMatrix <- WeightLength$CovariateMatrix[,col]
-newWeightLength$info <- WeightLength$info[col,]
+warning("remember to clean run parameters from prep_ECA, write doc for runECA")
 
-## Estimate model
-fit <- eca.estimate(newAgeLength,newWeightLength,Landings,GlobalParameters)
+burnindefault=0
+samplesdefault=201
+thindefault=1
+defaultfitfile="fit"
+defaultpredfile="pred"
+defaultlgamodel="log-linear"
+defaultCC=FALSE
+defaultCCError=FALSE
+runECA <- function(datafilepath, burnin=burnindefault, nSamples=samplesdefault, thin=thindefault, fitfile=defaultfitfile, predfile=defaultpredfile, lgamodel=defaultlgamodel, CC=defaultCC, CCError=defaultCCError, seed=NULL){
+  # Sett kjøreparametere her, sett dataparametere i prep_eca
+  tmp <- load(datafilepath)
+  write(paste("Loaded from", filename, ":", tmp), stderr())
+  
+  GlobalParameters <- set_in_prep(GlobalParameters, max(AgeLength$DataMatrix$lengthCM,na.rm=T))
+  
+  GlobalParameters$caa.burnin <- burnin
+  GlobalParameters$burnin <- burnin
+  GlobalParameters$nSamples <- nSamples
+  GlobalParameters$thin <- thin
+  GlobalParameters$fitfile <- fitfile
+  GlobalParameters$predictfile <- predfile
+  GlobalParameters$lgamodel <- lgamodel
+  
+  GlobalParameters$CC <- CC
+  GlobalParameters$CCerror <- defaultCCError
+  
+  if (is.null(seed)){
+    seed=""
+  }
+  GlobalParameters$seed <- seed
+  
+  AgeLength <- fix_in_prep_agelength(AgeLength)
+  WeightLength <- fix_in_prep_weightlength(WeightLength)
 
-## Predict
-pred <- eca.predict(newAgeLength,newWeightLength,Landings,GlobalParameters)
+  ## Estimate model
+  fit <- eca.estimate(AgeLength,WeightLength,Landings,GlobalParameters)
+  
+  ## Predict
+  pred <- eca.predict(AgeLength,WeightLength,Landings,GlobalParameters)
+  
+  l<-list()
+  l$fit<-fit
+  l$pred<-pred
+  return(l)
+}
+
+filename <- "ECA_torsk_2015.RData"
+filepath <- file.path(inpath, filename)
+result <- runECA(filepath)
 
 source(file.path(dir, "plot.R"))
-plot_pred_box(pred)
-
-season_plot_test <- function(){
-  par(mfrow=c(2,2))
-  for (s in unique(Landings$AgeLengthCov$season)){
-    print(paste0("Q", s))
-    valuename <- AgeLength$resources$covariateLink$season$Covariate[AgeLength$resources$covariateLink$season$Numeric==s]
-    sl <- Landings
-    keep_alc <- sl$AgeLengthCov$season==s
-    sl$AgeLengthCov <- sl$AgeLengthCov[keep_alc,]
-    sl$WeightLengthCov <- sl$WeightLengthCov[keep_alc,]
-    sl$LiveWeightKG <- sl$LiveWeightKG[keep_alc]
-    print(sl)
-    GlobalParameters$predictfile <- paste("predict",s,sep="_")
-    predsl <- eca.predict(newAgeLength,newWeightLength,sl,GlobalParameters)  
-    plot_pred_box(predsl, valuename)
-  }
-  par(mfrow=c(1,1))
-}
+plot_pred_box(result$pred)
