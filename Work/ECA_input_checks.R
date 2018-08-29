@@ -139,7 +139,7 @@ checkCovariateConsistency <- function(modelobj, landingscov){
       }
     }
   }
-  
+  warning("Implement check for combinations of fixed effects.")
 }
 
 #checks formatting on landing cov-matrices

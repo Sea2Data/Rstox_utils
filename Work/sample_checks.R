@@ -9,19 +9,19 @@ get_g_s_a_frame <- function(eca){
   
   agedb <- eca$biotic[!is.na(eca$biotic$age),]
   
-  cols <- c("season", "gearfactor", "spatial")
+  cols <- c("temporal", "gearfactor", "spatial")
   if(!all(cols %in% names(eca$covariateMatrixBiotic)) | !all(cols %in% names(eca$covariateMatrixLanding))){
-    stop("Covariates season, gearfactor and landing needs to be defined for this plot.")
+    stop("Covariates temporal, gearfactor and spatial needs to be defined for this plot.")
   }
-  if (any(is.na(eca$landing$season)) | any(is.na(eca$landing$gearfactor)) | any(is.na(eca$landing$spatial)) | any(is.na(eca$biotic$season)) | any(is.na(eca$biotic$gearfactor)) | any(is.na(eca$biotic$spatial))){
+  if (any(is.na(eca$landing$temporal)) | any(is.na(eca$landing$gearfactor)) | any(is.na(eca$landing$spatial)) | any(is.na(eca$biotic$temporal)) | any(is.na(eca$biotic$gearfactor)) | any(is.na(eca$biotic$spatial))){
     warning("NAs in covariates")  
   }
   
-  totland <- aggregate(list(landed_kt=eca$landing$rundvekt/(1000*1000)), by=list(season=eca$landing$season, gearfactor=eca$landing$gearfactor, spatial=eca$landing$spatial), FUN=sum)
-  totsamp <- aggregate(list(sampled_t=agedb$catchweight/1000), by=list(season=agedb$season, gearfactor=agedb$gearfactor, spatial=agedb$spatial), FUN=function(x){sum(x, na.rm=T)})
-  totvessel <- aggregate(list(vessels=agedb$platform), by=list(season=agedb$season, gearfactor=agedb$gearfactor, spatial=agedb$spatial), FUN=function(x){length(unique(x))})
-  tothaul <- aggregate(list(hauls=agedb$serialno), by=list(season=agedb$season, gearfactor=agedb$gearfactor, spatial=agedb$spatial), FUN=function(x){length(unique(x))})
-  totaged <- aggregate(list(aged=agedb$age), by=list(season=agedb$season, gearfactor=agedb$gearfactor, spatial=agedb$spatial), FUN=function(x){sum(!is.na(x))})
+  totland <- aggregate(list(landed_kt=eca$landing$rundvekt/(1000*1000)), by=list(temporal=eca$landing$temporal, gearfactor=eca$landing$gearfactor, spatial=eca$landing$spatial), FUN=sum)
+  totsamp <- aggregate(list(sampled_t=agedb$catchweight/1000), by=list(temporal=agedb$temporal, gearfactor=agedb$gearfactor, spatial=agedb$spatial), FUN=function(x){sum(x, na.rm=T)})
+  totvessel <- aggregate(list(vessels=agedb$platform), by=list(temporal=agedb$temporal, gearfactor=agedb$gearfactor, spatial=agedb$spatial), FUN=function(x){length(unique(x))})
+  tothaul <- aggregate(list(hauls=agedb$serialno), by=list(temporal=agedb$temporal, gearfactor=agedb$gearfactor, spatial=agedb$spatial), FUN=function(x){length(unique(x))})
+  totaged <- aggregate(list(aged=agedb$age), by=list(temporal=agedb$temporal, gearfactor=agedb$gearfactor, spatial=agedb$spatial), FUN=function(x){sum(!is.na(x))})
   
   m <- merge(totland, totvessel, by=cols, all=T)
   m <- merge(totsamp, m, by=cols, all=T)
@@ -35,13 +35,13 @@ get_g_s_a_frame <- function(eca){
   return(m)
 }
 
-#' show samples wrp common covariates gear, area and season
-plot_gear_season_area <- function(eca, titletext="Prøvetaking redskap/sesong - område\nlandet (kt)\nfartøy,hal,alder", colgood="green4", colok="green2", colbarely="yellow", colbad="orange", colempty="gray", colwrong="white"){
+#' show samples wrp common covariates gear, area and temporal
+plot_gear_temporal_area <- function(eca, titletext="Prøvetaking redskap/sesong - område\nlandet (kt)\nfartøy,hal,alder", colgood="green4", colok="green2", colbarely="yellow", colbad="orange", colempty="gray", colwrong="white"){
   
 
   m <- get_g_s_a_frame(eca)
   m$desc <- paste(m$landed_kt, "\n", m$vessels, ", ", m$hauls, ",", m$aged, sep="")
-  m$sd <- paste(m$gear, m$season, sep="/")
+  m$sd <- paste(m$gear, m$temporal, sep="/")
   
   landed <- xtabs(m$landed_kt~m$sd+m$spatial)
   landed[landed<1]<-0
@@ -170,7 +170,7 @@ plot_fixed_effect_coverage <- function(eca, indparameters=c("age"), titletext="S
 #
 
 plot_sampling_diagnostics <- function(eca){
-  plot_gear_season_area(eca)
+  plot_gear_temporal_area(eca)
   par.old <- par(no.readonly = T)
   par(mfrow=c(1,2))
   plot_cell_coverage(eca)

@@ -36,6 +36,12 @@ fix_in_prep_weightlength <- function(WeightLength){
   newWeightLength$info <- WeightLength$info[colsel,]
   return(newWeightLength)
 }
+fix_in_prep_landings <- function(Landings){
+  newLandings <- Landings
+  newLandings$AgeLengthCov <- Landings$AgeLengthCov[,c(colsel, length(names(Landings$AgeLengthCov)))]
+  newLandings$WeightLengthCov <- Landings$WeightLengthCov[,c(colsel, length(names(Landings$WeightLengthCov))),]
+  return(newLandings)
+}
 
 #
 # /workarounds
@@ -43,7 +49,7 @@ fix_in_prep_weightlength <- function(WeightLength){
 
 warning("remember to clean run parameters from prep_ECA, write doc for runECA")
 
-burnindefault=0
+burnindefault=50
 samplesdefault=201
 thindefault=1
 defaultfitfile="fit"
@@ -51,7 +57,7 @@ defaultpredfile="pred"
 defaultlgamodel="log-linear"
 defaultCC=FALSE
 defaultCCError=FALSE
-runECA <- function(datafilepath, burnin=burnindefault, nSamples=samplesdefault, thin=thindefault, fitfile=defaultfitfile, predfile=defaultpredfile, lgamodel=defaultlgamodel, CC=defaultCC, CCError=defaultCCError, seed=NULL){
+runECA <- function(datafilepath, burnin=burnindefault, caa.burnin=burnindefault, nSamples=samplesdefault, thin=thindefault, fitfile=defaultfitfile, predfile=defaultpredfile, lgamodel=defaultlgamodel, CC=defaultCC, CCError=defaultCCError, seed=NULL){
   # Sett kjøreparametere her, sett dataparametere i prep_eca
   tmp <- load(datafilepath)
   write(paste("Loaded from", filename, ":", tmp), stderr())
@@ -59,7 +65,7 @@ runECA <- function(datafilepath, burnin=burnindefault, nSamples=samplesdefault, 
   GlobalParameters <- set_in_prep(GlobalParameters, max(AgeLength$DataMatrix$lengthCM,na.rm=T))
   
   GlobalParameters$caa.burnin <- burnin
-  GlobalParameters$burnin <- burnin
+  GlobalParameters$burnin <- caa.burnin
   GlobalParameters$nSamples <- nSamples
   GlobalParameters$thin <- thin
   GlobalParameters$fitfile <- fitfile
@@ -76,6 +82,7 @@ runECA <- function(datafilepath, burnin=burnindefault, nSamples=samplesdefault, 
   
   AgeLength <- fix_in_prep_agelength(AgeLength)
   WeightLength <- fix_in_prep_weightlength(WeightLength)
+  Landings <- fix_in_prep_landings(Landings)
 
   ## Estimate model
   fit <- eca.estimate(AgeLength,WeightLength,Landings,GlobalParameters)
@@ -89,9 +96,9 @@ runECA <- function(datafilepath, burnin=burnindefault, nSamples=samplesdefault, 
   return(l)
 }
 
-filename <- "ECA_torsk_2015.RData"
+filename <- "ECA_sild_2015.RData"
 filepath <- file.path(inpath, filename)
 result <- runECA(filepath)
-
+tmp <- load(filepath)
 source(file.path(dir, "plot.R"))
 plot_pred_box(result$pred)
