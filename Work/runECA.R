@@ -113,5 +113,5 @@ filename <- "ECA_torsk_2015.RData"
 filepath <- file.path(inpath, filename)
 tmp <- load(filepath)
 result <- runECA(filepath)
-source(file.path(dir, "plot.R"))
+source(file.path(dir, "plot_results_ECA.R"))
 plot_pred_box(result$pred)
