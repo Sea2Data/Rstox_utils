@@ -53,7 +53,8 @@ runECA <- function(projectname, inputdir, burnin=burnindefault, caa.burnin=burni
   warning("write doc for runECA")
   # Sett kjøreparametere her, sett dataparametere i prep_eca
 
-  tmp <- load(file.path(inputdir, paste0(projectname, ".RData")))
+  filename <- file.path(inputdir, paste0(projectname, ".RData"))
+  tmp <- load(filename)
   write(paste("Data loaded from", filename, ":", tmp), stderr())
   
   GlobalParameters$caa.burnin <- burnin
