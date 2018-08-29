@@ -17,12 +17,19 @@ source(paste(dir, "ECA_input_checks.R", sep="/"))
 source(paste(dir, "ECA_input_conversion.R", sep="/"))
 
 
-
-
-prepECA <- function(projectname){
+#' see doc for eca.estimate for most parameters
+#' @param maxlength maximum length of fish in the data set in cm. If null the value will be extracted from the data.
+prepECA <- function(projectname, resultdir="ECAres", minage=1, maxage=20, delta.age=0.001, maxlength=NULL, use_otolithtype=TRUE, hatchDaySlashMonth="01/01"){
+    warning("write doc for prepECA")
     eca <- baseline2eca(projectname)
     
-    ecaParameters <- list(use_otolithtype=TRUE, hatchDaySlashMonth="01/01")
+    #max length in cm
+    if (is.null(maxlength)){
+      maxlength <- max(eca$biotic$length)      
+    }
+    #consider if it makes sense to extract from data for minage and maxage as well
+
+    ecaParameters <- list(resultdir=resultdir, minage=minage, maxage=maxage, delta.age=delta.age, maxlength=maxlength, use_otolithtype=use_otolithtype, hatchDaySlashMonth=hatchDaySlashMonth)
 
     #
     # convert data

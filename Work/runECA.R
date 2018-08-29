@@ -10,17 +10,6 @@ dir <- "/Users/a5362/code/github/Rstox_utils/Work"
 
 setwd(tmppath)
 
-## Add extra information in GlobalParameters
-#sett i prepECA
-set_in_prep <- function(GlobalParameters, maxl){
-  GlobalParameters$resultdir <- "ECAres" #Note, must be relative path
-  GlobalParameters$maxlength <- maxl
-  GlobalParameters$minage <- 1
-  GlobalParameters$maxage <- 20
-  GlobalParameters$delta.age <- 0.001
-  GlobalParameters$age.error <- FALSE
-  return(GlobalParameters)  
-}
 
 colsel <- c(1,2,3)
 fix_in_prep_agelength<-function(AgeLength){
@@ -60,22 +49,20 @@ fix_in_prep_landings <- function(Landings){
 # /workarounds
 #
 
-warning("remember to clean run parameters from prep_ECA, write doc for runECA")
-
-burnindefault=50
-samplesdefault=201
+burnindefault=10
+samplesdefault=101
 thindefault=1
 defaultfitfile="fit"
 defaultpredfile="pred"
 defaultlgamodel="log-linear"
 defaultCC=FALSE
 defaultCCError=FALSE
-runECA <- function(datafilepath, burnin=burnindefault, caa.burnin=burnindefault, nSamples=samplesdefault, thin=thindefault, fitfile=defaultfitfile, predfile=defaultpredfile, lgamodel=defaultlgamodel, CC=defaultCC, CCError=defaultCCError, seed=NULL){
+age.error.default=FALSE
+runECA <- function(datafilepath, burnin=burnindefault, caa.burnin=burnindefault, nSamples=samplesdefault, thin=thindefault, fitfile=defaultfitfile, predfile=defaultpredfile, lgamodel=defaultlgamodel, CC=defaultCC, CCError=defaultCCError, seed=NULL, age.error=age.error.default){
+  warning("write doc for runECA")
   # Sett kjøreparametere her, sett dataparametere i prep_eca
   tmp <- load(datafilepath)
   write(paste("Loaded from", filename, ":", tmp), stderr())
-  
-  GlobalParameters <- set_in_prep(GlobalParameters, max(AgeLength$DataMatrix$lengthCM,na.rm=T))
   
   GlobalParameters$caa.burnin <- burnin
   GlobalParameters$burnin <- caa.burnin
@@ -84,9 +71,9 @@ runECA <- function(datafilepath, burnin=burnindefault, caa.burnin=burnindefault,
   GlobalParameters$fitfile <- fitfile
   GlobalParameters$predictfile <- predfile
   GlobalParameters$lgamodel <- lgamodel
-  
   GlobalParameters$CC <- CC
   GlobalParameters$CCerror <- defaultCCError
+  GlobalParameters$age.error=age.error
   
   if (is.null(seed)){
     seed=""

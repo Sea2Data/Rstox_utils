@@ -65,7 +65,12 @@ getGlobalParameters <- function (eca, ecaParameters){
   }
   
   # Convert to centimeters in the lengthunit:
-  Gparams <- list(nSamples=ecaParameters$nSamples, thin=ecaParameters$thin, burnin=ecaParameters$burnin, lengthresCM=lengthresCM)
+  Gparams <- list(lengthresCM=lengthresCM, 
+                  resultdir=ecaParameters$resultdir, 
+                  maxlength=ecaParameters$maxlength, 
+                  minage=ecaParameters$minage, 
+                  maxage=ecaParameters$maxage,
+                  delta.age=ecaParameters$delta.age)
   
   return(Gparams)
 }
