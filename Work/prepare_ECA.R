@@ -32,10 +32,10 @@ prepECA <- function(projectname){
     # e.g.: stations missing both area and position
     # 
     eca <- filter_missing_data(eca)
-    eca <- impute_catchweight(eca) #Sjekk hva disse er (2015, snr: 39002-39080)
+    #eca <- impute_catchweight(eca) #Sjekk hva disse er (2015, snr: 39002-39080)
     
     #estimate in in prepECA, redefine function
-    eca <- estimate_catchcount(eca) 
+    #eca <- estimate_catchcount(eca) 
     
     # Koding og filtrering av otolitter må håndteres før use_otolit=TRUE can brukes.
     # ECA crasher om ikke otlittkolonne eskisterer avklar med Hanne

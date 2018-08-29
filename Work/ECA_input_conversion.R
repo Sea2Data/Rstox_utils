@@ -74,7 +74,7 @@ getLandings <- function(eca, ecaParameters){
   
   ### landingAggregated: ###
   numDaysOfYear <- 365
-  warning("Place responsibility for midSeason")
+  warning("Re-implement setting of midseason once NR updates documentation.")
   landingAggregated <- cbind(constant=1, eca$landingAggregated, midseason=sapply(getCovariateValue(eca$landingAggregated$temporal, eca, cov="temporal", type="landing"), getMidSeason))
   landingAggregated$midseason <- landingAggregated$midseason / numDaysOfYear
   
@@ -95,15 +95,22 @@ getLandings <- function(eca, ecaParameters){
 # Funciton for extracting the DataMatrix for the given variable ("age" or "weight", length is requested in both):
 getDataMatrixANDCovariateMatrix <- function(eca, var="age", ecaParameters){
   
+  #partcount
+  
   # Define variables to include in the DataMatrix, where the variable specified in the input 'var' is included:
-  getnames <- c("yearday", "length", "serialno", "samplenumber", "catchcount", if(ecaParameters$use_otolithtype) "otolithtype")
-  usenames <- c("realage", "lengthCM", "samplingID", "partnumber", "partcount", if(ecaParameters$use_otolithtype) "otolithtype")
+  getnames <- c("yearday", "length", "serialno", "samplenumber", "lengthsamplecount", "lengthsampleweight", "catchweight", if(ecaParameters$use_otolithtype) "otolithtype")
+  usenames <- c("realage", "lengthCM", "samplingID", "partnumber", "samplecount", "sampleweight", "catchweight", if(ecaParameters$use_otolithtype) "otolithtype")
   getnames <- c(var, getnames)
   usenames <- c(var, usenames)
   
   # Extract the data matrix:
   DataMatrix <- getVar(eca$biotic, getnames)
   names(DataMatrix) <- usenames
+  
+  #Estimate catch sample number: partcount
+  DataMatrix$partcount <- DataMatrix$catchweight * DataMatrix$samplecount / DataMatrix$sampleweight
+  #Drop columns only used for estimating partcount
+  DataMatrix <- DataMatrix[, !(names(DataMatrix) %in% c("catchweight", "samplecount", "sampleweight"))]
   
   # Add first the samplingID to the object eca$covariateMatrixBiotic:
   CovariateMatrix <- eca$covariateMatrixBiotic
