@@ -127,12 +127,25 @@ fix_otolithtypes <- function(ecaobj){
 
 #Filters that need to be applied in data filtering
 filter_missing_data <- function(ecaobj){
-  ecaobj$covariateMatrixBiotic <- ecaobj$covariateMatrixBiotic[!is.na(ecaobj$covariateMatrixBiotic$spatial),]
-  ecaobj$biotic <- eca$biotic[!is.na(ecaobj$biotic$spatial),]
+  warning(paste("filtering NAs for biotic temporal:", sum(is.na(ecaobj$covariateMatrixBiotic$temporal))))
+  ecaobj$covariateMatrixBiotic <- ecaobj$covariateMatrixBiotic[!is.na(ecaobj$covariateMatrixBiotic$temporal),]
+  ecaobj$biotic <- ecaobj$biotic[!is.na(ecaobj$biotic$temporal),]
   
-  warning("imputing gears in landings")
-  ecaobj$landing[is.na(ecaobj$landing$gearfactor), "gearfactor"] <- 2
-  ecaobj$covariateMatrixLanding[is.na(ecaobj$landing$gearfactor), "gearfactor"]<-2
+  warning(paste("filtering NAs for biotic spatial:", sum(is.na(ecaobj$covariateMatrixBiotic$spatial))))
+  if (!all(is.na(ecaobj$biotic$spatial) == is.na(ecaobj$covariateMatrixBiotic$spatial))){
+    stop("NAs in biotic does not correspond to NAs in covariateMatrixBiotic")
+  }
+  ecaobj$covariateMatrixBiotic <- ecaobj$covariateMatrixBiotic[!is.na(ecaobj$covariateMatrixBiotic$spatial),]
+  ecaobj$biotic <- ecaobj$biotic[!is.na(ecaobj$biotic$spatial),]
+
+  warning(paste("filtering NAs for biotic gear:", sum(is.na(ecaobj$covariateMatrixBiotic$gear))))
+  ecaobj$covariateMatrixBiotic <- ecaobj$covariateMatrixBiotic[!is.na(ecaobj$covariateMatrixBiotic$gear),]
+  ecaobj$biotic <- ecaobj$biotic[!is.na(ecaobj$biotic$gear),]
+  
+    
+  #warning("imputing gears in landings")
+  #ecaobj$landing[is.na(ecaobj$landing$gearfactor), "gearfactor"] <- 2
+  #ecaobj$covariateMatrixLanding[is.na(ecaobj$landing$gearfactor), "gearfactor"]<-2
   
   return(ecaobj)
 }
