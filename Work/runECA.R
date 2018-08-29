@@ -28,18 +28,31 @@ fix_in_prep_agelength<-function(AgeLength){
   newAgeLength <- AgeLength
   newAgeLength$CovariateMatrix <- AgeLength$CovariateMatrix[,colsel]
   newAgeLength$info <- AgeLength$info[colsel,]
+  
+  rownames(newAgeLength$info)[rownames(newAgeLength$info)=="temporal"]<-"season"
+  names(newAgeLength$CovariateMatrix)[names(newAgeLength$CovariateMatrix)=="temporal"]<-"season"
+  
   return(newAgeLength)  
 }
 fix_in_prep_weightlength <- function(WeightLength){
   newWeightLength <- WeightLength
   newWeightLength$CovariateMatrix <- WeightLength$CovariateMatrix[,colsel]
   newWeightLength$info <- WeightLength$info[colsel,]
+  
+  rownames(newWeightLength$info)[rownames(newWeightLength$info)=="temporal"]<-"season"
+  names(newWeightLength$CovariateMatrix)[names(newWeightLength$CovariateMatrix)=="temporal"]<-"season"
+  
+  
   return(newWeightLength)
 }
 fix_in_prep_landings <- function(Landings){
   newLandings <- Landings
   newLandings$AgeLengthCov <- Landings$AgeLengthCov[,c(colsel, length(names(Landings$AgeLengthCov)))]
   newLandings$WeightLengthCov <- Landings$WeightLengthCov[,c(colsel, length(names(Landings$WeightLengthCov))),]
+  
+  names(newLandings$WeightLengthCov)[names(newLandings$WeightLengthCov)=="temporal"]<-"season"
+  names(newLandings$AgeLengthCov)[names(newLandings$AgeLengthCov)=="temporal"]<-"season"
+  
   return(newLandings)
 }
 
@@ -96,9 +109,9 @@ runECA <- function(datafilepath, burnin=burnindefault, caa.burnin=burnindefault,
   return(l)
 }
 
-filename <- "ECA_sild_2015.RData"
+filename <- "ECA_torsk_2015.RData"
 filepath <- file.path(inpath, filename)
-result <- runECA(filepath)
 tmp <- load(filepath)
+result <- runECA(filepath)
 source(file.path(dir, "plot.R"))
 plot_pred_box(result$pred)
