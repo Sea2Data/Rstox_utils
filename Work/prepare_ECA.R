@@ -14,7 +14,6 @@ projectname <- "ECA_torsk_2015"
 #baselineOutput <- getBaseline(projectname)
 
 source(paste(dir, "ECA_input_checks.R", sep="/"))
-
 source(paste(dir, "ECA_input_conversion.R", sep="/"))
 
 

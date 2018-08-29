@@ -9,13 +9,10 @@ inpath <- file.path(ecadir, "datafiles")
 srcdir <- "/Users/a5362/code/github/Rstox_utils/Work"
 source(file.path(srcdir, "plot_results_ECA.R"))
 
-colsel <- c(1,2,3)
 fix_in_prep_agelength<-function(AgeLength){
   ## Select covariates - not use haulweight and boat now
   newAgeLength <- AgeLength
-  newAgeLength$CovariateMatrix <- AgeLength$CovariateMatrix[,colsel]
-  newAgeLength$info <- AgeLength$info[colsel,]
-  
+
   rownames(newAgeLength$info)[rownames(newAgeLength$info)=="temporal"]<-"season"
   names(newAgeLength$CovariateMatrix)[names(newAgeLength$CovariateMatrix)=="temporal"]<-"season"
   
@@ -23,9 +20,7 @@ fix_in_prep_agelength<-function(AgeLength){
 }
 fix_in_prep_weightlength <- function(WeightLength){
   newWeightLength <- WeightLength
-  newWeightLength$CovariateMatrix <- WeightLength$CovariateMatrix[,colsel]
-  newWeightLength$info <- WeightLength$info[colsel,]
-  
+
   rownames(newWeightLength$info)[rownames(newWeightLength$info)=="temporal"]<-"season"
   names(newWeightLength$CovariateMatrix)[names(newWeightLength$CovariateMatrix)=="temporal"]<-"season"
   
@@ -34,9 +29,7 @@ fix_in_prep_weightlength <- function(WeightLength){
 }
 fix_in_prep_landings <- function(Landings){
   newLandings <- Landings
-  newLandings$AgeLengthCov <- Landings$AgeLengthCov[,c(colsel, length(names(Landings$AgeLengthCov)))]
-  newLandings$WeightLengthCov <- Landings$WeightLengthCov[,c(colsel, length(names(Landings$WeightLengthCov))),]
-  
+
   names(newLandings$WeightLengthCov)[names(newLandings$WeightLengthCov)=="temporal"]<-"season"
   names(newLandings$AgeLengthCov)[names(newLandings$AgeLengthCov)=="temporal"]<-"season"
   
@@ -98,3 +91,5 @@ runECA <- function(projectname, inputdir, burnin=burnindefault, caa.burnin=burni
 projectname <- "ECA_torsk_2015"
 result <- runECA(projectname, inpath)
 plot_pred_box(result$pred)
+
+#  tmp <- load(file.path(inpath, paste0(projectname, ".RData")))

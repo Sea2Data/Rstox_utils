@@ -9,9 +9,6 @@ getHardCoded <- function(info){
     c(
       # Boat is always random whereas constant and haulcount is always fixed:
       "random", "constant", 0, 
-      # "Conditional autoregressive" is 1 for spatial:							
-      "CAR", "spatial", 1, 
-      "random", "spatial", 1,
       # Include slope for the constant:
       "in.slopeModel", "constant", 1
     ), 
