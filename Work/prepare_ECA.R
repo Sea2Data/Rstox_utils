@@ -12,8 +12,6 @@ projectname <- "ECA_torsk_2015"
 #projectname <- "ECA_sild_2015"
 #baselineOutput <- getBaseline(projectname)
 
-source(paste(dir, "workarounds.R", sep="/"))
-
 source(paste(dir, "ECA_input_checks.R", sep="/"))
 
 source(paste(dir, "ECA_input_conversion.R", sep="/"))
@@ -23,25 +21,6 @@ source(paste(dir, "ECA_input_conversion.R", sep="/"))
 
 prepECA <- function(projectname){
     eca <- baseline2eca(projectname)
-    
-    #
-    # workarounds
-    # Should be eliminated (moved to stox-processes, baseline2eca or functions in this script)
-    #
-    # replace by data filters in stox or extend reference lists
-    # e.g.: stations missing both area and position
-    # 
-    eca <- filter_missing_data(eca)
-    #eca <- impute_catchweight(eca) #Sjekk hva disse er (2015, snr: 39002-39080)
-    
-    #estimate in in prepECA, redefine function
-    #eca <- estimate_catchcount(eca) 
-    
-    # Koding og filtrering av otolitter må håndteres før use_otolit=TRUE can brukes.
-    # ECA crasher om ikke otlittkolonne eskisterer avklar med Hanne
-    # eca <- fix_otolithtypes(eca)
-    
-    #/workarounds
     
     ecaParameters <- list(use_otolithtype=TRUE, hatchDaySlashMonth="01/01")
 
