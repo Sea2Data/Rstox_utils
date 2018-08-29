@@ -4,18 +4,14 @@
 
 # Function used for combining hard coded parameter values and user defeined parameter values:
 getHardCoded <- function(info){
+  warning("Ovverriding settings for spatial")
   hardcoded <- as.data.frame(matrix(
     c(
       # Boat is always random whereas constant and haulcount is always fixed:
       "random", "constant", 0, 
-      "random", "haulcount", 0, 
-      "random", "boat", 1,
       # "Conditional autoregressive" is 1 for spatial:							
       "CAR", "spatial", 1, 
       "random", "spatial", 1,
-      # Only haulcount can be continuous for the moment:
-      "continuous", "haulcount", 1, 
-      
       # Include slope for the constant:
       "in.slopeModel", "constant", 1
     ), 
