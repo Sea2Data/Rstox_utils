@@ -28,8 +28,6 @@ prepECA <- function(projectname){
     # workarounds
     # Should be eliminated (moved to stox-processes, baseline2eca or functions in this script)
     #
-    
-    
     # replace by data filters in stox or extend reference lists
     # e.g.: stations missing both area and position
     # 
@@ -44,8 +42,6 @@ prepECA <- function(projectname){
     # eca <- fix_otolithtypes(eca)
     
     #/workarounds
-    
-    
     
     ecaParameters <- list(use_otolithtype=TRUE, hatchDaySlashMonth="01/01")
 
