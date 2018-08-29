@@ -4,7 +4,7 @@
 
 # Function used for combining hard coded parameter values and user defeined parameter values:
 getHardCoded <- function(info){
-  warning("Ovverriding settings for spatial")
+  
   hardcoded <- as.data.frame(matrix(
     c(
       # Boat is always random whereas constant and haulcount is always fixed:

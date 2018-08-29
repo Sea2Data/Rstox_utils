@@ -84,7 +84,7 @@ check_data_matrix <- function(modelobj){
   #  check_none_missing(modelobj$DataMatrix, c("otolithtype"))
   #}
   
-  warning("Clarify need for otolithtype check with NR. rECA currently not behaving consistnently with documentation. OK to run caa-analysis with all otolithtypes NA, but crashes if column is missing")
+  warning("Check otolith requirements after R-ECA is revised")
   lastsample <- max(modelobj$DataMatrix$samplingID)
   if (!lastsample==nrow(modelobj$CovariateMatrix)){
     stop("sampling ids does not equal the number of rows in covariate matrix")
@@ -130,16 +130,26 @@ checkCovariateConsistency <- function(modelobj, landingscov){
   }
   
   #check that all level are present for all fixed effects
-  fixedeffects <- rownames(modelobj$info[modelobj$info[,"random"]==0,])
-  for (co in fixedeffects){
-    if (modelobj$info[co,"continuous"]==0){
+  nonconfixedeffects <- rownames(modelobj$info[modelobj$info[,"random"]==0 & modelobj$info[,"continuous"]==0,])
+  for (co in nonconfixedeffects){
       num_unique <- length(unique(landingscov[,co]))
       if (num_unique!=modelobj$info[co,"nlev"]){
         stop(paste("Fixed effect", co, "does not have values for all corresponding landings"))
       }
-    }
   }
-  warning("Implement check for combinations of fixed effects.")
+  
+  #check that the number of combinations of fixed effects in samples equal those in landing
+  samp <- unique(modelobj$CovariateMatrix[,nonconfixedeffects])
+  land <- unique(landingscov[,nonconfixedeffects])
+  
+  sample_combos <- nrow(samp)
+  land_combos <- nrow(land)
+  if (is.null(sample_combos) & is.null(land_combos) & length(sample_combos)!=length(land_combos)){
+    stop("Not all combinations of fixed effects are sampled")
+  }
+  else if (sample_combos != land_combos){
+    stop("Not all combinations of fixed effects are sampled")
+  }
 }
 
 #checks formatting on landing cov-matrices
