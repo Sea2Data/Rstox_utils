@@ -3,6 +3,7 @@ options(java.parameters="-Xmx6g")
 # Edvin:
 dir <- "/Users/a5362/code/github/Rstox_utils/Work"
 outpath <- "/Users/a5362/code/github/Rstox_utils/Work/output"
+ecadir <- "/Users/a5362/code/github/Rstox_utils/Work/tmp/ECAres"
 # Arne Johannes:
 #dir <- "~/Documents/Produktivt/Prosjekt/R-packages/Rstox_utils/Rstox_utils/Work"
 #outpath <- "~/Documents/Produktivt/Prosjekt/R-packages/Rstox_utils/output"
@@ -19,7 +20,22 @@ source(paste(dir, "ECA_input_conversion.R", sep="/"))
 
 #' see doc for eca.estimate for most parameters
 #' @param maxlength maximum length of fish in the data set in cm. If null the value will be extracted from the data.
-prepECA <- function(projectname, resultdir="ECAres", minage=1, maxage=20, delta.age=0.001, maxlength=NULL, use_otolithtype=TRUE, hatchDaySlashMonth="01/01"){
+#' @param resultdir location where R-ECA will store temporal files
+#' @param outputdir location for output files, defaults (if NULL) to a subdirectory of resultdir called `datafiles` which will be created if it does not already exists.
+prepECA <- function(projectname, resultdir=ecadir, outputdir=NULL, minage=1, maxage=20, delta.age=0.001, maxlength=NULL, use_otolithtype=TRUE, hatchDaySlashMonth="01/01"){
+  
+    if(!(file.exists(resultdir))){
+      stop(paste("Directory", resultdir, "does not exist."))
+    }
+  
+    if (is.null(outputdir)){
+      outputdir <- file.path(resultdir, "datafiles")
+      if(!(file.path(resultdir, "datafiles") %in% list.dirs(resultdir))){
+        dir.create(outputdir)
+      }
+    }
+  
+  
     warning("write doc for prepECA")
     eca <- baseline2eca(projectname)
     
@@ -54,7 +70,6 @@ prepECA <- function(projectname, resultdir="ECAres", minage=1, maxage=20, delta.
     #
     # save data
     #
-    
-    save(GlobalParameters, Landings, WeightLength, AgeLength, file=file.path(outpath, paste0(projectname, ".RData")))
+    save(GlobalParameters, Landings, WeightLength, AgeLength, file=file.path(outputdir, paste0(projectname, ".RData")))
 }
 prepECA(projectname)

@@ -4,12 +4,10 @@ library(eca)
 # workarounds
 #
 
-inpath <- "/Users/a5362/code/github/Rstox_utils/Work/output"
-tmppath <- "/Users/a5362/code/github/Rstox_utils/Work/tmp"
-dir <- "/Users/a5362/code/github/Rstox_utils/Work"
-
-setwd(tmppath)
-
+ecadir <- "/Users/a5362/code/github/Rstox_utils/Work/tmp/ECAres"
+inpath <- file.path(ecadir, "datafiles")
+srcdir <- "/Users/a5362/code/github/Rstox_utils/Work"
+source(file.path(srcdir, "plot_results_ECA.R"))
 
 colsel <- c(1,2,3)
 fix_in_prep_agelength<-function(AgeLength){
@@ -58,11 +56,12 @@ defaultlgamodel="log-linear"
 defaultCC=FALSE
 defaultCCError=FALSE
 age.error.default=FALSE
-runECA <- function(datafilepath, burnin=burnindefault, caa.burnin=burnindefault, nSamples=samplesdefault, thin=thindefault, fitfile=defaultfitfile, predfile=defaultpredfile, lgamodel=defaultlgamodel, CC=defaultCC, CCError=defaultCCError, seed=NULL, age.error=age.error.default){
+runECA <- function(projectname, inputdir, burnin=burnindefault, caa.burnin=burnindefault, nSamples=samplesdefault, thin=thindefault, fitfile=defaultfitfile, predfile=defaultpredfile, lgamodel=defaultlgamodel, CC=defaultCC, CCError=defaultCCError, seed=NULL, age.error=age.error.default){
   warning("write doc for runECA")
   # Sett kjøreparametere her, sett dataparametere i prep_eca
-  tmp <- load(datafilepath)
-  write(paste("Loaded from", filename, ":", tmp), stderr())
+
+  tmp <- load(file.path(inputdir, paste0(projectname, ".RData")))
+  write(paste("Data loaded from", filename, ":", tmp), stderr())
   
   GlobalParameters$caa.burnin <- burnin
   GlobalParameters$burnin <- caa.burnin
@@ -96,9 +95,6 @@ runECA <- function(datafilepath, burnin=burnindefault, caa.burnin=burnindefault,
   return(l)
 }
 
-filename <- "ECA_torsk_2015.RData"
-filepath <- file.path(inpath, filename)
-tmp <- load(filepath)
-result <- runECA(filepath)
-source(file.path(dir, "plot_results_ECA.R"))
+projectname <- "ECA_torsk_2015"
+result <- runECA(projectname, inpath)
 plot_pred_box(result$pred)
