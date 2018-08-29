@@ -24,8 +24,7 @@ estimate_catchcount <- function(ecaobj){
   if (any(is.na(ecaobj$biotic[missing,"catchweight"])) | any(is.na(ecaobj$biotic[missing,"lengthsampleweight"])) | any(is.na(ecaobj$biotic[missing,"lengthsamplecount"]))){
     stop("Could not estimate catchcount")
   }
-  ecaobj$biotic[ecaobj$biotic$lengthsampleweight==0, "lengthsampleweight"] <- ecaobj$biotic[ecaobj$biotic$lengthsampleweight==0, "weight"]
-  ecaobj$biotic[missing,"catchcount"] <- eca$biotic[missing, "lengthsamplecount"] * eca$biotic[missing, "catchweight"] / eca$biotic[missing, "lengthsampleweight"]
+  ecaobj$biotic[missing,"catchcount"] <- ecaobj$biotic[missing, "lengthsamplecount"] * ecaobj$biotic[missing, "catchweight"] / ecaobj$biotic[missing, "lengthsampleweight"]
   
 	return(ecaobj)
 }
