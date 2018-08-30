@@ -1,5 +1,5 @@
 library(Rstox)
-options(java.parameters="-Xmx6g")
+options(java.parameters="-Xmx8g")
 # Edvin:
 dir <- "/Users/a5362/code/github/Rstox_utils/Work"
 outpath <- "/Users/a5362/code/github/Rstox_utils/Work/output"
@@ -21,6 +21,7 @@ source(paste(dir, "ECA_input_conversion.R", sep="/"))
 #' @param maxlength maximum length of fish in the data set in cm. If null the value will be extracted from the data.
 #' @param resultdir location where R-ECA will store temporal files
 #' @param outputdir location for output files, defaults (if NULL) to a subdirectory of resultdir called `datafiles` which will be created if it does not already exists.
+#' @return outputdir
 prepECA <- function(projectname, resultdir=ecadir, outputdir=NULL, minage=1, maxage=20, delta.age=0.001, maxlength=NULL, use_otolithtype=TRUE, hatchDaySlashMonth="01/01"){
   
     if(!(file.exists(resultdir))){
@@ -70,5 +71,6 @@ prepECA <- function(projectname, resultdir=ecadir, outputdir=NULL, minage=1, max
     # save data
     #
     save(GlobalParameters, Landings, WeightLength, AgeLength, file=file.path(outputdir, paste0(projectname, ".RData")))
+    return(outputdir)
 }
 prepECA(projectname)
