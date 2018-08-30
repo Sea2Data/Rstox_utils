@@ -1,11 +1,12 @@
 library(eca)
+library(Rstox)
 
 #
 # workarounds
 #
 
-ecadir <- "/Users/a5362/code/github/Rstox_utils/Work/tmp/ECAres"
-inpath <- file.path(ecadir, "datafiles")
+#ecadir <- "/Users/a5362/code/github/Rstox_utils/Work/tmp/ECAres"
+#inpath <- file.path(ecadir, "datafiles")
 srcdir <- "/Users/a5362/code/github/Rstox_utils/Work"
 source(file.path(srcdir, "plot_results_ECA.R"))
 
@@ -40,6 +41,10 @@ fix_in_prep_landings <- function(Landings){
 # /workarounds
 #
 
+get_default_data_dir <- function(projectname, recadir=getProjectPaths(projectname)$RDataDir){
+  return(file.path(recadir, "reca", "datafiles"))
+}
+
 burnindefault=10
 samplesdefault=101
 thindefault=1
@@ -49,14 +54,23 @@ defaultlgamodel="log-linear"
 defaultCC=FALSE
 defaultCCError=FALSE
 age.error.default=FALSE
-runECA <- function(projectname, inputdir, burnin=burnindefault, caa.burnin=burnindefault, nSamples=samplesdefault, thin=thindefault, fitfile=defaultfitfile, predfile=defaultpredfile, lgamodel=defaultlgamodel, CC=defaultCC, CCError=defaultCCError, seed=NULL, age.error=age.error.default){
+#' @param inputdir Defaults (if null) to ...
+runECA <- function(projectname, inputdir=NULL, burnin=burnindefault, caa.burnin=burnindefault, nSamples=samplesdefault, thin=thindefault, fitfile=defaultfitfile, predfile=defaultpredfile, lgamodel=defaultlgamodel, CC=defaultCC, CCError=defaultCCError, seed=NULL, age.error=age.error.default){
   warning("write doc for runECA")
   # Sett kjøreparametere her, sett dataparametere i prep_eca
 
+  if (is.null(inputdir)){
+    warning("temporally using non-default ecadir. source from prep_ECA")
+    inputdir <- get_default_data_dir(projectname, ecadir)
+  }
+  if (!file.exists(inputdir)){
+    stop(paste("Directory", inputdir, "does not exist."))
+  }
+  
   filename <- file.path(inputdir, paste0(projectname, ".RData"))
   tmp <- load(filename)
   write(paste("Data loaded from", filename, ":", tmp), stderr())
-  
+  print(GlobalParameters$resultdir)
   GlobalParameters$caa.burnin <- burnin
   GlobalParameters$burnin <- caa.burnin
   GlobalParameters$nSamples <- nSamples
@@ -90,7 +104,7 @@ runECA <- function(projectname, inputdir, burnin=burnindefault, caa.burnin=burni
 }
 
 projectname <- "ECA_torsk_2015"
-result <- runECA(projectname, inpath)
+result <- runECA(projectname)
 plot_pred_box(result$pred)
 
-#  tmp <- load(file.path(inpath, paste0(projectname, ".RData")))
+#  tmp <- load(file.path(file.path(getProjectPaths(projectname)$RDataDir,"RECA", "datafiles"), paste0(projectname, ".RData")))

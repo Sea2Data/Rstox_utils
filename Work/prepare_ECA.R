@@ -2,11 +2,9 @@ library(Rstox)
 options(java.parameters="-Xmx8g")
 # Edvin:
 dir <- "/Users/a5362/code/github/Rstox_utils/Work"
-outpath <- "/Users/a5362/code/github/Rstox_utils/Work/output"
-ecadir <- "/Users/a5362/code/github/Rstox_utils/Work/tmp/ECAres"
+ecadir <- "/Users/a5362/code/github/Rstox_utils/Work/tmp/a"
 # Arne Johannes:
 #dir <- "~/Documents/Produktivt/Prosjekt/R-packages/Rstox_utils/Rstox_utils/Work"
-#outpath <- "~/Documents/Produktivt/Prosjekt/R-packages/Rstox_utils/output"
 #sildeprosjekt: /delphi/Felles/alle/stox/ECA/2015/ECA_sild_2015. Legg til sild == '161724' i filter (annen kode for sild'g03)
 
 projectname <- "ECA_torsk_2015"
@@ -17,23 +15,44 @@ source(paste(dir, "ECA_input_checks.R", sep="/"))
 source(paste(dir, "ECA_input_conversion.R", sep="/"))
 
 
+get_default_data_dir <- function(projectname, recadir=getProjectPaths(projectname)$RDataDir){
+  return(file.path(recadir, "reca", "datafiles"))
+}
+
+get_default_result_dir <- function(projectname, recadir=getProjectPaths(projectname)$RDataDir){
+  return(file.path(recadir, "reca"))
+}
+
+
 #' see doc for eca.estimate for most parameters
 #' @param maxlength maximum length of fish in the data set in cm. If null the value will be extracted from the data.
-#' @param resultdir location where R-ECA will store temporal files
+#' @param resultdir location where R-ECA will store temporal files. Defaults (if null) to a subdirectory of getProjectPaths(projectname)$RDataDir called `RECA` whcih will be created if it does not already exist
 #' @param outputdir location for output files, defaults (if NULL) to a subdirectory of resultdir called `datafiles` which will be created if it does not already exists.
 #' @return outputdir
-prepECA <- function(projectname, resultdir=ecadir, outputdir=NULL, minage=1, maxage=20, delta.age=0.001, maxlength=NULL, use_otolithtype=TRUE, hatchDaySlashMonth="01/01"){
+prepECA <- function(projectname, resultdir=NULL, outputdir=NULL, minage=1, maxage=20, delta.age=0.001, maxlength=NULL, use_otolithtype=TRUE, hatchDaySlashMonth="01/01"){
   
+    if (is.null(resultdir)){
+      warning("temporally using non-default ecadir")
+      resultdir <- get_default_result_dir(projectname, ecadir)
+      if(!(file.exists(resultdir))){
+        dir.create(resultdir, recursive=T)
+      }
+    }
     if(!(file.exists(resultdir))){
       stop(paste("Directory", resultdir, "does not exist."))
     }
   
     if (is.null(outputdir)){
-      outputdir <- file.path(resultdir, "datafiles")
-      if(!(file.path(resultdir, "datafiles") %in% list.dirs(resultdir))){
-        dir.create(outputdir)
+      warning("temporally using non-default ecadir")
+      outputdir <- get_default_data_dir(projectname, ecadir)
+      if(!(file.path(outputdir) %in% list.dirs(resultdir))){
+        dir.create(outputdir, recursive=T)
       }
     }
+    if(!(file.exists(outputdir))){
+      stop(paste("Directory", outputtdir, "does not exist."))
+    }
+  
   
   
     warning("write doc for prepECA")
