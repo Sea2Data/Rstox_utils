@@ -157,6 +157,9 @@ check_landings_cov <- function(cov){
   if (!all(cov$midseason>0 & cov$midseason<=1)){
     stop("midseason must be in <0,1]")
   }
+  if (any(is.na(cov))){
+    stop("NAs in landings")
+  }
 }
 
 #checks that landings are specified correctly
