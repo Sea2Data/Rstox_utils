@@ -8,7 +8,7 @@ library(Rstox)
 fix_in_prep_agelength<-function(AgeLength){
   ## Select covariates - not use haulweight and boat now
   newAgeLength <- AgeLength
-
+  #newAgeLength$info["spatial", "CAR"] <- 1
   rownames(newAgeLength$info)[rownames(newAgeLength$info)=="temporal"]<-"season"
   names(newAgeLength$CovariateMatrix)[names(newAgeLength$CovariateMatrix)=="temporal"]<-"season"
   
@@ -17,9 +17,9 @@ fix_in_prep_agelength<-function(AgeLength){
 fix_in_prep_weightlength <- function(WeightLength){
   newWeightLength <- WeightLength
 
+  #newWeightLength$info["spatial", "CAR"] <- 1
   rownames(newWeightLength$info)[rownames(newWeightLength$info)=="temporal"]<-"season"
   names(newWeightLength$CovariateMatrix)[names(newWeightLength$CovariateMatrix)=="temporal"]<-"season"
-  
   
   return(newWeightLength)
 }
