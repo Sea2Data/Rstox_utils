@@ -5,11 +5,6 @@ library(Rstox)
 # workarounds
 #
 
-#ecadir <- "/Users/a5362/code/github/Rstox_utils/Work/tmp/ECAres"
-#inpath <- file.path(ecadir, "datafiles")
-srcdir <- "/Users/a5362/code/github/Rstox_utils/Work"
-source(file.path(srcdir, "plot_results_ECA.R"))
-
 fix_in_prep_agelength<-function(AgeLength){
   ## Select covariates - not use haulweight and boat now
   newAgeLength <- AgeLength
@@ -90,12 +85,8 @@ runRECA <- function(projectname, burnin=burnindefault, caa.burnin=burnindefault,
   ## Predict
   pred <- eca.predict(AgeLength,WeightLength,Landings,GlobalParameters)
   
-  l<-list()
-  l$fit<-fit
-  l$pred<-pred
-  return(l)
+  setProjectData(projectName=projectname, var=list(fit=fit, pred=pred), name="runRECA")
 }
 
 projectname <- "ECA_torsk_2015"
-result <- runRECA(projectname)
-plot_pred_box(result$pred)
+runRECA(projectname)

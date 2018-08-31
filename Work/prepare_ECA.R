@@ -2,7 +2,6 @@ library(Rstox)
 options(java.parameters="-Xmx8g")
 # Edvin:
 dir <- "/Users/a5362/code/github/Rstox_utils/Work"
-ecadir <- "/Users/a5362/code/github/Rstox_utils/Work/tmp/a"
 # Arne Johannes:
 #dir <- "~/Documents/Produktivt/Prosjekt/R-packages/Rstox_utils/Rstox_utils/Work"
 #sildeprosjekt: /delphi/Felles/alle/stox/ECA/2015/ECA_sild_2015. Legg til sild == '161724' i filter (annen kode for sild'g03)
@@ -77,7 +76,5 @@ prepRECA <- function(projectname, resultdir=NULL, minage=1, maxage=20, delta.age
     #
     
     setProjectData(projectName=projectname, var=list(GlobalParameters=GlobalParameters, Landings=Landings, WeightLength=WeightLength, AgeLength=AgeLength), name="prepareRECA")
-    #save(GlobalParameters, Landings, WeightLength, AgeLength, file=file.path(outputdir, paste0(projectname, ".RData")))
-    #return(outputdir)
 }
 prepRECA(projectname)
