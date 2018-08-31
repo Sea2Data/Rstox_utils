@@ -15,25 +15,20 @@ source(paste(dir, "ECA_input_checks.R", sep="/"))
 source(paste(dir, "ECA_input_conversion.R", sep="/"))
 
 
-get_default_data_dir <- function(projectname, recadir=getProjectPaths(projectname)$RDataDir){
-  return(file.path(recadir, "reca", "datafiles"))
-}
-
-get_default_result_dir <- function(projectname, recadir=getProjectPaths(projectname)$RDataDir){
-  return(file.path(recadir, "reca"))
+get_default_result_dir <- function(projectname, location=getProjectPaths(projectname)$RDataDir){
+  return(file.path(location, "reca"))
 }
 
 
 #' see doc for eca.estimate for most parameters
 #' @param maxlength maximum length of fish in the data set in cm. If null the value will be extracted from the data.
-#' @param resultdir location where R-ECA will store temporal files. Defaults (if null) to a subdirectory of getProjectPaths(projectname)$RDataDir called `RECA` whcih will be created if it does not already exist
-#' @param outputdir location for output files, defaults (if NULL) to a subdirectory of resultdir called `datafiles` which will be created if it does not already exists.
+#' @param resultdir location where R-ECA will store temporal files. Defaults (if null) to a subdirectory of getProjectPaths(projectname)$RDataDir called `reca` whcih will be created if it does not already exist
 #' @return outputdir
-prepECA <- function(projectname, resultdir=NULL, outputdir=NULL, minage=1, maxage=20, delta.age=0.001, maxlength=NULL, use_otolithtype=TRUE, hatchDaySlashMonth="01/01"){
+prepRECA <- function(projectname, resultdir=NULL, minage=1, maxage=20, delta.age=0.001, maxlength=NULL, use_otolithtype=TRUE, hatchDaySlashMonth="01/01"){
   
     if (is.null(resultdir)){
-      warning("temporally using non-default ecadir")
-      resultdir <- get_default_result_dir(projectname, ecadir)
+      warning(paste("temporally using non-default ecadir:",path.expand("~/recatmp")))
+      resultdir <- get_default_result_dir(projectname, path.expand("~/recatmp"))
       if(!(file.exists(resultdir))){
         dir.create(resultdir, recursive=T)
       }
@@ -41,19 +36,10 @@ prepECA <- function(projectname, resultdir=NULL, outputdir=NULL, minage=1, maxag
     if(!(file.exists(resultdir))){
       stop(paste("Directory", resultdir, "does not exist."))
     }
-  
-    if (is.null(outputdir)){
-      warning("temporally using non-default ecadir")
-      outputdir <- get_default_data_dir(projectname, ecadir)
-      if(!(file.path(outputdir) %in% list.dirs(resultdir))){
-        dir.create(outputdir, recursive=T)
-      }
+    warning("checking filepath length and char comp")
+    if (grepl(" ", resultdir) | nchar(resultdir)>48){
+      stop(paste("Please make ecadir", "(current:", resultdir, ") contain no spaces and be shorter than 48 characters."))
     }
-    if(!(file.exists(outputdir))){
-      stop(paste("Directory", outputtdir, "does not exist."))
-    }
-  
-  
   
     warning("write doc for prepECA")
     eca <- baseline2eca(projectname)
@@ -87,9 +73,11 @@ prepECA <- function(projectname, resultdir=NULL, outputdir=NULL, minage=1, maxag
     checkGlobalParameters(GlobalParameters)
     
     #
-    # save data
+    # store results
     #
-    save(GlobalParameters, Landings, WeightLength, AgeLength, file=file.path(outputdir, paste0(projectname, ".RData")))
-    return(outputdir)
+    
+    setProjectData(projectName=projectname, var=list(GlobalParameters=GlobalParameters, Landings=Landings, WeightLength=WeightLength, AgeLength=AgeLength), name="prepareRECA")
+    #save(GlobalParameters, Landings, WeightLength, AgeLength, file=file.path(outputdir, paste0(projectname, ".RData")))
+    #return(outputdir)
 }
-prepECA(projectname)
+prepRECA(projectname)
