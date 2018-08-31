@@ -1,9 +1,5 @@
 library(Rstox)
 library(plotrix)
-# We need to implement reports that users can use to decide on data filtration and model parameters.
-# Breakdown on samples pr. area and gear, etc.
-# We should have a look at current eca reports for that purpose
-
 #get matrix of sample and landings from the subset of biotic that contains aged individuals
 get_g_s_a_frame <- function(eca){
   
@@ -36,9 +32,9 @@ get_g_s_a_frame <- function(eca){
 }
 
 #' show samples wrp common covariates gear, area and temporal
-plot_gear_temporal_area <- function(eca, titletext="Prøvetaking redskap/sesong - område\nlandet (kt)\nfartøy,hal,alder", colgood="green4", colok="green2", colbarely="yellow", colbad="orange", colempty="gray", colwrong="white"){
+plot_gear_temporal_area <- function(eca, titletext="Samples gear/temporal - area\nlanded (kt)\nvessels,hauls,aged", colgood="green4", colok="green2", colbarely="yellow", colbad="orange", colempty="gray", colwrong="white"){
   
-
+  
   m <- get_g_s_a_frame(eca)
   m$desc <- paste(m$landed_kt, "\n", m$vessels, ", ", m$hauls, ",", m$aged, sep="")
   m$sd <- paste(m$gear, m$temporal, sep="/")
@@ -63,7 +59,7 @@ plot_gear_temporal_area <- function(eca, titletext="Prøvetaking redskap/sesong 
   landed <- landed[rowSums(landed)>0 | rowSums(aged)>0,colSums(landed)>0 | colSums(aged)>0]
   colnames(descr) <- colnames(landed)
   rownames(descr) <- rownames(landed)
-
+  
   #deal with sizing and such when output device is clear
   plot(1:100, axes = FALSE, xlab = "", ylab = "", type = "n", main=titletext)
   addtable2plot(x = "topleft", table = descr,
@@ -80,7 +76,7 @@ plot_cell_landings <- function(eca, xlab="Redskap/sesong/område", ylab="landet 
   mm <- get_g_s_a_frame(eca)
   mm<-mm[order(mm$landed_kt, decreasing = T),]
   mm$col <- NA
-
+  
   mm[mm$landed_kt==0 & mm$vessels >0,"col"]<-colwrong
   mm[mm$landed_kt==0 & mm$vessels ==0 ,"col"]<-colempty
   mm[mm$landed_kt>0 &  mm$vessels ==0,"col"]<-colbad
@@ -98,7 +94,7 @@ plot_cell_coverage <- function(eca, xlab="prøvetaking i celle", ylab="Andel lan
   mm<-mm[order(mm$landed_kt, decreasing = T),]
   mm$col <- NA
   mm$desc <- NA
-
+  
   mm[mm$landed_kt==0 & mm$vessels >0,"col"]<-colwrong
   mm[mm$landed_kt==0 & mm$vessels >0,"descr"]<-""
   mm[mm$landed_kt==0 & mm$vessels ==0 ,"col"]<-colempty
@@ -111,7 +107,7 @@ plot_cell_coverage <- function(eca, xlab="prøvetaking i celle", ylab="Andel lan
   mm[mm$landed_kt>0 &  mm$vessels ==1 & mm$hauls>1,"descr"]<-okdesc
   mm[mm$landed_kt>0 &  mm$vessels >1 &  mm$hauls>1,"col"]<-colgood
   mm[mm$landed_kt>0 &  mm$vessels >1 &  mm$hauls>1,"descr"]<-gooddesc
-    
+  
   tot <- aggregate(list(landed_fr=mm$landed_fr), by=list(samples=mm$col, desc=mm$descr), FUN=sum)
   tot <- tot[order(tot$landed_fr, decreasing=T),]
   
@@ -141,7 +137,7 @@ plot_fixed_effect_coverage <- function(eca, indparameters=c("age"), titletext="S
   for (p in indparameters){
     samples <- samples[!is.na(samples[[p]]),]    
   }
-
+  
   
   a <- lapply(fe, FUN=function(x){samples[[x]]})
   names(a)=fe
@@ -185,33 +181,10 @@ plot_model_diagnostics <- function(eca){
 }
 
 
-
-#
-# Test eksempler
-#
-
-runbl <- function(){
-  options(java.parameters="-Xmx8g")
-  # Edvin:
-  dir <- "/Users/a5362/code/github/Rstox_utils/Work"
-  outpath <- "/Users/a5362/code/github/Rstox_utils/Work/output"
-  # Arne Johannes:
-  #dir <- "~/Documents/Produktivt/Prosjekt/R-packages/Rstox_utils/Rstox_utils/Work"
-  #outpath <- "~/Documents/Produktivt/Prosjekt/R-packages/Rstox_utils/output"
-  #sildeprosjekt: /delphi/Felles/alle/stox/ECA/2015/ECA_sild_2015. Legg til sild == '161724' i filter (annen kode for sild'g03)
-  
-  projectname <- "ECA_torsk_2015"
-  #projectname <- "ECA_sild_2015"
-  baselineOutput <- getBaseline(projectname)
-  eca <- baseline2eca(projectname)
-  eca$resources$covariateInfo[4,"covType"]<-"Random"
-  return(eca)
-}
-
-
-ex <- function(eca){
+diagnosticsRECA <- function(projectname){
+  eca <- baseline2eca(projectname)  
   plot_sampling_diagnostics(eca)
   plot_model_diagnostics(eca)
 }
-eca <- runbl()
-ex(eca)
+projectname <- "ECA_torsk_2015"
+diagnosticsRECA(projectname)
