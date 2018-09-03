@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project template="" rstoxversion="" xmlns="http://www.imr.no/formats/stox/v1" lastmodified="31/08/18 09:05" rversion="" stoxversion="2.6.1" resourceversion="1.79">
+<project template="" rstoxversion="" xmlns="http://www.imr.no/formats/stox/v1" lastmodified="03/09/18 21:29" rversion="" stoxversion="2.6.1" resourceversion="1.79">
   <model name="baseline">
     <process name="ReadProcessData">
       <function>ReadProcessData</function>
@@ -55,7 +55,7 @@
       <fileoutput>true</fileoutput>
       <parameter name="LandingData">Process(ReadLandingXML)</parameter>
       <parameter name="SluttSeddelExpr">fangsthomr != 81 &amp;&amp; fangsthomr != 75</parameter>
-      <parameter name="FiskeLinjeExpr">rundvekt&gt;0 &amp;&amp; (fisk == '102202' || fisk == '1022' || fisk == '1043' || fisk == '102204')</parameter>
+      <parameter name="FiskeLinjeExpr">rundvekt&gt;0 &amp;&amp; (fisk == '1022' || fisk == '102201' || fisk == '102202' || fisk == '102203'  || fisk == '102204')</parameter>
       <output>LandingData</output>
     </process>
     <process name="ApplyPosToLanding">

@@ -12,7 +12,7 @@ get_g_s_a_frame <- function(eca){
   if (any(is.na(eca$landing$temporal)) | any(is.na(eca$landing$gearfactor)) | any(is.na(eca$landing$spatial)) | any(is.na(eca$biotic$temporal)) | any(is.na(eca$biotic$gearfactor)) | any(is.na(eca$biotic$spatial))){
     warning("NAs in covariates")  
   }
-  
+
   totland <- aggregate(list(landed_kt=eca$landing$rundvekt/(1000*1000)), by=list(temporal=eca$landing$temporal, gearfactor=eca$landing$gearfactor, spatial=eca$landing$spatial), FUN=sum)
   totsamp <- aggregate(list(sampled_t=agedb$catchweight/1000), by=list(temporal=agedb$temporal, gearfactor=agedb$gearfactor, spatial=agedb$spatial), FUN=function(x){sum(x, na.rm=T)})
   totvessel <- aggregate(list(vessels=agedb$platform), by=list(temporal=agedb$temporal, gearfactor=agedb$gearfactor, spatial=agedb$spatial), FUN=function(x){length(unique(x))})
@@ -32,15 +32,14 @@ get_g_s_a_frame <- function(eca){
 }
 
 #' show samples wrp common covariates gear, area and temporal
-plot_gear_temporal_area <- function(eca, titletext="Samples gear/temporal - area\nlanded (kt)\nvessels,hauls,aged", colgood="green4", colok="green2", colbarely="yellow", colbad="orange", colempty="gray", colwrong="white"){
-  
+plot_gear_temporal_area <- function(eca, titletext="gear/temporal - area\nlanded (kt)\nage samples: #vessels,#catches,#individuals", colgood="green4", colok="green2", colbarely="yellow", colbad="orange", colempty="gray", colwrong="white"){
   
   m <- get_g_s_a_frame(eca)
   m$desc <- paste(m$landed_kt, "\n", m$vessels, ", ", m$hauls, ",", m$aged, sep="")
   m$sd <- paste(m$gear, m$temporal, sep="/")
   
   landed <- xtabs(m$landed_kt~m$sd+m$spatial)
-  landed[landed<1]<-0
+  landed[landed<.001]<-0
   vessels <- xtabs(m$vessels~m$sd+m$spatial)
   hauls <- xtabs(m$hauls~m$sd+m$spatial)
   aged <- xtabs(m$aged~m$sd+m$spatial)
@@ -61,6 +60,7 @@ plot_gear_temporal_area <- function(eca, titletext="Samples gear/temporal - area
   rownames(descr) <- rownames(landed)
   
   #deal with sizing and such when output device is clear
+  #calculate plot size
   plot(1:100, axes = FALSE, xlab = "", ylab = "", type = "n", main=titletext)
   addtable2plot(x = "topleft", table = descr,
                 bty = "o", display.rownames = TRUE, display.colnames = TRUE,
@@ -71,10 +71,11 @@ plot_gear_temporal_area <- function(eca, titletext="Samples gear/temporal - area
   return(descr)
 }
 
-plot_cell_landings <- function(eca, xlab="Redskap/sesong/område", ylab="landet (kt)", titletext="Landinger", legendtitle="aldersprøver", colgood="green4", colok="green2", colbarely="yellow", colbad="orange", colempty="gray", colwrong="white", gooddesc="> 1 fartøy", okdesc="> 1 fangst", barelydesc="> 0 fangst", baddesc="0 prøver"){
+plot_cell_landings <- function(eca, xlab="Cells (gear/temp/spatial)", ylab="landed (kt)", frac=0.001, titletext=paste("top", 100-frac*100, "weigth-% cells"), legendtitle="sample clustering", colgood="green4", colok="green2", colbarely="yellow", colbad="orange", colempty="gray", colwrong="white", gooddesc="> 1 vessel", okdesc="> 1 catch", barelydesc="> 0 catch", baddesc="0 samples"){
   
   mm <- get_g_s_a_frame(eca)
   mm<-mm[order(mm$landed_kt, decreasing = T),]
+  mm<-mm[mm$landed_kt/sum(mm$landed_kt)>frac,]
   mm$col <- NA
   
   mm[mm$landed_kt==0 & mm$vessels >0,"col"]<-colwrong
@@ -88,7 +89,7 @@ plot_cell_landings <- function(eca, xlab="Redskap/sesong/område", ylab="landet 
   legend("topright", legend=c(gooddesc, okdesc, barelydesc, baddesc), fill=c(colgood, colok, colbarely, colbad), title = legendtitle)
 }
 
-plot_cell_coverage <- function(eca, xlab="prøvetaking i celle", ylab="Andel landet i celle (vekt-%)", titletext="Dekning aldersdata celler\n(redskap/sesong/område)", colgood="green4", colok="green2", colbarely="yellow", colbad="orange", colempty="gray", colwrong="white", gooddesc="> 1 fartøy", okdesc="> 1 fangst", barelydesc="> 0 fangst", baddesc="0 prøver"){
+plot_cell_coverage <- function(eca, xlab="sample clustering", ylab="Fraction landed (vekt-%)", titletext="Coverage w age\ncells (gear/temp/spatial)", colgood="green4", colok="green2", colbarely="yellow", colbad="orange", colempty="gray", colwrong="white", gooddesc="> 1 vessel", okdesc="> 1 catch", barelydesc="> 0 catch", baddesc="0 samples"){
   
   mm <- get_g_s_a_frame(eca)
   mm<-mm[order(mm$landed_kt, decreasing = T),]
@@ -108,8 +109,30 @@ plot_cell_coverage <- function(eca, xlab="prøvetaking i celle", ylab="Andel lan
   mm[mm$landed_kt>0 &  mm$vessels >1 &  mm$hauls>1,"col"]<-colgood
   mm[mm$landed_kt>0 &  mm$vessels >1 &  mm$hauls>1,"descr"]<-gooddesc
   
+  rankdesc <- function(desc){
+    if (desc==gooddesc){
+      return(5)
+    }
+    if (desc==okdesc){
+      return(4)
+    }
+    if (desc==barelydesc){
+      return(3)
+    }
+    if (desc==baddesc){
+      return(2)
+    }
+    if (desc==""){
+      return(1)
+    }
+    else{
+      stop()
+    }
+  }
+  rankdesc <- Vectorize(rankdesc)
+  
   tot <- aggregate(list(landed_fr=mm$landed_fr), by=list(samples=mm$col, desc=mm$descr), FUN=sum)
-  tot <- tot[order(tot$landed_fr, decreasing=T),]
+  tot <- tot[order(rankdesc(tot$desc)),]
   
   barplot(tot$landed_fr*100, col=tot$sample, xlab=xlab, ylab=ylab, names=tot$desc, main=titletext)
 }
@@ -166,12 +189,13 @@ plot_fixed_effect_coverage <- function(eca, indparameters=c("age"), titletext="S
 #
 
 plot_sampling_diagnostics <- function(eca){
-  plot_gear_temporal_area(eca)
   par.old <- par(no.readonly = T)
-  par(mfrow=c(1,2))
+  plot_gear_temporal_area(eca)
+  par(mfrow=c(2,1))
   plot_cell_coverage(eca)
   plot_cell_landings(eca)
   par(par.old)
+  par(mfrow=c(1,1))
 }
 
 plot_model_diagnostics <- function(eca){
