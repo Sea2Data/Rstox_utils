@@ -1,5 +1,13 @@
 library(Rstox)
-plotWrapper <-
+
+#' Saves plot to stox project location (getProjectPaths(projectname)$RReportDir) to be localised by getPlots in stox.
+#' @param projectname name of stox project
+#' @param plotname filename for plot without format suffix
+#' @param draw function for drawing the plot. Takes no arguments
+#' @param format function defining plotting device and file suffix, supports grDevices::pdf, grDevices::png, grDevices::jpeg, grDevices::tiff, grDevices::bmp
+#' @param verbose logical, if TRUE info is written to stderr()
+#' @param ... parameters to be passed on to format
+formatPlot <-
   function(projectname,
            plotname,
            draw,
@@ -12,28 +20,14 @@ plotWrapper <-
     filename <- paste(filenamebase, format, sep = ".")
     
     if (format %in% c("bmp", "jpeg", "png", "tiff")) {
-      if (!("width" %in% names(lll))) {
-        lll$width <- 5000
-      }
-      if (!("height" %in% names(lll))) {
-        lll$height <- 3000
-      }
-      if (!("res" %in% names(lll))) {
-        lll$res <- 500
-      }
       moveToTrash(filename)
       do.call(format, c(list(filename = filename), applyParlist(lll,
                                                                 format)))
     }
     else if (format %in% c("pdf")){
-      if (!("width" %in% names(lll))) {
-        lll$width <- 5000/500
-      }
-      if (!("height" %in% names(lll))) {
-        lll$height <- 3000/500
-      }
       moveToTrash(filename)
-      do.call(format, list(file = filename, width=lll$width, height=lll$height))
+      do.call(format, c(list(file = filename), applyParlist(lll,
+                                                                format)))
     }
       
     tryCatch({

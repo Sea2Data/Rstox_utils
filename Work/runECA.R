@@ -33,8 +33,8 @@ get_default_data_dir <- function(projectname, recadir=getProjectPaths(projectnam
   return(file.path(recadir, "reca", "datafiles"))
 }
 
-burnindefault=10
-samplesdefault=101
+burnindefault=20
+samplesdefault=201
 thindefault=1
 defaultfitfile="fit"
 defaultpredfile="pred"
