@@ -1,15 +1,5 @@
-plot_pred_hist <- function(pred, title=""){
-  caa <- apply(pred$TotalCount, c(2,3), sum)
-  caa_kt <- caa/1e6
-  par(mfcol=c(round(mage/2),2))
-  mm <- max(caa_kt)+5
-  bins <- seq(0,mm,5)
-  for (i in 1:max(pred$AgeCategories)){
-    hist(caa_kt[i,], breaks=bins, xlab="posterior catch mFish", main=paste("age", pred$AgeCategories[i]), xlim=c(0,200), main=title)
-  }
-  par(mfcol=c(1,1))
-}
-plot_pred_box <- function(pred, title=""){
+plot_pred_box <- function(pred, xlab="age", ylab="posterior catch mFish", ...){
+  warning("Use plottingUnits")
   caa <- apply(pred$TotalCount, c(2,3), sum)
   caa_kt <- caa/1e6
   
@@ -20,10 +10,23 @@ plot_pred_box <- function(pred, title=""){
     age <- c(age, rep(pred$AgeCategories[i], length(caa_kt[i,])))
   }
   
-  boxplot(post~age, las=2, xlab="age", ylab="posterior catch Mfish", main=title)
+  args <- list(...)
+  if (!("xlab" %in% names(args))){
+    args$xlab=xlab
+  }
+  if (!("ylab" %in% names(args))){
+    args$ylab=ylab
+  }
+  if (!("las" %in% names(args))){
+    args$las=2
+  }
+  
+  do.call(boxplot, c(post~age, args))
+
 }
 
 plot_pred_ci <- function(pred, title="", alpha=.1){
+  stop("Not implemented")
   caa <- apply(pred$TotalCount, c(2,3), sum)
   caa_kt <- caa/1e6
   
@@ -44,6 +47,7 @@ plot_pred_ci <- function(pred, title="", alpha=.1){
 }
 
 season_plot_test <- function(){
+  stop("Not implemented")
   par(mfrow=c(2,2))
   for (s in unique(Landings$AgeLengthCov$season)){
     print(paste0("Q", s))

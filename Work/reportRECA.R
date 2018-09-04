@@ -1,10 +1,13 @@
 library(Rstox)
 srcdir <- "/Users/a5362/code/github/Rstox_utils/Work"
 source(file.path(srcdir, "plot_results_ECA.R"))
+source(file.path(srcdir, "plotWrapper.R"))
 
-reportRECA <- function(projectname){
+reportRECA <- function(projectname, verbose=F, format="png", ...){
   rundata <- loadProjectData(projectname, var="runRECA")
-  plot_pred_box(rundata$runRECA$pred) 
+  plotWrapper(projectname, "catch_by_age", function(){plot_pred_box(rundata$runRECA$pred, ...)}, verbose=verbose, format=format, ...)
+  
+  #write results as in examples
   
   #ordne plot etter oppskrift fra plotAbundance_AcousticTrawl
   #legg png plot i getProjectPaths(projectName)$RReportDir
