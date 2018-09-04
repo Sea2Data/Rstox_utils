@@ -9,26 +9,19 @@ fix_in_prep_agelength<-function(AgeLength){
   ## Select covariates - not use haulweight and boat now
   newAgeLength <- AgeLength
   #newAgeLength$info["spatial", "CAR"] <- 1
-  rownames(newAgeLength$info)[rownames(newAgeLength$info)=="temporal"]<-"season"
-  names(newAgeLength$CovariateMatrix)[names(newAgeLength$CovariateMatrix)=="temporal"]<-"season"
-  
+
   return(newAgeLength)  
 }
 fix_in_prep_weightlength <- function(WeightLength){
   newWeightLength <- WeightLength
 
   #newWeightLength$info["spatial", "CAR"] <- 1
-  rownames(newWeightLength$info)[rownames(newWeightLength$info)=="temporal"]<-"season"
-  names(newWeightLength$CovariateMatrix)[names(newWeightLength$CovariateMatrix)=="temporal"]<-"season"
-  
+
   return(newWeightLength)
 }
 fix_in_prep_landings <- function(Landings){
   newLandings <- Landings
 
-  names(newLandings$WeightLengthCov)[names(newLandings$WeightLengthCov)=="temporal"]<-"season"
-  names(newLandings$AgeLengthCov)[names(newLandings$AgeLengthCov)=="temporal"]<-"season"
-  
   return(newLandings)
 }
 

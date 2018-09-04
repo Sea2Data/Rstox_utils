@@ -26,8 +26,7 @@ get_default_result_dir <- function(projectname, location=getProjectPaths(project
 prepRECA <- function(projectname, resultdir=NULL, minage=1, maxage=20, delta.age=0.001, maxlength=NULL, use_otolithtype=TRUE, hatchDaySlashMonth="01/01"){
   
     if (is.null(resultdir)){
-      warning(paste("temporally using non-default ecadir:",path.expand("~/recatmp")))
-      resultdir <- get_default_result_dir(projectname, path.expand("~/recatmp"))
+      resultdir <- get_default_result_dir(projectname)
       if(!(file.exists(resultdir))){
         dir.create(resultdir, recursive=T)
       }
@@ -35,9 +34,9 @@ prepRECA <- function(projectname, resultdir=NULL, minage=1, maxage=20, delta.age
     if(!(file.exists(resultdir))){
       stop(paste("Directory", resultdir, "does not exist."))
     }
-    warning("checking filepath length and char comp")
-    if (grepl(" ", resultdir) | nchar(resultdir)>48){
-      stop(paste("Please make ecadir", "(current:", resultdir, ") contain no spaces and be shorter than 48 characters."))
+    warning("checking filepath char comp")
+    if (grepl(" ", resultdir)){
+      stop(paste("Please make ecadir", "(current:", resultdir, ") contain no spaces."))
     }
   
     warning("write doc for prepECA")
