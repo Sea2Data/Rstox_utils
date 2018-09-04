@@ -42,6 +42,10 @@ prepRECA <- function(projectname, resultdir=NULL, minage=1, maxage=20, delta.age
     warning("write doc for prepECA")
     eca <- baseline2eca(projectname)
     
+    warning("hack while waiting for stox jar")
+    eca$biotic <- eca$biotic[!is.na(eca$biotic$spatial),]
+    eca$covariateMatrixBiotic <- eca$covariateMatrixBiotic[!is.na(eca$covariateMatrixBiotic$spatial),]
+    
     #max length in cm
     if (is.null(maxlength)){
       maxlength <- max(eca$biotic$length)      
