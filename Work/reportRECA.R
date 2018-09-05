@@ -26,9 +26,11 @@ plotCatchByAge <- function(projectName, var = "Abundance", unit="millions", verb
     res=NULL
   }
   
-  formatPlot(projectname, "catch_by_age", function(){plot_pred_ci(rundata$runRECA$pred, var=var, unit=unit, ...)}, verbose=verbose, format=format, height=height, width=width, res=res)
+  formatPlot(projectname, "catch_by_age", function(){plot_catch_at_age_ci(rundata$runRECA$pred, var=var, unit=unit, ...)}, verbose=verbose, format=format, height=height, width=width, res=res)
+  formatPlot(projectname, "weight_by_age", function(){plot_weight_at_age_ci(rundata$runRECA$pred, unit="kg", ...)}, verbose=verbose, format=format, height=height, width=width, res=res)
 
   warning("Implement save catch matrix")
+  warning("Fix defaults for units kt and mt")
   #save catch matrix
 }
 projectName <- "ECA_torsk_2015"

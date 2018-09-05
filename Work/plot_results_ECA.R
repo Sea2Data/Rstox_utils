@@ -1,3 +1,43 @@
+#' Constructs equal tailed credibility intervals. The probability mass above and below the interval is approximatelty the same.
+#' @param age agegroups integer vector
+#' @param values matrix where age indexes rows, and columns index points in the posterior distribution
+#' @param alpha value for the credibility intervals
+#' @return list with means, upper_ci and lower_ci all numeric vectors corresponding to age
+get_eq_tail_ci <- function(age, values, alpha){
+  postm <- c()
+  upper <- c()
+  lower <- c()
+  for (i in 1:length(age)){
+    postm <- c(postm, mean(values[i,]))
+    upper <- c(upper, quantile(values[i,], 1-(alpha/2.0)))
+    lower <- c(lower, quantile(values[i,], (alpha/2.0)))
+  }
+  res <- list()
+  res$means <- postm
+  res$upper_ci <- upper
+  res$lower_ci <- lower
+  return(res)
+}
+
+#' Plots means with error bars
+plot_ci <- function(x, means, upper_ci, lower_ci, ...){
+  args <- list(...)
+  
+  args$x=x
+  args$y=upper_ci
+  args$type="n"
+  do.call(plot, args)
+  args$y=means
+  args$type="p"
+  do.call(points, args)
+  
+  segments(x, upper_ci, x, lower_ci, lwd = 1.5)
+  arrows(x, upper_ci, x,
+         lower_ci, lwd = 1.5, angle = 90,
+         code = 3, length = 0.05)
+  
+}
+
 #' Plot catch by age prediction as boxplots
 #' @param var A key string indicating the variable to plot. ´Abundance´ and ´Weight´ is implemented. 
 #' @param unit A unit key string indicating the unit (see getPlottingUnit()$definitions$unlist.units for available key strings)
@@ -38,7 +78,7 @@ plot_pred_box <- function(pred, var, unit, xlab="age", ylab=paste("posterior cat
 #' @param var A key string indicating the variable to plot. ´Abundance´ and ´Weight´ is implemented. 
 #' @param unit A unit key string indicating the unit (see getPlottingUnit()$definitions$unlist.units for available key strings)
 #' @param alpha
-plot_pred_ci <- function(pred, var, unit, alpha=0.1, xlab="age", ylab=paste("posterior catch", unit), ...){
+plot_catch_at_age_ci <- function(pred, var, unit, alpha=0.1, xlab="age", ylab=paste("posterior catch", unit), ...){
   if (var=="Abundance" | var=="Count"){
     plottingUnit=getPlottingUnit(unit=unit, var=var, baseunit="ones", def.out = F)
     caa <- apply(pred$TotalCount, c(2,3), sum)
@@ -52,14 +92,37 @@ plot_pred_ci <- function(pred, var, unit, alpha=0.1, xlab="age", ylab=paste("pos
   }
   caa_scaled <- caa/plottingUnit$scale
 
-  postm <- c()
-  upper <- c()
-  lower <- c()
-  for (i in 1:length(pred$AgeCategories)){
-    postm <- c(postm, mean(caa_scaled[i,]))
-    upper <- c(upper, quantile(caa_scaled[i,], 1-(alpha/2.0)))
-    lower <- c(lower, quantile(caa_scaled[i,], (alpha/2.0)))
+  res <- get_eq_tail_ci(pred$AgeCategories, caa_scaled, alpha)
+
+  args <- alist(...)
+  if (!("las" %in% names(args))){
+    args$las=1
   }
+  if (!("pch" %in% names(args))){
+    args$pch=19
+  }
+  args$xlab=xlab
+  args$ylab=ylab
+  
+  args$x=pred$AgeCategories
+  args$means <- res$means
+  args$upper_ci <- res$upper_ci
+  args$lower_ci <- res$lower_ci
+  
+  do.call(plot_ci, args)
+  
+}
+
+#' Plot equal tailed credible intervals for _mean_ weight by age prediction
+#' @param unit A unit key string indicating the unit (see getPlottingUnit()$definitions$unlist.units for available key strings)
+#' @param alpha
+plot_weight_at_age_ci <- function(pred, unit="kg", alpha=0.1, xlab="age", ylab=paste("ind. weight", unit), ...){
+  
+  plottingUnit=getPlottingUnit(unit=unit, var="Weight", baseunit="kilograms", def.out = F)
+  
+  weight_scaled <- pred$MeanWeight/plottingUnit$scale
+  
+  res <- get_eq_tail_ci(pred$AgeCategories, weight_scaled, alpha)
   
   args <- alist(...)
   if (!("las" %in% names(args))){
@@ -70,22 +133,22 @@ plot_pred_ci <- function(pred, var, unit, alpha=0.1, xlab="age", ylab=paste("pos
   }
   args$xlab=xlab
   args$ylab=ylab
+  
   args$x=pred$AgeCategories
-  args$y=upper
-  args$type="n"
+  args$means <- res$means
+  args$upper_ci <- res$upper_ci
+  args$lower_ci <- res$lower_ci
   
-  do.call(plot, args)
-  args$y=postm
-  args$type="p"
-  do.call(points, args)
-  
-  segments(pred$AgeCategories, upper, pred$AgeCategories, lower, lwd = 1.5)
-  
-  arrows(pred$AgeCategories, upper, pred$AgeCategories,
-         lower, lwd = 1.5, angle = 90,
-         code = 3, length = 0.05)
+  do.call(plot_ci, args)
   
 }
+
+#plot_weight_at_age(prep, pred)
+
+#plot_length_at_age_ci
+#plot_weight_at_age_ci
+
+# plot_pred_c() #4-panel, caaN caaW laa waa
 
 season_plot_test <- function(){
   stop("Not implemented")
