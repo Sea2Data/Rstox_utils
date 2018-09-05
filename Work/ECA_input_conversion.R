@@ -95,15 +95,15 @@ getLandings <- function(eca, ecaParameters){
 ########## New functions as of 2018-05-07 (extracting DataMatrix separately for LengthGivenAge and WeightGivenLength): ##########
 #################################################################################################################################
 # Funciton for extracting the DataMatrix for the given variable ("age" or "weight", length is requested in both):
-getDataMatrixANDCovariateMatrix <- function(eca, var="age", ecaParameters){
+getDataMatrixANDCovariateMatrix <- function(eca, vars=c("age", "yearday"), ecaParameters){
   
   #partcount
   
   # Define variables to include in the DataMatrix, where the variable specified in the input 'var' is included:
-  getnames <- c("yearday", "length", "serialno", "samplenumber", "lengthsamplecount", "lengthsampleweight", "catchweight", if(ecaParameters$use_otolithtype) "otolithtype")
-  usenames <- c("realage", "lengthCM", "samplingID", "partnumber", "samplecount", "sampleweight", "catchweight", if(ecaParameters$use_otolithtype) "otolithtype")
-  getnames <- c(var, getnames)
-  usenames <- c(var, usenames)
+  getnames <- c("length", "serialno", "samplenumber", "lengthsamplecount", "lengthsampleweight", "catchweight", if(ecaParameters$use_otolithtype) "otolithtype")
+  usenames <- c("lengthCM", "samplingID", "partnumber", "samplecount", "sampleweight", "catchweight", if(ecaParameters$use_otolithtype) "otolithtype")
+  getnames <- c(vars, getnames)
+  usenames <- c(vars, usenames)
   
   # Extract the data matrix:
   DataMatrix <- getVar(eca$biotic, getnames)
@@ -211,7 +211,7 @@ getLengthGivenAge_Biotic <- function(eca, ecaParameters){
   eca$covariateMatrixBiotic <- eca$covariateMatrixBiotic[valid, , drop=FALSE]
   
   ### 1. DataMatrix: ###
-  temp <- getDataMatrixANDCovariateMatrix(eca, var=var, ecaParameters)
+  temp <- getDataMatrixANDCovariateMatrix(eca, var=c("age", "yearday"), ecaParameters)
   DataMatrix <- temp$DataMatrix
   CovariateMatrix <- temp$CovariateMatrix
   
@@ -220,8 +220,8 @@ getLengthGivenAge_Biotic <- function(eca, ecaParameters){
   
   # Estimate the real age by use of the hatchDaySlashMonth:
   numDaysOfYear <- 365
-  DataMatrix$realage <- DataMatrix$age + (DataMatrix$realage - getMidSeason(ecaParameters$hatchDaySlashMonth)) / numDaysOfYear
-  DataMatrix$realage
+  DataMatrix$realage <- DataMatrix$age + (DataMatrix$yearday - getMidSeason(ecaParameters$hatchDaySlashMonth)) / numDaysOfYear
+  DataMatrix$yearday <- NULL
   DataMatrix$part.year <- DataMatrix$realage - DataMatrix$age
   
   ### 2. CovariateMatrix: ###
