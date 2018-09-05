@@ -14,9 +14,7 @@ fix_in_prep_agelength<-function(AgeLength){
 }
 fix_in_prep_weightlength <- function(WeightLength){
   newWeightLength <- WeightLength
-
   #newWeightLength$info["spatial", "CAR"] <- 1
-
   return(newWeightLength)
 }
 fix_in_prep_landings <- function(Landings){

@@ -78,6 +78,6 @@ prepRECA <- function(projectname, resultdir=NULL, minage=1, maxage=20, delta.age
     # store results
     #
     
-    setProjectData(projectName=projectname, var=list(GlobalParameters=GlobalParameters, Landings=Landings, WeightLength=WeightLength, AgeLength=AgeLength), name="prepareRECA")
+    setProjectData(projectName=projectname, var=list(GlobalParameters=GlobalParameters, Landings=Landings, WeightLength=WeightLength, AgeLength=AgeLength, StoxExport=eca), name="prepareRECA")
 }
 prepRECA(projectname)

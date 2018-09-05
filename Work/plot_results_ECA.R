@@ -31,14 +31,15 @@ plot_ci <- function(x, means, upper_ci, lower_ci, ...){
   args$type="p"
   do.call(points, args)
   
-  segments(x, upper_ci, x, lower_ci, lwd = 1.5)
+  segments(x, upper_ci, x, lower_ci, lwd = 1.5, ...)
   arrows(x, upper_ci, x,
          lower_ci, lwd = 1.5, angle = 90,
-         code = 3, length = 0.05)
+         code = 3, length = 0.05, ...)
   
 }
 
 #' Plot catch by age prediction as boxplots
+#' @param pred RECA prediction object as returned by eca::eca.predict
 #' @param var A key string indicating the variable to plot. ´Abundance´ and ´Weight´ is implemented. 
 #' @param unit A unit key string indicating the unit (see getPlottingUnit()$definitions$unlist.units for available key strings)
 plot_pred_box <- function(pred, var, unit, xlab="age", ylab=paste("posterior catch", unit), ...){
@@ -75,6 +76,7 @@ plot_pred_box <- function(pred, var, unit, xlab="age", ylab=paste("posterior cat
 }
 
 #' Plot equal tailed credible intervals for a catch by age prediction
+#' @param pred RECA prediction object as returned by eca::eca.predict
 #' @param var A key string indicating the variable to plot. ´Abundance´ and ´Weight´ is implemented. 
 #' @param unit A unit key string indicating the unit (see getPlottingUnit()$definitions$unlist.units for available key strings)
 #' @param alpha
@@ -101,6 +103,12 @@ plot_catch_at_age_ci <- function(pred, var, unit, alpha=0.1, xlab="age", ylab=pa
   if (!("pch" %in% names(args))){
     args$pch=19
   }
+  if (!("lty" %in% names(args))){
+    args$lty=1
+  }
+  if (!("main" %in% names(args))){
+    args$main=paste("Catch at age (", var, ")", sep="")
+  }
   args$xlab=xlab
   args$ylab=ylab
   
@@ -110,45 +118,133 @@ plot_catch_at_age_ci <- function(pred, var, unit, alpha=0.1, xlab="age", ylab=pa
   args$lower_ci <- res$lower_ci
   
   do.call(plot_ci, args)
+  legend("topright", pch=c(args$pch, NA), lty=c(NA, args$lty), legend=c("mean", paste(100-alpha*100, "% interval", sep="")), bty="n")
   
 }
 
-#' Plot equal tailed credible intervals for _mean_ weight by age prediction
-#' @param unit A unit key string indicating the unit (see getPlottingUnit()$definitions$unlist.units for available key strings)
-#' @param alpha
-plot_weight_at_age_ci <- function(pred, unit="kg", alpha=0.1, xlab="age", ylab=paste("ind. weight", unit), ...){
+
+#' Plots mean weight at age and sample range
+#' @param biotic indiviuals as exported by stox
+#' @param pred RECA prediction object as returned by eca::eca.predict
+plot_weight_at_age <- function(biotic, pred, unit, xlab="age", ylab=paste("ind. weight", unit), ...){
   
-  plottingUnit=getPlottingUnit(unit=unit, var="Weight", baseunit="kilograms", def.out = F)
+  plottingUnitEca=getPlottingUnit(unit=unit, var="Weight", baseunit="kilograms", def.out = F)
+  plottingUnitBiotic=getPlottingUnit(unit=unit, var="Weight", baseunit="grams", def.out = F)
   
-  weight_scaled <- pred$MeanWeight/plottingUnit$scale
+  #sample weights by age
+  maxweights <- aggregate(list(weight=biotic$weight), by=list(age=biotic$age), FUN=function(x){max(x, na.rm=T)})
+  minweights <- aggregate(list(weight=biotic$weight), by=list(age=biotic$age), FUN=function(x){min(x, na.rm=T)})
+  maxweights$weight <- maxweights$weight/plottingUnitBiotic$scale
+  minweights$weight <- minweights$weight/plottingUnitBiotic$scale
   
+  #prediction mewans
+  weight_scaled <- pred$MeanWeight/plottingUnitEca$scale
   res <- get_eq_tail_ci(pred$AgeCategories, weight_scaled, alpha)
   
+  means <- data.frame(age=pred$AgeCategories, means=res$means)
+  upper <- data.frame(age=maxweights$age, upper=maxweights$weight)
+  lower <- data.frame(age=minweights$age, lower=minweights$weight)
+  
+  comp <- merge(means, merge(upper, lower), all.x=T)
+  
   args <- alist(...)
+  
   if (!("las" %in% names(args))){
     args$las=1
   }
   if (!("pch" %in% names(args))){
     args$pch=19
   }
+  if (!("lty" %in% names(args))){
+    args$lty="dotted"
+  }
+  if (!("ylim" %in% names(args))){
+    args$ylim=c(min(min(lower, na.rm=T), 0), max(0,max(upper, na.rm=T)))
+  }
+  if (!("main" %in% names(args))){
+    args$main="Weight at age"
+  }
+  
   args$xlab=xlab
   args$ylab=ylab
   
-  args$x=pred$AgeCategories
-  args$means <- res$means
-  args$upper_ci <- res$upper_ci
-  args$lower_ci <- res$lower_ci
+  args$x=comp$age
+  args$means <- comp$means
+  args$upper_ci <- comp$upper
+  args$lower_ci <- comp$lower
   
   do.call(plot_ci, args)
+  legend("topleft", pch=c(args$pch, NA), lty=c(NA, args$lty), legend=c("model mean", "sample range"), bty="n")
   
+} 
+
+#' Plots mean length at age and sample range
+#' @param biotic indiviuals as exported by stox
+#' @param pred RECA prediction object as returned by eca::eca.predict
+plot_length_at_age <- function(biotic, pred, xlab="age", ylab=paste("length cm"), ...){
+  
+  bioticscale = 1
+  ecascale = 1
+  
+  #sample length by age
+  maxlengths <- aggregate(list(length=biotic$length), by=list(age=biotic$age), FUN=function(x){max(x, na.rm=T)})
+  minlengths <- aggregate(list(length=biotic$length), by=list(age=biotic$age), FUN=function(x){min(x, na.rm=T)})
+  maxlengths$length <- maxlengths$length/bioticscale
+  minlengths$length <- minlengths$length/bioticscale
+  
+  #prediction mewans
+  length_scaled <- pred$MeanLength/ecascale
+  res <- get_eq_tail_ci(pred$AgeCategories, length_scaled, alpha)
+  
+  means <- data.frame(age=pred$AgeCategories, means=res$means)
+  upper <- data.frame(age=maxlengths$age, upper=maxlengths$length)
+  lower <- data.frame(age=minlengths$age, lower=minlengths$length)
+  
+  comp <- merge(means, merge(upper, lower), all.x=T)
+  
+  args <- alist(...)
+  
+  if (!("las" %in% names(args))){
+    args$las=1
+  }
+  if (!("pch" %in% names(args))){
+    args$pch=19
+  }
+  if (!("lty" %in% names(args))){
+    args$lty="dotted"
+  }
+  if (!("ylim" %in% names(args))){
+    args$ylim=c(min(min(lower, na.rm=T), 0), max(0,max(upper, na.rm=T)))
+  }
+  if (!("main" %in% names(args))){
+    args$main="Length at age"
+  }
+  
+  args$xlab=xlab
+  args$ylab=ylab
+  
+  args$x=comp$age
+  args$means <- comp$means
+  args$upper_ci <- comp$upper
+  args$lower_ci <- comp$lower
+  
+  do.call(plot_ci, args)
+  legend("topleft", pch=c(args$pch, NA), lty=c(NA, args$lty), legend=c("model mean", "sample range"), bty="n")
+  
+} 
+
+#' Plots a panel of RECA results
+#' @param biotic indiviuals as exported by stox
+#' @param pred RECA prediction object as returned by eca::eca.predict
+plot_RECA_results_panel <- function(pred, biotic, ...){
+  par.old <- par(no.readonly = T)
+  par(mfrow=c(2,2))
+  plot_catch_at_age_ci(pred, var="Abundance", unit="millions", ...)
+  plot_catch_at_age_ci(pred, var="Weight", unit="tt", ...)
+  plot_weight_at_age(biotic, pred, unit="kg", ...)
+  plot_length_at_age(biotic, pred, ...)
+  par(par.old)
 }
-
-#plot_weight_at_age(prep, pred)
-
-#plot_length_at_age_ci
-#plot_weight_at_age_ci
-
-# plot_pred_c() #4-panel, caaN caaW laa waa
 
 season_plot_test <- function(){
   stop("Not implemented")

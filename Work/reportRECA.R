@@ -5,33 +5,32 @@ source(file.path(srcdir, "plotWrapper.R"))
 
 #' Generates plots and reports from RECA prediction
 #' @param projectname name of stox project
-#' @param var A key string indicating the variable to plot. ´Abundance´ and ´Weight´ is implemented. 
 #' @param unit A unit key string indicating the unit (see getPlottingUnit()$definitions$unlist.units for available key strings)
 #' @param verbose logical, if TRUE info is written to stderr()
 #' @param format function defining filtetype for plots, supports grDevices::pdf, grDevices::png, grDevices::jpeg, grDevices::tiff, grDevices::bmp
 #' @param ... parameters passed on plot function and format
-plotCatchByAge <- function(projectName, var = "Abundance", unit="millions", verbose=F, format="png", ...){
+plotRECAresults <- function(projectName, unit="millions", verbose=F, format="png", ...){
   rundata <- loadProjectData(projectName, var="runRECA")
+  prep <- loadProjectData(projectName, var="prepareRECA")
   
   if (format=="png"){
     #dimension in pixels
     width=5000
-    height=3000
+    height=5000
     res=500
   }
   if (format=="pdf"){
     #dimension in inches
     width=10
-    height=6
+    height=10
     res=NULL
   }
   
-  formatPlot(projectname, "catch_by_age", function(){plot_catch_at_age_ci(rundata$runRECA$pred, var=var, unit=unit, ...)}, verbose=verbose, format=format, height=height, width=width, res=res)
-  formatPlot(projectname, "weight_by_age", function(){plot_weight_at_age_ci(rundata$runRECA$pred, unit="kg", ...)}, verbose=verbose, format=format, height=height, width=width, res=res)
-
+  formatPlot(projectname, "RECA_results", function(){plot_RECA_results_panel(rundata$runRECA$pred, prep$prepareRECA$StoxExport$biotic, ...)}, verbose=verbose, format=format, height=height, width=width, res=res)
+  
   warning("Implement save catch matrix")
-  warning("Fix defaults for units kt and mt")
+  warning("Fix defaults for units kt and mt. Consider adding lengthunits")
   #save catch matrix
 }
 projectName <- "ECA_torsk_2015"
-plotCatchByAge(projectName)
+plotRECAresults(projectName)
