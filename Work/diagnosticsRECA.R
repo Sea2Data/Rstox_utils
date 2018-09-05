@@ -1,5 +1,8 @@
 library(Rstox)
 library(plotrix)
+srcdir <- "/Users/a5362/code/github/Rstox_utils/Work"
+source(file.path(srcdir, "plotWrapper.R"))
+
 #get matrix of sample and landings from the subset of biotic that contains aged individuals
 get_g_s_a_frame <- function(eca){
   
@@ -143,30 +146,41 @@ plot_sampling_prop <- function(eca, xlab="Landet landet i celle (kt)", ylab="Fan
   plot(mm$landed_kt, mm$sampled_t/1000, xlab=xlab, ylab=ylab)
 }
 
+#' Get aggregated landings for fixed effects
+get_fixed_effects_landings <- function(stoxexport){
+  fixed_effects <- stoxexport$resources$covariateInfo[stoxexport$resources$covariateInfo$covType=="Fixed", "name"]
+  landedcol <- lapply(fixed_effects, FUN=function(x){stoxexport$landing[[x]]})
+  names(landedcol)=fixed_effects
+  print(fixed_effects)
+  aggland <- aggregate(list(landed_kt=stoxexport$landing$rundvekt), by=landedcol, FUN=sum)
+  return(aggland)
+}
+
 #' @param eca
 #' @param indparameter the parameters for which data needs to be available
-plot_fixed_effect_coverage <- function(eca, indparameters=c("age"), titletext="Samples for fixed effects", okcol="green", wrongcol="white", undersampledcol="red"){
-  fe <- eca$resources$covariateInfo[eca$resources$covariateInfo$covType=="Fixed", "name"]
-  
-  if (any(is.na(eca$biotic[,fe]) | any(is.na(eca$landing[,fe])))){
+plot_fixed_effect_coverage <- function(stoxexport, indparameters=c("age"), titletext="Samples for fixed effects", okcol="green", wrongcol="white", undersampledcol="red"){
+  fixed_effects <- stoxexport$resources$covariateInfo[stoxexport$resources$covariateInfo$covType=="Fixed", "name"]
+  if (any(is.na(stoxexport$biotic[,fixed_effects]) | any(is.na(stoxexport$landing[,fixed_effects])))){
     stop("NAs for covariates")
   }
   
-  a <- lapply(fe, FUN=function(x){eca$landing[[x]]})
-  names(a)=fe
-  aggland <- aggregate(list(landed_kt=eca$landing$rundvekt), by=a, FUN=sum)
+  aggland <- get_fixed_effects_landings(stoxexport)
   
-  samples <- eca$biotic
+  #discard samples without target parameters (indparameters)
+  samples <- stoxexport$biotic
   for (p in indparameters){
     samples <- samples[!is.na(samples[[p]]),]    
   }
   
+  biocol <- lapply(fixed_effects, FUN=function(x){samples[[x]]})
+  names(biocol)=fixed_effects
+  aggsamp <- aggregate(list(catchsamples=samples$serialno), by=biocol, FUN=function(x){length(unique(x))})
   
-  a <- lapply(fe, FUN=function(x){samples[[x]]})
-  names(a)=fe
-  aggsamp <- aggregate(list(catchsamples=samples$serialno), by=a, FUN=function(x){length(unique(x))})
+  print(fixed_effects)
+  print(names(aggland))
+  print(names(aggsamp))
   
-  agg <- merge(aggsamp, aggland, by=fe, all=T)
+  agg <- merge(aggsamp, aggland, by=fixed_effects, all=T)
   agg$landed_kt[is.na(agg$landed_kt)] <- rep(0, sum(is.na(agg$landed_kt)))
   agg$catchsamples[is.na(agg$catchsamples)] <- rep(0, sum(is.na(agg$catchsamples)))
   
@@ -176,12 +190,13 @@ plot_fixed_effect_coverage <- function(eca, indparameters=c("age"), titletext="S
   color[agg$catchsamples==0 & agg$landed_kt>0] <- undersampledcol
   color[agg$catchsamples>0 & agg$landed_kt==0] <- wrongcol
   
-  plot(1:10, axes = FALSE, xlab = "", ylab = "", type = "n", main=titletext)
+  plot.new()
   addtable2plot(x = "topleft", table = agg,
                 bty = "o", display.rownames = FALSE,
                 hlines = TRUE, vlines = TRUE,
                 bg = color,
                 xjust = 2, yjust = 1)
+  title(titletext)
 }
 
 #
@@ -204,11 +219,50 @@ plot_model_diagnostics <- function(eca){
   plot_fixed_effect_coverage(eca, indparameters=c("weight", "length"), titletext = "Weight samples for fixed effects")
 }
 
+diagnosticsSamplesRECA <- function(){}
+diagnosticsCoverageRECA <- function(){}
 
-diagnosticsRECA <- function(projectname){
-  eca <- baseline2eca(projectname)  
-  plot_sampling_diagnostics(eca)
-  plot_model_diagnostics(eca)
+#'Plots diagnostics for model configuration. Whether all combinations of fixed effects are sampled
+diagnostics_model_configuration <- function(stoxexport){
+  par.old <- par(no.readonly = T)
+  par(mfrow=c(1,2))
+  plot_fixed_effect_coverage(stoxexport, indparameters=c("age", "length"), titletext = "Age samples for fixed effects")
+  plot_fixed_effect_coverage(stoxexport, indparameters=c("weight", "length"), titletext = "Weight samples for fixed effects")
+  par(par.old) 
+}
+
+#' @param projectname name of stox project
+#' @param verbose logical, if TRUE info is written to stderr()
+#' @param format function defining filtetype for plots, supports grDevices::pdf, grDevices::png, grDevices::jpeg, grDevices::tiff, grDevices::bmp
+#' @param ... parameters passed on plot function and format
+diagnosticsRECA <- function(projectName, verbose=T, format="png", ...){
+  prep <- loadProjectData(projectName, var="prepareRECA")
+  stoxexp <- prep$prepareRECA$StoxExpor
+  
+  #for testing different configs
+  #stoxexp$resources$covariateInfo[2,"covType"] <- "Fixed"
+  #stoxexp$resources$covariateInfo[3,"covType"] <- "Fixed"
+  print(stoxexp$resources$covariateInfo)
+  
+  #calculate plot dimensions for table
+  rows = nrow(get_fixed_effects_landings(stoxexp))
+  cols = ncol(get_fixed_effects_landings(stoxexp))+2
+  
+  if (format=="png"){
+    #dimension in pixels
+    res=500
+    width=(res/1.5)*(cols+2)*2
+    height=(res/4.9)*(rows+7)
+  }
+  if (format=="pdf"){
+    #dimension in inches
+    width=(cols+2)*2/1.3
+    height=(rows+7)/5
+    res=NULL
+  }
+  
+  formatPlot(projectname, "RECA_model_configuration", function(){diagnostics_model_configuration(stoxexp, ...)}, verbose=verbose, format=format, height=height, width=width, res=res, ...)
+  
 }
 projectname <- "ECA_torsk_2015"
 diagnosticsRECA(projectname)

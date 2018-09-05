@@ -5,11 +5,10 @@ source(file.path(srcdir, "plotWrapper.R"))
 
 #' Generates plots and reports from RECA prediction
 #' @param projectname name of stox project
-#' @param unit A unit key string indicating the unit (see getPlottingUnit()$definitions$unlist.units for available key strings)
 #' @param verbose logical, if TRUE info is written to stderr()
 #' @param format function defining filtetype for plots, supports grDevices::pdf, grDevices::png, grDevices::jpeg, grDevices::tiff, grDevices::bmp
 #' @param ... parameters passed on plot function and format
-plotRECAresults <- function(projectName, unit="millions", verbose=F, format="png", ...){
+plotRECAresults <- function(projectName, verbose=F, format="png", ...){
   rundata <- loadProjectData(projectName, var="runRECA")
   prep <- loadProjectData(projectName, var="prepareRECA")
   
@@ -26,7 +25,7 @@ plotRECAresults <- function(projectName, unit="millions", verbose=F, format="png
     res=NULL
   }
   
-  formatPlot(projectname, "RECA_results", function(){plot_RECA_results_panel(rundata$runRECA$pred, prep$prepareRECA$StoxExport$biotic, ...)}, verbose=verbose, format=format, height=height, width=width, res=res)
+  formatPlot(projectname, "RECA_results", function(){plot_RECA_results_panel(rundata$runRECA$pred, prep$prepareRECA$StoxExport$biotic, ...)}, verbose=verbose, format=format, height=height, width=width, res=res, ...)
   
   warning("Implement save catch matrix")
   warning("Fix defaults for units kt and mt. Consider adding lengthunits")

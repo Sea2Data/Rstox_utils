@@ -32,7 +32,7 @@ formatPlot <-
       
     tryCatch({
       if (verbose) {
-        write(paste("Plot written to:", filename), stderr())
+        write(paste("Writing plot to:", filename), stderr())
       }
       draw()},
       finally={
