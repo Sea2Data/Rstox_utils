@@ -1,7 +1,7 @@
 library(Rstox)
 library(MASS)
 library(RColorBrewer)
-default_blankcode="<>"
+default_blankcode="--"
 
 #
 # Diverse plot for å vise prøveheterogenitet og enkle feilsjekker som bør håndteres med datafiltrering, datakorreksjon eller datakonvertering.
@@ -107,11 +107,9 @@ plot_weight_length <- function(individual, xlab="vekt", ylab="lengde", title="Al
 #' @param xlab label for x axis
 #' @param blankcode code for NA / not registered
 #' @param cex.names expansion factor for bar labels
-plot_sample_types <- function(catchsample, title="prøvetyper", xlab="# fangstprøver", blankcode=default_blankcode, cex.names=0.8){
+plot_sample_types <- function(biotic, title="prøvetyper", xlab="# fangstprøver", blankcode=default_blankcode, cex.names=0.8){
 
-  #Example for use with stox baseline
-  #catchsample=baselineOutput$outputData$FilterBiotic$FilterBiotic_BioticData_CatchSample.txt
-  #
+  catchsample <- biotic[!duplicated(biotic[,c("cruise", "serialno", "samplenumber", "species")]),]
   
   tt <- as.character(catchsample$sampletype)
   tt[is.na(tt)]<-""
@@ -139,10 +137,8 @@ plot_sample_types <- function(catchsample, title="prøvetyper", xlab="# fangstpr
 #' @param xlab label for x axis
 #' @param blankcode code for NA / not registered
 #' @param cex.names expansion factor for bar labels
-plot_station_types <- function(station, title="statsjonstyper", xlab="# stasjoner", blankcode=default_blankcode, cex.names=0.8){
-  #Example for use with stox baseline
-  #station=baselineOutput$outputData$FilterBiotic$FilterBiotic_BioticData_FishStation.txt
-  #
+plot_station_types <- function(biotic, title="station types", xlab="# stations", blankcode=default_blankcode, cex.names=0.8){
+  station <- biotic[!duplicated(biotic[,c("cruise", "serialno")]),]
   
   tt <- as.character(station$fishstationtype)
   tt[is.na(tt)]<-""
@@ -172,8 +168,8 @@ plot_station_types <- function(station, title="statsjonstyper", xlab="# stasjone
 #' @param xlab label for x axis
 #' @param blankcode code for NA / not registered
 #' @param cex.names expansion factor for bar labels
-plot_taxa_comp <- function(catchsample, title="taxa", xlab="# fangstprøver", blankcode=default_blankcode, cex.names=0.8){
-
+plot_taxa_comp <- function(biotic, title="taxa", xlab="# catch samples", blankcode=default_blankcode, cex.names=0.8){
+  catchsample <- biotic[!duplicated(biotic[,c("cruise", "serialno", "samplenumber", "species")]),]
   tt <- table(as.character(catchsample$noname))
 
   if (length(tt)>1){
@@ -192,7 +188,6 @@ plot_taxa_comp <- function(catchsample, title="taxa", xlab="# fangstprøver", bl
 #' @param xlab label for x axis
 #' @param allname name to use for samples where all catch was sampled
 #' @param landname name to use for samples where only landed fraction was sampled
-#' @param retainname name to use for retained fraction of catch when samples where taken after sorting
 #' @param discname name to use for discared fraction of cathc when samples where taken after sorting
 #' @param blankcode code to use when fraction is not coded in data.
 #' @param allcol color to use for samples where all catch was sampled
@@ -200,12 +195,16 @@ plot_taxa_comp <- function(catchsample, title="taxa", xlab="# fangstprøver", bl
 #' @param disccol
 #' @param retaincol
 #' @param unkwoncol color to use when sampled fraction is not coded in data.
-plot_catch_fractions <- function(station, catchsample, title="Fangstfraksjoner\n(platform/kvalitet/gruppe)", xlab="# fangstprøver", allname="All fangst", landname="Landet", retainname="S. landet", discname="S. ikke landet", allcol="red3", disccol="red", landcol="blue4", retaincol="blue", unkowncol="white", blankcode=default_blankcode){
-  station <- merge(station, catchsample, by=c("cruise", "serialno"), suffixes = c(".station", ".catchsample"))
-  station[is.na(station$trawlquality), "trawlquality"] <- rep(blankcode, sum(is.na(station$trawlquality)))
-  station[is.na(station$group), "group"] <- rep(blankcode, sum(is.na(station$group)))
+plot_catch_fractions <- function(biotic, title="Fraction sampled\n(missiontype/samplequality/group)", xlab="# fangstprøver", allname="All catch", landname="Landed", discname="Not Landed", allcol="red3", disccol="red", landcol="blue4", retaincol="blue", unkowncol="white", blankcode=default_blankcode){
+  year <- biotic$year[1]
+  if (length(unique(biotic$year))>1){
+    stop("Does not work with multi-year data.")
+  }
+  catches <- biotic[!duplicated(biotic[,c("cruise", "serialno", "samplenumber", "species")]),]
+  catches[is.na(catches$trawlquality), "trawlquality"] <- rep(blankcode, sum(is.na(catches$trawlquality)))
+  catches[is.na(catches$group), "group"] <- rep(blankcode, sum(is.na(catches$group)))
   
-  counts = aggregate(list(count=station$serialno), by=list(missiontype=station$missiontype, quality=station$trawlquality, group=station$group), FUN=length)
+  counts = aggregate(list(count=catches$serialno), by=list(cruise=catches$cruise, quality=catches$trawlquality, group=catches$group), FUN=length)
   counts$label <- paste(counts$missiontype, counts$quality, counts$group, sep="/")
   counts$catchrep <- rep(NA, nrow(counts))
   counts$color <- rep(NA, nrow(counts))
@@ -213,17 +212,19 @@ plot_catch_fractions <- function(station, catchsample, title="Fangstfraksjoner\n
   counts[counts$quality==8, "catchrep"] <- landname
   counts[counts$quality==8, "color"] <- landcol
   
-  counts[counts$missiontype=="Referanseflåten-Hav" & counts$quality==7, "catchrep"] <- rep(allname, sum(counts$missiontype=="Referanseflåten-Hav" & counts$quality==7))
-  counts[counts$missiontype=="Referanseflåten-Hav" & counts$quality==7, "color"] <- rep(allcol, sum(counts$missiontype=="Referanseflåten-Hav" & counts$quality==7))
+  #should ideally be missiontype
+  rfh <- paste("Referanseflåten-Hav", year, sep="-")
+  counts[counts$cruise==rfh & counts$quality==7, "catchrep"] <- rep(allname, sum(counts$cruise==rfh & counts$quality==7))
+  counts[counts$cruise==rfh & counts$quality==7, "color"] <- rep(allcol, sum(counts$cruise==rfh & counts$quality==7))
   
-  counts[counts$missiontype!="Referanseflåten-Hav" & counts$quality==7 & counts$group %in% c(26,27,28), "catchrep"] <- retainname
-  counts[counts$missiontype!="Referanseflåten-Hav" & counts$quality==7 & counts$group %in% c(26,27,28), "color"] <- retaincol
+  counts[counts$cruise!=rfh & counts$quality==7 & counts$group %in% c(26,27,28), "catchrep"] <- landname
+  counts[counts$cruise!=rfh & counts$quality==7 & counts$group %in% c(26,27,28), "color"] <- landcol
   
-  counts[counts$missiontype!="Referanseflåten-Hav" & counts$quality!=blankcode & counts$quality==7 & counts$group!=blankcode & counts$group %in% c(23,24,25), "catchrep"] <- discname
-  counts[counts$missiontype!="Referanseflåten-Hav" & counts$quality!=blankcode & counts$quality==7 & counts$group!=blankcode & counts$group %in% c(23,24,25), "color"] <- disccol
+  counts[counts$cruise!=rfh & counts$quality!=blankcode & counts$quality==7 & counts$group!=blankcode & counts$group %in% c(23,24,25), "catchrep"] <- discname
+  counts[counts$cruise!=rfh & counts$quality!=blankcode & counts$quality==7 & counts$group!=blankcode & counts$group %in% c(23,24,25), "color"] <- disccol
   
-  counts[counts$missiontype!="Referanseflåten-Hav" & counts$quality!=blankcode & counts$quality==7 & (counts$group==blankcode | !(counts$group %in% c(23,24,25,26,27,28))), "catchrep"] <- allname
-  counts[counts$missiontype!="Referanseflåten-Hav" & counts$quality!=blankcode & counts$quality==7 & (counts$group==blankcode | !(counts$group %in% c(23,24,25,26,27,28))), "color"] <- allcol
+  counts[counts$cruise!=rfh & counts$quality!=blankcode & counts$quality==7 & (counts$group==blankcode | !(counts$group %in% c(23,24,25,26,27,28))), "catchrep"] <- allname
+  counts[counts$cruise!=rfh & counts$quality!=blankcode & counts$quality==7 & (counts$group==blankcode | !(counts$group %in% c(23,24,25,26,27,28))), "color"] <- allcol
   
   counts[is.na(counts$color), "catchrep"] <- rep(blankcode, sum(is.na(counts$color)))
   counts[is.na(counts$color), "color"] <- rep(unkowncol, sum(is.na(counts$color)))
@@ -232,65 +233,31 @@ plot_catch_fractions <- function(station, catchsample, title="Fangstfraksjoner\n
   barplot(counts$count, names=counts$label, col=counts$color, horiz=T, las=1, xlab=xlab, main=title)
   
   leg <- unique(counts[,c("color", "catchrep")])
-  legend("topright", fill=c(unkowncol, landcol, retaincol, disccol, allcol), legend=c(blankcode, landname, retainname, discname, allname))
+  legend("topright", fill=c(unkowncol, landcol, disccol, allcol), legend=c(blankcode, landname, discname, allname), bty="n")
 }
 
-#' Plots overview of potential filtering parameters in samples
-plot_sample_comp <- function(catchsample, individual){
-  catchsample <- merge(catchsample, unique(individual[,c("serialno","species","samplenumber")]), by=c("serialno","species","samplenumber"))
+
+plot_sample_heterogenity <- function(stoxexport){
+  stop("get trawlquality and group, sampletype")
   old.par <- par(no.readonly = T)
   par(mfrow=c(2,2))
+  par(mar=c(5.1,7,4.1,2.1))
+  plot_taxa_comp(stoxexport$biotic)
   par(mar=c(5.1,12,4.1,2.1))
-  plot_sample_types(catchsample, xlab="# fangstprøver m/ind")
+  plot_catch_fractions(stoxexport$biotic)
   par(mar=c(5.1,7,4.1,2.1))
-  plot_product_types(catchsample, xlab="# fangstprøver m/ind")
-  par(mar=c(5.1,14,4.1,2.1))
-  plot_length_measurements(catchsample, xlab="# fangstprøver m/ind")
-  par(mar=c(5.1, 4.1,4.1,2.1))
-  plot_weight_length(individual, title="Alle ind. 1% ekstr. obs", alpha=0.01, density=T)
-  par(old.par)
-}
-
-plot_measurement_comp <- function(station, catchsample, individual){
-  old.par <- par(no.readonly = T)
-  par(mfrow=c(2,2))
-  par(mar=c(5.1,4.1,4.1,2.1))
-  plot_individuals(catchsample, individual)
-  par(mar=c(5.1,7,4.1,2.1))
-  plot_taxa_comp(catchsample)
+  plot_station_types(stoxexport$biotic)
   par(mar=c(5.1,12,4.1,2.1))
-  plot_catch_fractions(station, catchsample)
-  par(mar=c(5.1,7,4.1,2.1))
-  plot_station_types(station)
+  plot_sample_types(stoxexport$biotic, xlab="# fangstprøver m/ind")
   par(old.par)
-}
-
-#
-# Test-eksempler
-#
-
-runbl <- function(){
-  options(java.parameters="-Xmx6g")
-  # Edvin:
-  dir <- "/Users/a5362/code/github/Rstox_utils/Work"
-  outpath <- "/Users/a5362/code/github/Rstox_utils/Work/output"
-  # Arne Johannes:
-  #dir <- "~/Documents/Produktivt/Prosjekt/R-packages/Rstox_utils/Rstox_utils/Work"
-  #outpath <- "~/Documents/Produktivt/Prosjekt/R-packages/Rstox_utils/output"
-  #sildeprosjekt: /delphi/Felles/alle/stox/ECA/2015/ECA_sild_2015. Legg til sild == '161724' i filter (annen kode for sild'g03)
-  
-  #projectname <- "ECA_torsk_2015"
-  projectname <- "ECA_sild_2015"
-  return(getBaseline(projectname))
   
 }
 
-ex <- function(baselineOutput){
-  station <- baselineOutput$outputData$FilterBiotic$FilterBiotic_BioticData_FishStation.txt
-  catchsample <- baselineOutput$outputData$FilterBiotic$FilterBiotic_BioticData_CatchSample.txt
-  individual <- baselineOutput$outputData$FilterBiotic$FilterBiotic_BioticData_Individual.txt
-  plot_measurement_comp(station, catchsample, individual)
-  plot_sample_comp(catchsample, individual) 
+
+sampleTypesRECA <- function(projectname){
+  prep <- loadProjectData(projectName, var = "prepareRECA")
+  stoxexp <- prep$prepareRECA$StoxExport
+  plot_sample_heterogenity(stoxexp)
 }
-baselineOutput <- runbl()
-ex(baselineOutput)
+projectname <- "ECA_sild_2015"
+sampleTypesRECA(projectname)
