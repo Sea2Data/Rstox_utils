@@ -340,8 +340,7 @@ plot_fixed_effect_coverage <-
            titletext = "Samples for fixed effects",
            okcol = "green",
            wrongcol = "white",
-           undersampledcol = "red",
-           oktext="OK", undersampledtext="missing samples", wrongtext="no landings"
+           undersampledcol = "red"
            ) {
     fixed_effects <-
       stoxexport$resources$covariateInfo[stoxexport$resources$covariateInfo$covType ==
@@ -387,7 +386,8 @@ plot_fixed_effect_coverage <-
     color[agg$catchsamples == 0 & agg$landed_kt > 0] <-
       undersampledcol
     color[agg$catchsamples > 0 & agg$landed_kt == 0] <- wrongcol
-    
+    names(agg)[names(agg)=="catchsamples"] <- "catch samples"
+    names(agg)[names(agg)=="landed_kt"] <- "landed kt"
     plot.new()
     addtable2plot(
       x = "topleft",
@@ -423,7 +423,7 @@ diagnosticsSamplesRECA <- function(stoxexport) {
 diagnostics_model_configuration <- function(stoxexport, okcol = "green",
                                             wrongcol = "white",
                                             undersampledcol = "red",
-                                            oktext="OK", undersampledtext="missing samples", wrongtext="no landings") {
+                                            oktext="OK", undersampledtext="no samples", wrongtext="no landings") {
   par.old <- par(no.readonly = T)
   par(mfrow = c(1, 2), mar=c(1, 4.1, 4.1, 2.1))
   plot_fixed_effect_coverage(stoxexport,
@@ -526,7 +526,7 @@ diagnosticsRECA <-
     #
     
     #for testing different configs
-    stoxexp$resources$covariateInfo[2,"covType"] <- "Fixed"
+    #stoxexp$resources$covariateInfo[2,"covType"] <- "Fixed"
     #stoxexp$resources$covariateInfo[3,"covType"] <- "Fixed"
     
     #calculate plot dimensions for table
