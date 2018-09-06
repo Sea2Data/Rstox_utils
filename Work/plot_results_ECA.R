@@ -126,7 +126,7 @@ plot_catch_at_age_ci <- function(pred, var, unit, alpha=0.1, xlab="age", ylab=pa
 #' Plots mean weight at age and sample range
 #' @param biotic indiviuals as exported by stox
 #' @param pred RECA prediction object as returned by eca::eca.predict
-plot_weight_at_age <- function(biotic, pred, unit, xlab="age", ylab=paste("ind. weight", unit), ...){
+plot_weight_at_age <- function(biotic, pred, unit, alpha=0.01, xlab="age", ylab=paste("ind. weight", unit), ...){
   
   plottingUnitEca=getPlottingUnit(unit=unit, var="Weight", baseunit="kilograms", def.out = F)
   plottingUnitBiotic=getPlottingUnit(unit=unit, var="Weight", baseunit="grams", def.out = F)
@@ -181,7 +181,7 @@ plot_weight_at_age <- function(biotic, pred, unit, xlab="age", ylab=paste("ind. 
 #' Plots mean length at age and sample range
 #' @param biotic indiviuals as exported by stox
 #' @param pred RECA prediction object as returned by eca::eca.predict
-plot_length_at_age <- function(biotic, pred, xlab="age", ylab=paste("length cm"), ...){
+plot_length_at_age <- function(biotic, pred, xlab="age", alpha=0.01, ylab=paste("length cm"), ...){
   
   bioticscale = 1
   ecascale = 1
