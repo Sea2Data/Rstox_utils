@@ -34,6 +34,14 @@ get_g_s_a_frame <- function(eca){
   return(m)
 }
 
+get_gta_landings <- function(stoxexport){
+  gta <- c("gearfactor", "temporal", "spatial")
+  landedcol <- lapply(gta, FUN=function(x){stoxexport$landing[[x]]})
+  names(landedcol)=gta
+  aggland <- aggregate(list(landed_kt=stoxexport$landing$rundvekt), by=landedcol, FUN=sum)
+  return(aggland)
+}
+
 #' show samples wrp common covariates gear, area and temporal
 plot_gear_temporal_area <- function(eca, titletext="gear/temporal - area\nlanded (kt)\nage samples: #vessels,#catches,#individuals", colgood="green4", colok="green2", colbarely="yellow", colbad="orange", colempty="gray", colwrong="white"){
   
@@ -42,7 +50,6 @@ plot_gear_temporal_area <- function(eca, titletext="gear/temporal - area\nlanded
   m$sd <- paste(m$gear, m$temporal, sep="/")
   
   landed <- xtabs(m$landed_kt~m$sd+m$spatial)
-  landed[landed<.001]<-0
   vessels <- xtabs(m$vessels~m$sd+m$spatial)
   hauls <- xtabs(m$hauls~m$sd+m$spatial)
   aged <- xtabs(m$aged~m$sd+m$spatial)
@@ -64,17 +71,18 @@ plot_gear_temporal_area <- function(eca, titletext="gear/temporal - area\nlanded
   
   #deal with sizing and such when output device is clear
   #calculate plot size
-  plot(1:100, axes = FALSE, xlab = "", ylab = "", type = "n", main=titletext)
+  plot.new()
   addtable2plot(x = "topleft", table = descr,
                 bty = "o", display.rownames = TRUE, display.colnames = TRUE,
                 hlines = TRUE, vlines = TRUE,
                 bg = col,
                 xjust = 2, yjust = 1, cex=0.5)
+  title(titletext)
   
   return(descr)
 }
 
-plot_cell_landings <- function(eca, xlab="Cells (gear/temp/spatial)", ylab="landed (kt)", frac=0.001, titletext=paste("top", 100-frac*100, "weigth-% cells"), legendtitle="sample clustering", colgood="green4", colok="green2", colbarely="yellow", colbad="orange", colempty="gray", colwrong="white", gooddesc="> 1 vessel", okdesc="> 1 catch", barelydesc="> 0 catch", baddesc="0 samples"){
+plot_cell_landings <- function(eca, xlab="Cells (gear/temp/spatial)", ylab="landed (kt)", frac=0.001, titletext=paste("top", 100-frac*100, "weigth-% cells"), legendtitle="sample clusteredness", colgood="green4", colok="green2", colbarely="yellow", colbad="orange", colempty="gray", colwrong="white", gooddesc="> 1 vessel", okdesc="> 1 catch", barelydesc="> 0 catch", baddesc="0 samples"){
   
   mm <- get_g_s_a_frame(eca)
   mm<-mm[order(mm$landed_kt, decreasing = T),]
@@ -92,7 +100,7 @@ plot_cell_landings <- function(eca, xlab="Cells (gear/temp/spatial)", ylab="land
   legend("topright", legend=c(gooddesc, okdesc, barelydesc, baddesc), fill=c(colgood, colok, colbarely, colbad), title = legendtitle)
 }
 
-plot_cell_coverage <- function(eca, xlab="sample clustering", ylab="Fraction landed (vekt-%)", titletext="Coverage w age\ncells (gear/temp/spatial)", colgood="green4", colok="green2", colbarely="yellow", colbad="orange", colempty="gray", colwrong="white", gooddesc="> 1 vessel", okdesc="> 1 catch", barelydesc="> 0 catch", baddesc="0 samples"){
+plot_cell_coverage <- function(eca, xlab="sample clusteredness", ylab="Fraction landed (vekt-%)", titletext="Coverage w age\ncells (gear/temp/spatial)", colgood="green4", colok="green2", colbarely="yellow", colbad="orange", colempty="gray", colwrong="white", gooddesc="> 1 vessel", okdesc="> 1 catch", barelydesc="> 0 catch", baddesc="0 samples"){
   
   mm <- get_g_s_a_frame(eca)
   mm<-mm[order(mm$landed_kt, decreasing = T),]
@@ -203,24 +211,17 @@ plot_fixed_effect_coverage <- function(stoxexport, indparameters=c("age"), title
 #
 #
 
-plot_sampling_diagnostics <- function(eca){
-  par.old <- par(no.readonly = T)
-  plot_gear_temporal_area(eca)
-  par(mfrow=c(2,1))
-  plot_cell_coverage(eca)
-  plot_cell_landings(eca)
-  par(par.old)
-  par(mfrow=c(1,1))
-}
 
-plot_model_diagnostics <- function(eca){
-  # check that all fixed effect are sampled at all levels
-  plot_fixed_effect_coverage(eca, indparameters=c("age", "length"), titletext = "Age samples for fixed effects")
-  plot_fixed_effect_coverage(eca, indparameters=c("weight", "length"), titletext = "Weight samples for fixed effects")
+ diagnosticsCoverageRECA<- function(stoxexport){
+   par.old <- par(no.readonly = T)
+   par(mfrow=c(2,1))
+   plot_cell_coverage(stoxexport)
+   plot_cell_landings(stoxexport)
+   par(par.old)
+ }
+ diagnosticsSamplesRECA <- function(stoxexport){
+  plot_gear_temporal_area(stoxexport)
 }
-
-diagnosticsSamplesRECA <- function(){}
-diagnosticsCoverageRECA <- function(){}
 
 #'Plots diagnostics for model configuration. Whether all combinations of fixed effects are sampled
 diagnostics_model_configuration <- function(stoxexport){
@@ -238,6 +239,56 @@ diagnostics_model_configuration <- function(stoxexport){
 diagnosticsRECA <- function(projectName, verbose=T, format="png", ...){
   prep <- loadProjectData(projectName, var="prepareRECA")
   stoxexp <- prep$prepareRECA$StoxExpor
+  
+  #
+  # Coverage plot
+  #
+  
+  if (format=="png"){
+    #dimension in pixels
+    res=500
+    width=5000
+    height=5000
+  }
+  if (format=="pdf"){
+    #dimension in inches
+    width=10
+    height=10
+    res=NULL
+  }
+  formatPlot(projectname, "RECA_cell_coverage", function(){diagnosticsCoverageRECA(stoxexp, ...)}, verbose=verbose, format=format, height=height, width=width, res=res, ...)
+  
+  stop()
+  
+  #
+  # Samples by cells
+  #
+  if (all(c("gearfactor", "temporal", "spatial") %in% stoxexp$resources$covariateInfo$name)){
+    rows <- nrow(unique(get_gta_landings(stoxexp)[,c("gearfactor", "temporal")]))
+    cols <- length(unique(get_gta_landings(stoxexp)$spatial))
+    
+    if (format=="png"){
+      #dimension in pixels
+      res=500
+      width=(res/3)*(cols+2)
+      height=(res/4)*(rows+7)
+    }
+    if (format=="pdf"){
+      #dimension in inches
+      width=(cols+2)/3
+      height=(rows+7)/4
+      res=NULL
+    }
+    
+    formatPlot(projectname, "RECA_samples_by_cells", function(){diagnosticsSamplesRECA(stoxexp, ...)}, verbose=verbose, format=format, height=height, width=width, res=res, ...)
+  }
+  else{
+    write(paste("Need all","gearfactor", "temporal", "spatial", "as covariates to produce RECA_samples_by_cells"), stderr())
+  }
+  
+  #
+  # Fixed effect plot
+  #
   
   #for testing different configs
   #stoxexp$resources$covariateInfo[2,"covType"] <- "Fixed"
@@ -264,5 +315,5 @@ diagnosticsRECA <- function(projectName, verbose=T, format="png", ...){
   formatPlot(projectname, "RECA_model_configuration", function(){diagnostics_model_configuration(stoxexp, ...)}, verbose=verbose, format=format, height=height, width=width, res=res, ...)
   
 }
-projectname <- "ECA_torsk_2015"
-diagnosticsRECA(projectname)
+projectName <- "ECA_torsk_2015"
+diagnosticsRECA(projectName)
