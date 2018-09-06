@@ -340,7 +340,9 @@ plot_fixed_effect_coverage <-
            titletext = "Samples for fixed effects",
            okcol = "green",
            wrongcol = "white",
-           undersampledcol = "red") {
+           undersampledcol = "red",
+           oktext="OK", undersampledtext="missing samples", wrongtext="no landings"
+           ) {
     fixed_effects <-
       stoxexport$resources$covariateInfo[stoxexport$resources$covariateInfo$covType ==
                                            "Fixed", "name"]
@@ -418,19 +420,23 @@ diagnosticsSamplesRECA <- function(stoxexport) {
 }
 
 #'Plots diagnostics for model configuration. Whether all combinations of fixed effects are sampled
-diagnostics_model_configuration <- function(stoxexport) {
+diagnostics_model_configuration <- function(stoxexport, okcol = "green",
+                                            wrongcol = "white",
+                                            undersampledcol = "red",
+                                            oktext="OK", undersampledtext="missing samples", wrongtext="no landings") {
   par.old <- par(no.readonly = T)
-  par(mfrow = c(1, 2))
+  par(mfrow = c(1, 2), mar=c(1, 4.1, 4.1, 2.1))
   plot_fixed_effect_coverage(stoxexport,
                              indparameters = c("age", "length"),
-                             titletext = "Age samples for fixed effects")
+                             titletext = "Age samples for fixed effects", okcol=okcol, wrongcol=wrongcol, undersampledcol=undersampledcol)
+  legend("bottom", fill=c(okcol, undersampledcol, wrongcol), legend=c(oktext, undersampledtext, wrongtext), bty="n", ncol=1, xpd=T)
   plot_fixed_effect_coverage(stoxexport,
                              indparameters = c("weight", "length"),
-                             titletext = "Weight samples for fixed effects")
+                             titletext = "Weight samples for fixed effects", okcol=okcol, wrongcol=wrongcol, undersampledcol=undersampledcol)
   par(par.old)
 }
 
-#' @param projectname name of stox project
+#' @param projectName name of stox project
 #' @param verbose logical, if TRUE info is written to stderr()
 #' @param format function defining filtetype for plots, supports grDevices::pdf, grDevices::png, grDevices::jpeg, grDevices::tiff, grDevices::bmp
 #' @param ... parameters passed on plot function and format
@@ -458,7 +464,7 @@ diagnosticsRECA <-
         height = 10
         res = NULL
       }
-      formatPlot(projectname, "RECA_cell_coverage", function() {
+      formatPlot(projectName, "RECA_cell_coverage", function() {
         diagnosticsCoverageRECA(stoxexp, ...)
       }, verbose = verbose, format = format, height = height, width = width, res =
         res, ...)
@@ -497,7 +503,7 @@ diagnosticsRECA <-
         res = NULL
       }
       
-      formatPlot(projectname, "RECA_samples_by_cells", function() {
+      formatPlot(projectName, "RECA_samples_by_cells", function() {
         diagnosticsSamplesRECA(stoxexp, ...)
       }, verbose = verbose, format = format, height = height, width = width, res =
         res, ...)
@@ -520,7 +526,7 @@ diagnosticsRECA <-
     #
     
     #for testing different configs
-    #stoxexp$resources$covariateInfo[2,"covType"] <- "Fixed"
+    stoxexp$resources$covariateInfo[2,"covType"] <- "Fixed"
     #stoxexp$resources$covariateInfo[3,"covType"] <- "Fixed"
     
     #calculate plot dimensions for table
@@ -531,7 +537,7 @@ diagnosticsRECA <-
       #dimension in pixels
       res = 500
       width = (res / 1.5) * (cols + 2) * 2
-      height = (res / 4.9) * (rows + 7)
+      height = (res / 4.9) * (rows + 10)
     }
     if (format == "pdf") {
       #dimension in inches
@@ -540,7 +546,7 @@ diagnosticsRECA <-
       res = NULL
     }
     
-    formatPlot(projectname, "RECA_model_configuration", function() {
+    formatPlot(projectName, "RECA_model_configuration", function() {
       diagnostics_model_configuration(stoxexp, ...)
     }, verbose = verbose, format = format, height = height, width = width, res =
       res, ...)
