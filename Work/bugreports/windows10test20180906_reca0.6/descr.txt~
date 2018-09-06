@@ -1,0 +1,12 @@
+Crasher for spesifikke verdier av Globalparameters$resultdir. Noen eksempler som virker:
+/Users/a5362/code/github/Rstox_utils/Work/reca/
+/Users/a5362/code/github/Rstox_utils/Work/reca
+/Users/a5362/code/github/Rstox_utils/Work/eca/
+ett eksempel som konsistent ikke virker:
+/Users/a5362/code/github/Rstox_utils/Work/eca
+
+testet med:
+torskesett_prepdata_mac.rdata
+
+Et datasett, generert på windows, funker på mac, men ikke windows (krasjer i prediksjon)
+torskesett_prepdata_windows.rdata
