@@ -97,6 +97,9 @@ runRECA_file <- function(runfile=NULL, runfiledir=NULL){
   if(!(file.exists(GlobalParameters$resultdir))){
     dir.create(GlobalParameters$resultdir, recursive=T)
   }
+  ## Estimate model
+  fit <- eca.estimate(AgeLength,WeightLength,Landings,GlobalParameters)
+  
   pred <- eca.predict(AgeLength,WeightLength,Landings,GlobalParameters)
 }
 
