@@ -20,7 +20,7 @@ build_pelfoss <- function(buildDir, pkgName="pelfoss", version="1.0", Rversion="
 		
 		write("", READMEfile, append=TRUE)
 		write("# Install pelfoss from github using the devtools package:", READMEfile, append=TRUE)
-		write("# devtools::install_github(\"Sea2Data/pelfoss\")", READMEfile, append=TRUE)
+		write("devtools::install_github(\"Sea2Data/pelfoss\")", READMEfile, append=TRUE)
 		write("# Alternatively install the latest develop version: devtools::install_github(\"Sea2Data/pelfoss\", ref=\"develop\")", READMEfile, append=TRUE)
 		write("", READMEfile, append=TRUE)
 		
@@ -146,7 +146,7 @@ build_pelfoss <- function(buildDir, pkgName="pelfoss", version="1.0", Rversion="
 	# Depends is replaced by @import specified by functions"
 	DESCRIPTIONtext = paste(
 		paste0("Package: ", pkgName),
-		"Title: Simulate acosutic-trawl surveys and produce survey estimated using Rstox.",
+		"Title: Simulate acosutic-trawl surveys and produce survey estimated using Rstox",
 		paste0("Version: ", version),
 		"Authors@R: c(",
 		"  person(\"Arne Johannes\", \"Holmin\", role = c(\"aut\",\"cre\"), email = \"arnejh@imr.no\"))",
@@ -156,7 +156,7 @@ build_pelfoss <- function(buildDir, pkgName="pelfoss", version="1.0", Rversion="
 		"Description: The package pelfoss contains code to simulate acoustic-trawl surveys based on biomass fields from population dynamic models, and produces survey estimates using the Rstox package.",
 		"BugReports: https://github.com/Sea2Data/pelfoss/issues", 
 		"License: LGPL-3",
-		"LazyData: true", sep="\n")
+		"LazyData: true\n", sep="\n")
 	write(DESCRIPTIONtext, DESCRIPTIONfile)
 	##########
 	
@@ -716,7 +716,9 @@ build_Rstox <- function(buildDir, pkgName="Rstox", version="1.0", Rversion="3.3.
 		write("# Install from github using the devtools package:", READMEfile, append=TRUE)
 		write("# devtools::install_github(\"Sea2Data/Rstox\", ref=\"develop\")", READMEfile, append=TRUE)
 		write("", READMEfile, append=TRUE)
-		write("# R should be installed as the 64 bit version (and 64 bit version ONLY for Windows 10. To do this, uncheck the box \"32-bit Files\" when selecting components to install. If you are re-intalling an R that has both 32 and 64 bit, you will need to uninstall R first).", READMEfile, append=TRUE)
+		write("# R should be installed as the 64 bit version. On Windows 10 ONLY the 64 bit version should be used. ", READMEfile, append=TRUE)
+		write("# To do this, uncheck the box \"32-bit Files\" when selecting components to install.", READMEfile, append=TRUE)
+		write("# If you are re-intalling an R that has both 32 and 64 bit, you will need to uninstall R first.", READMEfile, append=TRUE)
 		write("# On Windows systems with adminstrator requirements, it is recommended to install R in C:/users/<user>/documents/R.", READMEfile, append=TRUE)
 		write("", READMEfile, append=TRUE)
 		write("# Note that 64 bit Java is required to run Rstox", READMEfile, append=TRUE)
@@ -732,7 +734,8 @@ build_Rstox <- function(buildDir, pkgName="Rstox", version="1.0", Rversion="3.3.
 		write("# You may want to check that the downloaded version is first in the list by running the following in the Terminal:", READMEfile, append=TRUE)
 		write("# \t/usr/libexec/java_home -V", READMEfile, append=TRUE)
 		write("# \tjava -version", READMEfile, append=TRUE)
-		write("# Then run this in the Terminal.app:", READMEfile, append=TRUE)
+		write("# Then run this in the Terminal.app (you will be asked for password, but the password will not show as you type.", READMEfile, append=TRUE)
+		write("# It is possible to type the password in a text editor first and then paste it into the Terminal.):", READMEfile, append=TRUE)
 		write("# \tsudo ln -s $(/usr/libexec/java_home)/jre/lib/server/libjvm.dylib /usr/local/lib", READMEfile, append=TRUE)
 		write("# \tsudo R CMD javareconf", READMEfile, append=TRUE)
 		write("# Open R (close and then open if already open) and install rJava:", READMEfile, append=TRUE)
@@ -852,36 +855,68 @@ build_Rstox <- function(buildDir, pkgName="Rstox", version="1.0", Rversion="3.3.
 	# JAVA_HOME is unset to be able to load rJava.dll in R CMD BATCH
 	# jPackage is moved to rstox.init for dynamic import of rJava
 	# The local Rstox environment is created here, in which all useful outputs from functions are placed, and saved at the end of any code:
+	#onLoadText = paste(
+	#	".onLoad <- function(libname, pkgname){",
+	#	"	",
+	#	"	if(Sys.getenv(\"JAVA_HOME\")!=\"\") Sys.setenv(JAVA_HOME=\"\")",
+	#	"	# options(java.parameters=\"-Xmx2g\")",
+	#	"# Create a Rstox environment in which the baseline objects of the various projects are placed. This allows for a check for previously run baseline models and avoids memory leakage:", 
+	#	"	assign(\"RstoxEnv\", new.env(), envir=.GlobalEnv)",
+	#	"	# Assign fundamental variables to the RstoxEnv:",
+	#	"	Definitions <- list(",
+	#	"		JavaMem = 2e9, ",
+	#	"		StoXFolders = c(\"input\", \"output\", \"process\"), ",
+	#	"		NMD_data_types = c(\"echosounder\", \"biotic\", \"landing\"), ",
+	#	"		StoX_data_types = c(\"acoustic\", \"biotic\", \"landing\"), ",
+	#	"		StoX_data_type_keys = c(acoustic=\"echosounder_dataset\", biotic=\"missions xmlns\", landing=\"Sluttseddel\"), ",
+	#	"		project_types = c(\"AcousticTrawl\", \"SweptAreaLength\", \"SweptAreaTotal\"), ",
+	#	"		processLevels = c(\"bootstrap\", \"bootstrapImpute\"), ",
+	#	"		modelTypeJavaNames = c(\"baseline\", \"baseline-report\", \"r\", \"r-report\", \"name\"), ",
+	#	"		modelTypeJavaFuns = c(\"getBaseline\", \"getBaselineReport\", \"getRModel\", \"getRModelReport\", \"getProjectName\")",
+	#	"		)",
+	#	"	assign(\"Definitions\", Definitions, envir=get(\"RstoxEnv\"))",
+	#	"	assign(\"Projects\", list(), envir=get(\"RstoxEnv\"))",
+	#	"	# Set the Java memory:",
+	#	"	setJavaMemory(Definitions$JavaMem)", 
+	#	"	print(initiateRstoxEnv)", 
+	#	"}", 
+	#	sep="\n"
+	#)
 	onLoadText = paste(
 		".onLoad <- function(libname, pkgname){",
 		"	",
 		"	if(Sys.getenv(\"JAVA_HOME\")!=\"\") Sys.setenv(JAVA_HOME=\"\")",
-		"	options(java.parameters=\"-Xmx2g\")",
-		"# Create a Rstox environment in which the baseline objects of the various projects are placed. This allows for a check for previously run baseline models and avoids memory leakage:", 
-		"	assign(\"RstoxEnv\", new.env(), envir=.GlobalEnv)",
-		"	# Assign fundamental variables to the RstoxEnv:",
-		"	Definitions <- list(",
-		"		StoXFolders = c(\"input\", \"output\", \"process\"), ",
-		"		NMD_data_types = c(\"echosounder\", \"biotic\", \"landing\"), ",
-		"		StoX_data_types = c(\"acoustic\", \"biotic\", \"landing\"), ",
-		"		StoX_data_type_keys = c(acoustic=\"echosounder_dataset\", biotic=\"missions xmlns\", landing=\"Sluttseddel\"), ",
-		"		project_types = c(\"AcousticTrawl\", \"SweptAreaLength\", \"SweptAreaTotal\"), ",
-		"		processLevels = c(\"bootstrap\", \"bootstrapImpute\"), ",
-		"		modelTypeJavaNames = c(\"baseline\", \"baseline-report\", \"r\", \"r-report\", \"name\"), ",
-		"		modelTypeJavaFuns = c(\"getBaseline\", \"getBaselineReport\", \"getRModel\", \"getRModelReport\", \"getProjectName\")",
-		"		)",
-		"	assign(\"Definitions\", Definitions, envir=get(\"RstoxEnv\"))",
-		"	assign(\"Projects\", list(), envir=get(\"RstoxEnv\"))",
-	"}", sep="\n")
+		"	# options(java.parameters=\"-Xmx2g\")",
+		"	# Initiate the Rstox envitonment:", 
+		"	Definitions <- initiateRstoxEnv()", 
+		"	# Set the Java memory:",
+		"	setJavaMemory(Definitions$JavaMem)", 
+		"}", 
+		sep="\n"
+	)
 	write(onLoadText, onLoadFile)
 	##########
 	
-	##### Save a Java memory message to the onAttach.R file in the "R" directory: #####
-	onAttachText = paste(
-		".onAttach <- function(libname, pkgname){",
-		"	",
-		paste0("	packageStartupMessage(\"", pkgName, "_", version, "\n**********\nIf problems with Java Memory such as java.lang.OutOfMemoryError occurs, try increasing the Java memory by running setJavaMemory(4e9), and possibly using an even higher value than 4 gigabytes (but not as large as the total system memory)\n**********\n\", appendLF=FALSE)"),
-	"}", sep="\n")
+	##########
+	# Define the onAttach funciton for the Rstox package:
+	if(official){
+		onAttachText = paste(
+			".onAttach <- function(libname, pkgname){",
+			"	",
+			paste0("	packageStartupMessage(\"", pkgName, "_", version, "\n**********\nIf problems with Java Memory such as java.lang.OutOfMemoryError occurs, see ?setJavaMemory.\n**********\n\", appendLF=FALSE)"),
+			"}", 
+			sep="\n"
+		)
+	}
+	else{
+		onAttachText = paste(
+			".onAttach <- function(libname, pkgname){",
+			"	",
+			paste0("	packageStartupMessage(\"", pkgName, "_", version, "\n**********\nWARNING: This version of Rstox is an unofficial/developer version and bugs should be expected.\nIf problems with Java Memory such as java.lang.OutOfMemoryError occurs, see ?setJavaMemory.\n**********\n\", appendLF=FALSE)"),
+			"}", 
+			sep="\n"
+		)
+	}
 	write(onAttachText, onAttachFile)
 	##########
 	
