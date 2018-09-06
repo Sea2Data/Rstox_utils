@@ -40,16 +40,21 @@ defaultlgamodel="log-linear"
 defaultCC=FALSE
 defaultCCError=FALSE
 age.error.default=FALSE
-runRECA <- function(projectname, burnin=burnindefault, caa.burnin=burnindefault, nSamples=samplesdefault, thin=thindefault, fitfile=defaultfitfile, predfile=defaultpredfile, lgamodel=defaultlgamodel, CC=defaultCC, CCError=defaultCCError, seed=NULL, age.error=age.error.default){
+
+#' @param export_only if not NULL this indicates that eca should not be run, but all parameters should be exported to the file export_only
+runRECA <- function(projectname, burnin=burnindefault, caa.burnin=burnindefault, nSamples=samplesdefault, thin=thindefault, fitfile=defaultfitfile, predfile=defaultpredfile, lgamodel=defaultlgamodel, CC=defaultCC, CCError=defaultCCError, seed=NULL, age.error=age.error.default, export_only=NULL){
   warning("write doc for runECA")
   # Sett kjøreparametere her, sett dataparametere i prep_eca
+    prepdata <- loadProjectData(projectname, var="prepareRECA")   
+    prepareRECA <- prepdata$prepareRECA
+    if (is.null(prepdata)){
+      stop("Could not load project data")
+    }
+    GlobalParameters <- prepareRECA$GlobalParameters
+    AgeLength <- prepareRECA$AgeLength
+    WeightLength <- prepareRECA$WeightLength
+    Landings <- prepareRECA$Landings
 
-  prepdata <- loadProjectData(projectname, var="prepareRECA")
-  GlobalParameters <- prepdata$prepareRECA$GlobalParameters
-  AgeLength <- prepdata$prepareRECA$AgeLength
-  WeightLength <- prepdata$prepareRECA$WeightLength
-  Landings <- prepdata$prepareRECA$Landings
-  
   GlobalParameters$caa.burnin <- burnin
   GlobalParameters$burnin <- caa.burnin
   GlobalParameters$nSamples <- nSamples
@@ -70,14 +75,31 @@ runRECA <- function(projectname, burnin=burnindefault, caa.burnin=burnindefault,
   WeightLength <- fix_in_prep_weightlength(WeightLength)
   Landings <- fix_in_prep_landings(Landings)
 
-  ## Estimate model
-  fit <- eca.estimate(AgeLength,WeightLength,Landings,GlobalParameters)
-  
-  ## Predict
+  if (!is.null(export_only)){
+    save(GlobalParameters, AgeLength, WeightLength, Landings, file=export_only)
+  }
+  else{
+    ## Estimate model
+    fit <- eca.estimate(AgeLength,WeightLength,Landings,GlobalParameters)
+    
+    ## Predict
+    pred <- eca.predict(AgeLength,WeightLength,Landings,GlobalParameters)
+    
+    setProjectData(projectName=projectname, var=list(fit=fit, pred=pred), name="runRECA")
+  }
+}
+
+#' @param runfile run with parameters stored in file, and runfiledir as GlovalParameters$resultdir (will be created if does not exist)
+runRECA_file <- function(runfile=NULL, runfiledir=NULL){
+  write(paste("Loading from file:", runfile), stderr())
+  load(runfile)
+  GlobalParameters$resultdir <- runfiledir
+  if(!(file.exists(GlobalParameters$resultdir))){
+    dir.create(GlobalParameters$resultdir, recursive=T)
+  }
   pred <- eca.predict(AgeLength,WeightLength,Landings,GlobalParameters)
-  
-  setProjectData(projectName=projectname, var=list(fit=fit, pred=pred), name="runRECA")
 }
 
 projectname <- "ECA_torsk_2015"
-runRECA(projectname)
+runRECA(projectname, seed=42, export_only = "/Users/a5362/Desktop/torskesett_prepdata_mac.rdata")
+runRECA_file(runfile = "/Users/a5362/Desktop/torskesett_prepdata_mac.rdata", runfiledir="/Users/a5362/code/github/Rstox_utils/Work/reca")
