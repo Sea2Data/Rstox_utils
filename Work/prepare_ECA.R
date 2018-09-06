@@ -19,10 +19,10 @@ get_default_result_dir <- function(projectname, location=getProjectPaths(project
 }
 
 
-#' see doc for eca.estimate for most parameters
+#' Convert data to eca format and test. Save results to project data 'prepareRECA'
+#' parameters not described below are defined in eca.estimate and eca.predict
 #' @param maxlength maximum length of fish in the data set in cm. If null the value will be extracted from the data.
 #' @param resultdir location where R-ECA will store temporal files. Defaults (if null) to a subdirectory of getProjectPaths(projectname)$RDataDir called `reca` whcih will be created if it does not already exist
-#' @return outputdir
 prepRECA <- function(projectname, resultdir=NULL, minage=1, maxage=20, delta.age=0.001, maxlength=NULL, use_otolithtype=TRUE, hatchDaySlashMonth="01/01"){
   
     if (is.null(resultdir)){
@@ -39,7 +39,6 @@ prepRECA <- function(projectname, resultdir=NULL, minage=1, maxage=20, delta.age
       stop(paste("Please make ecadir", "(current:", resultdir, ") contain no spaces."))
     }
   
-    warning("write doc for prepECA")
     eca <- baseline2eca(projectname)
     
     warning("hack while waiting for stox jar")

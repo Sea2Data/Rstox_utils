@@ -41,9 +41,10 @@ defaultCC=FALSE
 defaultCCError=FALSE
 age.error.default=FALSE
 
+#' run fit and prediction. Save results to project data 'runRECA'
+#' parameters not described below are defined in eca.estimate and eca.predict
 #' @param export_only if not NULL this indicates that eca should not be run, but all parameters should be exported to the file export_only
 runRECA <- function(projectname, burnin=burnindefault, caa.burnin=burnindefault, nSamples=samplesdefault, thin=thindefault, fitfile=defaultfitfile, predfile=defaultpredfile, lgamodel=defaultlgamodel, CC=defaultCC, CCError=defaultCCError, seed=NULL, age.error=age.error.default, export_only=NULL){
-  warning("write doc for runECA")
   # Sett kjøreparametere her, sett dataparametere i prep_eca
     prepdata <- loadProjectData(projectname, var="prepareRECA")   
     prepareRECA <- prepdata$prepareRECA
