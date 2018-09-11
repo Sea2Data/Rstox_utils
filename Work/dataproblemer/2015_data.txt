@@ -1,0 +1,5 @@
+missiontype: 
+var kodet som strenger i tidlig versjon: ordnet
+
+referanseflåten:
+mistenkelig posisjon: 89575, Havbryn: sendt til Tom
