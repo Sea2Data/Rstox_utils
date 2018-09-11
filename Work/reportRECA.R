@@ -31,5 +31,5 @@ plotRECAresults <- function(projectName, verbose=F, format="png", ...){
   warning("Fix defaults for units kt and mt. Consider adding lengthunits")
   #save catch matrix
 }
-projectName <- "ECA_torsk_2015"
+
 plotRECAresults(projectName)

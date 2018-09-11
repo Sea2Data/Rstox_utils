@@ -7,6 +7,7 @@ dir <- "/Users/a5362/code/github/Rstox_utils/Work"
 #sildeprosjekt: /delphi/Felles/alle/stox/ECA/2015/ECA_sild_2015. Legg til sild == '161724' i filter (annen kode for sild'g03)
 
 projectname <- "ECA_torsk_2015"
+#projectname <- "ECA_torsk_2015_cc"
 #projectname <- "ECA_sild_2015"
 #baselineOutput <- getBaseline(projectname)
 
@@ -40,10 +41,6 @@ prepRECA <- function(projectname, resultdir=NULL, minage=1, maxage=20, delta.age
     }
   
     eca <- baseline2eca(projectname)
-    
-    warning("hack while waiting for stox jar")
-    eca$biotic <- eca$biotic[!is.na(eca$biotic$spatial),]
-    eca$covariateMatrixBiotic <- eca$covariateMatrixBiotic[!is.na(eca$covariateMatrixBiotic$spatial),]
     
     #max length in cm
     if (is.null(maxlength)){

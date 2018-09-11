@@ -552,5 +552,5 @@ diagnosticsRECA <-
       res, ...)
     
   }
-projectName <- "ECA_torsk_2015"
-diagnosticsRECA(projectName)
+
+diagnosticsRECA(projectname)

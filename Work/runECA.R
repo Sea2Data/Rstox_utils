@@ -37,7 +37,7 @@ thindefault=1
 defaultfitfile="fit"
 defaultpredfile="pred"
 defaultlgamodel="log-linear"
-defaultCC=FALSE
+defaultCC=TRUE
 defaultCCError=FALSE
 age.error.default=FALSE
 
@@ -104,7 +104,6 @@ runRECA_file <- function(runfile=NULL, runfiledir=NULL){
   pred <- eca.predict(AgeLength,WeightLength,Landings,GlobalParameters)
 }
 
-projectname <- "ECA_torsk_2015"
 #runRECA(projectname, seed=42, export_only = "/Users/a5362/Desktop/torskesett_prepdata_mac.rdata")
 #runRECA_file(runfile = "/Users/a5362/Desktop/torskesett_prepdata_mac.rdata", runfiledir="/Users/a5362/code/github/Rstox_utils/Work/reca")
 runRECA(projectname, seed=42)
