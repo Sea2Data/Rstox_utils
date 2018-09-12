@@ -32,3 +32,13 @@ runRECA_file <- function(runfile=NULL, runfiledir=NULL){
 #runRECA(projectname, seed=42, export_only = "/Users/a5362/Desktop/torskesett_prepdata_mac.rdata")
 #runRECA_file(runfile = "/Users/a5362/Desktop/torskesett_prepdata_mac.rdata", runfiledir="/Users/a5362/code/github/Rstox_utils/Work/reca")
 runproject(projectname)
+
+
+#noter til windowstesting:
+#Etter test 6. sept 2018 oppdaterte jeg biotic filen for å få inn datakorreksjoner (ca 11. sept). Noen av disse datakorreksjonene vil føre til at filter i oppdatert prosjektfil ikke vil virke. Så:
+#- installer oppdatert eca
+#- installer Rstox på nytt fra develop
+#- last ned ny biotic fil fra api
+#- oppdater prosjektfil fra Rstox_utils/stox_processfiles
+#- oppdater ressursfiler fra Rstox_utils/resources
+#- sett projectname og kjør dette scriptet
