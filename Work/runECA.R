@@ -1,8 +1,19 @@
-library(eca)
 library(Rstox)
 
 burnindefault=100
 samplesdefault=400
+projectname <- "ECA_torsk_2015"
+#projectname <- "ECA_torsk_2015_cc"
+#projectname <- "ECA_sild_2015"
+#baselineOutput <- getBaseline(projectname)
+
+runproject <- function(projectname){
+  prepareRECA(projectname)
+  diagnosticsRECA(projectname)
+  runRECA(projectname, seed=42, burnin=burnindefault, caa.burnin=burnindefault, nSamples=samplesdefault)
+  warning("Figure out proper name in Rstox")
+  plotRECAresults(projectname)
+}
 
 #' @param runfile run with parameters stored in file, and runfiledir as GlovalParameters$resultdir (will be created if does not exist)
 runRECA_file <- function(runfile=NULL, runfiledir=NULL){
@@ -20,4 +31,4 @@ runRECA_file <- function(runfile=NULL, runfiledir=NULL){
 
 #runRECA(projectname, seed=42, export_only = "/Users/a5362/Desktop/torskesett_prepdata_mac.rdata")
 #runRECA_file(runfile = "/Users/a5362/Desktop/torskesett_prepdata_mac.rdata", runfiledir="/Users/a5362/code/github/Rstox_utils/Work/reca")
-runRECA(projectname, seed=42, burnin=burnindefault, caa.burnin=burnindefault, nSamples=samplesdefault)
+runproject(projectname)
