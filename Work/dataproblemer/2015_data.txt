@@ -2,4 +2,7 @@ missiontype:
 var kodet som strenger i tidlig versjon: ordnet
 
 referanseflåten:
-mistenkelig posisjon: 89575, Havbryn: sendt til Tom
+mistenkelig posisjon: 89575, Havbryn: sendt til Tom som har fikset.
+
+annet:
+noen individprøver av sild i 2015 er fra delprøver uten fangstvekt eller prøvevekt (182 stasjoner fra kommersielle prøver og referanseflåtene).
