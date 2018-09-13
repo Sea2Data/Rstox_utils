@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project template="" rstoxversion="1.9.1" xmlns="http://www.imr.no/formats/stox/v1" lastmodified="12/09/18 18:55" rversion="3.5.0" stoxversion="2.6.2" resourceversion="1.79">
+<project template="" rstoxversion="1.9.1" xmlns="http://www.imr.no/formats/stox/v1" lastmodified="13/09/18 13:15" rversion="3.5.0" stoxversion="2.6.2" resourceversion="1.79">
   <model name="baseline">
     <process name="ReadProcessData">
       <function>ReadProcessData</function>
@@ -268,9 +268,9 @@
       <parameter name="use_otolithtype">true</parameter>
       <parameter name="hatchDaySlashMonth">01/01</parameter>
     </process>
-    <process name="diagnosticsRECA">
+    <process name="diagonstics">
       <function>diagnosticsRECA</function>
-      <enabled>true</enabled>
+      <enabled>false</enabled>
       <respondingui>true</respondingui>
       <breakingui>false</breakingui>
     </process>
@@ -291,10 +291,23 @@
       <parameter name="seed"></parameter>
       <parameter name="age.error">false</parameter>
     </process>
+    <process name="saveProjectData">
+      <function>saveProjectData</function>
+      <enabled>true</enabled>
+      <respondingui>true</respondingui>
+      <breakingui>false</breakingui>
+    </process>
   </model>
   <model name="baseline-report">
   </model>
   <model name="r-report">
+    <process name="getPlots">
+      <function>getPlots</function>
+      <enabled>true</enabled>
+      <respondingui>true</respondingui>
+      <breakingui>false</breakingui>
+      <parameter name="out">all</parameter>
+    </process>
   </model>
   <processdata>
     <bioticassignment>
