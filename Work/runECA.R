@@ -2,16 +2,15 @@ library(Rstox)
 setJavaMemory(size=6e+09)
 burnindefault=100
 samplesdefault=400
-#projectname <- "ECA_torsk_2015"
+projectname <- "ECA_torsk_2015"
 #projectname <- "ECA_torsk_2015_cc"
-projectname <- "ECA_sild_2015"
+#projectname <- "ECA_sild_2015"
 #baselineOutput <- getBaseline(projectname)
 
 runproject <- function(projectname){
   prepareRECA(projectname)
   diagnosticsRECA(projectname)
   runRECA(projectname, seed=42, burnin=burnindefault, caa.burnin=burnindefault, nSamples=samplesdefault)
-  warning("Figure out proper name in Rstox")
   plotRECAresults(projectname)
 }
 
