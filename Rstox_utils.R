@@ -998,10 +998,34 @@ build_Rstox <- function(buildDir, pkgName="Rstox", version="1.0", Rversion="3.3.
 
 
 
+
+
+
+
+
+
+#*********************************************
+#*********************************************
+#' Get the platform ID of an operating system
+#'
+#' @param var	The element of Sys.info() used as identifyer of the platform.
+#'
+#' @export
+#' @keywords internal
+#'
 getPlatformID <- function(var="release"){
 	paste(.Platform$OS.type, var, paste(strsplit(Sys.info()[var], " ", fixed=TRUE)[[1]], collapse="_"), sep="_")
 }
 
+#*********************************************
+#*********************************************
+#' Small funciton to get a list of the file paths to the sub folders of the test directory (Projects_original, Projects, Output, Diff)
+#'
+#' @param x	The test directory
+#'
+#' @export
+#' @keywords internal
+#'
 getTestFolderStructure <- function(x){
 	list(
 		Projects_original = file.path(x, "Projects_original"), 
@@ -1010,8 +1034,20 @@ getTestFolderStructure <- function(x){
 		Diff = file.path(x, "Diff"))
 }
 
+#*********************************************
+#*********************************************
+#' Get the latest directory of 
+#'
+#' @param dir	The directory of subdirectories named with the Rstox and stox-lib versions.
+#' @param op	The operator used to get the latest. Do not mess with this unless you know what you are doing.
+#' @param n		The number of directories to return, as used in utils::tail().
+#'
+#' @export
+#' @keywords internal
+#'
 getLatestDir <- function(dir, op="<", n=1){
 	
+	# Function for converting the Rstox version to a numeric value suitable for sorting, by multiplying each digit in the version number by scaling factor which are largest for the first digits (e.g., Rstox_1.10.3 gives 1 * 1e4 + 10 * 1e2 + 3 = 11003):
 	version2numeric <- function(x){
 		x <- lapply(strsplit(x, ".", fixed=TRUE), as.numeric)
 		x <- sapply(x, function(y) sum(y * 10^(6 - 2 * seq_along(y))))
@@ -1021,17 +1057,21 @@ getLatestDir <- function(dir, op="<", n=1){
 	if(length(dir)==0){
 		return(NULL)
 	}
+	# Get the Rstox and stox-lib versions:
 	current <- lapply(getRstoxVersion(), as.character)
 	currentString <- paste(current, sep="_", collapse="_")
 	currentRstox <- version2numeric(current$Rstox)
 	currentStoXLib <- version2numeric(current$StoXLib)
+	# Weight Rstox higher:
 	current <- 10^10 * currentRstox + currentStoXLib
 	
+	# List all directories:
 	All <- list.dirs(dir, recursive=FALSE)
 	if(length(All)==0){
 		warning(paste0("No projects in the test folder '", dir, "'"))
 	}
 	
+	# Get the Rstox and stox-lib versions encoded in the folder names:
 	RstoxVersions <- sapply(strsplit(basename(All), "_"), "[", 2)
 	if(length(RstoxVersions)==0){
 		return(NULL)
@@ -1039,6 +1079,7 @@ getLatestDir <- function(dir, op="<", n=1){
 	StoXLibVersions <- sapply(strsplit(basename(All), "_"), "[", 4)
 	RstoxVersions <- version2numeric(RstoxVersions)
 	StoXLibVersions <- version2numeric(StoXLibVersions)
+	# Weight Rstox higher:
 	Versions <- 10^10 * RstoxVersions + StoXLibVersions
 	
 	# There has to be at least one previous version:
@@ -1053,12 +1094,23 @@ getLatestDir <- function(dir, op="<", n=1){
 	}
 }
 
-
-
+#*********************************************
+#*********************************************
+#' Copy the 'n' latest directories of the folders 'toCopy' from the local 'from' to the central 'to' directory.
+#'
+#' @param from		The local directory holding the version testing.
+#' @param to		The central directory holding the version testing.
+#' @param toCopy	The sub folders to copy files from.
+#' @param overwrite	Logical: If TRUE, overwrite the files on the central directory.
+#' @param msg		Logical: If TRUE, print progress to the console.
+#' @param op,n		See \code{\link{getLatestDir}}.
+#'
+#' @export
+#' @keywords internal
+#'
 copyLatest <- function(from, to, toCopy=c("Diff", "Output", "Projects_original"), overwrite=TRUE, msg=FALSE, op="<", n=1){
-	from <- getTestFolderStructure(path.expand(from))
-	to <- getTestFolderStructure(path.expand(to))
 	
+	# Function for copying from one subdirectory:
 	copyLatestOne <- function(folder, from, to, overwrite=TRUE, msg=FALSE, op=op, n=1){
 		from <- getLatestDir(from[[folder]], op=op, n=n)
 		if(length(from)){
@@ -1075,10 +1127,24 @@ copyLatest <- function(from, to, toCopy=c("Diff", "Output", "Projects_original")
 		}
 	}
 	
+	# Get the folder structure of the local and central directory:
+	from <- getTestFolderStructure(path.expand(from))
+	to <- getTestFolderStructure(path.expand(to))
+	
+	# Copy for all specified subdirectories:
 	invisible(lapply(toCopy, copyLatestOne, from, to, overwrite=overwrite, msg=msg, op=op, n=n))
 }
 
-
+#*********************************************
+#*********************************************
+#' Get the path to the server, depending on the local platform (Mac, Windows).
+#'
+#' @param root	A list of specifyers for the root directory to the central server.
+#' @param path	The relative path from the root.
+#'
+#' @export
+#' @keywords internal
+#'
 getServerPath <- function(root=list(windows="\\\\delphi", unix="/Volumes"), path="pc_prog/S2D/stox/StoXAutoTest"){
 	root <- root[[.Platform$OS.type]]
 	if(length(root)==0){
@@ -1092,14 +1158,41 @@ getServerPath <- function(root=list(windows="\\\\delphi", unix="/Volumes"), path
 	server
 }
 
-
+#*********************************************
+#*********************************************
+#' Copy the test run to the central srever.
+#'
+#' @param dir		The local directory holding the version testing.
+#' @param root		A list of specifyers for the root directory to the central server.
+#' @param path		The relative path from the root.
+#' @param toCopy	The sub folders to copy files from.
+#' @param overwrite	Logical: If TRUE, overwrite the files on the central directory.
+#' @param msg		Logical: If TRUE, print progress to the console.
+#' @param n			The number of runs (one runfor each version tested) to copy.
+#'
+#' @export
+#' @keywords internal
+#'
 copyCurrentToServer <- function(dir, root=list(windows="\\\\delphi", unix="/Volumes"), path="pc_prog/S2D/stox/StoXAutoTest", toCopy=c("Diff", "Output", "Projects_original"), overwrite=FALSE, msg=FALSE, n=1){
 	server <- getServerPath(root=root, path=path)
 	copyLatest(dir, server, toCopy=toCopy, overwrite=overwrite, msg=msg, op="<=", n=n)
 }
 
-
-# Function for running all test projects and comparing outputs with previous outputs:
+#*********************************************
+#*********************************************
+#' Function for running all test projects and comparing outputs with previous outputs.
+#'
+#' @param dir				The local directory holding the version testing.
+#' @param root				A list of specifyers for the root directory to the central server.
+#' @param path				The relative path from the root.
+#' @param copyFromServer	Logical: If TRUE, copy the latest original projects, outputs and diffs in the server to the local directory.
+#' @param process			Which steps to run in the testing used mostly to reduce processing time for development and bug fixing.
+#' @param diffs				Which diffs to include, also used to reduce processing time.
+#' @param nlines			The number of lines to display for diffs between text files.
+#'
+#' @export
+#' @keywords internal
+#'
 automatedRstoxTest <- function(dir, root=list(windows="\\\\delphi", unix="/Volumes"), path="pc_prog/S2D/stox/StoXAutoTest", copyFromServer=TRUE, process=c("run", "diff"),  diffs=c("Rdata", "images", "text", "baseline"), nlines=50){
 #automatedRstoxTest <- function(dir, copyFromServer=TRUE, process=c("run", "diff"),  nlines=-1L, root=list(windows="\\\\delphi", unix="/Volumes"), path="pc_prog/S2D/stox/StoXAutoTest"){
 	
@@ -1158,35 +1251,35 @@ automatedRstoxTest <- function(dir, root=list(windows="\\\\delphi", unix="/Volum
 		}
 	}
 	
-	# Function borrowed from the TSD package (parallel version of lapply):
-	papply <- function(X, FUN, ..., cores=1, outfile="", msg="Processing... "){
-		availableCores <- parallel::detectCores()
-		# If memory runs out, a system call to determine number of cores might fail, thus detectCores() could return NA
-		# defaulting to single core if this is the case
-		if(is.na(availableCores)){
-			availableCores <- 1
-		}
-		if(cores > availableCores){
-			warning(paste0("Only ", availableCores, " cores available (", cores, " requested)"))
-		}
-		nruns <- length(X)
-		cores <- min(cores, nruns, availableCores)
-	
-		# Generate the clusters of time steps:
-		if(cores>1){
-			cat(paste0(msg, "(", nruns, " runs using ", cores, " cores in parallel):\n"))
-			cl <- parallel::makeCluster(cores)
-			# Bootstrap:
-			out <- pbapply::pblapply(X, FUN, ..., cl=cl)
-			# End the parallel bootstrapping:
-			parallel::stopCluster(cl)
-		}
-		else{
-			cat(paste0(msg, "(", nruns, " runs):\n"))
-			out <- pbapply::pblapply(X, FUN, ...)
-		}
-		return(out)
-	}
+	## # Function borrowed from the TSD package (parallel version of lapply):
+	## papply <- function(X, FUN, ..., cores=1, outfile="", msg="Processing... "){
+	## 	availableCores <- parallel::detectCores()
+	## 	# If memory runs out, a system call to determine number of cores might fail, thus detectCores() could return NA
+	## 	# defaulting to single core if this is the case
+	## 	if(is.na(availableCores)){
+	## 		availableCores <- 1
+	## 	}
+	## 	if(cores > availableCores){
+	## 		warning(paste0("Only ", availableCores, " cores available (", cores, " requested)"))
+	## 	}
+	## 	nruns <- length(X)
+	## 	cores <- min(cores, nruns, availableCores)
+	## 
+	## 	# Generate the clusters of time steps:
+	## 	if(cores>1){
+	## 		cat(paste0(msg, "(", nruns, " runs using ", cores, " cores in parallel):\n"))
+	## 		cl <- parallel::makeCluster(cores)
+	## 		# Bootstrap:
+	## 		out <- pbapply::pblapply(X, FUN, ..., cl=cl)
+	## 		# End the parallel bootstrapping:
+	## 		parallel::stopCluster(cl)
+	## 	}
+	## 	else{
+	## 		cat(paste0(msg, "(", nruns, " runs):\n"))
+	## 		out <- pbapply::pblapply(X, FUN, ...)
+	## 	}
+	## 	return(out)
+	## }
 	
 	# Function for getting a string with the current time: 
 	now <- function(brackets=FALSE){
