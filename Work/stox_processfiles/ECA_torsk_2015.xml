@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project template="" rstoxversion="1.9.1" xmlns="http://www.imr.no/formats/stox/v1" lastmodified="13/09/18 13:29" rversion="3.5.0" stoxversion="2.6.2" resourceversion="1.79">
+<project template="" rstoxversion="1.9.1" xmlns="http://www.imr.no/formats/stox/v1" lastmodified="11/10/18 19:46" rversion="3.5.0" stoxversion="2.6.4" resourceversion="1.79">
   <model name="baseline">
     <process name="ReadProcessData">
       <function>ReadProcessData</function>
@@ -212,8 +212,8 @@
       <breakingui>false</breakingui>
       <parameter name="ProcessData">Process(ReadProcessData)</parameter>
       <parameter name="SourceType">Biotic</parameter>
-      <parameter name="CovariateType">Fixed</parameter>
-      <parameter name="ConditionalAutoRegression">false</parameter>
+      <parameter name="CovariateType">Random</parameter>
+      <parameter name="ConditionalAutoRegression">true</parameter>
       <parameter name="DefinitionMethod">Inherit</parameter>
       <parameter name="LandingData"></parameter>
       <parameter name="BioticData">Process(FilterBiotic)</parameter>
@@ -586,7 +586,7 @@
       <value covariatesourcetype="Landing" covariate="60">60</value>
       <value covariatesourcetype="Landing" covariate="61">61</value>
     </spatial>
-    <platform>
+    <platformfactor>
       <value covariatesourcetype="Biotic" covariate="1249">1249</value>
       <value covariatesourcetype="Biotic" covariate="1258">1258</value>
       <value covariatesourcetype="Biotic" covariate="1266">1266</value>
@@ -911,12 +911,13 @@
       <value covariatesourcetype="Biotic" covariate="9109">9109</value>
       <value covariatesourcetype="Biotic" covariate="9112">9112</value>
       <value covariatesourcetype="Biotic" covariate="9113">9113</value>
-    </platform>
+    </platformfactor>
     <covparam>
+      <value covariatetable="gearfactor" parameter="ConditionalAutoRegression">false</value>
       <value covariatetable="gearfactor" parameter="CovariateType">Random</value>
-      <value covariatetable="platform" parameter="CovariateType">Random</value>
-      <value covariatetable="spatial" parameter="CovariateType">Fixed</value>
-      <value covariatetable="temporal" parameter="conditionalautoregression">false</value>
+      <value covariatetable="platformfactor" parameter="CovariateType">Random</value>
+      <value covariatetable="spatial" parameter="ConditionalAutoRegression">true</value>
+      <value covariatetable="spatial" parameter="CovariateType">Random</value>
       <value covariatetable="temporal" parameter="CovariateType">Fixed</value>
     </covparam>
     <ageerror>
@@ -1017,7 +1018,7 @@
     </ageerror>
     <stratumneighbour>
       <value variable="0">5,6</value>
-      <value variable="1">2,10,11</value>
+      <value variable="1">2,10,11,59</value>
       <value variable="2">1,3,10,11</value>
       <value variable="3">2,4,10,12,13</value>
       <value variable="4">3,5,12,37,39</value>
@@ -1055,10 +1056,10 @@
       <value variable="39">4,5,12,20,26,27,36,37,38</value>
       <value variable="40">41</value>
       <value variable="41">8,9,40,42,43</value>
-      <value variable="42">8,28,30,31,41,43</value>
+      <value variable="42">8,28,30,31,41,43,47</value>
       <value variable="43">31,41,42,47,48,57,58</value>
       <value variable="45">49,40</value>
-      <value variable="47">43,48,57,70,42</value>
+      <value variable="47">43,48,57,70,42,61</value>
       <value variable="48">43,47,49,70</value>
       <value variable="49">48,70,71</value>
       <value variable="50">30,31,34,35,36,51,57</value>
@@ -1067,8 +1068,8 @@
       <value variable="55">54,56,62,59</value>
       <value variable="57">30,31,43,47,50,51,58,70</value>
       <value variable="58">43,57</value>
-      <value variable="59">50,51,56,1</value>
-      <value variable="60">61,70,75</value>
+      <value variable="59">50,51,56,1,55</value>
+      <value variable="60">61,70,75,52</value>
       <value variable="61">60,47</value>
       <value variable="64">66,67,68,69,76</value>
       <value variable="66">64,67</value>
