@@ -967,6 +967,7 @@ build_Rstox <- function(buildDir, pkgName="Rstox", version="1.0", Rversion="3.3.
 	##### Run R cmd check with devtools: #####
 	if(check){
 		devtools::check(pkg=buildDir)
+		# args = "--no-examples"
 	}
 	##########
 	
@@ -1301,8 +1302,9 @@ automatedRstoxTest <- function(dir, root=list(windows="\\\\delphi", unix="/Volum
 	}
 	
 	deleteOutput <- function(dir){
-		unlink(file.path(dir, "output", "baseline"), recursive=TRUE, force=TRUE)
-		unlink(file.path(dir, "output", "r"), recursive=TRUE, force=TRUE)
+		unlink(list.files(file.path(dir, "output"), full.names=TRUE, recursive=TRUE), force=TRUE)
+		#unlink(file.path(dir, "output", "baseline"), recursive=TRUE, force=TRUE)
+		#unlink(file.path(dir, "output", "r"), recursive=TRUE, force=TRUE)
 	}
 	
 	pasteAndHash <- function(...){
@@ -1378,15 +1380,7 @@ automatedRstoxTest <- function(dir, root=list(windows="\\\\delphi", unix="/Volum
 		
 		RstoxVersion <- getRstoxVersion()
 		
-		# Get the path to the scripts to run:
-		r_script <- file.path(projectName, "output", "R", "r.R")
-		rreport_script <- file.path(projectName, "output", "R", "r-report.R")
-		# Generate the r scripts:
-		generateRScripts(projectName)
-	
-		# Run the scripts and print info to the progress file:
-		cat(paste0("Running project ", i, ": ", projectName, ":\n"))
-		write(paste0(now(TRUE), "Starting project ", i, ": ", projectName), progressFile, append=TRUE)
+		cat(paste0("\n\n------------------------------------------------------------\nRunning project ", i, ": ", projectName, ":\n"))
 		
 		# Run the baseline and baseline report (the latter with input=NULL):
 		# The parameter 'modelType', enabling reading Baseline Report, was introduced in 1.8.1:
@@ -1403,6 +1397,15 @@ automatedRstoxTest <- function(dir, root=list(windows="\\\\delphi", unix="/Volum
 			baselineOutput <- getBaseline(projectName, exportCSV=TRUE, input=NULL, drop=FALSE)
 			saveProject(projectName)
 		}
+		
+		# Get the path to the scripts to run:
+		r_script <- file.path(projectName, "output", "R", "r.R")
+		rreport_script <- file.path(projectName, "output", "R", "r-report.R")
+		# Generate the r scripts:
+		generateRScripts(projectName)
+	
+		# Run the scripts and print info to the progress file:
+		write(paste0(now(TRUE), "Starting project ", i, ": ", projectName), progressFile, append=TRUE)
 		
 		
 		write(paste0(now(TRUE), "Running r.R"), progressFile, append=TRUE)
@@ -1577,7 +1580,8 @@ automatedRstoxTest <- function(dir, root=list(windows="\\\\delphi", unix="/Volum
 					"x1 <- load(file1, envir=tempenvironment1)",
 					"x2 <- load(file2, envir=tempenvironment2)", 
 					"str(tempenvironment1[[x1]])", 
-					"str(tempenvironment2[[x2]])"
+					"str(tempenvironment2[[x2]])", 
+					"all.equal(tempenvironment1[[x1]], tempenvironment2[[x2]])"
 					)
 				
 				out <- paste(out, "# Inspect the differences by using the following code:", sep="\n")
