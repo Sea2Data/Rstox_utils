@@ -14,7 +14,7 @@ runproject <- function(projectname){
   plotRECAresults(projectname)
 }
 
-#' @param runfile run with parameters stored in file, and runfiledir as GlovalParameters$resultdir (will be created if does not exist)
+#' @param runfile run with parameters stored in file, and runfiledir as GlobalParameters$resultdir (will be created if does not exist)
 runRECA_file <- function(runfile=NULL, runfiledir=NULL){
   write(paste("Loading from file:", runfile), stderr())
   load(runfile)
