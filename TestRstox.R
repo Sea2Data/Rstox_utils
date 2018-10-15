@@ -6,7 +6,7 @@
 
 
 # Load image packages:
-# install.packages("png", "jpeg", "tiff", "tools", "R.utils")
+# install.packages(c("png", "jpeg", "tiff", "tools", "R.utils"))
 
 
 # Define the path to the directory holding the automated testing:
@@ -20,7 +20,8 @@ dir <- "~/workspace/stox/project/Test projects/Automated_testing"
 ###### RESTART R/Rstudio!!! ######
 
 ###### Install Rstox_1.8: #####
-install.packages("ftp://ftp.imr.no/StoX/Download/Rstox/Rstox_1.8.tar.gz", repos=NULL)
+#install.packages("ftp://ftp.imr.no/StoX/Download/Rstox/Rstox_1.8.tar.gz", repos=NULL)
+devtools::install_github("Sea2Data/Rstox", ref="v1.8")
 # Load Rstox:
 library(Rstox)
 
@@ -34,6 +35,25 @@ system.time(automatedRstoxTest(dir=dir, copyFromServer=TRUE, process=c("run", "d
 
 #################################
 ########## Rstox_1.8.1 ##########
+#################################
+
+###### RESTART R/Rstudio!!! ######
+
+##### Install the latest develop version of Rstox: #####
+devtools::install_github("Sea2Data/Rstox", ref="develop")
+# Load Rstox:
+library(Rstox)
+
+##### Run the projects with Rstox 1.8.1 and diff with Rstox 1.7.2: #####
+source("https://raw.githubusercontent.com/Sea2Data/Rstox_utils/master/Rstox_utils.R")
+
+system.time(automatedRstoxTest(dir=dir, copyFromServer=FALSE, process=c("run", "diff"), nlines=50))
+#     user   system  elapsed 
+# 2044.219  394.894 4639.868 
+
+
+#################################
+########## Rstox_1.9.1 ##########
 #################################
 
 ###### RESTART R/Rstudio!!! ######
