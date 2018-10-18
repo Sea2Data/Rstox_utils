@@ -1,7 +1,7 @@
 library(Rstox)
 setJavaMemory(size=6e+09)
 burnindefault=100
-samplesdefault=400
+samplesdefault=300
 projectname <- "ECA_torsk_2015"
 #projectname <- "ECA_torsk_2015_cc"
 #projectname <- "ECA_sild_2015"
@@ -10,7 +10,7 @@ projectname <- "ECA_torsk_2015"
 runproject <- function(projectname){
   prepareRECA(projectname)
   diagnosticsRECA(projectname)
-  runRECA(projectname, seed=42, burnin=burnindefault, caa.burnin=burnindefault, nSamples=samplesdefault)
+  runRECA(projectname, burnin=burnindefault, caa.burnin=burnindefault, nSamples=samplesdefault)
   plotRECAresults(projectname)
 }
 
@@ -28,8 +28,10 @@ runRECA_file <- function(runfile=NULL, runfiledir=NULL){
   pred <- eca.predict(AgeLength,WeightLength,Landings,GlobalParameters)
 }
 
-#runRECA(projectname, seed=42, export_only = "/Users/a5362/Desktop/torskesett_prepdata_mac.rdata")
-#runRECA_file(runfile = "/Users/a5362/Desktop/torskesett_prepdata_mac.rdata", runfiledir="/Users/a5362/code/github/Rstox_utils/Work/reca")
+
+#loadProjectData(projectname, var="prepareRECA") 
+#runRECA(projectname, seed=42, export_only = "/Users/a5362/Desktop/torskesett_prepdata_mac.rdata", burnin=burnindefault, caa.burnin=burnindefault, nSamples=samplesdefault)
+#runRECA_file(runfile = "/Users/a5362/Desktop/torskesett_prepdata_mac.rdata", runfiledir="/Users/a5362/code/github/Rstox_utils/Work/eca")
 runproject(projectname)
 
 
