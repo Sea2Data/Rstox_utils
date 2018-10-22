@@ -1,7 +1,7 @@
 library(Rstox)
 setJavaMemory(size=6e+09)
 burnindefault=100
-samplesdefault=300
+samplesdefault=500
 projectname <- "ECA_torsk_2015"
 #projectname <- "ECA_torsk_2015_cc"
 #projectname <- "ECA_sild_2015"
@@ -30,16 +30,6 @@ runRECA_file <- function(runfile=NULL, runfiledir=NULL){
 
 
 #loadProjectData(projectname, var="prepareRECA") 
-#runRECA(projectname, seed=42, export_only = "/Users/a5362/Desktop/torskesett_prepdata_mac.rdata", burnin=burnindefault, caa.burnin=burnindefault, nSamples=samplesdefault)
-#runRECA_file(runfile = "/Users/a5362/Desktop/torskesett_prepdata_mac.rdata", runfiledir="/Users/a5362/code/github/Rstox_utils/Work/eca")
+#runRECA(projectname, seed=42, export_only = "/Volumes/KINGSTON/torsk_fra_mac.Rdata", burnin=burnindefault, caa.burnin=burnindefault, nSamples=samplesdefault)
+#runRECA_file(runfile = "/Volumes/KINGSTON/torsk2.Rdata", runfiledir="/Users/a5362/code/github/Rstox_utils/Work/eca")
 runproject(projectname)
-
-
-#noter til windowstesting:
-#Etter test 6. sept 2018 oppdaterte jeg biotic filen for å få inn datakorreksjoner (ca 11. sept). Noen av disse datakorreksjonene vil føre til at filter i oppdatert prosjektfil ikke vil virke. Så:
-#- installer oppdatert eca
-#- installer Rstox på nytt fra develop
-#- last ned ny biotic fil fra api
-#- oppdater prosjektfil fra Rstox_utils/stox_processfiles
-#- oppdater ressursfiler fra Rstox_utils/resources
-#- sett projectname og kjør dette scriptet

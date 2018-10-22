@@ -1,0 +1,12 @@
+ECA crasher på Windows 10. Model1 går greit, krasjer i model2. Logfiler skrevet under kjøring har mistenkelige linjer for input_model2. I utskrift av wgl_eff_mean (siste linje), forekommer to negative tall i størrelsesorden e+235, samt at siste utskrevne tall er skrevet med forskjellig presisjon enn de andre.
+
+Datasettet kjører greit på Mac, men jeg fant ikke tilsvarende logiler for sammenligning
+
+Eksempel på datasett som krasjer:
+torsk.Rdata
+
+Logfiler skrevet til working directory:
+caa_input_model1.txt
+caa_input_model2.txt
+caa_logfile_model1.txt
+caa_logfile_model2.txt
