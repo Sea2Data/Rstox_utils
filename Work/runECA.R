@@ -34,8 +34,3 @@ runRECA_file <- function(runfile=NULL, runfiledir=NULL){
 #loadProjectData(projectname, var="prepareRECA") 
 #runRECA(projectname, seed=42, export_only = "~/Desktop/torskesett_prepdata_mac.rdata", burnin=burnindefault, caa.burnin=burnindefault, nSamples=samplesdefault)
 #runRECA_file(runfile = "~/Desktop/torskesett_prepdata_mac.rdata", runfiledir="/Users/a5362/code/github/Rstox_utils/Work/tmp")
-
-projectname<-"ECA_sildetest_2015"
-runproject(projectname)
-runRECA(projectname, seed=42, export_only = "testfiles/herring_2015_tempfixed_gearrandom_100samples.Rdata", burnin=10, caa.burnin=10, nSamples=100)
-
