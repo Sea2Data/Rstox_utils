@@ -16,6 +16,8 @@ runproject <- function(projectname){
 
 #' @param runfile run with parameters stored in file, and runfiledir as GlobalParameters$resultdir (will be created if does not exist)
 runRECA_file <- function(runfile=NULL, runfiledir=NULL){
+  require(eca)
+  require(Rstox)
   write(paste("Loading from file:", runfile), stderr())
   load(runfile)
   GlobalParameters$resultdir <- runfiledir
@@ -28,8 +30,8 @@ runRECA_file <- function(runfile=NULL, runfiledir=NULL){
   pred <- eca.predict(AgeLength,WeightLength,Landings,GlobalParameters)
 }
 
-
-#loadProjectData(projectname, var="prepareRECA") 
-#runRECA(projectname, seed=42, export_only = "/Volumes/KINGSTON/torsk_fra_mac.Rdata", burnin=burnindefault, caa.burnin=burnindefault, nSamples=samplesdefault)
-#runRECA_file(runfile = "/Volumes/KINGSTON/torsk2.Rdata", runfiledir="/Users/a5362/code/github/Rstox_utils/Work/eca")
 runproject(projectname)
+#loadProjectData(projectname, var="prepareRECA") 
+#runRECA(projectname, seed=42, export_only = "~/Desktop/torskesett_prepdata_mac.rdata", burnin=burnindefault, caa.burnin=burnindefault, nSamples=samplesdefault, CC = TRUE)
+#runRECA_file(runfile = "~/Desktop/torskesett_prepdata_mac.rdata", runfiledir="/Users/a5362/code/github/Rstox_utils/Work/eca")
+
