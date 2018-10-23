@@ -3,12 +3,12 @@
 #' @details Catch at age matrix is written as comma-separated file with quoted strings as row/column names.
 #'    Each row correspond to an age group, and columns to either means or an iteration of the Monte Carlo simulation.
 #'    Units are controlled by parameters, and written as metainformation in a preamble identified by the comment charater '#', along with any text provided in other arguments (parameter main).
-#'@param pred as returned by \code{\link[eca]{eca.predict}}
-#'@param filename name of file to save to.
-#'@param var Variable to extract. Allows for Abundance, Count or Weight
-#'@param unit Unit for extracted variable. See \code{\link{getPlottingUnit}}
-#'@param main Title for the analysis, to be included as comment in saved file (e.g. species and year)
-#'@param savemeans If True, only means for each age group will be saved, otherwise extracted variable is saved for each iteration of the Monte Carlo simulation.
+#' @param pred as returned by \code{\link[eca]{eca.predict}}
+#' @param filename name of file to save to.
+#' @param var Variable to extract. Allows for Abundance, Count or Weight
+#' @param unit Unit for extracted variable. See \code{\link{getPlottingUnit}}
+#' @param main Title for the analysis, to be included as comment in saved file (e.g. species and year)
+#' @param savemeans If True, only means for each age group will be saved, otherwise extracted variable is saved for each iteration of the Monte Carlo simulation.
 saveCatchMatrix <- function(pred, filename, var="Abundance", unit="ones", main="", savemeans=F){
   comments <- c()
   if (savemeans){
