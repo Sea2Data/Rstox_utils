@@ -7,10 +7,10 @@ projectname <- "ECA_torsk_2015"
 #projectname <- "ECA_sild_2015"
 #baselineOutput <- getBaseline(projectname)
 
-runproject <- function(projectname){
+runproject <- function(projectname, burnin=burnindefault, caa.burnin=burnindefault, nSamples=samplesdefault){
   prepareRECA(projectname)
   diagnosticsRECA(projectname)
-  runRECA(projectname, burnin=burnindefault, caa.burnin=burnindefault, nSamples=samplesdefault)
+  runRECA(projectname, burnin=burnin, caa.burnin=caa.burnin, nSamples=nSamples)
   plotRECAresults(projectname)
 }
 
@@ -30,7 +30,12 @@ runRECA_file <- function(runfile=NULL, runfiledir=NULL){
   pred <- eca.predict(AgeLength,WeightLength,Landings,GlobalParameters)
 }
 
-runproject(projectname)
+#runproject(projectname)
 #loadProjectData(projectname, var="prepareRECA") 
 #runRECA(projectname, seed=42, export_only = "~/Desktop/torskesett_prepdata_mac.rdata", burnin=burnindefault, caa.burnin=burnindefault, nSamples=samplesdefault)
-#runRECA_file(runfile = "~/Desktop/torskesett_prepdata_mac.rdata", runfiledir="/Users/a5362/code/github/Rstox_utils/Work/eca")
+#runRECA_file(runfile = "~/Desktop/torskesett_prepdata_mac.rdata", runfiledir="/Users/a5362/code/github/Rstox_utils/Work/tmp")
+
+projectname<-"ECA_sildetest_2015"
+runproject(projectname)
+runRECA(projectname, seed=42, export_only = "testfiles/herring_2015_tempfixed_gearrandom_100samples.Rdata", burnin=10, caa.burnin=10, nSamples=100)
+
