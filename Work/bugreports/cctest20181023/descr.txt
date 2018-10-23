@@ -1,0 +1,590 @@
+Kjøring av ECA med tilvalg CC=True, krasjer i prediksjon på mac (segfault).
+
+Rcode som krasjer:
+  fit <- eca.estimate(AgeLength,WeightLength,Landings,GlobalParameters) 
+  pred <- eca.predict(AgeLength,WeightLength,Landings,GlobalParameters)
+
+datasett som krasjer:
+torsk.Rdata
+
+output fra R:
+Write to ascii file /Users/a5362/workspace/stox/project/ECA_torsk_2015_cc/output/r/data/reca/cfiles//common_par_predict_ascii
+Write to binary file /Users/a5362/workspace/stox/project/ECA_torsk_2015_cc/output/r/data/reca/cfiles//data_catch
+Write to binary file /Users/a5362/workspace/stox/project/ECA_torsk_2015_cc/output/r/data/reca/cfiles//dist_cell
+Read input data from file: /Users/a5362/workspace/stox/project/ECA_torsk_2015_cc/output/r/data/reca/cfiles/common_par_predict_ascii
+Read input data from file: /Users/a5362/workspace/stox/project/ECA_torsk_2015_cc/output/r/data/reca/cfiles/data_catch
+Read input data from file: /Users/a5362/workspace/stox/project/ECA_torsk_2015_cc/output/r/data/reca/cfiles/dist_cell
+print parameters to file /Users/a5362/workspace/stox/project/ECA_torsk_2015_cc/output/r/data/reca/resfiles/pred_predict
+Error in if (log[length(log)] == "OK") cat("Success in prediction\n") else stop("Error in prediction") : 
+  argument is of length zero
+
+output fra kommandolinjekjøring:
+HI-08998:reca a5362$ ~/code/nr/ecatest/Test/reca_Version0.8/inst/bin/caa_main_predict cfiles/
+Read input data from file: cfiles/common_par_predict_ascii
+Read input data from file: cfiles/data_catch
+Read input data from file: cfiles/dist_cell
+predict: Open /Users/a5362/workspace/stox/project/ECA_torsk_2015/output/r/data/reca/resfiles/fit_mcmc1 for reading age and lga parameters
+
+nMCMC=500
+read_boat=0
+read_glm_object: ncat=40, nHaul=708, nxcov=1
+n_cov=6
+fac[0]=1,fix[0]=1
+fac[1]=4,fix[1]=1
+fac[2]=5,fix[2]=0
+fac[3]=42,fix[3]=0
+fac[4]=283,fix[4]=0
+fac[5]=708,fix[5]=0
+ispat=-1,ihaul=5,icell=-1,iboat=-1,ihaulsize=-1
+read_glm_object: ncat=1, nHaul=708, nxcov=2
+n_cov=6
+fac[0]=1,fix[0]=1
+fac[1]=4,fix[1]=1
+fac[2]=5,fix[2]=0
+fac[3]=42,fix[3]=0
+fac[4]=283,fix[4]=0
+fac[5]=708,fix[5]=0
+n_cov=1
+fac[0]=1,fix[0]=1
+ispat=-1,ihaul=5,icell=-1,iboat=-1,ihaulsize=-1
+ga_model=0
+coastal cod=1
+read_glm_object: ncat=1, nHaul=708, nxcov=2
+n_cov=6
+fac[0]=1,fix[0]=1
+fac[1]=4,fix[1]=1
+fac[2]=5,fix[2]=0
+fac[3]=42,fix[3]=0
+fac[4]=283,fix[4]=0
+fac[5]=708,fix[5]=0
+n_cov=1
+fac[0]=1,fix[0]=1
+ispat=-1,ihaul=5,icell=-1,iboat=-1,ihaulsize=-1
+ga_model=0
+predict: Open /Users/a5362/workspace/stox/project/ECA_torsk_2015/output/r/data/reca/resfiles/fit_mcmc2 for reading wgl parameters
+npar_wgl=1814
+read_glm_object: ncat=1, nHaul=1472, nxcov=2
+n_cov=6
+fac[0]=1,fix[0]=1
+fac[1]=4,fix[1]=1
+fac[2]=5,fix[2]=0
+fac[3]=42,fix[3]=0
+fac[4]=283,fix[4]=0
+fac[5]=1472,fix[5]=0
+n_cov=1
+fac[0]=1,fix[0]=1
+ispat=-1,ihaul=5,icell=-1,iboat=-1,ihaulsize=-1
+read_glm_object: ncat=1, nHaul=1472, nxcov=2
+n_cov=6
+fac[0]=1,fix[0]=1
+fac[1]=4,fix[1]=1
+fac[2]=5,fix[2]=0
+fac[3]=42,fix[3]=0
+fac[4]=283,fix[4]=0
+fac[5]=1472,fix[5]=0
+n_cov=1
+fac[0]=1,fix[0]=1
+ispat=-1,ihaul=5,icell=-1,iboat=-1,ihaulsize=-1
+print parameters to file /Users/a5362/workspace/stox/project/ECA_torsk_2015/output/r/data/reca/resfiles/pred_predict
+run_predict:burnin=100, nMCMC=500
+run_predict: burnin: it=0
+run_predict:read_it age model
+run_predict:read_it lga model
+run_predict:read_it wgl model
+run_predict:read_it hsz model
+run_predict: burnin: it=1
+run_predict:read_it age model
+run_predict:read_it lga model
+run_predict:read_it wgl model
+run_predict:read_it hsz model
+run_predict: burnin: it=2
+run_predict:read_it age model
+run_predict:read_it lga model
+run_predict:read_it wgl model
+run_predict:read_it hsz model
+run_predict: burnin: it=3
+run_predict:read_it age model
+run_predict:read_it lga model
+run_predict:read_it wgl model
+run_predict:read_it hsz model
+run_predict: burnin: it=4
+run_predict:read_it age model
+run_predict:read_it lga model
+run_predict:read_it wgl model
+run_predict:read_it hsz model
+run_predict: burnin: it=5
+run_predict:read_it age model
+run_predict:read_it lga model
+run_predict:read_it wgl model
+run_predict:read_it hsz model
+run_predict: burnin: it=6
+run_predict:read_it age model
+run_predict:read_it lga model
+run_predict:read_it wgl model
+run_predict:read_it hsz model
+run_predict: burnin: it=7
+run_predict:read_it age model
+run_predict:read_it lga model
+run_predict:read_it wgl model
+run_predict:read_it hsz model
+run_predict: burnin: it=8
+run_predict:read_it age model
+run_predict:read_it lga model
+run_predict:read_it wgl model
+run_predict:read_it hsz model
+run_predict: burnin: it=9
+run_predict:read_it age model
+run_predict:read_it lga model
+run_predict:read_it wgl model
+run_predict:read_it hsz model
+run_predict: burnin: it=10
+run_predict:read_it age model
+run_predict:read_it lga model
+run_predict:read_it wgl model
+run_predict:read_it hsz model
+run_predict: burnin: it=11
+run_predict:read_it age model
+run_predict:read_it lga model
+run_predict:read_it wgl model
+run_predict:read_it hsz model
+run_predict: burnin: it=12
+run_predict:read_it age model
+run_predict:read_it lga model
+run_predict:read_it wgl model
+run_predict:read_it hsz model
+run_predict: burnin: it=13
+run_predict:read_it age model
+run_predict:read_it lga model
+run_predict:read_it wgl model
+run_predict:read_it hsz model
+run_predict: burnin: it=14
+run_predict:read_it age model
+run_predict:read_it lga model
+run_predict:read_it wgl model
+run_predict:read_it hsz model
+run_predict: burnin: it=15
+run_predict:read_it age model
+run_predict:read_it lga model
+run_predict:read_it wgl model
+run_predict:read_it hsz model
+run_predict: burnin: it=16
+run_predict:read_it age model
+run_predict:read_it lga model
+run_predict:read_it wgl model
+run_predict:read_it hsz model
+run_predict: burnin: it=17
+run_predict:read_it age model
+run_predict:read_it lga model
+run_predict:read_it wgl model
+run_predict:read_it hsz model
+run_predict: burnin: it=18
+run_predict:read_it age model
+run_predict:read_it lga model
+run_predict:read_it wgl model
+run_predict:read_it hsz model
+run_predict: burnin: it=19
+run_predict:read_it age model
+run_predict:read_it lga model
+run_predict:read_it wgl model
+run_predict:read_it hsz model
+run_predict: burnin: it=20
+run_predict:read_it age model
+run_predict:read_it lga model
+run_predict:read_it wgl model
+run_predict:read_it hsz model
+run_predict: burnin: it=21
+run_predict:read_it age model
+run_predict:read_it lga model
+run_predict:read_it wgl model
+run_predict:read_it hsz model
+run_predict: burnin: it=22
+run_predict:read_it age model
+run_predict:read_it lga model
+run_predict:read_it wgl model
+run_predict:read_it hsz model
+run_predict: burnin: it=23
+run_predict:read_it age model
+run_predict:read_it lga model
+run_predict:read_it wgl model
+run_predict:read_it hsz model
+run_predict: burnin: it=24
+run_predict:read_it age model
+run_predict:read_it lga model
+run_predict:read_it wgl model
+run_predict:read_it hsz model
+run_predict: burnin: it=25
+run_predict:read_it age model
+run_predict:read_it lga model
+run_predict:read_it wgl model
+run_predict:read_it hsz model
+run_predict: burnin: it=26
+run_predict:read_it age model
+run_predict:read_it lga model
+run_predict:read_it wgl model
+run_predict:read_it hsz model
+run_predict: burnin: it=27
+run_predict:read_it age model
+run_predict:read_it lga model
+run_predict:read_it wgl model
+run_predict:read_it hsz model
+run_predict: burnin: it=28
+run_predict:read_it age model
+run_predict:read_it lga model
+run_predict:read_it wgl model
+run_predict:read_it hsz model
+run_predict: burnin: it=29
+run_predict:read_it age model
+run_predict:read_it lga model
+run_predict:read_it wgl model
+run_predict:read_it hsz model
+run_predict: burnin: it=30
+run_predict:read_it age model
+run_predict:read_it lga model
+run_predict:read_it wgl model
+run_predict:read_it hsz model
+run_predict: burnin: it=31
+run_predict:read_it age model
+run_predict:read_it lga model
+run_predict:read_it wgl model
+run_predict:read_it hsz model
+run_predict: burnin: it=32
+run_predict:read_it age model
+run_predict:read_it lga model
+run_predict:read_it wgl model
+run_predict:read_it hsz model
+run_predict: burnin: it=33
+run_predict:read_it age model
+run_predict:read_it lga model
+run_predict:read_it wgl model
+run_predict:read_it hsz model
+run_predict: burnin: it=34
+run_predict:read_it age model
+run_predict:read_it lga model
+run_predict:read_it wgl model
+run_predict:read_it hsz model
+run_predict: burnin: it=35
+run_predict:read_it age model
+run_predict:read_it lga model
+run_predict:read_it wgl model
+run_predict:read_it hsz model
+run_predict: burnin: it=36
+run_predict:read_it age model
+run_predict:read_it lga model
+run_predict:read_it wgl model
+run_predict:read_it hsz model
+run_predict: burnin: it=37
+run_predict:read_it age model
+run_predict:read_it lga model
+run_predict:read_it wgl model
+run_predict:read_it hsz model
+run_predict: burnin: it=38
+run_predict:read_it age model
+run_predict:read_it lga model
+run_predict:read_it wgl model
+run_predict:read_it hsz model
+run_predict: burnin: it=39
+run_predict:read_it age model
+run_predict:read_it lga model
+run_predict:read_it wgl model
+run_predict:read_it hsz model
+run_predict: burnin: it=40
+run_predict:read_it age model
+run_predict:read_it lga model
+run_predict:read_it wgl model
+run_predict:read_it hsz model
+run_predict: burnin: it=41
+run_predict:read_it age model
+run_predict:read_it lga model
+run_predict:read_it wgl model
+run_predict:read_it hsz model
+run_predict: burnin: it=42
+run_predict:read_it age model
+run_predict:read_it lga model
+run_predict:read_it wgl model
+run_predict:read_it hsz model
+run_predict: burnin: it=43
+run_predict:read_it age model
+run_predict:read_it lga model
+run_predict:read_it wgl model
+run_predict:read_it hsz model
+run_predict: burnin: it=44
+run_predict:read_it age model
+run_predict:read_it lga model
+run_predict:read_it wgl model
+run_predict:read_it hsz model
+run_predict: burnin: it=45
+run_predict:read_it age model
+run_predict:read_it lga model
+run_predict:read_it wgl model
+run_predict:read_it hsz model
+run_predict: burnin: it=46
+run_predict:read_it age model
+run_predict:read_it lga model
+run_predict:read_it wgl model
+run_predict:read_it hsz model
+run_predict: burnin: it=47
+run_predict:read_it age model
+run_predict:read_it lga model
+run_predict:read_it wgl model
+run_predict:read_it hsz model
+run_predict: burnin: it=48
+run_predict:read_it age model
+run_predict:read_it lga model
+run_predict:read_it wgl model
+run_predict:read_it hsz model
+run_predict: burnin: it=49
+run_predict:read_it age model
+run_predict:read_it lga model
+run_predict:read_it wgl model
+run_predict:read_it hsz model
+run_predict: burnin: it=50
+run_predict:read_it age model
+run_predict:read_it lga model
+run_predict:read_it wgl model
+run_predict:read_it hsz model
+run_predict: burnin: it=51
+run_predict:read_it age model
+run_predict:read_it lga model
+run_predict:read_it wgl model
+run_predict:read_it hsz model
+run_predict: burnin: it=52
+run_predict:read_it age model
+run_predict:read_it lga model
+run_predict:read_it wgl model
+run_predict:read_it hsz model
+run_predict: burnin: it=53
+run_predict:read_it age model
+run_predict:read_it lga model
+run_predict:read_it wgl model
+run_predict:read_it hsz model
+run_predict: burnin: it=54
+run_predict:read_it age model
+run_predict:read_it lga model
+run_predict:read_it wgl model
+run_predict:read_it hsz model
+run_predict: burnin: it=55
+run_predict:read_it age model
+run_predict:read_it lga model
+run_predict:read_it wgl model
+run_predict:read_it hsz model
+run_predict: burnin: it=56
+run_predict:read_it age model
+run_predict:read_it lga model
+run_predict:read_it wgl model
+run_predict:read_it hsz model
+run_predict: burnin: it=57
+run_predict:read_it age model
+run_predict:read_it lga model
+run_predict:read_it wgl model
+run_predict:read_it hsz model
+run_predict: burnin: it=58
+run_predict:read_it age model
+run_predict:read_it lga model
+run_predict:read_it wgl model
+run_predict:read_it hsz model
+run_predict: burnin: it=59
+run_predict:read_it age model
+run_predict:read_it lga model
+run_predict:read_it wgl model
+run_predict:read_it hsz model
+run_predict: burnin: it=60
+run_predict:read_it age model
+run_predict:read_it lga model
+run_predict:read_it wgl model
+run_predict:read_it hsz model
+run_predict: burnin: it=61
+run_predict:read_it age model
+run_predict:read_it lga model
+run_predict:read_it wgl model
+run_predict:read_it hsz model
+run_predict: burnin: it=62
+run_predict:read_it age model
+run_predict:read_it lga model
+run_predict:read_it wgl model
+run_predict:read_it hsz model
+run_predict: burnin: it=63
+run_predict:read_it age model
+run_predict:read_it lga model
+run_predict:read_it wgl model
+run_predict:read_it hsz model
+run_predict: burnin: it=64
+run_predict:read_it age model
+run_predict:read_it lga model
+run_predict:read_it wgl model
+run_predict:read_it hsz model
+run_predict: burnin: it=65
+run_predict:read_it age model
+run_predict:read_it lga model
+run_predict:read_it wgl model
+run_predict:read_it hsz model
+run_predict: burnin: it=66
+run_predict:read_it age model
+run_predict:read_it lga model
+run_predict:read_it wgl model
+run_predict:read_it hsz model
+run_predict: burnin: it=67
+run_predict:read_it age model
+run_predict:read_it lga model
+run_predict:read_it wgl model
+run_predict:read_it hsz model
+run_predict: burnin: it=68
+run_predict:read_it age model
+run_predict:read_it lga model
+run_predict:read_it wgl model
+run_predict:read_it hsz model
+run_predict: burnin: it=69
+run_predict:read_it age model
+run_predict:read_it lga model
+run_predict:read_it wgl model
+run_predict:read_it hsz model
+run_predict: burnin: it=70
+run_predict:read_it age model
+run_predict:read_it lga model
+run_predict:read_it wgl model
+run_predict:read_it hsz model
+run_predict: burnin: it=71
+run_predict:read_it age model
+run_predict:read_it lga model
+run_predict:read_it wgl model
+run_predict:read_it hsz model
+run_predict: burnin: it=72
+run_predict:read_it age model
+run_predict:read_it lga model
+run_predict:read_it wgl model
+run_predict:read_it hsz model
+run_predict: burnin: it=73
+run_predict:read_it age model
+run_predict:read_it lga model
+run_predict:read_it wgl model
+run_predict:read_it hsz model
+run_predict: burnin: it=74
+run_predict:read_it age model
+run_predict:read_it lga model
+run_predict:read_it wgl model
+run_predict:read_it hsz model
+run_predict: burnin: it=75
+run_predict:read_it age model
+run_predict:read_it lga model
+run_predict:read_it wgl model
+run_predict:read_it hsz model
+run_predict: burnin: it=76
+run_predict:read_it age model
+run_predict:read_it lga model
+run_predict:read_it wgl model
+run_predict:read_it hsz model
+run_predict: burnin: it=77
+run_predict:read_it age model
+run_predict:read_it lga model
+run_predict:read_it wgl model
+run_predict:read_it hsz model
+run_predict: burnin: it=78
+run_predict:read_it age model
+run_predict:read_it lga model
+run_predict:read_it wgl model
+run_predict:read_it hsz model
+run_predict: burnin: it=79
+run_predict:read_it age model
+run_predict:read_it lga model
+run_predict:read_it wgl model
+run_predict:read_it hsz model
+run_predict: burnin: it=80
+run_predict:read_it age model
+run_predict:read_it lga model
+run_predict:read_it wgl model
+run_predict:read_it hsz model
+run_predict: burnin: it=81
+run_predict:read_it age model
+run_predict:read_it lga model
+run_predict:read_it wgl model
+run_predict:read_it hsz model
+run_predict: burnin: it=82
+run_predict:read_it age model
+run_predict:read_it lga model
+run_predict:read_it wgl model
+run_predict:read_it hsz model
+run_predict: burnin: it=83
+run_predict:read_it age model
+run_predict:read_it lga model
+run_predict:read_it wgl model
+run_predict:read_it hsz model
+run_predict: burnin: it=84
+run_predict:read_it age model
+run_predict:read_it lga model
+run_predict:read_it wgl model
+run_predict:read_it hsz model
+run_predict: burnin: it=85
+run_predict:read_it age model
+run_predict:read_it lga model
+run_predict:read_it wgl model
+run_predict:read_it hsz model
+run_predict: burnin: it=86
+run_predict:read_it age model
+run_predict:read_it lga model
+run_predict:read_it wgl model
+run_predict:read_it hsz model
+run_predict: burnin: it=87
+run_predict:read_it age model
+run_predict:read_it lga model
+run_predict:read_it wgl model
+run_predict:read_it hsz model
+run_predict: burnin: it=88
+run_predict:read_it age model
+run_predict:read_it lga model
+run_predict:read_it wgl model
+run_predict:read_it hsz model
+run_predict: burnin: it=89
+run_predict:read_it age model
+run_predict:read_it lga model
+run_predict:read_it wgl model
+run_predict:read_it hsz model
+run_predict: burnin: it=90
+run_predict:read_it age model
+run_predict:read_it lga model
+run_predict:read_it wgl model
+run_predict:read_it hsz model
+run_predict: burnin: it=91
+run_predict:read_it age model
+run_predict:read_it lga model
+run_predict:read_it wgl model
+run_predict:read_it hsz model
+run_predict: burnin: it=92
+run_predict:read_it age model
+run_predict:read_it lga model
+run_predict:read_it wgl model
+run_predict:read_it hsz model
+run_predict: burnin: it=93
+run_predict:read_it age model
+run_predict:read_it lga model
+run_predict:read_it wgl model
+run_predict:read_it hsz model
+run_predict: burnin: it=94
+run_predict:read_it age model
+run_predict:read_it lga model
+run_predict:read_it wgl model
+run_predict:read_it hsz model
+run_predict: burnin: it=95
+run_predict:read_it age model
+run_predict:read_it lga model
+run_predict:read_it wgl model
+run_predict:read_it hsz model
+run_predict: burnin: it=96
+run_predict:read_it age model
+run_predict:read_it lga model
+run_predict:read_it wgl model
+run_predict:read_it hsz model
+run_predict: burnin: it=97
+run_predict:read_it age model
+run_predict:read_it lga model
+run_predict:read_it wgl model
+run_predict:read_it hsz model
+run_predict: burnin: it=98
+run_predict:read_it age model
+run_predict:read_it lga model
+run_predict:read_it wgl model
+run_predict:read_it hsz model
+run_predict: burnin: it=99
+run_predict:read_it age model
+run_predict:read_it lga model
+run_predict:read_it wgl model
+run_predict:read_it hsz model
+Segmentation fault: 11
