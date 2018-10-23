@@ -32,6 +32,5 @@ runRECA_file <- function(runfile=NULL, runfiledir=NULL){
 
 runproject(projectname)
 #loadProjectData(projectname, var="prepareRECA") 
-#runRECA(projectname, seed=42, export_only = "~/Desktop/torskesett_prepdata_mac.rdata", burnin=burnindefault, caa.burnin=burnindefault, nSamples=samplesdefault, CC = TRUE)
+#runRECA(projectname, seed=42, export_only = "~/Desktop/torskesett_prepdata_mac.rdata", burnin=burnindefault, caa.burnin=burnindefault, nSamples=samplesdefault)
 #runRECA_file(runfile = "~/Desktop/torskesett_prepdata_mac.rdata", runfiledir="/Users/a5362/code/github/Rstox_utils/Work/eca")
-
