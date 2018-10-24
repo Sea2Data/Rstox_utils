@@ -1,0 +1,4 @@
+Set fails, do not know whats wrong with config, but its not flagged in any test in stox.
+
+set that crashes:
+sild_fails.rdata
