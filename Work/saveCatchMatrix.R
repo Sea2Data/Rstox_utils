@@ -48,11 +48,11 @@ saveCatchMatrix <- function(pred, filename, var="Abundance", unit="ones", main="
   f <- file(filename, open="w")
   write(paste("#", comments), f)
   if (savemeans){
-    write.csv(means, file = f, row.names = T)
+    write.table(caa_scaled, file=f, sep="\t", dec=".", row.names=FALSE)
     close(f)
   }
   else{
-    write.csv(caa_scaled, file = f, row.names = T)
+    write.table(caa_scaled, file=f, sep="\t", dec=".", row.names=FALSE)
     close(f)
   }
 }
