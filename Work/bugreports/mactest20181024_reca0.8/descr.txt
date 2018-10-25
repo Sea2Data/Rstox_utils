@@ -1,4 +1,51 @@
-Set fails, do not know whats wrong with config, but its not flagged in any test in stox.
+Vedlagt datasett crasher i prediksjon på mac, dersom jeg kjører uten platfrom som kovariat. Ser ut til å fungere når jeg kjører med. Det er mulig det er noe med dataopparbeidingen som er feil her, men jeg klarer ikke å finne noe mistenkelige forskjeller mellom datasettene, 
 
-set that crashes:
+sett som krasjer:
 sild_fails.rdata
+
+sett som virker (med platform):
+sild_ok.rdata
+
+
+output from command line:
+HI-08998:reca a5362$ ~/code/github/Rstox_utils/Work/mac_binaries/v0.8/caa_main_predict cfiles/
+Read input data from file: cfiles/common_par_predict_ascii
+Read input data from file: cfiles/data_catch
+Read input data from file: cfiles/dist_cell
+predict: Open /Users/a5362/workspace/stox/project/ECA_sild_2015/output/r/data/reca/resfiles/fit_mcmc1 for reading age and lga parameters
+
+nMCMC=1500
+read_boat=0
+read_glm_object: ncat=20, nHaul=101, nxcov=1
+n_cov=5
+fac[0]=1,fix[0]=1
+fac[1]=4,fix[1]=1
+fac[2]=4,fix[2]=0
+fac[3]=20,fix[3]=0
+fac[4]=101,fix[4]=0
+ispat=-1,ihaul=4,icell=-1,iboat=-1,ihaulsize=-1
+read_glm_object: ncat=1, nHaul=101, nxcov=2
+n_cov=5
+fac[0]=1,fix[0]=1
+fac[1]=4,fix[1]=1
+fac[2]=4,fix[2]=0
+fac[3]=20,fix[3]=0
+fac[4]=101,fix[4]=0
+n_cov=1
+fac[0]=1,fix[0]=1
+ispat=-1,ihaul=4,icell=-1,iboat=-1,ihaulsize=-1
+ga_model=0
+coastal cod=0
+predict: Open /Users/a5362/workspace/stox/project/ECA_sild_2015/output/r/data/reca/resfiles/fit_mcmc2 for reading wgl parameters
+npar_wgl=191
+read_glm_object: ncat=1, nHaul=156, nxcov=2
+n_cov=5
+fac[0]=1,fix[0]=1
+fac[1]=4,fix[1]=1
+fac[2]=4,fix[2]=0
+fac[3]=20,fix[3]=0
+fac[4]=156,fix[4]=0
+n_cov=1
+fac[0]=1,fix[0]=1
+ispat=-1,ihaul=4,icell=-1,iboat=-1,ihaulsize=-1
+Segmentation fault: 11
