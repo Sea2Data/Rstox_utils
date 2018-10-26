@@ -3,7 +3,6 @@
 #' @param runfiledir direcotry to use for eca output
 testEcaFormatted <- function(file, runfiledir){
   require(eca)
-  require(Rstox)
   write(paste("Loading from file:", file), stderr())
   load(file)
   GlobalParameters$resultdir <- runfiledir
