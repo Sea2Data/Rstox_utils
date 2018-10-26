@@ -15,21 +15,48 @@ testEcaFormatted <- function(file, runfiledir){
 }
 
 runTest <- function(testfile, testfiles="./testfiles", tmpdir="./tmp"){
-  if(!(file.exists(tmpdir))){
-    stop(paste("Directory", tmpdir, "does not exist."))
-  }
-  if(!(file.exists(testfiles))){
-    stop(paste("Directory", testfiles, "does not exist."))
-  }
+  write("\n", stdout())
+  write("######", stdout())
+  write(paste("Testing:", testfile), stdout())
+  write("######", stdout())
+  write("\n", stdout())
+  
+  testcurrent <- function(){
+    if(!(file.exists(tmpdir))){
+      stop(paste("Directory", tmpdir, "does not exist."))
+    }
+    if(!(file.exists(testfiles))){
+      stop(paste("Directory", testfiles, "does not exist."))
+    }
     ecadir <- gsub(".Rdata", "", testfile)
     if (!(file.exists(file.path(tmpdir, ecadir)))){
       dir.create(file.path(tmpdir, ecadir))
     }
     testEcaFormatted(file.path(testfiles,testfile), file.path(tmpdir, ecadir))
+  
+    
   }
+  handle <- function(e){write(paste("Test", testfile, ": fail"), stdout())}
+  
+  ret <- FALSE
+  tryCatch(
+    {testcurrent()
+    write(paste("Test", testfile, ": sucsess"), stdout())
+    ret <- T
+    }, 
+    error = handle,
+    finally={
+      write(paste("Test", testfile, "finished"), stdout())
+      return(ret)
+      }
+    )
+}
+  
 
 #' @param tmpdir location where tests will generate output
 runAllTests <- function(testfiles="./testfiles", tmpdir="./tmp"){
+  successes <- c()
+  failures <- c()
   if(!(file.exists(tmpdir))){
     stop(paste("Directory", tmpdir, "does not exist."))
   }
@@ -37,8 +64,27 @@ runAllTests <- function(testfiles="./testfiles", tmpdir="./tmp"){
     stop(paste("Directory", testfiles, "does not exist."))
   }
   for (testfile in list.files(testfiles)){
-    runTest(testfile, testfiles, tmpdir)
+    success <- runTest(testfile, testfiles, tmpdir)
+    if (success){
+      successes <- c(successes, testfile)
+    }
+    else{
+      failures <- c(failures, testfile)
+    }
   }
+  write("\n", stdout())
+  write("######", stdout())
+  write("Summary:", stdout())
+  write("Tests that run successfully:", stdout())
+  for (t in successes){
+    write(t, stdout())
+  }
+  write("\n", stdout())
+  write("Tests that failed:", stdout())
+  for (t in failures){
+    write(t, stdout())
+  }
+  write("######", stdout())
 }
 #runAllTests()
 runTest("herring_2015_tempfixed_gearrandom_100samples.Rdata")

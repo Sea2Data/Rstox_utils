@@ -1,0 +1,7 @@
+Datasett krasjer i prediksjon på windows 7 (kjører fint på mac og linux, og andre datasett virker på samme widows 7-maskin)
+
+sett som krasjer:
+torsk.rdata
+
+output fra kommandolinjekjøring:
+scrrendump_cmd.png
