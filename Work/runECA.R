@@ -29,9 +29,7 @@ runRECA_file <- function(runfile=NULL, runfiledir=NULL){
   pred <- eca.predict(AgeLength,WeightLength,Landings,GlobalParameters)
 }
 
-#runproject(projectname)
-runRECA(projectname, seed=42, export_only = "bugreports/mactest20181024_reca0.8/sild_fails.rdata", burnin=burnindefault, caa.burnin=burnindefault, nSamples=samplesdefault)
-#runRECA_file(runfile = "bugreports/mactest20181024_reca0.8/sild_fails.rdata", runfiledir="/Users/a5362/code/github/Rstox_utils/Work/tmp")
+runproject(projectname)
 #loadProjectData(projectname, var="prepareRECA") 
-#runRECA(projectname, seed=42, export_only = "~/Desktop/torskesett_prepdata_mac.rdata", burnin=burnindefault, caa.burnin=burnindefault, nSamples=samplesdefault)
-#runRECA_file(runfile = "~/Desktop/torskesett_prepdata_mac.rdata", runfiledir="/Users/a5362/code/github/Rstox_utils/Work/tmp")
+#runRECA(projectname, seed=42, export_only = "bugreports/mactest20181024_reca0.8/sild_fails.rdata", burnin=burnindefault, caa.burnin=burnindefault, nSamples=samplesdefault)
+#runRECA_file(runfile = "bugreports/mactest20181024_reca0.8/sild_fails.rdata", runfiledir="/Users/a5362/code/github/Rstox_utils/Work/tmp")
