@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project template="" rstoxversion="1.9.1" xmlns="http://www.imr.no/formats/stox/v1" lastmodified="11/10/18 19:46" rversion="3.5.0" stoxversion="2.6.4" resourceversion="1.79">
+<project template="" rstoxversion="1.9.1" xmlns="http://www.imr.no/formats/stox/v1" lastmodified="13/11/18 13:20" rversion="3.5.0" stoxversion="2.6.4" resourceversion="1.79">
   <model name="baseline">
     <process name="ReadProcessData">
       <function>ReadProcessData</function>
@@ -199,7 +199,7 @@
       <parameter name="ProcessData">Process(ReadProcessData)</parameter>
       <parameter name="SourceType">Landing</parameter>
       <parameter name="CovariateType">Random</parameter>
-      <parameter name="ConditionalAutoRegression">true</parameter>
+      <parameter name="ConditionalAutoRegression">false</parameter>
       <parameter name="DefinitionMethod">UseData</parameter>
       <parameter name="LandingData">Process(FilterLanding)</parameter>
       <parameter name="BioticData"></parameter>
@@ -213,8 +213,8 @@
       <parameter name="ProcessData">Process(ReadProcessData)</parameter>
       <parameter name="SourceType">Biotic</parameter>
       <parameter name="CovariateType">Random</parameter>
-      <parameter name="ConditionalAutoRegression">true</parameter>
-      <parameter name="DefinitionMethod">Inherit</parameter>
+      <parameter name="ConditionalAutoRegression">false</parameter>
+      <parameter name="DefinitionMethod">UseData</parameter>
       <parameter name="LandingData"></parameter>
       <parameter name="BioticData">Process(FilterBiotic)</parameter>
       <output>ProcessData</output>
@@ -311,6 +311,13 @@
   <model name="r-report">
     <process name="getPlots">
       <function>getPlots</function>
+      <enabled>true</enabled>
+      <respondingui>true</respondingui>
+      <breakingui>false</breakingui>
+      <parameter name="out">all</parameter>
+    </process>
+    <process name="getReports">
+      <function>getReports</function>
       <enabled>true</enabled>
       <respondingui>true</respondingui>
       <breakingui>false</breakingui>
@@ -463,30 +470,19 @@
       <value covariatesourcetype="Landing" covariate="2015.Q4">01/10/2015-31/12/2015</value>
     </temporal>
     <gearfactor>
-      <value covariatesourcetype="Biotic" covariate="Annet">5211,5212,5210,4311,5363,5309,5366,5307,5335,6600,6685,5360,5305,5362,5365,5364,5300,5231,5200,5230,3710,3700,3712,3711,3731,3713,3720,3714</value>
       <value covariatesourcetype="Biotic" covariate="D.Seine">3600,3601</value>
-      <value covariatesourcetype="Biotic" covariate="Garn">4000,4144,4140,4143,4123,4115,4182,4114,4149,4125,4126,4183,4128,4142,4110,4141,4124,4127,4113,4134,4100,4180,4145,4121,4164,4129,4119,4146</value>
       <value covariatesourcetype="Biotic" covariate="Gillnet">4000,4144,4140,4143,4123,4115,4182,4114,4149,4125,4126,4183,4128,4142,4110,4141,4124,4127,4113,4134,4100,4180,4145,4121,4164,4129,4119,4146</value>
       <value covariatesourcetype="Biotic" covariate="L.Line">5110,5121,5101,5141,5122,5120,5100</value>
-      <value covariatesourcetype="Biotic" covariate="Line">5110,5121,5101,5141,5122,5120,5100</value>
       <value covariatesourcetype="Biotic" covariate="Other">5211,5212,5210,4311,5363,5309,5366,5307,5335,6600,6685,5360,5305,5362,5365,5364,5300,5231,5200,5230,3710,3700,3712,3711,3731,3713,3720,3714</value>
-      <value covariatesourcetype="Biotic" covariate="Snurrevad">3600,3601</value>
-      <value covariatesourcetype="Biotic" covariate="Tral">3159,3158,3157,3100,3154,3155,3132,3127,3122,3131,3128,3103,3183,3135,3151,3149,3187,3148,3152,3141,3163,3162,3121,3136,3161,3126,3139,3137,3173,3170,3130,3210,3267,3213,3265,3230,3200,3212,3287,3252,3264,3266,3260,3272,3412,3410,3411,3400,3500,3530,3563,3510,3523,3580,3532,3590</value>
       <value covariatesourcetype="Biotic" covariate="Trawl">3159,3158,3157,3100,3154,3155,3132,3127,3122,3131,3128,3103,3183,3135,3151,3149,3187,3148,3152,3141,3163,3162,3121,3136,3161,3126,3139,3137,3173,3170,3130,3210,3267,3213,3265,3230,3200,3212,3287,3252,3264,3266,3260,3272,3412,3410,3411,3400,3500,3530,3563,3510,3523,3580,3532,3590</value>
-      <value covariatesourcetype="Landing" covariate="Annet">33,42,84,44,71,34,43,30,90,41,85,73,80,81,83,11,12,14,10</value>
       <value covariatesourcetype="Landing" covariate="D.Seine">61</value>
-      <value covariatesourcetype="Landing" covariate="Garn">21,20,22</value>
       <value covariatesourcetype="Landing" covariate="Gillnet">21,20,22</value>
       <value covariatesourcetype="Landing" covariate="L.Line">31,35,32</value>
-      <value covariatesourcetype="Landing" covariate="Line">31,35,32</value>
       <value covariatesourcetype="Landing" covariate="Other">33,42,84,44,71,34,43,30,90,41,85,73,80,81,83,11,12,14,10</value>
-      <value covariatesourcetype="Landing" covariate="Snurrevad">61</value>
-      <value covariatesourcetype="Landing" covariate="Tral">55,51,52,57,56,54,50,53,58</value>
       <value covariatesourcetype="Landing" covariate="Trawl">55,51,52,57,56,54,50,53,58</value>
     </gearfactor>
     <spatial>
       <value covariatesourcetype="Biotic" covariate="0">0</value>
-      <value covariatesourcetype="Biotic" covariate="1">1</value>
       <value covariatesourcetype="Biotic" covariate="2">2</value>
       <value covariatesourcetype="Biotic" covariate="3">3</value>
       <value covariatesourcetype="Biotic" covariate="4">4</value>
@@ -496,44 +492,21 @@
       <value covariatesourcetype="Biotic" covariate="8">8</value>
       <value covariatesourcetype="Biotic" covariate="9">9</value>
       <value covariatesourcetype="Biotic" covariate="10">10</value>
-      <value covariatesourcetype="Biotic" covariate="11">11</value>
       <value covariatesourcetype="Biotic" covariate="12">12</value>
       <value covariatesourcetype="Biotic" covariate="13">13</value>
-      <value covariatesourcetype="Biotic" covariate="14">14</value>
       <value covariatesourcetype="Biotic" covariate="15">15</value>
-      <value covariatesourcetype="Biotic" covariate="16">16</value>
-      <value covariatesourcetype="Biotic" covariate="17">17</value>
       <value covariatesourcetype="Biotic" covariate="20">20</value>
       <value covariatesourcetype="Biotic" covariate="21">21</value>
       <value covariatesourcetype="Biotic" covariate="22">22</value>
       <value covariatesourcetype="Biotic" covariate="23">23</value>
       <value covariatesourcetype="Biotic" covariate="24">24</value>
-      <value covariatesourcetype="Biotic" covariate="25">25</value>
-      <value covariatesourcetype="Biotic" covariate="27">27</value>
       <value covariatesourcetype="Biotic" covariate="28">28</value>
       <value covariatesourcetype="Biotic" covariate="30">30</value>
-      <value covariatesourcetype="Biotic" covariate="31">31</value>
-      <value covariatesourcetype="Biotic" covariate="34">34</value>
-      <value covariatesourcetype="Biotic" covariate="35">35</value>
-      <value covariatesourcetype="Biotic" covariate="36">36</value>
       <value covariatesourcetype="Biotic" covariate="37">37</value>
       <value covariatesourcetype="Biotic" covariate="39">39</value>
-      <value covariatesourcetype="Biotic" covariate="40">40</value>
       <value covariatesourcetype="Biotic" covariate="41">41</value>
       <value covariatesourcetype="Biotic" covariate="42">42</value>
-      <value covariatesourcetype="Biotic" covariate="43">43</value>
       <value covariatesourcetype="Biotic" covariate="47">47</value>
-      <value covariatesourcetype="Biotic" covariate="48">48</value>
-      <value covariatesourcetype="Biotic" covariate="49">49</value>
-      <value covariatesourcetype="Biotic" covariate="50">50</value>
-      <value covariatesourcetype="Biotic" covariate="52">52</value>
-      <value covariatesourcetype="Biotic" covariate="54">54</value>
-      <value covariatesourcetype="Biotic" covariate="55">55</value>
-      <value covariatesourcetype="Biotic" covariate="56">56</value>
-      <value covariatesourcetype="Biotic" covariate="57">57</value>
-      <value covariatesourcetype="Biotic" covariate="58">58</value>
-      <value covariatesourcetype="Biotic" covariate="59">59</value>
-      <value covariatesourcetype="Biotic" covariate="60">60</value>
       <value covariatesourcetype="Biotic" covariate="61">61</value>
       <value covariatesourcetype="Landing" covariate="0">0</value>
       <value covariatesourcetype="Landing" covariate="1">1</value>
@@ -916,7 +889,7 @@
       <value covariatetable="gearfactor" parameter="ConditionalAutoRegression">false</value>
       <value covariatetable="gearfactor" parameter="CovariateType">Random</value>
       <value covariatetable="platformfactor" parameter="CovariateType">Random</value>
-      <value covariatetable="spatial" parameter="ConditionalAutoRegression">true</value>
+      <value covariatetable="spatial" parameter="ConditionalAutoRegression">false</value>
       <value covariatetable="spatial" parameter="CovariateType">Random</value>
       <value covariatetable="temporal" parameter="CovariateType">Fixed</value>
     </covparam>
@@ -1028,14 +1001,14 @@
       <value variable="8">9,28,41,42</value>
       <value variable="9">8,41</value>
       <value variable="10">1,2,3,11,13,14</value>
-      <value variable="11">1,2,10,13,14</value>
+      <value variable="11">1,2,10,13,14,19</value>
       <value variable="12">3,4,13,20,27,39</value>
       <value variable="13">3,10,11,12,14,15,16,20</value>
       <value variable="14">10,11,13,15,16</value>
       <value variable="15">13,14,16,17,20,23,24</value>
       <value variable="16">13,14,15,17,18,24</value>
       <value variable="17">15,16,18,24</value>
-      <value variable="18">16,17</value>
+      <value variable="18">16,17,19</value>
       <value variable="19">11,18</value>
       <value variable="20">12,13,15,21,22,23,27,39</value>
       <value variable="21">20,22,25,26,27</value>
@@ -1054,35 +1027,38 @@
       <value variable="37">4,5,6,7,30,34,36,38,39</value>
       <value variable="38">26,27,35,36,37,39</value>
       <value variable="39">4,5,12,20,26,27,36,37,38</value>
-      <value variable="40">41</value>
+      <value variable="40">41,45</value>
       <value variable="41">8,9,40,42,43</value>
       <value variable="42">8,28,30,31,41,43,47</value>
       <value variable="43">31,41,42,47,48,57,58</value>
       <value variable="45">49,40</value>
       <value variable="47">43,48,57,70,42,61</value>
       <value variable="48">43,47,49,70</value>
-      <value variable="49">48,70,71</value>
-      <value variable="50">30,31,34,35,36,51,57</value>
-      <value variable="51">50,52,57,70</value>
+      <value variable="49">45,48,70,71</value>
+      <value variable="50">30,31,34,35,36,51,57,59</value>
+      <value variable="51">50,52,57,59,70</value>
       <value variable="52">51,60,70</value>
+      <value variable="54">55</value>
       <value variable="55">54,56,62,59</value>
+      <value variable="56">55,59</value>
       <value variable="57">30,31,43,47,50,51,58,70</value>
       <value variable="58">43,57</value>
       <value variable="59">50,51,56,1,55</value>
       <value variable="60">61,70,75,52</value>
       <value variable="61">60,47</value>
+      <value variable="62">55</value>
       <value variable="64">66,67,68,69,76</value>
       <value variable="66">64,67</value>
       <value variable="67">64,66,68</value>
       <value variable="68">64,67,69</value>
       <value variable="69">64,68,75,76</value>
-      <value variable="70">47,48,49,51,52,57,60,71,75,79</value>
+      <value variable="70">47,48,49,51,52,57,60,71,75,78,79</value>
       <value variable="71">49,70,81</value>
       <value variable="75">60,69,70,78,79</value>
       <value variable="76">64,69,77</value>
       <value variable="77">76,78</value>
       <value variable="78">70,75,77,79</value>
-      <value variable="79">70,75,78</value>
+      <value variable="79">70,75,78,81</value>
       <value variable="81">71,79</value>
     </stratumneighbour>
   </processdata>
