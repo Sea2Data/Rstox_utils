@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project template="" rstoxversion="1.9.1" xmlns="http://www.imr.no/formats/stox/v1" lastmodified="13/11/18 13:20" rversion="3.5.0" stoxversion="2.6.4" resourceversion="1.79">
+<project template="" rstoxversion="1.9.1" xmlns="http://www.imr.no/formats/stox/v1" lastmodified="21/11/18 08:40" rversion="3.5.0" stoxversion="2.6.9" resourceversion="1.83">
   <model name="baseline">
     <process name="ReadProcessData">
       <function>ReadProcessData</function>
@@ -64,9 +64,10 @@
       <respondingui>false</respondingui>
       <breakingui>false</breakingui>
       <parameter name="SourceType">Landing</parameter>
+      <parameter name="AreaCoding">MainArea</parameter>
       <parameter name="LandingData">Process(FilterLanding)</parameter>
       <parameter name="BioticData"></parameter>
-      <parameter name="FileName">${STOX}/reference/stratumpos/area_loc_pos_new.txt</parameter>
+      <parameter name="FileName">${STOX}/reference/stratumpos/mainarea_fdir_to_2017_incl.txt</parameter>
     </process>
     <process name="ReadBioticXML">
       <function>ReadBioticXML</function>
@@ -84,7 +85,7 @@
       <breakingui>false</breakingui>
       <fileoutput>true</fileoutput>
       <parameter name="BioticData">Process(ReadBioticXML)</parameter>
-      <parameter name="FishStationExpr">fs.hasCatch('torsk') &amp;&amp; missiontype =~ ['11', '2','3','1'] &amp;&amp; startdate != null &amp;&amp; latitudestart != 0 &amp;&amp; latitudestart != null &amp;&amp; gear != null  &amp;&amp; latitudestart &gt; 48 &amp;&amp; longitudestart &gt; -42</parameter>
+      <parameter name="FishStationExpr">fs.hasCatch('torsk') &amp;&amp; missiontype =~ ['11', '2','3','1'] &amp;&amp; startdate != null &amp;&amp; latitudestart != 0 &amp;&amp; latitudestart != null &amp;&amp; gear != null  &amp;&amp; latitudestart &gt; 48 &amp;&amp; longitudestart &gt; -42 &amp;&amp; serialno!='99566'</parameter>
       <parameter name="CatchExpr">species == '164712'</parameter>
       <parameter name="SampleExpr">lengthsampleweight&gt;0 &amp;&amp; lengthsamplecount &gt; 0 &amp;&amp; weight&gt;0</parameter>
       <parameter name="IndExpr">age &gt; 0 || weight &gt; 0</parameter>
@@ -109,9 +110,10 @@
       <respondingui>false</respondingui>
       <breakingui>false</breakingui>
       <parameter name="SourceType">Biotic</parameter>
+      <parameter name="AreaCoding">MainArea</parameter>
       <parameter name="LandingData"></parameter>
       <parameter name="BioticData">Process(FilterBiotic)</parameter>
-      <parameter name="FileName">${STOX}/reference/stratumpos/area_loc_pos_new.txt</parameter>
+      <parameter name="FileName">${STOX}/reference/stratumpos/mainarea_fdir_to_2017_incl.txt</parameter>
     </process>
     <process name="AssignLandingToStratum">
       <function>AssignDataToStratum</function>
@@ -141,7 +143,6 @@
       <parameter name="ProcessData">Process(ReadProcessData)</parameter>
       <parameter name="SourceType">Landing</parameter>
       <parameter name="CovariateType">Fixed</parameter>
-      <parameter name="ConditionalAutoRegression">false</parameter>
       <parameter name="DefinitionMethod">UseData</parameter>
       <parameter name="LandingData">Process(FilterLanding)</parameter>
       <parameter name="BioticData"></parameter>
@@ -157,7 +158,6 @@
       <parameter name="ProcessData">Process(ReadProcessData)</parameter>
       <parameter name="SourceType">Biotic</parameter>
       <parameter name="CovariateType">Fixed</parameter>
-      <parameter name="ConditionalAutoRegression">false</parameter>
       <parameter name="DefinitionMethod">UseData</parameter>
       <parameter name="LandingData"></parameter>
       <parameter name="BioticData">Process(FilterBiotic)</parameter>
@@ -173,7 +173,6 @@
       <parameter name="ProcessData">Process(ReadProcessData)</parameter>
       <parameter name="SourceType">Landing</parameter>
       <parameter name="CovariateType">Random</parameter>
-      <parameter name="ConditionalAutoRegression">false</parameter>
       <parameter name="DefinitionMethod">ResourceFile</parameter>
       <parameter name="FileName">${STOX}/reference/gearfactor/gearfactor_nametest.txt</parameter>
       <output>ProcessData</output>
@@ -186,7 +185,6 @@
       <parameter name="ProcessData">Process(ReadProcessData)</parameter>
       <parameter name="SourceType">Biotic</parameter>
       <parameter name="CovariateType">Random</parameter>
-      <parameter name="ConditionalAutoRegression">false</parameter>
       <parameter name="DefinitionMethod">ResourceFile</parameter>
       <parameter name="FileName">${STOX}/reference/gearfactor/gearfactor_nametest.txt</parameter>
       <output>ProcessData</output>
@@ -199,7 +197,7 @@
       <parameter name="ProcessData">Process(ReadProcessData)</parameter>
       <parameter name="SourceType">Landing</parameter>
       <parameter name="CovariateType">Random</parameter>
-      <parameter name="ConditionalAutoRegression">false</parameter>
+      <parameter name="UseStratumNeighbour">false</parameter>
       <parameter name="DefinitionMethod">UseData</parameter>
       <parameter name="LandingData">Process(FilterLanding)</parameter>
       <parameter name="BioticData"></parameter>
@@ -213,7 +211,7 @@
       <parameter name="ProcessData">Process(ReadProcessData)</parameter>
       <parameter name="SourceType">Biotic</parameter>
       <parameter name="CovariateType">Random</parameter>
-      <parameter name="ConditionalAutoRegression">false</parameter>
+      <parameter name="UseStratumNeighbour">true</parameter>
       <parameter name="DefinitionMethod">UseData</parameter>
       <parameter name="LandingData"></parameter>
       <parameter name="BioticData">Process(FilterBiotic)</parameter>
@@ -279,7 +277,6 @@
       <parameter name="maxage">20</parameter>
       <parameter name="delta.age">0.001</parameter>
       <parameter name="maxlength"></parameter>
-      <parameter name="use_otolithtype">true</parameter>
       <parameter name="hatchDaySlashMonth">01/01</parameter>
     </process>
     <process name="runRECA">
@@ -532,6 +529,7 @@
       <value covariatesourcetype="Landing" covariate="23">23</value>
       <value covariatesourcetype="Landing" covariate="24">24</value>
       <value covariatesourcetype="Landing" covariate="25">25</value>
+      <value covariatesourcetype="Landing" covariate="26">26</value>
       <value covariatesourcetype="Landing" covariate="27">27</value>
       <value covariatesourcetype="Landing" covariate="28">28</value>
       <value covariatesourcetype="Landing" covariate="30">30</value>
@@ -886,11 +884,10 @@
       <value covariatesourcetype="Biotic" covariate="9113">9113</value>
     </platformfactor>
     <covparam>
-      <value covariatetable="gearfactor" parameter="ConditionalAutoRegression">false</value>
       <value covariatetable="gearfactor" parameter="CovariateType">Random</value>
       <value covariatetable="platformfactor" parameter="CovariateType">Random</value>
-      <value covariatetable="spatial" parameter="ConditionalAutoRegression">false</value>
       <value covariatetable="spatial" parameter="CovariateType">Random</value>
+      <value covariatetable="spatial" parameter="UseStratumNeighbour">true</value>
       <value covariatetable="temporal" parameter="CovariateType">Fixed</value>
     </covparam>
     <ageerror>
