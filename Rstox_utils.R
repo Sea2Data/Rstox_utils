@@ -729,6 +729,87 @@ copyCurrentToServer <- function(dir, root=list(windows="\\\\delphi", unix="/Volu
 
 #*********************************************
 #*********************************************
+#' Function for running the r scripts of a project and copying the relevant output files to the "Output" directory:
+#'
+#' @param projectName		The path to the project.
+#' @param progressFile		The paht to the progress file.
+#' @param outputDir			The path to the directory in which to put the output files to be compared for the project (everything in "output" except trash files, baseline and baseline report output, and the project.xml file).
+#'
+#' @export
+#' @keywords internal
+#'
+runProject <- function(projectName, progressFile, outputDir){
+	
+	RstoxVersion <- getRstoxVersion()
+	
+	cat(paste0("\n\n------------------------------------------------------------\nRunning project ", i, ": ", projectName, ":\n"))
+	
+	# Run the baseline and baseline report (the latter with input=NULL):
+	# The parameter 'modelType', enabling reading Baseline Report, was introduced in 1.8.1:
+	# 2018-04-19 Added saveProject() since we wish to pick up changes in the project.xml files:
+	if(RstoxVersion$Rstox > "1.8"){
+		write(paste0(now(TRUE), "Running Baseline and Baseline Report"), progressFile, append=TRUE)
+		baselineOutput <- getBaseline(projectName, exportCSV=TRUE, modelType="baseline", input=NULL, drop=FALSE)
+		saveProject(projectName)
+		baselineReportOutput <- getBaseline(projectName, exportCSV=TRUE, modelType="report", input=NULL, drop=FALSE)
+		saveProject(projectName)
+	}
+	else{
+		write(paste0(now(TRUE), "Running Baseline"), progressFile, append=TRUE)
+		baselineOutput <- getBaseline(projectName, exportCSV=TRUE, input=NULL, drop=FALSE)
+		saveProject(projectName)
+	}
+	
+	# Get the path to the scripts to run:
+	r_script <- file.path(projectName, "output", "R", "r.R")
+	rreport_script <- file.path(projectName, "output", "R", "r-report.R")
+	# Generate the r scripts:
+	generateRScripts(projectName)
+
+	# Run the scripts and print info to the progress file:
+	write(paste0(now(TRUE), "Starting project ", i, ": ", projectName), progressFile, append=TRUE)
+	
+	
+	write(paste0(now(TRUE), "Running r.R"), progressFile, append=TRUE)
+	if(file.exists(r_script)){
+		source(r_script)
+	}
+	write(paste0(now(TRUE), "Running r-report.R"), progressFile, append=TRUE)
+	if(file.exists(rreport_script)){
+		source(rreport_script)
+	}
+	write(paste0(now(TRUE), "Ending project ", i, ": ", projectName), progressFile, append=TRUE)
+	write("", progressFile, append=TRUE)
+	closeProject(projectName)
+	
+	# Copy output files to the output directory:
+	unlink(outputDir, recursive=TRUE, force=TRUE)
+	suppressWarnings(dir.create(outputDir, recursive=TRUE))
+	output <- file.path(projectName, "output")
+	file.copy(output, outputDir, recursive=TRUE)
+	
+	# Delete trash:
+	trash <- list.dirs(outputDir)
+	trash <- trash[grep("trash", trash)]
+	unlink(trash, recursive=TRUE, force=TRUE)
+	
+	# Save also the output from baseline and baseline report to an RData file:
+	save(baselineOutput, file=file.path(outputDir, "baselineOutput.RData"))
+	if(RstoxVersion$Rstox > "1.8"){
+		save(baselineReportOutput, file=file.path(outputDir, "baselineReportOutput.RData"))
+	}
+	
+	# Copy the project.xml file:
+	from <- getProjectPaths(projectName)$projectXML
+	to <- file.path(outputDir, "project.xml")
+	file.copy(from=from, to=to, overwrite=TRUE)
+	
+	cat("\n")
+}
+
+
+#*********************************************
+#*********************************************
 #' Function for running all test projects and comparing outputs with previous outputs.
 #'
 #' @param dir				The local directory holding the version testing.
@@ -799,36 +880,6 @@ automatedRstoxTest <- function(dir, root=list(windows="\\\\delphi", unix="/Volum
 			out
 		}
 	}
-	
-	## # Function borrowed from the TSD package (parallel version of lapply):
-	## papply <- function(X, FUN, ..., cores=1, outfile="", msg="Processing... "){
-	## 	availableCores <- parallel::detectCores()
-	## 	# If memory runs out, a system call to determine number of cores might fail, thus detectCores() could return NA
-	## 	# defaulting to single core if this is the case
-	## 	if(is.na(availableCores)){
-	## 		availableCores <- 1
-	## 	}
-	## 	if(cores > availableCores){
-	## 		warning(paste0("Only ", availableCores, " cores available (", cores, " requested)"))
-	## 	}
-	## 	nruns <- length(X)
-	## 	cores <- min(cores, nruns, availableCores)
-	## 
-	## 	# Generate the clusters of time steps:
-	## 	if(cores>1){
-	## 		cat(paste0(msg, "(", nruns, " runs using ", cores, " cores in parallel):\n"))
-	## 		cl <- parallel::makeCluster(cores)
-	## 		# Bootstrap:
-	## 		out <- pbapply::pblapply(X, FUN, ..., cl=cl)
-	## 		# End the parallel bootstrapping:
-	## 		parallel::stopCluster(cl)
-	## 	}
-	## 	else{
-	## 		cat(paste0(msg, "(", nruns, " runs):\n"))
-	## 		out <- pbapply::pblapply(X, FUN, ...)
-	## 	}
-	## 	return(out)
-	## }
 	
 	# Function for getting a string with the current time: 
 	now <- function(brackets=FALSE){
@@ -923,75 +974,6 @@ automatedRstoxTest <- function(dir, root=list(windows="\\\\delphi", unix="/Volum
 		out
 	}
 	
-	# Function for running the r scripts of a project and copying the relevant output files to the "Output" directory:
-	runProject <- function(projectName, progressFile, outputDir){
-		
-		RstoxVersion <- getRstoxVersion()
-		
-		cat(paste0("\n\n------------------------------------------------------------\nRunning project ", i, ": ", projectName, ":\n"))
-		
-		# Run the baseline and baseline report (the latter with input=NULL):
-		# The parameter 'modelType', enabling reading Baseline Report, was introduced in 1.8.1:
-		# 2018-04-19 Added saveProject() since we wish to pick up changes in the project.xml files:
-		if(RstoxVersion$Rstox > "1.8"){
-			write(paste0(now(TRUE), "Running Baseline and Baseline Report"), progressFile, append=TRUE)
-			baselineOutput <- getBaseline(projectName, exportCSV=TRUE, modelType="baseline", input=NULL, drop=FALSE)
-			saveProject(projectName)
-			baselineReportOutput <- getBaseline(projectName, exportCSV=TRUE, modelType="report", input=NULL, drop=FALSE)
-			saveProject(projectName)
-		}
-		else{
-			write(paste0(now(TRUE), "Running Baseline"), progressFile, append=TRUE)
-			baselineOutput <- getBaseline(projectName, exportCSV=TRUE, input=NULL, drop=FALSE)
-			saveProject(projectName)
-		}
-		
-		# Get the path to the scripts to run:
-		r_script <- file.path(projectName, "output", "R", "r.R")
-		rreport_script <- file.path(projectName, "output", "R", "r-report.R")
-		# Generate the r scripts:
-		generateRScripts(projectName)
-	
-		# Run the scripts and print info to the progress file:
-		write(paste0(now(TRUE), "Starting project ", i, ": ", projectName), progressFile, append=TRUE)
-		
-		
-		write(paste0(now(TRUE), "Running r.R"), progressFile, append=TRUE)
-		if(file.exists(r_script)){
-			source(r_script)
-		}
-		write(paste0(now(TRUE), "Running r-report.R"), progressFile, append=TRUE)
-		if(file.exists(rreport_script)){
-			source(rreport_script)
-		}
-		write(paste0(now(TRUE), "Ending project ", i, ": ", projectName), progressFile, append=TRUE)
-		write("", progressFile, append=TRUE)
-		closeProject(projectName)
-		
-		# Copy output files to the output directory:
-		unlink(outputDir, recursive=TRUE, force=TRUE)
-		suppressWarnings(dir.create(outputDir, recursive=TRUE))
-		output <- file.path(projectName, "output")
-		file.copy(output, outputDir, recursive=TRUE)
-		
-		# Delete trash:
-		trash <- list.dirs(outputDir)
-		trash <- trash[grep("trash", trash)]
-		unlink(trash, recursive=TRUE, force=TRUE)
-		
-		# Save also the output from baseline and baseline report to an RData file:
-		save(baselineOutput, file=file.path(outputDir, "baselineOutput.RData"))
-		if(RstoxVersion$Rstox > "1.8"){
-			save(baselineReportOutput, file=file.path(outputDir, "baselineReportOutput.RData"))
-		}
-		
-		# Copy the project.xml file:
-		from <- getProjectPaths(projectName)$projectXML
-		to <- file.path(outputDir, "project.xml")
-		file.copy(from=from, to=to, overwrite=TRUE)
-		
-		cat("\n")
-	}
 	
 	printProjectName <- function(x, progressFile){
 		cat(x$projectName, "...", "\n", sep="")
@@ -1077,7 +1059,7 @@ automatedRstoxTest <- function(dir, root=list(windows="\\\\delphi", unix="/Volum
 	}
 	
 	
-	RDataDiff <- function(files, progressFile){
+	diffRData <- function(files, progressFile){
 		diffRData <- function(i, files, progressFile){
 			all.equalOne <- function(name, progressFile){
 				#write(paste0("\tObject: ", name), file=progressFile, append=TRUE)
@@ -1153,8 +1135,8 @@ automatedRstoxTest <- function(dir, root=list(windows="\\\\delphi", unix="/Volum
 	}
 	
 	# Function to check diffs between images, and printing the diffs to file:
-	imDiff <- function(files, progressFile, diffdir){
-		imDiffOne <- function(file, dir1, dir2, progressFile, diffdir){
+	diffImage <- function(files, progressFile, diffdir){
+		diffImageOne <- function(file, dir1, dir2, progressFile, diffdir){
 			
 			if(length(file)==0){
 				write("No images", progressFile, append=TRUE)
@@ -1226,7 +1208,7 @@ automatedRstoxTest <- function(dir, root=list(windows="\\\\delphi", unix="/Volum
 		printProjectName(files, progressFile)
 		
 		write("{", file=progressFile, append=TRUE)
-		out <- lapply(files$commonFiles, imDiffOne, dir1=files$dir1, dir2=files$dir2, progressFile=progressFile, diffdir=diffdir)
+		out <- lapply(files$commonFiles, diffImageOne, dir1=files$dir1, dir2=files$dir2, progressFile=progressFile, diffdir=diffdir)
 		write("}", file=progressFile, append=TRUE)
 	}
 	
@@ -1680,7 +1662,7 @@ automatedRstoxTest <- function(dir, root=list(windows="\\\\delphi", unix="/Volum
 		if("Rdata" %in% diffs){
 			printHeader("2. Comparing RData files", progressFile)
 			write("\n{", file=progressFile, append=TRUE)
-			lapply(allFiles$RDataFiles, RDataDiff, progressFile=progressFile)
+			lapply(allFiles$RDataFiles, diffRData, progressFile=progressFile)
 			write("}", file=progressFile, append=TRUE)
 		}
 		
@@ -1688,7 +1670,7 @@ automatedRstoxTest <- function(dir, root=list(windows="\\\\delphi", unix="/Volum
 		if("images" %in% diffs){
 			printHeader("3. Comparing image files", progressFile)
 			write("{", file=progressFile, append=TRUE)
-			lapply(allFiles$imageFiles, imDiff, progressFile=progressFile, diffdir=diffdir)
+			lapply(allFiles$imageFiles, diffImage, progressFile=progressFile, diffdir=diffdir)
 			write("}", file=progressFile, append=TRUE)
 		}
 		
