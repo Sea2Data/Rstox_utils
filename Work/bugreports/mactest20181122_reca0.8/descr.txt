@@ -1,0 +1,58 @@
+Sett krasjer på mac
+Settet har noen fisk med kun lengde i AgeLength-modellen
+
+Sett: length_str.rdata
+
+output kommandolinjekjøring (merk at Season ikke er satt som kovariat):
+/Library/Frameworks/R.framework/Resources/library/eca/bin/caa_main_model1 cfiles/
+Start C program: estimating age and length-given-age model
+
+Read input data from file: cfiles/common_par_fit_ascii
+Read input data from file: cfiles/stoxdata_age
+Read input data from file: cfiles/stoxdata_lga
+Read input data from file: cfiles/priorList
+WARNING: Season=-1199988
+WARNING: Season=-1199988
+WARNING: Season=-1199988
+WARNING: Season=-1199988
+WARNING: Season=-1199988
+WARNING: Season=-1199988
+WARNING: Season=-1199988
+WARNING: Season=-1199988
+WARNING: Season=-1199988
+WARNING: Season=-1199988
+WARNING: Season=-1199988
+WARNING: Season=-1199988
+WARNING: Season=-1199988
+WARNING: Season=-1199988
+WARNING: Season=-1199988
+WARNING: Season=-1199988
+WARNING: Season=-1199988
+WARNING: Season=-1199988
+WARNING: Season=-1199988
+WARNING: Season=-1199988
+WARNING: Season=-1199988
+WARNING: Season=-1199988
+WARNING: Season=-1199988
+WARNING: Season=-1199988
+WARNING: Season=-1199988
+WARNING: Season=-1199988
+WARNING: Season=-1199988
+WARNING: Season=-1199988
+WARNING: Season=-1199988
+WARNING: Season=-1199988
+WARNING: Season=-1199988
+WARNING: Season=-1199988
+WARNING: Season=-1199988
+WARNING: Season=-1199988
+WARNING: Season=-1199988
+WARNING: Season=-1199988
+WARNING: Season=-1199988
+WARNING: Season=-1199988
+WARNING: Season=-1199988
+WARNING: Season=-1199988
+WARNING: Season=-1199988
+WARNING: Season=-1199988
+WARNING: Season=-1199988
+WARNING: Season=-1199988
+Segmentation fault: 11
