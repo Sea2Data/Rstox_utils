@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project template="" rstoxversion="1.9.1" xmlns="http://www.imr.no/formats/stox/v1" lastmodified="16/10/18 10:19" rversion="3.5.0" stoxversion="2.6.4" resourceversion="1.79">
+<project template="" rstoxversion="1.9.1" xmlns="http://www.imr.no/formats/stox/v1" lastmodified="14/12/18 21:14" rversion="3.5.0" stoxversion="2.6.13" resourceversion="1.84">
   <model name="baseline">
     <process name="ReadProcessData">
       <function>ReadProcessData</function>
@@ -15,7 +15,7 @@
       <breakingui>false</breakingui>
       <parameter name="ProcessData">Process(ReadProcessData)</parameter>
       <parameter name="DefinitionMethod">ResourceFile</parameter>
-      <parameter name="FileName">${STOX}/reference/age/AgeError.txt</parameter>
+      <parameter name="FileName">${STOX}/reference/age/AgeErrorPerfectAges0_20.txt</parameter>
       <output>ProcessData</output>
     </process>
     <process name="DefineStrata">
@@ -27,45 +27,6 @@
       <parameter name="UseProcessData">true</parameter>
       <parameter name="FileName">${STOX}/reference/stratum/mainarea.txt</parameter>
       <output>ProcessData</output>
-    </process>
-    <process name="DefineStratumNeighbour">
-      <function>DefineStratumNeighbour</function>
-      <enabled>true</enabled>
-      <respondingui>false</respondingui>
-      <breakingui>false</breakingui>
-      <parameter name="ProcessData">Process(ReadProcessData)</parameter>
-      <parameter name="DefinitionMethod">ResourceFile</parameter>
-      <parameter name="FileName">${STOX}/reference/stratumneighbour/mainarea_neighbour.txt</parameter>
-      <output>ProcessData</output>
-    </process>
-    <process name="ReadLandingXML">
-      <function>ReadLandingXML</function>
-      <enabled>true</enabled>
-      <respondingui>false</respondingui>
-      <breakingui>false</breakingui>
-      <fileoutput>false</fileoutput>
-      <parameter name="FileName1">input/landing/landingdata2015.xml</parameter>
-      <output>LandingData</output>
-    </process>
-    <process name="FilterLanding">
-      <function>FilterLanding</function>
-      <enabled>true</enabled>
-      <respondingui>false</respondingui>
-      <breakingui>false</breakingui>
-      <fileoutput>true</fileoutput>
-      <parameter name="LandingData">Process(ReadLandingXML)</parameter>
-      <parameter name="FiskeLinjeExpr">fisk =~ ['061101', '0611', '061104']</parameter>
-      <output>LandingData</output>
-    </process>
-    <process name="ApplyPosToLanding">
-      <function>ApplyPosToData</function>
-      <enabled>true</enabled>
-      <respondingui>false</respondingui>
-      <breakingui>false</breakingui>
-      <parameter name="SourceType">Landing</parameter>
-      <parameter name="LandingData">Process(FilterLanding)</parameter>
-      <parameter name="BioticData"></parameter>
-      <parameter name="FileName">${STOX}/reference/stratumpos/area_loc_pos_new.txt</parameter>
     </process>
     <process name="ReadBioticXML">
       <function>ReadBioticXML</function>
@@ -83,11 +44,51 @@
       <breakingui>false</breakingui>
       <fileoutput>true</fileoutput>
       <parameter name="BioticData">Process(ReadBioticXML)</parameter>
-      <parameter name="FishStationExpr">(fs.hasCatch('sildG03') || fs.hasCatch('sildG05')) &amp;&amp; missiontype =~ ['3','2','1']</parameter>
+      <parameter name="FishStationExpr">(fs.hasCatch('sild\'G03') || fs.hasCatch('sild\'G05')) &amp;&amp; missiontype =~ ['3','2','1']</parameter>
       <parameter name="CatchExpr">species =~ ['161722.G03', '161724', '161722.G05']</parameter>
       <parameter name="SampleExpr">weight &gt; 0</parameter>
       <parameter name="IndExpr">age &gt; 0 || weight &gt; 0</parameter>
       <output>BioticData</output>
+    </process>
+    <process name="DefineStratumNeighbour">
+      <function>DefineStratumNeighbour</function>
+      <enabled>true</enabled>
+      <respondingui>false</respondingui>
+      <breakingui>false</breakingui>
+      <parameter name="ProcessData">Process(ReadProcessData)</parameter>
+      <parameter name="DefinitionMethod">ResourceFile</parameter>
+      <parameter name="FileName">${STOX}/reference/stratumneighbour/mainarea_neighbour_hack.txt</parameter>
+      <output>ProcessData</output>
+    </process>
+    <process name="ReadLandingXML">
+      <function>ReadLandingXML</function>
+      <enabled>true</enabled>
+      <respondingui>false</respondingui>
+      <breakingui>false</breakingui>
+      <fileoutput>false</fileoutput>
+      <parameter name="FileName1">input/landing/2015_sild.xml</parameter>
+      <output>LandingData</output>
+    </process>
+    <process name="FilterLanding">
+      <function>FilterLanding</function>
+      <enabled>true</enabled>
+      <respondingui>false</respondingui>
+      <breakingui>false</breakingui>
+      <fileoutput>true</fileoutput>
+      <parameter name="LandingData">Process(ReadLandingXML)</parameter>
+      <parameter name="LandingExpr">rundvekt&gt;0</parameter>
+      <output>LandingData</output>
+    </process>
+    <process name="ApplyPosToLanding">
+      <function>ApplyPosToData</function>
+      <enabled>true</enabled>
+      <respondingui>false</respondingui>
+      <breakingui>false</breakingui>
+      <parameter name="SourceType">Landing</parameter>
+      <parameter name="AreaCoding">MainArea</parameter>
+      <parameter name="LandingData">Process(FilterLanding)</parameter>
+      <parameter name="BioticData"></parameter>
+      <parameter name="FileName">${STOX}/reference/stratumpos/mainarea_fdir_to_2017_incl.txt</parameter>
     </process>
     <process name="ConvertLengthAndWeight">
       <function>ConvertLengthAndWeight</function>
@@ -98,8 +99,8 @@
       <parameter name="BioticData">Process(ReadBioticXML)</parameter>
       <parameter name="HeadCutFacA">1</parameter>
       <parameter name="HeadCutFacB">2</parameter>
-      <parameter name="WGutHeadOff">1</parameter>
-      <parameter name="WGutHeadOn">1</parameter>
+      <parameter name="WGutHeadOff">1.22</parameter>
+      <parameter name="WGutHeadOn">1.07</parameter>
       <output>BioticData</output>
     </process>
     <process name="ApplyPosToBiotic">
@@ -108,9 +109,10 @@
       <respondingui>false</respondingui>
       <breakingui>false</breakingui>
       <parameter name="SourceType">Biotic</parameter>
+      <parameter name="AreaCoding">MainArea</parameter>
       <parameter name="LandingData"></parameter>
       <parameter name="BioticData">Process(FilterBiotic)</parameter>
-      <parameter name="FileName">${STOX}/reference/stratumpos/area_loc_pos_new.txt</parameter>
+      <parameter name="FileName">${STOX}/reference/stratumpos/mainarea_fdir_to_2017_incl.txt</parameter>
     </process>
     <process name="AssignLandingToStratum">
       <function>AssignDataToStratum</function>
@@ -140,7 +142,6 @@
       <parameter name="ProcessData">Process(ReadProcessData)</parameter>
       <parameter name="SourceType">Landing</parameter>
       <parameter name="CovariateType">Fixed</parameter>
-      <parameter name="ConditionalAutoRegression">false</parameter>
       <parameter name="DefinitionMethod">UseData</parameter>
       <parameter name="LandingData">Process(FilterLanding)</parameter>
       <parameter name="BioticData"></parameter>
@@ -156,8 +157,7 @@
       <parameter name="ProcessData">Process(ReadProcessData)</parameter>
       <parameter name="SourceType">Biotic</parameter>
       <parameter name="CovariateType">Fixed</parameter>
-      <parameter name="ConditionalAutoRegression">false</parameter>
-      <parameter name="DefinitionMethod">Inherit</parameter>
+      <parameter name="DefinitionMethod">CopyFromLanding</parameter>
       <parameter name="LandingData"></parameter>
       <parameter name="BioticData"></parameter>
       <parameter name="Seasonal">true</parameter>
@@ -171,7 +171,6 @@
       <parameter name="ProcessData">Process(ReadProcessData)</parameter>
       <parameter name="SourceType">Landing</parameter>
       <parameter name="CovariateType">Random</parameter>
-      <parameter name="ConditionalAutoRegression">false</parameter>
       <parameter name="DefinitionMethod">ResourceFile</parameter>
       <parameter name="FileName">${STOX}/reference/gearfactor/gearfactor_nametest.txt</parameter>
       <output>ProcessData</output>
@@ -184,7 +183,6 @@
       <parameter name="ProcessData">Process(ReadProcessData)</parameter>
       <parameter name="SourceType">Biotic</parameter>
       <parameter name="CovariateType">Random</parameter>
-      <parameter name="ConditionalAutoRegression">false</parameter>
       <parameter name="DefinitionMethod">ResourceFile</parameter>
       <parameter name="FileName">${STOX}/reference/gearfactor/gearfactor_nametest.txt</parameter>
       <output>ProcessData</output>
@@ -197,7 +195,7 @@
       <parameter name="ProcessData">Process(ReadProcessData)</parameter>
       <parameter name="SourceType">Landing</parameter>
       <parameter name="CovariateType">Random</parameter>
-      <parameter name="ConditionalAutoRegression">false</parameter>
+      <parameter name="UseStratumNeighbour">false</parameter>
       <parameter name="DefinitionMethod">UseData</parameter>
       <parameter name="LandingData">Process(FilterLanding)</parameter>
       <parameter name="BioticData"></parameter>
@@ -211,8 +209,8 @@
       <parameter name="ProcessData">Process(ReadProcessData)</parameter>
       <parameter name="SourceType">Biotic</parameter>
       <parameter name="CovariateType">Random</parameter>
-      <parameter name="ConditionalAutoRegression">false</parameter>
-      <parameter name="DefinitionMethod">Inherit</parameter>
+      <parameter name="UseStratumNeighbour">false</parameter>
+      <parameter name="DefinitionMethod">CopyFromLanding</parameter>
       <parameter name="LandingData"></parameter>
       <parameter name="BioticData">Process(FilterBiotic)</parameter>
       <output>ProcessData</output>
@@ -249,15 +247,6 @@
       <parameter name="LandingData">Process(FilterLanding)</parameter>
       <output>LandingCovData</output>
     </process>
-    <process name="LandingWeightCovData">
-      <function>LandingWeightCovData</function>
-      <enabled>true</enabled>
-      <respondingui>false</respondingui>
-      <breakingui>false</breakingui>
-      <fileoutput>true</fileoutput>
-      <parameter name="LandingCovData">Process(LandingCovData)</parameter>
-      <output>LandingWeightCovData</output>
-    </process>
     <process name="WriteProcessData">
       <function>WriteProcessData</function>
       <enabled>true</enabled>
@@ -277,7 +266,6 @@
       <parameter name="maxage">20</parameter>
       <parameter name="delta.age">0.001</parameter>
       <parameter name="maxlength"></parameter>
-      <parameter name="use_otolithtype">true</parameter>
       <parameter name="hatchDaySlashMonth">01/01</parameter>
     </process>
     <process name="runRECA">
@@ -309,6 +297,13 @@
   <model name="r-report">
     <process name="getPlots">
       <function>getPlots</function>
+      <enabled>true</enabled>
+      <respondingui>true</respondingui>
+      <breakingui>false</breakingui>
+      <parameter name="out">all</parameter>
+    </process>
+    <process name="getReports">
+      <function>getReports</function>
       <enabled>true</enabled>
       <respondingui>true</respondingui>
       <breakingui>false</breakingui>
@@ -472,105 +467,45 @@
     </gearfactor>
     <spatial>
       <value covariatesourcetype="Biotic" covariate="0">0</value>
-      <value covariatesourcetype="Biotic" covariate="1">1</value>
-      <value covariatesourcetype="Biotic" covariate="2">2</value>
       <value covariatesourcetype="Biotic" covariate="3">3</value>
       <value covariatesourcetype="Biotic" covariate="4">4</value>
       <value covariatesourcetype="Biotic" covariate="5">5</value>
       <value covariatesourcetype="Biotic" covariate="6">6</value>
       <value covariatesourcetype="Biotic" covariate="7">7</value>
       <value covariatesourcetype="Biotic" covariate="8">8</value>
-      <value covariatesourcetype="Biotic" covariate="9">9</value>
-      <value covariatesourcetype="Biotic" covariate="10">10</value>
-      <value covariatesourcetype="Biotic" covariate="11">11</value>
       <value covariatesourcetype="Biotic" covariate="12">12</value>
-      <value covariatesourcetype="Biotic" covariate="13">13</value>
-      <value covariatesourcetype="Biotic" covariate="14">14</value>
-      <value covariatesourcetype="Biotic" covariate="15">15</value>
-      <value covariatesourcetype="Biotic" covariate="16">16</value>
-      <value covariatesourcetype="Biotic" covariate="17">17</value>
-      <value covariatesourcetype="Biotic" covariate="20">20</value>
       <value covariatesourcetype="Biotic" covariate="21">21</value>
-      <value covariatesourcetype="Biotic" covariate="22">22</value>
-      <value covariatesourcetype="Biotic" covariate="23">23</value>
-      <value covariatesourcetype="Biotic" covariate="24">24</value>
-      <value covariatesourcetype="Biotic" covariate="25">25</value>
       <value covariatesourcetype="Biotic" covariate="27">27</value>
       <value covariatesourcetype="Biotic" covariate="28">28</value>
       <value covariatesourcetype="Biotic" covariate="30">30</value>
-      <value covariatesourcetype="Biotic" covariate="31">31</value>
       <value covariatesourcetype="Biotic" covariate="34">34</value>
-      <value covariatesourcetype="Biotic" covariate="35">35</value>
       <value covariatesourcetype="Biotic" covariate="36">36</value>
       <value covariatesourcetype="Biotic" covariate="37">37</value>
-      <value covariatesourcetype="Biotic" covariate="39">39</value>
       <value covariatesourcetype="Biotic" covariate="40">40</value>
       <value covariatesourcetype="Biotic" covariate="41">41</value>
       <value covariatesourcetype="Biotic" covariate="42">42</value>
       <value covariatesourcetype="Biotic" covariate="43">43</value>
-      <value covariatesourcetype="Biotic" covariate="47">47</value>
       <value covariatesourcetype="Biotic" covariate="48">48</value>
-      <value covariatesourcetype="Biotic" covariate="49">49</value>
-      <value covariatesourcetype="Biotic" covariate="50">50</value>
-      <value covariatesourcetype="Biotic" covariate="52">52</value>
-      <value covariatesourcetype="Biotic" covariate="54">54</value>
-      <value covariatesourcetype="Biotic" covariate="55">55</value>
-      <value covariatesourcetype="Biotic" covariate="56">56</value>
-      <value covariatesourcetype="Biotic" covariate="57">57</value>
-      <value covariatesourcetype="Biotic" covariate="58">58</value>
-      <value covariatesourcetype="Biotic" covariate="59">59</value>
-      <value covariatesourcetype="Biotic" covariate="60">60</value>
-      <value covariatesourcetype="Biotic" covariate="61">61</value>
       <value covariatesourcetype="Landing" covariate="0">0</value>
-      <value covariatesourcetype="Landing" covariate="1">1</value>
-      <value covariatesourcetype="Landing" covariate="2">2</value>
       <value covariatesourcetype="Landing" covariate="3">3</value>
       <value covariatesourcetype="Landing" covariate="4">4</value>
       <value covariatesourcetype="Landing" covariate="5">5</value>
       <value covariatesourcetype="Landing" covariate="6">6</value>
       <value covariatesourcetype="Landing" covariate="7">7</value>
       <value covariatesourcetype="Landing" covariate="8">8</value>
-      <value covariatesourcetype="Landing" covariate="9">9</value>
-      <value covariatesourcetype="Landing" covariate="10">10</value>
-      <value covariatesourcetype="Landing" covariate="11">11</value>
       <value covariatesourcetype="Landing" covariate="12">12</value>
-      <value covariatesourcetype="Landing" covariate="13">13</value>
-      <value covariatesourcetype="Landing" covariate="14">14</value>
-      <value covariatesourcetype="Landing" covariate="15">15</value>
-      <value covariatesourcetype="Landing" covariate="16">16</value>
-      <value covariatesourcetype="Landing" covariate="17">17</value>
-      <value covariatesourcetype="Landing" covariate="20">20</value>
       <value covariatesourcetype="Landing" covariate="21">21</value>
-      <value covariatesourcetype="Landing" covariate="22">22</value>
-      <value covariatesourcetype="Landing" covariate="23">23</value>
-      <value covariatesourcetype="Landing" covariate="24">24</value>
-      <value covariatesourcetype="Landing" covariate="25">25</value>
       <value covariatesourcetype="Landing" covariate="27">27</value>
       <value covariatesourcetype="Landing" covariate="28">28</value>
       <value covariatesourcetype="Landing" covariate="30">30</value>
-      <value covariatesourcetype="Landing" covariate="31">31</value>
       <value covariatesourcetype="Landing" covariate="34">34</value>
-      <value covariatesourcetype="Landing" covariate="35">35</value>
       <value covariatesourcetype="Landing" covariate="36">36</value>
       <value covariatesourcetype="Landing" covariate="37">37</value>
-      <value covariatesourcetype="Landing" covariate="39">39</value>
       <value covariatesourcetype="Landing" covariate="40">40</value>
       <value covariatesourcetype="Landing" covariate="41">41</value>
       <value covariatesourcetype="Landing" covariate="42">42</value>
       <value covariatesourcetype="Landing" covariate="43">43</value>
-      <value covariatesourcetype="Landing" covariate="47">47</value>
       <value covariatesourcetype="Landing" covariate="48">48</value>
-      <value covariatesourcetype="Landing" covariate="49">49</value>
-      <value covariatesourcetype="Landing" covariate="50">50</value>
-      <value covariatesourcetype="Landing" covariate="52">52</value>
-      <value covariatesourcetype="Landing" covariate="54">54</value>
-      <value covariatesourcetype="Landing" covariate="55">55</value>
-      <value covariatesourcetype="Landing" covariate="56">56</value>
-      <value covariatesourcetype="Landing" covariate="57">57</value>
-      <value covariatesourcetype="Landing" covariate="58">58</value>
-      <value covariatesourcetype="Landing" covariate="59">59</value>
-      <value covariatesourcetype="Landing" covariate="60">60</value>
-      <value covariatesourcetype="Landing" covariate="61">61</value>
     </spatial>
     <platformfactor>
       <value covariatesourcetype="Biotic" covariate="1002">1002</value>
@@ -1535,112 +1470,38 @@
       <value covariatesourcetype="Biotic" covariate="9210">9210</value>
     </platformfactor>
     <covparam>
-      <value covariatetable="gearfactor" parameter="ConditionalAutoRegression">false</value>
       <value covariatetable="gearfactor" parameter="CovariateType">Random</value>
       <value covariatetable="platformfactor" parameter="CovariateType">Random</value>
-      <value covariatetable="spatial" parameter="ConditionalAutoRegression">false</value>
       <value covariatetable="spatial" parameter="CovariateType">Random</value>
+      <value covariatetable="spatial" parameter="UseStratumNeighbour">false</value>
       <value covariatetable="temporal" parameter="CovariateType">Fixed</value>
     </covparam>
     <ageerror>
-      <probability readage="0" realage="0">0.7</probability>
-      <probability readage="0" realage="1">0.2</probability>
-      <probability readage="0" realage="2">0.1</probability>
-      <probability readage="1" realage="0">0.2</probability>
-      <probability readage="1" realage="1">0.5</probability>
-      <probability readage="1" realage="2">0.2</probability>
-      <probability readage="1" realage="3">0.1</probability>
-      <probability readage="2" realage="0">0.1</probability>
-      <probability readage="2" realage="1">0.2</probability>
-      <probability readage="2" realage="2">0.4</probability>
-      <probability readage="2" realage="3">0.2</probability>
-      <probability readage="2" realage="4">0.1</probability>
-      <probability readage="3" realage="1">0.1</probability>
-      <probability readage="3" realage="2">0.2</probability>
-      <probability readage="3" realage="3">0.4</probability>
-      <probability readage="3" realage="4">0.2</probability>
-      <probability readage="3" realage="5">0.1</probability>
-      <probability readage="4" realage="2">0.1</probability>
-      <probability readage="4" realage="3">0.2</probability>
-      <probability readage="4" realage="4">0.4</probability>
-      <probability readage="4" realage="5">0.2</probability>
-      <probability readage="4" realage="6">0.1</probability>
-      <probability readage="5" realage="3">0.1</probability>
-      <probability readage="5" realage="4">0.2</probability>
-      <probability readage="5" realage="5">0.4</probability>
-      <probability readage="5" realage="6">0.2</probability>
-      <probability readage="5" realage="7">0.1</probability>
-      <probability readage="6" realage="4">0.1</probability>
-      <probability readage="6" realage="5">0.2</probability>
-      <probability readage="6" realage="6">0.4</probability>
-      <probability readage="6" realage="7">0.2</probability>
-      <probability readage="6" realage="8">0.1</probability>
-      <probability readage="7" realage="5">0.1</probability>
-      <probability readage="7" realage="6">0.2</probability>
-      <probability readage="7" realage="7">0.4</probability>
-      <probability readage="7" realage="8">0.2</probability>
-      <probability readage="7" realage="9">0.1</probability>
-      <probability readage="8" realage="6">0.1</probability>
-      <probability readage="8" realage="7">0.2</probability>
-      <probability readage="8" realage="8">0.4</probability>
-      <probability readage="8" realage="9">0.2</probability>
-      <probability readage="8" realage="10">0.1</probability>
-      <probability readage="9" realage="7">0.1</probability>
-      <probability readage="9" realage="8">0.2</probability>
-      <probability readage="9" realage="9">0.4</probability>
-      <probability readage="9" realage="10">0.2</probability>
-      <probability readage="9" realage="11">0.1</probability>
-      <probability readage="10" realage="8">0.1</probability>
-      <probability readage="10" realage="9">0.2</probability>
-      <probability readage="10" realage="10">0.4</probability>
-      <probability readage="10" realage="11">0.2</probability>
-      <probability readage="10" realage="12">0.1</probability>
-      <probability readage="11" realage="9">0.1</probability>
-      <probability readage="11" realage="10">0.2</probability>
-      <probability readage="11" realage="11">0.4</probability>
-      <probability readage="11" realage="12">0.2</probability>
-      <probability readage="11" realage="13">0.1</probability>
-      <probability readage="12" realage="10">0.1</probability>
-      <probability readage="12" realage="11">0.2</probability>
-      <probability readage="12" realage="12">0.4</probability>
-      <probability readage="12" realage="13">0.2</probability>
-      <probability readage="12" realage="14">0.1</probability>
-      <probability readage="13" realage="11">0.1</probability>
-      <probability readage="13" realage="12">0.2</probability>
-      <probability readage="13" realage="13">0.4</probability>
-      <probability readage="13" realage="14">0.2</probability>
-      <probability readage="13" realage="15">0.1</probability>
-      <probability readage="14" realage="12">0.1</probability>
-      <probability readage="14" realage="13">0.2</probability>
-      <probability readage="14" realage="14">0.4</probability>
-      <probability readage="14" realage="15">0.2</probability>
-      <probability readage="14" realage="16">0.1</probability>
-      <probability readage="15" realage="13">0.1</probability>
-      <probability readage="15" realage="14">0.2</probability>
-      <probability readage="15" realage="15">0.4</probability>
-      <probability readage="15" realage="16">0.2</probability>
-      <probability readage="15" realage="17">0.1</probability>
-      <probability readage="16" realage="14">0.1</probability>
-      <probability readage="16" realage="15">0.2</probability>
-      <probability readage="16" realage="16">0.4</probability>
-      <probability readage="16" realage="17">0.2</probability>
-      <probability readage="16" realage="18">0.1</probability>
-      <probability readage="17" realage="15">0.1</probability>
-      <probability readage="17" realage="16">0.2</probability>
-      <probability readage="17" realage="17">0.4</probability>
-      <probability readage="17" realage="18">0.2</probability>
-      <probability readage="17" realage="19">0.1</probability>
-      <probability readage="18" realage="16">0.1</probability>
-      <probability readage="18" realage="17">0.2</probability>
-      <probability readage="18" realage="18">0.5</probability>
-      <probability readage="18" realage="19">0.2</probability>
-      <probability readage="19" realage="17">0.1</probability>
-      <probability readage="19" realage="18">0.2</probability>
-      <probability readage="19" realage="19">0.7</probability>
+      <probability readage="0" realage="0">1.0</probability>
+      <probability readage="1" realage="1">1.0</probability>
+      <probability readage="2" realage="2">1.0</probability>
+      <probability readage="3" realage="3">1.0</probability>
+      <probability readage="4" realage="4">1.0</probability>
+      <probability readage="5" realage="5">1.0</probability>
+      <probability readage="6" realage="6">1.0</probability>
+      <probability readage="7" realage="7">1.0</probability>
+      <probability readage="8" realage="8">1.0</probability>
+      <probability readage="9" realage="9">1.0</probability>
+      <probability readage="10" realage="10">1.0</probability>
+      <probability readage="11" realage="11">1.0</probability>
+      <probability readage="12" realage="12">1.0</probability>
+      <probability readage="13" realage="13">1.0</probability>
+      <probability readage="14" realage="14">1.0</probability>
+      <probability readage="15" realage="15">1.0</probability>
+      <probability readage="16" realage="16">1.0</probability>
+      <probability readage="17" realage="17">1.0</probability>
+      <probability readage="18" realage="18">1.0</probability>
+      <probability readage="19" realage="19">1.0</probability>
+      <probability readage="20" realage="20">1.0</probability>
     </ageerror>
     <stratumneighbour>
       <value variable="0">5,6</value>
-      <value variable="1">2,10,11</value>
+      <value variable="1">2,10,11,59</value>
       <value variable="2">1,3,10,11</value>
       <value variable="3">2,4,10,12,13</value>
       <value variable="4">3,5,12,37,39</value>
@@ -1650,14 +1511,15 @@
       <value variable="8">9,28,41,42</value>
       <value variable="9">8,41</value>
       <value variable="10">1,2,3,11,13,14</value>
-      <value variable="11">1,2,10,13,14</value>
+      <value variable="11">1,2,10,13,14,19</value>
       <value variable="12">3,4,13,20,27,39</value>
       <value variable="13">3,10,11,12,14,15,16,20</value>
       <value variable="14">10,11,13,15,16</value>
       <value variable="15">13,14,16,17,20,23,24</value>
       <value variable="16">13,14,15,17,18,24</value>
       <value variable="17">15,16,18,24</value>
-      <value variable="18">16,17</value>
+      <value variable="18">16,17,19</value>
+      <value variable="19">11,18</value>
       <value variable="20">12,13,15,21,22,23,27,39</value>
       <value variable="21">20,22,25,26,27</value>
       <value variable="22">20,21,23,25</value>
@@ -1675,32 +1537,38 @@
       <value variable="37">4,5,6,7,30,34,36,38,39</value>
       <value variable="38">26,27,35,36,37,39</value>
       <value variable="39">4,5,12,20,26,27,36,37,38</value>
-      <value variable="40">41</value>
+      <value variable="40">41,45</value>
       <value variable="41">8,9,40,42,43</value>
-      <value variable="42">8,28,30,31,41,43</value>
+      <value variable="42">8,28,30,31,41,43,47</value>
       <value variable="43">31,41,42,47,48,57,58</value>
-      <value variable="47">43,48,57,70</value>
+      <value variable="45">49,40</value>
+      <value variable="47">43,48,57,70,42,61</value>
       <value variable="48">43,47,49,70</value>
-      <value variable="49">48,70,71</value>
-      <value variable="50">30,31,34,35,36,51,57</value>
-      <value variable="51">50,52,57,70</value>
+      <value variable="49">45,48,70,71</value>
+      <value variable="50">30,31,34,35,36,51,57,59</value>
+      <value variable="51">50,52,57,59,70</value>
       <value variable="52">51,60,70</value>
+      <value variable="54">55</value>
+      <value variable="55">54,56,62,59</value>
+      <value variable="56">55,59</value>
       <value variable="57">30,31,43,47,50,51,58,70</value>
       <value variable="58">43,57</value>
-      <value variable="60">61,70,75</value>
-      <value variable="61">60</value>
+      <value variable="59">50,51,56,1,55</value>
+      <value variable="60">61,70,75,52</value>
+      <value variable="61">60,47</value>
+      <value variable="62">55</value>
       <value variable="64">66,67,68,69,76</value>
       <value variable="66">64,67</value>
       <value variable="67">64,66,68</value>
       <value variable="68">64,67,69</value>
       <value variable="69">64,68,75,76</value>
-      <value variable="70">47,48,49,51,52,57,60,71,75,79</value>
+      <value variable="70">47,48,49,51,52,57,60,71,75,78,79</value>
       <value variable="71">49,70,81</value>
       <value variable="75">60,69,70,78,79</value>
       <value variable="76">64,69,77</value>
       <value variable="77">76,78</value>
       <value variable="78">70,75,77,79</value>
-      <value variable="79">70,75,78</value>
+      <value variable="79">70,75,78,81</value>
       <value variable="81">71,79</value>
     </stratumneighbour>
   </processdata>
