@@ -1,0 +1,36 @@
+RECA krasjer etter prediksjon når lgamodel er satt til "non-linear"
+
+Sett som krasjer:
+sild_nonlinear.Rdata
+
+Settet krasjer ikke når lgamodel er satt til "log-linear".
+
+R output:
+...
+Success fitting wgl model
+Error in readBin(fp, double(), n = 3, endian = "little") : 
+  object 'fp' not found
+In addition: Warning messages:
+1: In prepareRECA(projectname, temporalresolution = tempres) :
+  Running prepareECA with overwrite=T
+2: In prepareRECA(projectname, temporalresolution = tempres) :
+  checking filepath char comp
+3: In getLandings(eca, ecaParameters) :
+  Re-implement setting of midseason once NR updates documentation.
+4: In checkGlobalParameters(GlobalParameters, AgeLength, WeightLength) :
+  Age error matrix set, but age.error parameter set to FALSE.
+> traceback()
+9: readBin(fp, double(), n = 3, endian = "little")
+8: read.fit.bin(filename.mcmc1, filename.mcmc2, filename.hsz.mcmc2, 
+       stoxdata)
+7: eca::eca.estimate(AgeLength, WeightLength, Landings, GlobalParameters)
+6: runRECA(projectname, burnin = burnin, caa.burnin = caa.burnin, 
+       nSamples = nSamples, seed = seed, lgamodel = lgamodel) at runECA.R#14
+5: runproject(projectname, lgamodel = "non-linear") at runECA.R#34
+4: eval(ei, envir)
+3: eval(ei, envir)
+2: withVisible(eval(ei, envir))
+1: source("~/Google Drive/code/github/Rstox_utils/Work/runECA.R")
+Warning message:
+In .Internal(putconst(constBuf, constCount, x)) :
+  closing unused connection 3 (/Users/a5362/workspace/stox/project/ECA_sild_2015/output/r/data/reca/resfiles/fit_mcmc1)
