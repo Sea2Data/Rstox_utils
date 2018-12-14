@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project template="" rstoxversion="1.9.1" xmlns="http://www.imr.no/formats/stox/v1" lastmodified="14/12/18 21:14" rversion="3.5.0" stoxversion="2.6.13" resourceversion="1.84">
+<project template="" rstoxversion="1.9.1" xmlns="http://www.imr.no/formats/stox/v1" lastmodified="14/12/18 23:02" rversion="3.5.0" stoxversion="2.6.13" resourceversion="1.84">
   <model name="baseline">
     <process name="ReadProcessData">
       <function>ReadProcessData</function>
@@ -76,7 +76,7 @@
       <breakingui>false</breakingui>
       <fileoutput>true</fileoutput>
       <parameter name="LandingData">Process(ReadLandingXML)</parameter>
-      <parameter name="LandingExpr">rundvekt&gt;0</parameter>
+      <parameter name="LandingExpr">rundvekt&gt;0  &amp;&amp; fiskernasjonalitetkode=='NOR'</parameter>
       <output>LandingData</output>
     </process>
     <process name="ApplyPosToLanding">
@@ -474,18 +474,13 @@
       <value covariatesourcetype="Biotic" covariate="7">7</value>
       <value covariatesourcetype="Biotic" covariate="8">8</value>
       <value covariatesourcetype="Biotic" covariate="12">12</value>
-      <value covariatesourcetype="Biotic" covariate="21">21</value>
-      <value covariatesourcetype="Biotic" covariate="27">27</value>
       <value covariatesourcetype="Biotic" covariate="28">28</value>
       <value covariatesourcetype="Biotic" covariate="30">30</value>
       <value covariatesourcetype="Biotic" covariate="34">34</value>
-      <value covariatesourcetype="Biotic" covariate="36">36</value>
       <value covariatesourcetype="Biotic" covariate="37">37</value>
       <value covariatesourcetype="Biotic" covariate="40">40</value>
       <value covariatesourcetype="Biotic" covariate="41">41</value>
       <value covariatesourcetype="Biotic" covariate="42">42</value>
-      <value covariatesourcetype="Biotic" covariate="43">43</value>
-      <value covariatesourcetype="Biotic" covariate="48">48</value>
       <value covariatesourcetype="Landing" covariate="0">0</value>
       <value covariatesourcetype="Landing" covariate="3">3</value>
       <value covariatesourcetype="Landing" covariate="4">4</value>
@@ -494,18 +489,13 @@
       <value covariatesourcetype="Landing" covariate="7">7</value>
       <value covariatesourcetype="Landing" covariate="8">8</value>
       <value covariatesourcetype="Landing" covariate="12">12</value>
-      <value covariatesourcetype="Landing" covariate="21">21</value>
-      <value covariatesourcetype="Landing" covariate="27">27</value>
       <value covariatesourcetype="Landing" covariate="28">28</value>
       <value covariatesourcetype="Landing" covariate="30">30</value>
       <value covariatesourcetype="Landing" covariate="34">34</value>
-      <value covariatesourcetype="Landing" covariate="36">36</value>
       <value covariatesourcetype="Landing" covariate="37">37</value>
       <value covariatesourcetype="Landing" covariate="40">40</value>
       <value covariatesourcetype="Landing" covariate="41">41</value>
       <value covariatesourcetype="Landing" covariate="42">42</value>
-      <value covariatesourcetype="Landing" covariate="43">43</value>
-      <value covariatesourcetype="Landing" covariate="48">48</value>
     </spatial>
     <platformfactor>
       <value covariatesourcetype="Biotic" covariate="1002">1002</value>
