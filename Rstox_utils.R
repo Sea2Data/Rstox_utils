@@ -761,8 +761,6 @@ copyLatestToServer <- function(local, server, toCopy=c("Diff", "Output", "Projec
 }
 copyStaged_Projects_original <- function(server, local, overwrite=TRUE){
 	
-	browser()
-	
 	local <- getTestFolderStructure(path.expand(local))$Staged_Projects_original
 	server <- getTestFolderStructure(path.expand(server))$Staged_Projects_original
 	
@@ -1903,9 +1901,6 @@ automatedRstoxTest <- function(dir, root=list(windows="\\\\delphi", unix="/Volum
 		write("}", file=progressFile, append=TRUE)
 		#write("\n", file=progressFile, append=TRUE)
 	}
-	
-	browser()
-	
 	
 	# Set the directory of the test projects:
 	server <- getServerPath(root=root, path=path)
