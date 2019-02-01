@@ -1915,6 +1915,7 @@ automatedRstoxTest <- function(dir, root=list(windows="\\\\delphi", unix="/Volum
 	# Make sure the paths are expanded:
 	server <- path.expand(server)
 	dir <- path.expand(dir)
+	suppressWarnings(dir.create(dir))
 	
 	dirList <- getTestFolderStructure(dir)
 	# Create the folder structure if missing:
