@@ -584,6 +584,11 @@ getPlatformID <- function(var="release"){
 #'
 getTestFolderStructure <- function(x){
 	
+	# Accept the platoform specific directory:
+	if("Projects_original" %in% list.dirs(x, recursive=FALSE)){
+		x <- dirname(x)
+	}
+	
 	platformFolderName <- getPlatformID()
 	
 	list(
@@ -728,31 +733,44 @@ getLatestDir <- function(dir, op="<", n=1){
 #' @export
 #' @keywords internal
 #'
-copyLatest <- function(from, to, toCopy=c("Diff", "Output", "Projects_original"), overwrite=TRUE, msg=FALSE, op="<", n=1){
+copyLatestToServer <- function(local, server, toCopy=c("Diff", "Output", "Projects_original"), overwrite=TRUE, msg=FALSE, op="<", n=1){
 	
 	# Function for copying from one subdirectory:
-	copyLatestOne <- function(folder, from, to, overwrite=TRUE, msg=FALSE, op=op, n=1){
-		from <- getLatestDir(from[[folder]], op=op, n=n)
-		if(length(from)){
+	copyLatestOne <- function(folder, local, server, overwrite=TRUE, msg=FALSE, op=op, n=1){
+		local <- getLatestDir(local[[folder]], op=op, n=n)
+		if(length(local)){
 			# Check for the existence of the folder (as opposed to using 'overwrite' in file.copy(), which copies all files which do not exist in the destination).
-			if(file.exists(to[[folder]]) && !overwrite){
-				warning(paste0("The folder ", to[[folder]], " already exists and was not overwritten. Use overwrite=TRUE to overwrite from ", from))
+			if(file.exists(server[[folder]]) && !overwrite){
+				warning(paste0("The folder ", server[[folder]], " already exists and was not overwritten. Use overwrite=TRUE to overwrite from ", local))
 			}
 			else{
-				temp <- file.copy(from, to[[folder]], recursive=TRUE, overwrite=overwrite)
+				temp <- file.copy(local, server[[folder]], recursive=TRUE, overwrite=overwrite)
 				if(msg){
-					cat("Copied", from, "to", to[[folder]], "\n")
+					cat("Copied", local, "to", server[[folder]], "\n")
 				}
 			}
 		}
 	}
 	
 	# Get the folder structure of the local and central directory:
-	from <- getTestFolderStructure(path.expand(from))
-	to <- getTestFolderStructure(path.expand(to))
+	local <- getTestFolderStructure(path.expand(local))
+	server <- getTestFolderStructure(path.expand(server))
 	
 	# Copy for all specified subdirectories:
-	invisible(lapply(toCopy, copyLatestOne, from, to, overwrite=overwrite, msg=msg, op=op, n=n))
+	invisible(lapply(toCopy, copyLatestOne, local, server, overwrite=overwrite, msg=msg, op=op, n=n))
+}
+copyStaged_Projects_original <- function(server, local, overwrite=TRUE){
+	
+	browser()
+	
+	local <- getTestFolderStructure(path.expand(local))$Staged_Projects_original
+	server <- getTestFolderStructure(path.expand(server))$Staged_Projects_original
+	
+	
+	# Delete the local Staged_Projects_original:
+	unlink(local, recursive=TRUE, force=TRUE)
+	
+	file.copy(server, dirname(local), recursive=TRUE, overwrite=overwrite)
 }
 
 #*********************************************
@@ -1012,7 +1030,7 @@ copyProjectRun <- function(projectName, progressFile, outputDir){
 #' @export
 #' @keywords internal
 #'
-automatedRstoxTest <- function(dir, root=list(windows="\\\\delphi", unix="/Volumes"), path="pc_prog/S2D/stox/StoXAutoTest", copyFromServer=TRUE, process=c("run", "diff"),  diffs=c("Rdata", "images", "text", "baseline"), nlines=50, mem.size=16e9, nwarnings=10000, n=1L){
+automatedRstoxTest <- function(dir, root=list(windows="\\\\delphi", unix="/Volumes"), path="pc_prog/S2D/stox/StoX_version_test/Automated_testing", copyFromServer=TRUE, process=c("run", "diff"),  diffs=c("Rdata", "images", "text", "baseline"), nlines=50, mem.size=16e9, nwarnings=10000, n=1L){
 #automatedRstoxTest <- function(dir, copyFromServer=TRUE, process=c("run", "diff"),  nlines=-1L, root=list(windows="\\\\delphi", unix="/Volumes"), path="pc_prog/S2D/stox/StoXAutoTest"){
 	
 	# Load image packages:
@@ -1171,74 +1189,74 @@ automatedRstoxTest <- function(dir, root=list(windows="\\\\delphi", unix="/Volum
 	}
 	
 	# Function for running the r scripts of a project and copying the relevant output files to the "Output" directory:
-	runProject <- function(projectName, progressFile, outputDir){
-		
-		RstoxVersion <- getRstoxVersion()
-		
-		cat(paste0("\n\n------------------------------------------------------------\nRunning project ", i, ": ", projectName, ":\n"))
-		
-		# Run the baseline and baseline report (the latter with input=NULL):
-		# The parameter 'modelType', enabling reading Baseline Report, was introduced in 1.8.1:
-		# 2018-04-19 Added saveProject() since we wish to pick up changes in the project.xml files:
-		if(RstoxVersion$Rstox > "1.8"){
-			write(paste0(now(TRUE), "Running Baseline and Baseline Report"), progressFile, append=TRUE)
-			baselineOutput <- getBaseline(projectName, exportCSV=TRUE, modelType="baseline", input=NULL, drop=FALSE)
-			saveProject(projectName)
-			baselineReportOutput <- getBaseline(projectName, exportCSV=TRUE, modelType="report", input=NULL, drop=FALSE)
-			saveProject(projectName)
-		}
-		else{
-			write(paste0(now(TRUE), "Running Baseline"), progressFile, append=TRUE)
-			baselineOutput <- getBaseline(projectName, exportCSV=TRUE, input=NULL, drop=FALSE)
-			saveProject(projectName)
-		}
-		
-		# Get the path to the scripts to run:
-		r_script <- file.path(projectName, "output", "R", "r.R")
-		rreport_script <- file.path(projectName, "output", "R", "r-report.R")
-		# Generate the r scripts:
-		generateRScripts(projectName)
-	
-		# Run the scripts and print info to the progress file:
-		write(paste0(now(TRUE), "Starting project ", i, ": ", projectName), progressFile, append=TRUE)
-		
-		
-		write(paste0(now(TRUE), "Running r.R"), progressFile, append=TRUE)
-		if(file.exists(r_script)){
-			source(r_script)
-		}
-		write(paste0(now(TRUE), "Running r-report.R"), progressFile, append=TRUE)
-		if(file.exists(rreport_script)){
-			source(rreport_script)
-		}
-		write(paste0(now(TRUE), "Ending project ", i, ": ", projectName), progressFile, append=TRUE)
-		write("", progressFile, append=TRUE)
-		closeProject(projectName)
-		
-		# Copy output files to the output directory:
-		unlink(outputDir, recursive=TRUE, force=TRUE)
-		suppressWarnings(dir.create(outputDir, recursive=TRUE))
-		output <- file.path(projectName, "output")
-		file.copy(output, outputDir, recursive=TRUE)
-		
-		# Delete trash:
-		trash <- list.dirs(outputDir)
-		trash <- trash[grep("trash", trash)]
-		unlink(trash, recursive=TRUE, force=TRUE)
-		
-		# Save also the output from baseline and baseline report to an RData file:
-		save(baselineOutput, file=file.path(outputDir, "baselineOutput.RData"))
-		if(RstoxVersion$Rstox > "1.8"){
-			save(baselineReportOutput, file=file.path(outputDir, "baselineReportOutput.RData"))
-		}
-		
-		# Copy the project.xml file:
-		from <- getProjectPaths(projectName)$projectXML
-		to <- file.path(outputDir, "project.xml")
-		file.copy(from=from, to=to, overwrite=TRUE)
-		
-		cat("\n")
-	}
+	###runProject <- function(projectName, progressFile, outputDir){
+	###	
+	###	RstoxVersion <- getRstoxVersion()
+	###	
+	###	cat(paste0("\n\n------------------------------------------------------------\nRunning project ", i, ": ", projectName, ":\n"))
+	###	
+	###	# Run the baseline and baseline report (the latter with input=NULL):
+	###	# The parameter 'modelType', enabling reading Baseline Report, was introduced in 1.8.1:
+	###	# 2018-04-19 Added saveProject() since we wish to pick up changes in the project.xml files:
+	###	if(RstoxVersion$Rstox > "1.8"){
+	###		write(paste0(now(TRUE), "Running Baseline and Baseline Report"), progressFile, append=TRUE)
+	###		baselineOutput <- getBaseline(projectName, exportCSV=TRUE, modelType="baseline", input=NULL, drop=FALSE)
+	###		saveProject(projectName)
+	###		baselineReportOutput <- getBaseline(projectName, exportCSV=TRUE, modelType="report", input=NULL, drop=FALSE)
+	###		saveProject(projectName)
+	###	}
+	###	else{
+	###		write(paste0(now(TRUE), "Running Baseline"), progressFile, append=TRUE)
+	###		baselineOutput <- getBaseline(projectName, exportCSV=TRUE, input=NULL, drop=FALSE)
+	###		saveProject(projectName)
+	###	}
+	###	
+	###	# Get the path to the scripts to run:
+	###	r_script <- file.path(projectName, "output", "R", "r.R")
+	###	rreport_script <- file.path(projectName, "output", "R", "r-report.R")
+	###	# Generate the r scripts:
+	###	generateRScripts(projectName)
+	###
+	###	# Run the scripts and print info to the progress file:
+	###	write(paste0(now(TRUE), "Starting project ", i, ": ", projectName), progressFile, append=TRUE)
+	###	
+	###	
+	###	write(paste0(now(TRUE), "Running r.R"), progressFile, append=TRUE)
+	###	if(file.exists(r_script)){
+	###		source(r_script)
+	###	}
+	###	write(paste0(now(TRUE), "Running r-report.R"), progressFile, append=TRUE)
+	###	if(file.exists(rreport_script)){
+	###		source(rreport_script)
+	###	}
+	###	write(paste0(now(TRUE), "Ending project ", i, ": ", projectName), progressFile, append=TRUE)
+	###	write("", progressFile, append=TRUE)
+	###	closeProject(projectName)
+	###	
+	###	# Copy output files to the output directory:
+	###	unlink(outputDir, recursive=TRUE, force=TRUE)
+	###	suppressWarnings(dir.create(outputDir, recursive=TRUE))
+	###	output <- file.path(projectName, "output")
+	###	file.copy(output, outputDir, recursive=TRUE)
+	###	
+	###	# Delete trash:
+	###	trash <- list.dirs(outputDir)
+	###	trash <- trash[grep("trash", trash)]
+	###	unlink(trash, recursive=TRUE, force=TRUE)
+	###	
+	###	# Save also the output from baseline and baseline report to an RData file:
+	###	save(baselineOutput, file=file.path(outputDir, "baselineOutput.RData"))
+	###	if(RstoxVersion$Rstox > "1.8"){
+	###		save(baselineReportOutput, file=file.path(outputDir, "baselineReportOutput.RData"))
+	###	}
+	###	
+	###	# Copy the project.xml file:
+	###	from <- getProjectPaths(projectName)$projectXML
+	###	to <- file.path(outputDir, "project.xml")
+	###	file.copy(from=from, to=to, overwrite=TRUE)
+	###	
+	###	cat("\n")
+	###}
 	
 	printProjectName <- function(x, progressFile){
 		cat(x$projectName, "...", "\n", sep="")
@@ -1886,6 +1904,7 @@ automatedRstoxTest <- function(dir, root=list(windows="\\\\delphi", unix="/Volum
 		#write("\n", file=progressFile, append=TRUE)
 	}
 	
+	browser()
 	
 	
 	# Set the directory of the test projects:
@@ -1912,8 +1931,13 @@ automatedRstoxTest <- function(dir, root=list(windows="\\\\delphi", unix="/Volum
 	
 	# 1. Copy the latest original projects, outputs and diffs in the server to the local directory:
 	if("run" %in% process && copyFromServer){
+		#cat("Copying original projects from \"", server, "\" to ", dir, "\n", sep="")
 		cat("Copying original projects from \"", server, "\" to ", dir, "\n", sep="")
-		copyLatest(server, dir)
+		
+		#copyStaged_Projects_original(server, dirname(dir))
+		copyStaged_Projects_original(dirname(server), dir)
+		
+		#copyLatest(server, dir)
 	}
 	
 	# Get the latest projects:

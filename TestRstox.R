@@ -79,7 +79,6 @@ system.time(automatedRstoxTest(dir="~/workspace/stox/project/Automated_testing",
 
 
 
-
-copyCurrentToServer(dir, root=list(windows="\\\\delphi", unix="/Volumes"), path="pc_prog/S2D/stox/StoXAutoTest", toCopy=c("Diff", "Output", "Projects_original"), msg=TRUE, n=2)
+copyCurrentToServer(dir, root=list(windows="\\\\delphi", unix="/Volumes"), path="pc_prog/S2D/stox/StoX_version_test/Automated_testing", toCopy=c("Diff", "Output", "Projects_original"), msg=TRUE, n=2)
 
 	
