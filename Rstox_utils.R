@@ -264,14 +264,19 @@ build_Rstox <- function(buildDir, pkgName="Rstox", version="1.0", Rversion="3.3.
 		write("# Install from github using the devtools package:", READMEfile, append=TRUE)
 		write("# devtools::install_github(\"Sea2Data/Rstox\", ref=\"develop\")", READMEfile, append=TRUE)
 		write("", READMEfile, append=TRUE)
-		write("# R should be installed as the 64 bit version. On Windows 10 ONLY the 64 bit version should be used. ", READMEfile, append=TRUE)
+		write("# R should be installed as the 64 bit version. On Windows 10, ONLY the 64 bit version should be used.", READMEfile, append=TRUE)
 		write("# To do this, uncheck the box \"32-bit Files\" when selecting components to install.", READMEfile, append=TRUE)
-		write("# If you are re-intalling an R that has both 32 and 64 bit, you will need to uninstall R first.", READMEfile, append=TRUE)
+		write("# If you are re-installing an R that has both 32 and 64 bit, you will need to uninstall R first.", READMEfile, append=TRUE)
+		write("", READMEfile, append=TRUE)
 		write("# On Windows systems with adminstrator requirements, it is recommended to install R in C:/users/<user>/documents/R.", READMEfile, append=TRUE)
+		write("# Also if you are using Rstudio, please make sure that you are using the correct R version (in case you have", READMEfile, append=TRUE)
+		write("# multiple versions installed). The R version can be selected in Tools > Global Options.", READMEfile, append=TRUE)
 		write("", READMEfile, append=TRUE)
 		write("# Note that 64 bit Java is required to run Rstox", READMEfile, append=TRUE)
+		write("", READMEfile, append=TRUE)
 		write("# On Windows, install Java from this webpage: https://www.java.com/en/download/windows-64bit.jsp,", READMEfile, append=TRUE)
 		write("# or follow the instructions found on ftp://ftp.imr.no/StoX/Tutorials/", READMEfile, append=TRUE)
+		write("", READMEfile, append=TRUE)
 		write("# On Mac, getting Java and Rstox to communicate can be challenging.", READMEfile, append=TRUE)
 		write("# If you run into problems such as \"Unsupported major.minor version ...\", try the following:", READMEfile, append=TRUE)
 		write("# Update java, on", READMEfile, append=TRUE)
@@ -279,6 +284,8 @@ build_Rstox <- function(buildDir, pkgName="Rstox", version="1.0", Rversion="3.3.
 		write("# If this does not work install first the JDK and then the JRE:", READMEfile, append=TRUE)
 		write("# \thttp://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html", READMEfile, append=TRUE)
 		write("# \thttp://www.oracle.com/technetwork/java/javase/downloads/jre8-downloads-2133155.html", READMEfile, append=TRUE)
+		write("# Rstox sohuld also work with Java 11, presently available only as Development Kit:", READMEfile, append=TRUE)
+		write("# \thttps://www.oracle.com/technetwork/java/javase/downloads/jdk11-downloads-5066655.html", READMEfile, append=TRUE)
 		write("# You may want to check that the downloaded version is first in the list by running the following in the Terminal:", READMEfile, append=TRUE)
 		write("# \t/usr/libexec/java_home -V", READMEfile, append=TRUE)
 		write("# \tjava -version", READMEfile, append=TRUE)
@@ -576,11 +583,15 @@ getPlatformID <- function(var="release"){
 #' @keywords internal
 #'
 getTestFolderStructure <- function(x){
+	
+	platformFolderName <- getPlatformID()
+	
 	list(
-		Projects_original = file.path(x, "Projects_original"), 
-		Projects = file.path(x, "Projects"), 
-		Output = file.path(x, "Output"), 
-		Diff = file.path(x, "Diff"))
+		Staged_Projects_original = file.path(x, "Staged_Projects_original"), 
+		Projects_original = file.path(x, platformFolderName, "Projects_original"), 
+		Projects = file.path(x, platformFolderName, "Projects"), 
+		Output = file.path(x, platformFolderName, "Output"), 
+		Diff = file.path(x, platformFolderName, "Diff"))
 }
 
 #*********************************************
@@ -594,7 +605,7 @@ getTestFolderStructure <- function(x){
 #' @export
 #' @keywords internal
 #'
-getLatestDir <- function(dir, op="<", n=1){
+getLatestDir_old <- function(dir, op="<", n=1){
 	
 	# Function for converting the Rstox version to a numeric value suitable for sorting, by multiplying each digit in the version number by scaling factor which are largest for the first digits (e.g., Rstox_1.10.3 gives 1 * 1e4 + 10 * 1e2 + 3 = 11003):
 	version2numeric <- function(x){
@@ -642,6 +653,66 @@ getLatestDir <- function(dir, op="<", n=1){
 		return(NULL)
 	}
 }
+
+getLatestDir <- function(dir, op="<", n=1){
+	
+	# Function for converting the Rstox version to a numeric value suitable for sorting, by multiplying each digit in the version number by scaling factor which are largest for the first digits (e.g., Rstox_1.10.3 gives 1 * 1e4 + 10 * 1e2 + 3 = 11003):
+	version2numeric <- function(x){
+		x <- lapply(strsplit(x, ".", fixed=TRUE), as.numeric)
+		x <- sapply(x, function(y) sum(y * 10^(6 - 2 * seq_along(y))))
+		x
+	}
+	extractVersionstrings <- function(x){
+		x[seq(2, length(x), by=2)]
+	}
+	versionScaled <- function(x){
+		sum(x * 10^(10 * seq(length(x) - 1, 0)))
+	}
+	
+	if(length(dir)==0){
+		return(NULL)
+	}
+	# Get the Rstox and stox-lib versions:
+	current <- sapply(getRstoxVersion(), as.character)
+	currentString <- paste(current, sep="_", collapse="_")
+	currentNumeric <- sapply(current, version2numeric)
+	current <- versionScaled(currentNumeric)
+	
+	# List all directories:
+	All <- list.dirs(dir, recursive=FALSE)
+	All <- All[grep("Rstox", All)]
+	if(length(All)==0){
+		warning(paste0("No projects in the test folder '", dir, "'"))
+	}
+	
+	# Get the Rstox and stox-lib versions encoded in the folder names:
+	versions <- strsplit(basename(All), "_")
+	# Pick out every other element, which are the version strings:
+	versionStrings <- lapply(versions, extractVersionstrings)
+	versionStrings <- lapply(versionStrings, version2numeric)
+	versions <- sapply(versionStrings, versionScaled)
+	
+	# There has to be at least one previous version:
+	latest <- do.call(op, list(versions, current))
+	if(!any(is.na(latest)) && any(latest)){
+		#return(All[max(which(latest))])
+		# Allow for specifying e.g. the third latest:
+		if(is.integer(n)){
+			atlatest <- sort(which(latest))
+			out <- All[atlatest[length(atlatest) - n + 1]]
+		}
+		else{
+			out <- All[tail(sort(which(latest)), n)]
+		}
+		return(out)
+	}
+	else{
+		warning(paste0("No directories with Rstox version before Rstox_StoXLib version \"", currentString, "\" in the directory \"", dir, "\""))
+		return(NULL)
+	}
+}
+
+
 
 #*********************************************
 #*********************************************
@@ -738,25 +809,29 @@ copyCurrentToServer <- function(dir, root=list(windows="\\\\delphi", unix="/Volu
 #' @export
 #' @keywords internal
 #'
-runProject <- function(projectName, progressFile, outputDir){
+runProject <- function(projectName, progressFile, outputDir, ind=NULL){
 	
 	RstoxVersion <- getRstoxVersion()
 	
-	cat(paste0("\n\n------------------------------------------------------------\nRunning project ", i, ": ", projectName, ":\n"))
+	# Run the scripts and print info to the progress file:
+	write(paste0(now(TRUE), "Starting project", paste0(" ", ind), ": ", projectName), progressFile, append=TRUE)
+	
+	
+	cat(paste0("\n\n------------------------------------------------------------\nRunning project", paste0(" ", ind), ": ", projectName, ":\n"))
 	
 	# Run the baseline and baseline report (the latter with input=NULL):
 	# The parameter 'modelType', enabling reading Baseline Report, was introduced in 1.8.1:
 	# 2018-04-19 Added saveProject() since we wish to pick up changes in the project.xml files:
 	if(RstoxVersion$Rstox > "1.8"){
 		write(paste0(now(TRUE), "Running Baseline and Baseline Report"), progressFile, append=TRUE)
-		baselineOutput <- getBaseline(projectName, exportCSV=TRUE, modelType="baseline", input=NULL, drop=FALSE)
+		baselineOutput <- getBaseline(projectName, exportCSV=TRUE, modelType="baseline", input=c("par", "proc"), drop=FALSE)
 		saveProject(projectName)
-		baselineReportOutput <- getBaseline(projectName, exportCSV=TRUE, modelType="report", input=NULL, drop=FALSE)
+		baselineReportOutput <- getBaseline(projectName, exportCSV=TRUE, modelType="report", input=c("par", "proc"), drop=FALSE)
 		saveProject(projectName)
 	}
 	else{
 		write(paste0(now(TRUE), "Running Baseline"), progressFile, append=TRUE)
-		baselineOutput <- getBaseline(projectName, exportCSV=TRUE, input=NULL, drop=FALSE)
+		baselineOutput <- getBaseline(projectName, exportCSV=TRUE, input=c("par", "proc"), drop=FALSE)
 		saveProject(projectName)
 	}
 	
@@ -766,10 +841,6 @@ runProject <- function(projectName, progressFile, outputDir){
 	# Generate the r scripts:
 	generateRScripts(projectName)
 
-	# Run the scripts and print info to the progress file:
-	write(paste0(now(TRUE), "Starting project ", i, ": ", projectName), progressFile, append=TRUE)
-	
-	
 	write(paste0(now(TRUE), "Running r.R"), progressFile, append=TRUE)
 	if(file.exists(r_script)){
 		source(r_script)
@@ -778,7 +849,7 @@ runProject <- function(projectName, progressFile, outputDir){
 	if(file.exists(rreport_script)){
 		source(rreport_script)
 	}
-	write(paste0(now(TRUE), "Ending project ", i, ": ", projectName), progressFile, append=TRUE)
+	write(paste0(now(TRUE), "Ending project", paste0(" ", ind), ": ", projectName), progressFile, append=TRUE)
 	write("", progressFile, append=TRUE)
 	closeProject(projectName)
 	
@@ -806,6 +877,124 @@ runProject <- function(projectName, progressFile, outputDir){
 	
 	cat("\n")
 }
+runProjectNew <- function(projectName, save=FALSE, msg=TRUE, close=FALSE){
+	
+	writeMessageToConsoleOrFile <- function(text, msg, add.time=FALSE){
+		if(is.character(msg) && file.exists(msg)){
+			write(paste0(if(add.time) now(TRUE), text), msg, append=TRUE)
+		}
+		else if(isTRUE(msg)){
+			message(text)
+		}
+	}
+	
+	
+	RstoxVersion <- getRstoxVersion()
+	
+	# Run the baseline and baseline report (the latter with input=NULL):
+	# The parameter 'modelType', enabling reading Baseline Report, was introduced in 1.8.1:
+	# 2018-04-19 Added saveProject() since we wish to pick up changes in the project.xml files:
+	baselineReportOutput <- NULL
+	if(RstoxVersion$Rstox > "1.8"){
+		if(f(progressFile)){
+			write(paste0(now(TRUE), "Running Baseline and Baseline Report"), progressFile, append=TRUE)
+		}
+		else if(msg){
+			message("Running Baseline and Baseline Report")
+		}
+		baselineOutput <- getBaseline(projectName, exportCSV=TRUE, modelType="baseline", input=NULL, drop=FALSE)
+		if(save){
+			saveProject(projectName)
+		}
+		
+		baselineReportOutput <- getBaseline(projectName, exportCSV=TRUE, modelType="report", input=NULL, drop=FALSE)
+		if(save){
+			saveProject(projectName)
+		}
+	}
+	else{
+		if(length(progressFile)){
+			write(paste0(now(TRUE), "Running Baseline"), progressFile, append=TRUE)
+		}
+		else if(msg){
+			message("Running Baseline")
+		}
+		baselineOutput <- getBaseline(projectName, exportCSV=TRUE, input=NULL, drop=FALSE)
+		if(save){
+			saveProject(projectName)
+		}
+	}
+	
+	# Get the path to the scripts to run:
+	r_script <- file.path(projectName, "output", "R", "r.R")
+	rreport_script <- file.path(projectName, "output", "R", "r-report.R")
+	# Generate the r scripts:
+	generateRScripts(projectName)
+
+	# Run the scripts and print info to the progress file:
+	if(length(progressFile)){
+		write(paste0(now(TRUE), "Starting project ", i, ": ", projectName), progressFile, append=TRUE)
+	}
+	
+	if(length(progressFile)){
+		write(paste0(now(TRUE), "Running r.R"), progressFile, append=TRUE)
+	}
+	else if(msg){
+		message("Running r.R")
+	}
+	if(file.exists(r_script)){
+		source(r_script)
+	}
+	
+	if(length(progressFile)){
+		write(paste0(now(TRUE), "Running r-report.R"), progressFile, append=TRUE)
+	}
+	else if(msg){
+		message("Running r-report.R")
+	}
+	if(file.exists(rreport_script)){
+		source(rreport_script)
+	}
+	
+	if(length(progressFile)){
+		write(paste0(now(TRUE), "Ending project ", i, ": ", projectName), progressFile, append=TRUE)
+		write("", progressFile, append=TRUE)
+	}
+	
+	if(close){
+		closeProject(projectName)
+	}
+	
+	list(baselineOutput=baselineOutput, baselineReportOutput=baselineReportOutput)
+}
+copyProjectRun <- function(projectName, progressFile, outputDir){
+	
+	run <- runProject(projectName, save=TRUE, progressFile=progressFile, msg=TRUE, close=TRUE)
+		
+	# Copy output files to the output directory:
+	unlink(outputDir, recursive=TRUE, force=TRUE)
+	suppressWarnings(dir.create(outputDir, recursive=TRUE))
+	output <- file.path(projectName, "output")
+	file.copy(output, outputDir, recursive=TRUE)
+	
+	# Delete trash:
+	trash <- list.dirs(outputDir)
+	trash <- trash[grep("trash", trash)]
+	unlink(trash, recursive=TRUE, force=TRUE)
+	
+	# Save also the output from baseline and baseline report to an RData file:
+	save(run$baselineOutput, file=file.path(outputDir, "baselineOutput.RData"))
+	if(length(run$baselineReportOutput)){
+		save(run$baselineReportOutput, file=file.path(outputDir, "baselineReportOutput.RData"))
+	}
+	
+	# Copy the project.xml file:
+	from <- getProjectPaths(projectName)$projectXML
+	to <- file.path(outputDir, "project.xml")
+	file.copy(from=from, to=to, overwrite=TRUE)
+	
+	cat("\n")
+}
 
 
 #*********************************************
@@ -823,7 +1012,7 @@ runProject <- function(projectName, progressFile, outputDir){
 #' @export
 #' @keywords internal
 #'
-automatedRstoxTest <- function(dir, root=list(windows="\\\\delphi", unix="/Volumes"), path="pc_prog/S2D/stox/StoXAutoTest", copyFromServer=TRUE, process=c("run", "diff"),  diffs=c("Rdata", "images", "text", "baseline"), nlines=50){
+automatedRstoxTest <- function(dir, root=list(windows="\\\\delphi", unix="/Volumes"), path="pc_prog/S2D/stox/StoXAutoTest", copyFromServer=TRUE, process=c("run", "diff"),  diffs=c("Rdata", "images", "text", "baseline"), nlines=50, mem.size=16e9, nwarnings=10000, n=1L){
 #automatedRstoxTest <- function(dir, copyFromServer=TRUE, process=c("run", "diff"),  nlines=-1L, root=list(windows="\\\\delphi", unix="/Volumes"), path="pc_prog/S2D/stox/StoXAutoTest"){
 	
 	# Load image packages:
@@ -833,6 +1022,10 @@ automatedRstoxTest <- function(dir, root=list(windows="\\\\delphi", unix="/Volum
 	# Load utilities packages:
 	library(tools)
 	library(R.utils)
+	
+	setJavaMemory(mem.size)
+	oldnwarnings <- options()$nwarnings
+	options(nwarnings=nwarnings)  
 	
 	# The function readBaselineFiles() was introduced in Rstox 1.8.1:
 	if(getRstoxVersion()$Rstox <= "1.8"){
@@ -881,15 +1074,6 @@ automatedRstoxTest <- function(dir, root=list(windows="\\\\delphi", unix="/Volum
 		}
 	}
 	
-	# Function for getting a string with the current time: 
-	now <- function(brackets=FALSE){
-		out <- format(Sys.time(),tz="UTC", "%Y-%m-%d_%H.%M.%S")
-		if(brackets){
-			out <- paste0("[", out, "] ")
-		}
-		out
-	}
-	
 	# Order the sub data frames:
 	sortByName <- function(x){
 		if(length(x)){
@@ -904,6 +1088,14 @@ automatedRstoxTest <- function(dir, root=list(windows="\\\\delphi", unix="/Volum
 		unlink(list.files(file.path(dir, "output"), full.names=TRUE, recursive=TRUE), force=TRUE)
 		#unlink(file.path(dir, "output", "baseline"), recursive=TRUE, force=TRUE)
 		#unlink(file.path(dir, "output", "r"), recursive=TRUE, force=TRUE)
+	}
+	deleteOutput <- function(x){
+		if(length(x)==1 && !isProject(x[1])){
+			x <- list.dirs(x, recursive=FALSE)
+		}
+		output <- file.path(x, "output")
+		files <- list.files(output, recursive=TRUE, full.names=TRUE)
+		unlink(files)
 	}
 	
 	pasteAndHash <- function(...){
@@ -949,8 +1141,11 @@ automatedRstoxTest <- function(dir, root=list(windows="\\\\delphi", unix="/Volum
 		}
 		getMatches <- function(files1, files2, dir1, dir2){
 			commonFiles <- intersect(files1, files2)
-			commonPaths1 <- file.path(dir1, files1)
-			commonPaths2 <- file.path(dir2, files2)
+			# This was an error, the correct would be to use the commonFiles as basename:
+			#commonPaths1 <- file.path(dir1, files1)
+			#commonPaths2 <- file.path(dir2, files2)
+			commonPaths1 <- file.path(dir1, commonFiles)
+			commonPaths2 <- file.path(dir2, commonFiles)
 			onlyInFirst <- setdiff(files1, files2)
 			onlyInSecond <- setdiff(files2, files1)
 			list(commonFiles=commonFiles, commonPaths1=commonPaths1, commonPaths2=commonPaths2, onlyInFirst=onlyInFirst, onlyInSecond=onlyInSecond)
@@ -959,8 +1154,8 @@ automatedRstoxTest <- function(dir, root=list(windows="\\\\delphi", unix="/Volum
 		
 		
 		# Get matching and differing files:
-		files1 <- getFilesByExtOne(list.files(dir1, recursive=recursive), ext=ext)
-		files2 <- getFilesByExtOne(list.files(dir2, recursive=recursive), ext=ext)
+		files1 <- getFilesByExtOne(list.files(dir1, recursive=recursive, full.names=FALSE), ext=ext)
+		files2 <- getFilesByExtOne(list.files(dir2, recursive=recursive, full.names=FALSE), ext=ext)
 		out <- getMatches(files1, files2, dir1, dir2)
 		# Add the input directories:
 		out$dir1 <- dir1
@@ -981,43 +1176,112 @@ automatedRstoxTest <- function(dir, root=list(windows="\\\\delphi", unix="/Volum
 		write(toWrite, file=progressFile, append=TRUE)
 	}
 	
-	reportFilesIntersects <- function(x, type="Projects", addProjectName=FALSE){
+	reportFilesIntersects <- function(x, progressFile, type="Projects", addProjectName=FALSE){
 		if(addProjectName){
 			printProjectName(x, progressFile)
 			#toWrite <- paste0("##### ", x$projectName, ": #####")
 			#write(toWrite, file=progressFile, append=TRUE)
 		}
 		
+		# (1) Common files:
+		toWrite <- paste0("# ", type, " common for both directories")
+		# Add the common files, ot the string "NONE":
 		if(length(x$commonFiles)){
 			toWrite <- paste0(c(
-				paste0("# ", type, " common for both directories"), 
+				toWrite, 
 				x$dir1, 
 				"# and", 
-				paste0(x$dir2, ":"), 
+				paste0(x$dir2, ":\n"), 
 				paste0("\t", x$commonFiles, collapse="\n"), 
-				""), collapse="\n")
-			write(toWrite, file=progressFile, append=TRUE)
+				""), collapse="\n"
+			)
 		}
+		else{
+			toWrite  <- paste0(c(
+				toWrite, 
+				"\tNONE", 
+				""), collapse="\n"
+			)
+		}
+		write(toWrite, file=progressFile, append=TRUE)
+	
+		# (2) Files only in the first directory:
+		toWrite <- paste0(c(
+			paste0("# ", type, " present only in the later directory: "), 
+			paste0(x$dir1, ":\n"))
+		)
+		# Add the common files, ot the string "NONE":
 		if(length(x$onlyInFirst)){
-			#toWrite <- paste0("# ", type, " only present in the directory\n# ", x$dir1, ":\n", paste("\t", x$onlyInFirst, collapse="\n"), "\n")
-			
 			toWrite <- paste0(c(
-				paste0("# ", type, " only present in the directory"), 
-				paste0(x$dir1, ":"), 
+				toWrite, 
 				paste0("\t", x$onlyInFirst, collapse="\n"), 
-				""), collapse="\n")
-						
-			write(toWrite, file=progressFile, append=TRUE)
+				""), collapse="\n"
+			)
 		}
+		else{
+			toWrite  <- paste0(c(
+				toWrite, 
+				"\tNONE", 
+				""), collapse="\n"
+			)
+		}
+		write(toWrite, file=progressFile, append=TRUE)
+	
+		# (3) Files only in the second directory:
+		toWrite <- paste0(c(
+			paste0("# ", type, " present only in the former directory:"), 
+			paste0(x$dir2, ":\n"))
+		)
+		# Add the common files, ot the string "NONE":
 		if(length(x$onlyInSecond)){
-			#toWrite <- paste0("# ", type, " only present in the directory\n# ", x$dir2, ":\n", paste("\t", x$onlyInSecond, collapse="\n"), "\n")
 			toWrite <- paste0(c(
-				paste0("# ", type, " only present in the directory"), 
-				paste0(x$dir2, ":"), 
+				toWrite, 
 				paste0("\t", x$onlyInSecond, collapse="\n"), 
-				""), collapse="\n")
-			write(toWrite, file=progressFile, append=TRUE)
+				""), collapse="\n"
+			)
 		}
+		else{
+			toWrite  <- paste0(c(
+				toWrite, 
+				"\tNONE", 
+				""), collapse="\n"
+			)
+		}
+		write(toWrite, file=progressFile, append=TRUE)
+	
+		
+		
+		
+		## Files only in the first directory:
+		#if(length(x$onlyInFirst)){
+		#	#toWrite <- paste0("# ", type, " present only in the directory\n# ", x$dir1, ":\n", paste("\t", x$onlyInFirst, collapse="\n"), "\n")
+		#	toWrite <- paste0(c(
+		#		paste0("# ", type, " present only in the directory"), 
+		#		paste0(x$dir1, ":\n"), 
+		#		paste0("\t", x$onlyInFirst, collapse="\n"), 
+		#		""), collapse="\n"
+		#	)
+		#}
+		#else{
+		#	toWrite  <- "NONE"
+		#}
+		#write(toWrite, file=progressFile, append=TRUE)
+		#
+		## Files only in the second directory:
+		#if(length(x$onlyInSecond)){
+		#	#toWrite <- paste0("# ", type, " present only in the directory\n# ", x$dir2, ":\n", paste("\t", x$onlyInSecond, collapse="\n"), "\n")
+		#	toWrite <- paste0(c(
+		#		paste0("# ", type, " present only in the directory"), 
+		#		paste0(x$dir2, ":\n"), 
+		#		paste0("\t", x$onlyInSecond, collapse="\n"), 
+		#		""), collapse="\n"
+		#	)
+		#}
+		#else{
+		#	toWrite  <- "NONE"
+		#}
+		#write(toWrite, file=progressFile, append=TRUE)
+		
 	}
 	
 	printHeader <- function(header, progressFile, w=60){
@@ -1041,7 +1305,7 @@ automatedRstoxTest <- function(dir, root=list(windows="\\\\delphi", unix="/Volum
 		projects <- getFilesByExt(dir1, dir2, recursive=FALSE)
 		
 		printHeader("Projects", progressFile, w=30)
-		reportFilesIntersects(projects, type="Projects")
+		reportFilesIntersects(projects, progressFile=progressFile, type="Projects")
 		
 		# Get the different files per project, in a list, for clarity:
 		RDataFiles <- lapply(seq_along(projects$commonFiles), function(i) getFilesByExt(dir1=projects$commonPaths1[i], dir2=projects$commonPaths2[i], ext="RData"))
@@ -1049,11 +1313,11 @@ automatedRstoxTest <- function(dir, root=list(windows="\\\\delphi", unix="/Volum
 		textFiles <- lapply(seq_along(projects$commonFiles), function(i) getFilesByExt(dir1=projects$commonPaths1[i], dir2=projects$commonPaths2[i], ext=c("txt", "xml")))
 		
 		printHeader("RData files", progressFile, w=30)
-		lapply(RDataFiles, reportFilesIntersects, type="RData files", addProjectName=TRUE)
+		lapply(RDataFiles, reportFilesIntersects, progressFile=progressFile, type="RData files", addProjectName=TRUE)
 		printHeader("Image files", progressFile, w=30)
-		lapply(imageFiles, reportFilesIntersects, type="Image files", addProjectName=TRUE)
+		lapply(imageFiles, reportFilesIntersects, progressFile=progressFile, type="Image files", addProjectName=TRUE)
 		printHeader("Text files", progressFile, w=30)
-		lapply(textFiles, reportFilesIntersects, type="Text files", addProjectName=TRUE)
+		lapply(textFiles, reportFilesIntersects, progressFile=progressFile, type="Text files", addProjectName=TRUE)
 		
 		list(RDataFiles=RDataFiles, imageFiles=imageFiles, textFiles=textFiles)
 	}
@@ -1460,7 +1724,7 @@ automatedRstoxTest <- function(dir, root=list(windows="\\\\delphi", unix="/Volum
 			
 			write(paste0("\n### MODEL TYPE: ", name, "\n"), file=progressFile, append=TRUE)
 			
-			# Inform files only present in one or the other:
+			# Inform files present only in one or the other:
 			if(length(commonDF)){
 				write("# Data frames common for Rstox and StoX: ", file=progressFile, append=TRUE)
 				lapply(paste("\t", commonDF), write, file=progressFile, append=TRUE)
@@ -1582,19 +1846,28 @@ automatedRstoxTest <- function(dir, root=list(windows="\\\\delphi", unix="/Volum
 		copyLatest(server, dir)
 	}
 	
-	
 	# Get the latest projects:
-	ProjectsDir_original <- getLatestDir(dirList$Projects_original)
-	
+	ProjectsDir_original <- getLatestDir(dirList$Projects_original, n=n)
 	# Get paths to the original projects and previous output folders:
 	ProjectsList_original <- list.dirs(ProjectsDir_original, recursive=FALSE)
 	ProjectsDir <- dirList$Projects
+	Staged_ProjectsDir_original <- file.path(dirList$Staged_Projects_original, basename(ProjectsDir_original))
+	Staged_ProjectsList_original <- list.dirs(Staged_ProjectsDir_original, recursive=FALSE)
 	
 	# First copy all files from ProjectsDir_original to ProjectsDir
 	if("run" %in% process){
 		unlink(ProjectsDir, recursive=TRUE, force=TRUE)
 		suppressWarnings(dir.create(ProjectsDir))
-		cat("Copying projects from \"", dirname(head(ProjectsList_original, 1)), "\" to ", ProjectsDir, "\n", sep="")
+		
+		# Copy first staged projects:
+		if(length(Staged_ProjectsList_original)){
+			cat("Copying projects from \n\t\"", Staged_ProjectsDir_original, "\"\n to \n\t", ProjectsDir_original, "\n", sep="")
+			lapply(Staged_ProjectsList_original, file.copy, ProjectsDir_original, overwrite=TRUE, recursive=TRUE)
+			# Update ProjectsList_original:
+			ProjectsList_original <- list.dirs(ProjectsDir_original, recursive=FALSE)
+		}
+		
+		cat("Copying projects from \n\t\"", ProjectsDir_original, "\"\n to \n\t", ProjectsDir, "\n", sep="")
 		lapply(ProjectsList_original, file.copy, ProjectsDir, overwrite=TRUE, recursive=TRUE)
 		
 		# Then delete all output files for safety:
@@ -1622,15 +1895,19 @@ automatedRstoxTest <- function(dir, root=list(windows="\\\\delphi", unix="/Volum
 			stop("'Projects' folder empty or invalid")
 		}
 		for(i in seq_along(projectPaths)){
-			runProject(projectName=projectPaths[i], progressFile=progressFile, outputDir=newOutputList[i])
+			runProject(projectName=projectPaths[i], progressFile=progressFile, outputDir=newOutputList[i], ind=i)
 		}
 	}
 	
-	# Copy the projects that were run to a new folder in the Projects_original:
+	# Copy the projects that were run to a new folder in the Projects_original, but first delete any output:
 	if("run" %in% process){
 		newProjectsDir_original <- file.path(dirname(ProjectsDir_original), folderName)
 		suppressWarnings(dir.create(newProjectsDir_original))
 		ProjectsList <- list.dirs(ProjectsDir, recursive=FALSE)
+		
+		# Delete output:
+		lapply(ProjectsList, deleteOutput)
+		
 		lapply(ProjectsList, file.copy, newProjectsDir_original, overwrite=TRUE, recursive=TRUE)
 		
 		# Also delete the projects in "Projects":
@@ -1638,12 +1915,13 @@ automatedRstoxTest <- function(dir, root=list(windows="\\\\delphi", unix="/Volum
 	}
 	
 	# Get the lastest sub directory of the previously generated outputs:
-	latestOutput <- getLatestDir(dirList$Output)
-	
+	latestOutput <- getLatestDir(dirList$Output, n=n)
 	
 	if("diff" %in% process && length(latestOutput)){
+		VersionComparisonString <- paste(basename(newOutput), basename(latestOutput), sep="_")
+	
 		#diffdir <- path.expand(file.path(dir, "Diff", paste("Diff", basename(newOutput), basename(latestOutput), sep="_")))
-		diffdir <- path.expand(file.path(dirList$Diff, paste(basename(newOutput), basename(latestOutput), sep="_")))
+		diffdir <- path.expand(file.path(dirList$Diff, VersionComparisonString))
 		setSlashes(diffdir)
 		unlink(diffdir, recursive=TRUE, force=TRUE)
 		suppressWarnings(dir.create(diffdir))
@@ -1704,9 +1982,32 @@ automatedRstoxTest <- function(dir, root=list(windows="\\\\delphi", unix="/Volum
 		l <- paste0(tabs, l)
 		writeLines(l, progressFile)
 		
+		# Add warnings():
+		d <- warnings()
+		d <- paste0("[", formatC(seq_along(d), width=nchar(length(d)), format="d", flag="0"), "]", "\t", d, names(d))
+		d <- c(paste("THERE WERE", length(d), " WARNINGS:"), d)
+		write(d, progressFile, append=TRUE)
+		
 		# Copy the progress file to the current diff directory:
-		file.copy(progressFile, diffdir, recursive=TRUE, overwrite=TRUE)
+		finalProgressFile <- file.path(diffdir, paste0("PROGRESS_", VersionComparisonString, ".R"))
+		# The notesFile is a copy of the progress file, in which the reviewer should input comments to each diff. This will be made more automatic in later versions, where the diff will be saved in a list of strings which wil be numbered and each diff must be approved or resolved.
+		finalNotesFile <- file.path(dirname(dirList$Diff), paste0("NOTES_", VersionComparisonString, ".R"))
+		
+		file.copy(progressFile, finalProgressFile, overwrite=TRUE)
+		file.copy(progressFile, finalNotesFile, overwrite=TRUE)
 		unlink(progressFile, force=TRUE)
 	}
+	
+	options(nwarnings=oldnwarnings)
 }
+
+# Function for getting a string with the current time: 
+now <- function(brackets=FALSE){
+	out <- format(Sys.time(),tz="UTC", "%Y-%m-%d_%H.%M.%S")
+	if(brackets){
+		out <- paste0("[", out, "] ")
+	}
+	out
+}
+
 

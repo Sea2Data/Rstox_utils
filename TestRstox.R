@@ -10,7 +10,7 @@
 
 
 # Define the path to the directory holding the automated testing:
-dir <- "~/workspace/stox/project/Test projects/Automated_testing"
+
 
 
 ###############################
@@ -20,15 +20,15 @@ dir <- "~/workspace/stox/project/Test projects/Automated_testing"
 ###### RESTART R/Rstudio!!! ######
 
 ###### Install Rstox_1.8: #####
-#install.packages("ftp://ftp.imr.no/StoX/Download/Rstox/Rstox_1.8.tar.gz", repos=NULL)
-devtools::install_github("Sea2Data/Rstox", ref="v1.8")
+install.packages("ftp://ftp.imr.no/StoX/Download/Rstox/Versions/Rstox_1.8/Rstox_1.8.tar.gz", repos=NULL)
+#devtools::install_github("Sea2Data/Rstox", ref="v1.8")
 # Load Rstox:
 library(Rstox)
 
 ###### Run the projects with Rstox 1.8 and diff with Rstox 1.7.2: #####
 source("https://raw.githubusercontent.com/Sea2Data/Rstox_utils/master/Rstox_utils.R")
 
-system.time(automatedRstoxTest(dir=dir, copyFromServer=TRUE, process=c("run", "diff"), nlines=50))
+system.time(automatedRstoxTest(dir="~/workspace/stox/project/Automated_testing", copyFromServer=TRUE, process=c("run", "diff"), nlines=50))
 #     user   system  elapsed 
 # 1156.712  271.704 3834.652 
 
@@ -40,14 +40,15 @@ system.time(automatedRstoxTest(dir=dir, copyFromServer=TRUE, process=c("run", "d
 ###### RESTART R/Rstudio!!! ######
 
 ##### Install the latest develop version of Rstox: #####
-devtools::install_github("Sea2Data/Rstox", ref="develop")
+install.packages("ftp://ftp.imr.no/StoX/Download/Rstox/Versions/Alpha/Rstox_1.8.1/Rstox_1.8.1.tar.gz", repos=NULL)
+#devtools::install_github("Sea2Data/Rstox", ref="develop")
 # Load Rstox:
 library(Rstox)
 
 ##### Run the projects with Rstox 1.8.1 and diff with Rstox 1.7.2: #####
 source("https://raw.githubusercontent.com/Sea2Data/Rstox_utils/master/Rstox_utils.R")
 
-system.time(automatedRstoxTest(dir=dir, copyFromServer=FALSE, process=c("run", "diff"), nlines=50))
+system.time(automatedRstoxTest(dir="~/workspace/stox/project/Automated_testing", copyFromServer=FALSE, process=c("run", "diff"), nlines=50))
 #     user   system  elapsed 
 # 2044.219  394.894 4639.868 
 
@@ -65,10 +66,15 @@ library(Rstox)
 
 ##### Run the projects with Rstox 1.8.1 and diff with Rstox 1.7.2: #####
 source("https://raw.githubusercontent.com/Sea2Data/Rstox_utils/master/Rstox_utils.R")
+#source('~/Code/Github/Rstox_utils/Rstox_utils/Rstox_utils.R', chdir = TRUE)
 
-system.time(automatedRstoxTest(dir=dir, copyFromServer=FALSE, process=c("run", "diff"), nlines=50))
+
+system.time(automatedRstoxTest(dir="~/workspace/stox/project/Automated_testing", copyFromServer=FALSE, process=c("run", "diff"), nlines=50))
 #     user   system  elapsed 
 # 2044.219  394.894 4639.868 
+# New mac
+#     user   system  elapsed 
+# 3030.232  306.394 2742.444 
 
 
 
