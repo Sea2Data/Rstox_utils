@@ -3,6 +3,10 @@
 ##### Load devtools: #####
 library("devtools")
 
+# Source the utility functions:
+#source("https://raw.githubusercontent.com/Sea2Data/Rstox_utils/master/Rstox_utils.R")
+
+
 # Define the directory of the working copy:
 #arnejh
 #dir_Rstox <- "~/Documents/Produktivt/Prosjekt/R-packages/Rstox/Rstox"
@@ -10,31 +14,10 @@ library("devtools")
 # aasmunds
 #dir_Rstox <- "C:/Projects/Sea2Data/NewBeam/trunk/beam/StoX/StoX-Main/src/main/resources/stox/system/r"
 #edvin
-#dir_Rstox <- "~/code/github/rstox_/"
-#dir_Rstox_utils <- "~/code/github/Rstox_utils/"
+dir_Rstox <- "~/code/github/rstox_/"
+dir_Rstox_utils <- "~/code/github/Rstox_utils/"
 
-# Define the directory of the working copy:
-dir <- list(
-	arnejh = list(
-		Rstox = "~/Code/github/Rstox/Rstox/", 
-		Rstox_utils = "~/Code/github/Rstox_utils/Rstox_utils/"
-	), 
-	aasmunds = list(
-		Rstox = "C:/Projects/Sea2Data/NewBeam/trunk/beam/StoX/StoX-Main/src/main/resources/stox/system/r", 
-		Rstox_utils = NA
-	), 
-	edvin = list(
-		Rstox = "~/code/github/rstox_/", 
-		Rstox_utils = "~/code/github/Rstox_utils/"
-	)
-)
-
-# Get user:
-user <- Sys.info()["user"]
-
-#source(file.path(dir_Rstox_utils, "Rstox_utils.R"))
-source(file.path(dir[[user]]$Rstox_utils, "Rstox_utils.R"))
-
+source(file.path(dir_Rstox_utils, "Rstox_utils.R"))
 
 # Build 1.6.2:
 # build_Rstox(dir_Rstox, version="1.6.2", Rversion="3.3.3", official=FALSE, check=FALSE)
@@ -74,6 +57,15 @@ source(file.path(dir[[user]]$Rstox_utils, "Rstox_utils.R"))
 
 
 
+<<<<<<< HEAD
 # Build 1.9.1:
 build_Rstox(dir[[user]]$Rstox, version="1.9.1", Rversion="3.5.0", pckversion=list(data.table="1.10.4-3"), official=FALSE, suggests=c("ggmap", "ncdf4", "pgirmess", "eca", "plotrix"), check=FALSE)
+=======
+build_Rstox(dir_Rstox, version="1.9.1", Rversion="3.5.0", pckversion=list(data.table="1.10.4-3"), official=FALSE, suggests=c("ggmap", "ncdf4", "pgirmess", "eca", "plotrix"), check=TRUE)
+
+
+
+
+
+>>>>>>> cc302ad38cb5b0b3282934eb1e58854213d73999
 
