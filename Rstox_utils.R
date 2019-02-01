@@ -594,6 +594,7 @@ getTestFolderStructure <- function(x){
 	list(
 		Staged_Projects_original = file.path(x, "Staged_Projects_original"), 
 		Projects_original = file.path(x, platformFolderName, "Projects_original"), 
+		Projects_original1 = file.path(x, platformFolderName, "Projects_original", "Rstox_1.0_StoXLib_1.0"), 
 		Projects = file.path(x, platformFolderName, "Projects"), 
 		Output = file.path(x, platformFolderName, "Output"), 
 		Diff = file.path(x, platformFolderName, "Diff"))

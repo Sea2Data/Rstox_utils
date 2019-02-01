@@ -60,7 +60,8 @@ system.time(automatedRstoxTest(dir="~/workspace/stox/project/Automated_testing",
 ###### RESTART R/Rstudio!!! ######
 
 ##### Install the latest develop version of Rstox: #####
-devtools::install_github("Sea2Data/Rstox", ref="develop")
+# devtools::install_github("Sea2Data/Rstox", ref="develop")
+install.packages("ftp://ftp.imr.no/StoX/Download/Rstox/Versions/Alpha/Rstox_1.9.1/Rstox_1.9.1.tar.gz", repos=NULL)
 # Load Rstox:
 library(Rstox)
 

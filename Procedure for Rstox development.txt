@@ -26,6 +26,9 @@ Change also the line "# go to ftp://ftp.imr.no/StoX/Download/Rstox/Examples/Rsto
 
 	# Change direcotry to the local Rstox git repository:
 	cd THE_LOCAL_RSTOX_REPOSITORY
+	
+	# Always work on the develop branch!!:
+	git checkout develop
 
 	# Check changes:
 	git status
@@ -109,6 +112,11 @@ Change also the line "# go to ftp://ftp.imr.no/StoX/Download/Rstox/Examples/Rsto
 	
 
 7. Pull the new tag with git pull in any branch.
+
+	git pull
+	
+	# Always work on the develop branch!!:
+	git checkout develop
 	
 
 8. Download the "Source code (tar.gz)" of the release to you local system. Rename the file to using underscore instead of hyphen, e.g., rename "Rstox-1.7.2.tar.gz" to "Rstox_1.7.2.tar.gz".
