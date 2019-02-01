@@ -1919,7 +1919,7 @@ automatedRstoxTest <- function(dir, root=list(windows="\\\\delphi", unix="/Volum
 	
 	dirList <- getTestFolderStructure(dir)
 	# Create the folder structure if missing:
-	lapply(dirList, dir.create, showWarnings=FALSE)
+	lapply(dirList, dir.create, recursive=TRUE, showWarnings=FALSE)
 	
 	# Name the folder for the output files by the time and Rstox version:
 	RstoxVersion <- getRstoxVersion()

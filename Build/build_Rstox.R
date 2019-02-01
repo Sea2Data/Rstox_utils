@@ -8,16 +8,19 @@ library("devtools")
 
 
 # Define the directory of the working copy:
-#arnejh
-#dir_Rstox <- "~/Documents/Produktivt/Prosjekt/R-packages/Rstox/Rstox"
-#dir_Rstox_utils <- "~/Documents/Produktivt/Prosjekt/R-packages/Rstox_utils/Rstox_utils"
-# aasmunds
-#dir_Rstox <- "C:/Projects/Sea2Data/NewBeam/trunk/beam/StoX/StoX-Main/src/main/resources/stox/system/r"
-#edvin
-dir_Rstox <- "~/code/github/rstox_/"
-dir_Rstox_utils <- "~/code/github/Rstox_utils/"
+dir <- list(
+	arnejh = list(
+		Rstox = "~/Code/Github/Rstox/Rstox", 
+		Rstox_utils = "~/Code/Github/Rstox_utils/Rstox_utils"
+	), 
+	edvinf = list(
+		Rstox = "~/code/github/rstox_/", 
+		Rstox_utils = "~/code/github/Rstox_utils/"
+	)
+)
 
-source(file.path(dir_Rstox_utils, "Rstox_utils.R"))
+
+source(file.path(dir[[Sys.info()["user"]]]$Rstox_utils, "Rstox_utils.R"))
 
 # Build 1.6.2:
 # build_Rstox(dir_Rstox, version="1.6.2", Rversion="3.3.3", official=FALSE, check=FALSE)
@@ -57,15 +60,6 @@ source(file.path(dir_Rstox_utils, "Rstox_utils.R"))
 
 
 
-<<<<<<< HEAD
 # Build 1.9.1:
-build_Rstox(dir[[user]]$Rstox, version="1.9.1", Rversion="3.5.0", pckversion=list(data.table="1.10.4-3"), official=FALSE, suggests=c("ggmap", "ncdf4", "pgirmess", "eca", "plotrix"), check=FALSE)
-=======
-build_Rstox(dir_Rstox, version="1.9.1", Rversion="3.5.0", pckversion=list(data.table="1.10.4-3"), official=FALSE, suggests=c("ggmap", "ncdf4", "pgirmess", "eca", "plotrix"), check=TRUE)
-
-
-
-
-
->>>>>>> cc302ad38cb5b0b3282934eb1e58854213d73999
+build_Rstox(dir[[Sys.info()["user"]]]$Rstox, version="1.9.1", Rversion="3.5.0", pckversion=list(data.table="1.10.4-3"), official=FALSE, suggests=c("ggmap", "ncdf4", "pgirmess", "eca", "plotrix"), check=FALSE)
 
