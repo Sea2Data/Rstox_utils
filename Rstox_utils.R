@@ -762,14 +762,17 @@ copyLatestToServer <- function(local, server, toCopy=c("Diff", "Output", "Projec
 }
 copyStaged_Projects_original <- function(server, local, overwrite=TRUE, op="<", n=1){
 	
+	browser()
+	
 	local <- getTestFolderStructure(path.expand(local))$Staged_Projects_original
 	server <- getTestFolderStructure(path.expand(server))$Staged_Projects_original
 	
 	# Get the latest local folder, to which staged projects on the server will be copied:
-	localLatest <- getLatestDir(local, op="<", n=1)
+	#localLatest <- getLatestDir(local, op="<", n=1)
+	localLatest <- file.path(local, getRstoxVersion("string"))
 	
 	# Look for the corresponding folder on the server:
-	serverLatest <- file.path(server, basename(localLatest))
+	serverLatest <- file.path(server, getRstoxVersion("string"))
 	
 	
 	# Copy if 'serverLatest' exists and is not empty:
@@ -1944,14 +1947,14 @@ automatedRstoxTest <- function(dir, root=list(windows="\\\\delphi", unix="/Volum
 	lapply(dirList, dir.create, recursive=TRUE, showWarnings=FALSE)
 	
 	# Name the folder for the output files by the time and Rstox version:
-	RstoxVersion <- getRstoxVersion()
-	folderName <- paste(names(RstoxVersion), unlist(lapply(RstoxVersion, as.character)), sep="_", collapse="_")
+	RstoxVersion <- getRstoxVersion("string")
+	#folderName <- paste(names(RstoxVersion), unlist(lapply(RstoxVersion, as.character)), sep="_", collapse="_")
 	
 	# 1. Copy the latest original projects, outputs and diffs on the server to the local directory:
 	#if("run" %in% process && copyFromServer){
 	if(copyFromServer){
 		#cat("Copying original projects from \"", server, "\" to ", dir, "\n", sep="")
-		cat("Copying original projects from \"", server, "\" to ", dir, "\n", sep="")
+		message("Copying original projects from \"", server, "\" to \"", dir, "\"\n")
 		copyStaged_Projects_original(dirname(server), dir)
 	}
 	
