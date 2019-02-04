@@ -1063,7 +1063,7 @@ getRstoxVersionString <- function(){
 #' @export
 #' @keywords internal
 #'
-automatedRstoxTest <- function(dir, root=list(windows="\\\\delphi", unix="/Volumes"), path="pc_prog/S2D/stox/StoX_version_test/Automated_testing", copyFromServer=TRUE, process=c("run", "diff"),  diffs=c("Rdata", "images", "text", "baseline"), nlines=50, mem.size=16e9, nwarnings=10000, n=1L){
+automatedRstoxTest <- function(root=list(windows="\\\\delphi", unix="/Volumes"), path="pc_prog/S2D/stox/StoX_version_test/Automated_testing", copyFromServer=TRUE, process=c("run", "diff"),  diffs=c("Rdata", "images", "text", "baseline"), nlines=50, mem.size=16e9, nwarnings=10000, n=1L){
 #automatedRstoxTest <- function(dir, copyFromServer=TRUE, process=c("run", "diff"),  nlines=-1L, root=list(windows="\\\\delphi", unix="/Volumes"), path="pc_prog/S2D/stox/StoXAutoTest"){
 	
 	# Load image packages:
@@ -1949,8 +1949,11 @@ automatedRstoxTest <- function(dir, root=list(windows="\\\\delphi", unix="/Volum
 	
 	# Make sure the paths are expanded:
 	server <- path.expand(server)
-	dir <- path.expand(dir)
-	suppressWarnings(dir.create(dir))
+	# Changed from using a 'dir' parameter to using the default workspace:
+	#dir <- path.expand(dir)
+	dir <- getProjectPaths()$projectRoot
+	dir <- file.path(dir, "Automated_testing")
+	#suppressWarnings(dir.create(dir))
 	
 	dirList <- getTestFolderStructure(dir)
 	# Create the folder structure if missing:

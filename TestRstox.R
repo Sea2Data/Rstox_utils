@@ -24,7 +24,8 @@ library(Rstox)
 ###### Run the projects with Rstox 1.8 and diff with Rstox 1.7.2: #####
 source("https://raw.githubusercontent.com/Sea2Data/Rstox_utils/master/Rstox_utils.R")
 
-system.time(automatedRstoxTest(dir="~/workspace/stox/project/Automated_testing", copyFromServer=TRUE, process=c("run", "diff"), nlines=50))
+#system.time(automatedRstoxTest(dir="~/workspace/stox/project/Automated_testing", copyFromServer=TRUE, process=c("run", "diff"), nlines=50))
+system.time(automatedRstoxTest(copyFromServer=TRUE, process=c("run", "diff"), nlines=50))
 #     user   system  elapsed 
 # 1156.712  271.704 3834.652 
 
@@ -44,7 +45,8 @@ library(Rstox)
 ##### Run the projects with Rstox 1.8.1 and diff with Rstox 1.7.2: #####
 source("https://raw.githubusercontent.com/Sea2Data/Rstox_utils/master/Rstox_utils.R")
 
-system.time(automatedRstoxTest(dir="~/workspace/stox/project/Automated_testing", copyFromServer=TRUE, process=c("run", "diff"), nlines=50))
+# system.time(automatedRstoxTest(dir="~/workspace/stox/project/Automated_testing", copyFromServer=TRUE, process=c("run", "diff"), nlines=50))
+system.time(automatedRstoxTest(opyFromServer=TRUE, process=c("run", "diff"), nlines=50))
 #     user   system  elapsed 
 # 2044.219  394.894 4639.868 
 
@@ -66,7 +68,8 @@ source("https://raw.githubusercontent.com/Sea2Data/Rstox_utils/master/Rstox_util
 #source('~/Code/Github/Rstox_utils/Rstox_utils/Rstox_utils.R', chdir = TRUE)
 
 
-system.time(automatedRstoxTest(dir="~/workspace/stox/project/Automated_testing", copyFromServer=TRUE, process=c("run", "diff"), nlines=50))
+# system.time(automatedRstoxTest(dir="~/workspace/stox/project/Automated_testing", copyFromServer=TRUE, process=c("run", "diff"), nlines=50))
+system.time(automatedRstoxTest(copyFromServer=TRUE, process=c("run", "diff"), nlines=50))
 #     user   system  elapsed 
 # 2044.219  394.894 4639.868 
 # New mac
