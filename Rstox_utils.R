@@ -2032,7 +2032,18 @@ automatedRstoxTest <- function(root=list(windows="\\\\delphi", unix="/Volumes"),
 			stop("'Projects' folder empty or invalid")
 		}
 		for(i in seq_along(projectPaths)){
-			runProject(projectName=projectPaths[i], progressFile=progressFile, outputDir=newOutputList[i], ind=i)
+			
+		    tryCatch({
+		      runProject(projectName=projectPaths[i], progressFile=progressFile, outputDir=newOutputList[i], ind=i)
+		    },
+		    error = function(e) {
+		    },
+		    finally = function(e) {
+		    })
+			
+			
+			
+			#runProject(projectName=projectPaths[i], progressFile=progressFile, outputDir=newOutputList[i], ind=i)
 		}
 	}
 	
