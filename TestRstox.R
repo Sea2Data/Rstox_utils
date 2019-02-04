@@ -6,11 +6,7 @@
 
 
 # Load image packages:
-# install.packages(c("png", "jpeg", "tiff", "tools", "R.utils"))
-
-
-# Define the path to the directory holding the automated testing:
-
+install.packages(c("png", "jpeg", "tiff", "tools", "R.utils", "Rcpp", "rlang"))
 
 
 ###############################
