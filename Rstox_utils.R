@@ -1047,6 +1047,16 @@ getRstoxVersionString <- function(){
 	RstoxVersionString
 }
 
+file.path_new <- function(...){
+	release <- Sys.info()["release"]
+	if(tolower(.Platform$OS.type) == "windows" && startsWith(release, "10")){
+		paste(..., sep="\\")
+	}
+	else{
+		file.path(...)
+	}
+}
+
 
 #*********************************************
 #*********************************************
@@ -1608,15 +1618,7 @@ automatedRstoxTest <- function(root=list(windows="\\\\delphi", unix="/Volumes"),
 			nlinesFile2 <- R.utils::countLines(file2)
 			# Write tepmorary files with less lines:
 			
-			file.path_new <- function(...){
-				release <- Sys.info()["release"]
-				if(tolower(.Platform$OS.type) == "windows" && startsWith(release, "10")){
-					paste(..., collapse="\\")
-				}
-				else{
-					file.path(...)
-				}
-			}
+			
 			
 			#tempfile1 <- file.path(tempdir(), "tempfile1")
 			#tempfile2 <- file.path(tempdir(), "tempfile2")
