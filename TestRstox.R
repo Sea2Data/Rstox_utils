@@ -25,14 +25,12 @@ install.packages(dep.pck, repos="http://cran.us.r-project.org", type="binary")
 
 # Install Rstox:
 install.packages("ftp://ftp.imr.no/StoX/Download/Rstox/Versions/Rstox_1.8/Rstox_1.8.tar.gz", repos=NULL)
-#devtools::install_github("Sea2Data/Rstox", ref="v1.8")
 # Load Rstox:
 library(Rstox)
 
-###### Run the projects with Rstox 1.8 and diff with Rstox 1.7.2: #####
+###### Run the projects with Rstox 1.8 with no diff: #####
 source("https://raw.githubusercontent.com/Sea2Data/Rstox_utils/master/Rstox_utils.R")
 
-#system.time(automatedRstoxTest(dir="~/workspace/stox/project/Automated_testing", copyFromServer=TRUE, process=c("run", "diff"), nlines=50))
 system.time(automatedRstoxTest(copyFromServer=TRUE, process=c("run", "diff"), nlines=50))
 #     user   system  elapsed 
 # 1156.712  271.704 3834.652 
@@ -52,14 +50,12 @@ install.packages(dep.pck, repos="http://cran.us.r-project.org", type="binary")
 # Install Rstox:
 install.packages("ftp://ftp.imr.no/StoX/Download/Rstox/Versions/Alpha/Rstox_1.8.1/Rstox_1.8.1.tar.gz", repos=NULL)
 
-#devtools::install_github("Sea2Data/Rstox", ref="develop")
 # Load Rstox:
 library(Rstox)
 
-##### Run the projects with Rstox 1.8.1 and diff with Rstox 1.7.2: #####
+##### Run the projects with Rstox 1.8.1 and diff with Rstox 1.8: #####
 source("https://raw.githubusercontent.com/Sea2Data/Rstox_utils/master/Rstox_utils.R")
 
-# system.time(automatedRstoxTest(dir="~/workspace/stox/project/Automated_testing", copyFromServer=TRUE, process=c("run", "diff"), nlines=50))
 system.time(automatedRstoxTest(copyFromServer=TRUE, process=c("run", "diff"), nlines=50))
 #     user   system  elapsed 
 # 2044.219  394.894 4639.868 
@@ -72,8 +68,6 @@ system.time(automatedRstoxTest(copyFromServer=TRUE, process=c("run", "diff"), nl
 ###### RESTART R/Rstudio!!! ######
 
 ##### Install the latest develop version of Rstox: #####
-# devtools::install_github("Sea2Data/Rstox", ref="develop")
-
 # Install the packages that Rstox depends on. Note that this updates all the specified packages to the latest (binary) version:
 dep.pck <- c("data.table", "ggplot2", "pbapply", "rgdal", "rgeos", "rJava", "sp", "XML")
 install.packages(dep.pck, repos="http://cran.us.r-project.org", type="binary")
@@ -84,7 +78,7 @@ install.packages("ftp://ftp.imr.no/StoX/Download/Rstox/Versions/Alpha/Rstox_1.9.
 # Load Rstox:
 library(Rstox)
 
-##### Run the projects with Rstox 1.8.1 and diff with Rstox 1.7.2: #####
+##### Run the projects with Rstox 1.9.1 and diff with Rstox 1.8.1: #####
 source("https://raw.githubusercontent.com/Sea2Data/Rstox_utils/master/Rstox_utils.R")
 #source('~/Code/Github/Rstox_utils/Rstox_utils/Rstox_utils.R', chdir = TRUE)
 
@@ -100,6 +94,6 @@ system.time(automatedRstoxTest(copyFromServer=TRUE, process=c("run", "diff"), nl
 
 
 # Run this at the office while connected with a cable. 
-copyCurrentToServer(dir="~/workspace/stox/project/Automated_testing", root=list(windows="\\\\delphi", unix="/Volumes"), path="pc_prog/S2D/stox/StoX_version_test/Automated_testing", toCopy=c("Diff", "Output", "Projects_original"), msg=TRUE, n=3)
+#copyCurrentToServer(dir="~/workspace/stox/project/Automated_testing", root=list(windows="\\\\delphi", unix="/Volumes"), path="pc_prog/S2D/stox/StoX_version_test/Automated_testing", toCopy=c("Diff", "Output", "Projects_original"), msg=TRUE, n=3)
 
 	
