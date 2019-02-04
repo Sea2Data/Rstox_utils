@@ -1607,8 +1607,21 @@ automatedRstoxTest <- function(root=list(windows="\\\\delphi", unix="/Volumes"),
 			nlinesFile1 <- R.utils::countLines(file1)
 			nlinesFile2 <- R.utils::countLines(file2)
 			# Write tepmorary files with less lines:
-			tempfile1 <- file.path(tempdir(), "tempfile1")
-			tempfile2 <- file.path(tempdir(), "tempfile2")
+			
+			file.path_new <- function(...){
+				release <- Sys.info()["release"]
+				if(tolower(.Platform$OS.type) == "windows" && startsWith(release, "10")){
+					paste(..., collapse="\\")
+				}
+				else{
+					file.path(...)
+				}
+			}
+			
+			#tempfile1 <- file.path(tempdir(), "tempfile1")
+			#tempfile2 <- file.path(tempdir(), "tempfile2")
+			tempfile1 <- file.path_new(tempdir(), "tempfile1")
+			tempfile2 <- file.path_new(tempdir(), "tempfile2")
 			if(nlinesFile1 > nlines){
 				temp <- readLines(file1, n=nlines)
 				writeLines(temp, tempfile1)
