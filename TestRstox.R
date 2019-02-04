@@ -75,6 +75,9 @@ install.packages(dep.pck, repos="http://cran.us.r-project.org", type="binary")
 # Install Rstox:
 install.packages("ftp://ftp.imr.no/StoX/Download/Rstox/Versions/Alpha/Rstox_1.9.2/Rstox_1.9.2.tar.gz", repos=NULL)
 
+# Install Reca on Windows (on Mac there are several steps required, see GitHub, "Rstox_utils/Work/mac_binaries/README.txt"):
+devtools::install_github("NorskRegnesentral/Reca")
+
 # Load Rstox:
 library(Rstox)
 
