@@ -762,8 +762,6 @@ copyLatestToServer <- function(local, server, toCopy=c("Diff", "Output", "Projec
 }
 copyStaged_Projects_original <- function(server, local, overwrite=TRUE, op="<", n=1){
 	
-	browser()
-	
 	local <- getTestFolderStructure(path.expand(local))$Staged_Projects_original
 	server <- getTestFolderStructure(path.expand(server))$Staged_Projects_original
 	
@@ -1971,7 +1969,7 @@ automatedRstoxTest <- function(dir, root=list(windows="\\\\delphi", unix="/Volum
 	}
 	
 	# Get the latest projects:
-	ProjectsDir_original <- getLatestDir(dirList$Projects_original, n=n)
+	ProjectsDir_original <- getLatestDir(dirList$Projects_original, n=1)
 	# Get paths to the original projects and previous output folders:
 	ProjectsList_original <- list.dirs(ProjectsDir_original, recursive=FALSE)
 	ProjectsDir <- dirList$Projects
