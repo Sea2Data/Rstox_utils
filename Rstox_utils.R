@@ -584,8 +584,8 @@ getPlatformID <- function(var="release"){
 #'
 getTestFolderStructure <- function(x){
 	
-	# Accept the platoform specific directory:
-	if("Projects_original" %in% list.dirs(x, recursive=FALSE)){
+	# Accept the platform specific directory:
+	if("Projects_original" %in% list.dirs(x, recursive=FALSE, full.names=FALSE)){
 		x <- dirname(x)
 	}
 	
@@ -758,18 +758,39 @@ copyLatestToServer <- function(local, server, toCopy=c("Diff", "Output", "Projec
 	server <- getTestFolderStructure(path.expand(server))
 	
 	# Copy for all specified subdirectories:
-	invisible(lapply(toCopy, copyLatestOne, local, server, overwrite=overwrite, msg=msg, op=op, n=n))
+	invisible(lapply(toCopy, copyLatestOne, local, server, overwrite=overwrite, msg=msg))
 }
-copyStaged_Projects_original <- function(server, local, overwrite=TRUE){
+copyStaged_Projects_original <- function(server, local, overwrite=TRUE, op="<", n=1){
 	
 	local <- getTestFolderStructure(path.expand(local))$Staged_Projects_original
 	server <- getTestFolderStructure(path.expand(server))$Staged_Projects_original
 	
+	# Get the latest local folder, to which staged projects on the server will be copied:
+	localLatest <- getLatestDir(local, op="<", n=1)
 	
-	# Delete the local Staged_Projects_original:
-	unlink(local, recursive=TRUE, force=TRUE)
+	# Look for the corresponding folder on the server:
+	serverLatest <- file.path(server, basename(localLatest))
 	
-	file.copy(server, dirname(local), recursive=TRUE, overwrite=overwrite)
+	
+	# Copy if 'serverLatest' exists and is not empty:
+	serverLatestDirs <- list.dirs(serverLatest, recursive=FALSE)
+	if(length(serverLatestDirs)){
+		# Delete the local Staged_Projects_original:
+		unlink(localLatest, recursive=TRUE, force=TRUE)
+	
+		message("Copying the following projects from the server to the local system:\n\t", paste(serverLatestDirs, collapse="\n\t"))
+	
+		file.copy(serverLatest, local, recursive=TRUE, overwrite=overwrite)
+	}
+	else{
+		message("No staged original projects copied from the server to the local system")
+	}
+	
+	
+	### # Delete the local Staged_Projects_original:
+	### unlink(local, recursive=TRUE, force=TRUE)
+	### 
+	### file.copy(server, dirname(local), recursive=TRUE, overwrite=overwrite)
 }
 
 #*********************************************
@@ -782,7 +803,7 @@ copyStaged_Projects_original <- function(server, local, overwrite=TRUE){
 #' @export
 #' @keywords internal
 #'
-getServerPath <- function(root=list(windows="\\\\delphi", unix="/Volumes"), path="pc_prog/S2D/stox/StoXAutoTest"){
+getServerPath <- function(root=list(windows="\\\\delphi", unix="/Volumes"), path="pc_prog/S2D/stox/StoX_version_test/Automated_testing"){
 	root <- root[[.Platform$OS.type]]
 	if(length(root)==0){
 		stop(paste0("The OS.type ", .Platform$OS.type, " does not match any of the names of 'root' (", paste(names(root), collapse=", "), ")"))
@@ -810,9 +831,9 @@ getServerPath <- function(root=list(windows="\\\\delphi", unix="/Volumes"), path
 #' @export
 #' @keywords internal
 #'
-copyCurrentToServer <- function(dir, root=list(windows="\\\\delphi", unix="/Volumes"), path="pc_prog/S2D/stox/StoXAutoTest", toCopy=c("Diff", "Output", "Projects_original"), overwrite=FALSE, msg=FALSE, n=1){
+copyCurrentToServer <- function(dir, root=list(windows="\\\\delphi", unix="/Volumes"), path="pc_prog/S2D/stox/StoX_version_test/Automated_testing", toCopy=c("Diff", "Output", "Projects_original"), overwrite=FALSE, msg=FALSE, n=1){
 	server <- getServerPath(root=root, path=path)
-	copyLatest(dir, server, toCopy=toCopy, overwrite=overwrite, msg=msg, op="<=", n=n)
+	copyLatestToServer(dir, server, toCopy=toCopy, overwrite=overwrite, msg=msg, op="<=", n=n)
 }
 
 #*********************************************
@@ -1926,15 +1947,11 @@ automatedRstoxTest <- function(dir, root=list(windows="\\\\delphi", unix="/Volum
 	RstoxVersion <- getRstoxVersion()
 	folderName <- paste(names(RstoxVersion), unlist(lapply(RstoxVersion, as.character)), sep="_", collapse="_")
 	
-	# 1. Copy the latest original projects, outputs and diffs in the server to the local directory:
+	# 1. Copy the latest original projects, outputs and diffs on the server to the local directory:
 	if("run" %in% process && copyFromServer){
 		#cat("Copying original projects from \"", server, "\" to ", dir, "\n", sep="")
 		cat("Copying original projects from \"", server, "\" to ", dir, "\n", sep="")
-		
-		#copyStaged_Projects_original(server, dirname(dir))
 		copyStaged_Projects_original(dirname(server), dir)
-		
-		#copyLatest(server, dir)
 	}
 	
 	# Get the latest projects:
