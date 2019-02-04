@@ -9,6 +9,8 @@
 install.packages(c("png", "jpeg", "tiff", "tools", "R.utils", "Rcpp", "rlang"))
 
 
+
+
 ###############################
 ########## Rstox_1.8 ##########
 ###############################
@@ -16,6 +18,12 @@ install.packages(c("png", "jpeg", "tiff", "tools", "R.utils", "Rcpp", "rlang"))
 ###### RESTART R/Rstudio!!! ######
 
 ###### Install Rstox_1.8: #####
+
+# Install the packages that Rstox depends on. Note that this updates all the specified packages to the latest (binary) version:
+dep.pck <- c("data.table", "ggplot2", "pbapply", "rgdal", "rgeos", "rJava", "sp", "XML")
+install.packages(dep.pck, repos="http://cran.us.r-project.org", type="binary")
+
+# Install Rstox:
 install.packages("ftp://ftp.imr.no/StoX/Download/Rstox/Versions/Rstox_1.8/Rstox_1.8.tar.gz", repos=NULL)
 #devtools::install_github("Sea2Data/Rstox", ref="v1.8")
 # Load Rstox:
@@ -37,7 +45,13 @@ system.time(automatedRstoxTest(copyFromServer=TRUE, process=c("run", "diff"), nl
 ###### RESTART R/Rstudio!!! ######
 
 ##### Install the latest develop version of Rstox: #####
+# Install the packages that Rstox depends on. Note that this updates all the specified packages to the latest (binary) version:
+dep.pck <- c("data.table", "ggplot2", "pbapply", "rgdal", "rgeos", "rJava", "sp", "XML")
+install.packages(dep.pck, repos="http://cran.us.r-project.org", type="binary")
+
+# Install Rstox:
 install.packages("ftp://ftp.imr.no/StoX/Download/Rstox/Versions/Alpha/Rstox_1.8.1/Rstox_1.8.1.tar.gz", repos=NULL)
+
 #devtools::install_github("Sea2Data/Rstox", ref="develop")
 # Load Rstox:
 library(Rstox)
@@ -59,7 +73,14 @@ system.time(automatedRstoxTest(copyFromServer=TRUE, process=c("run", "diff"), nl
 
 ##### Install the latest develop version of Rstox: #####
 # devtools::install_github("Sea2Data/Rstox", ref="develop")
+
+# Install the packages that Rstox depends on. Note that this updates all the specified packages to the latest (binary) version:
+dep.pck <- c("data.table", "ggplot2", "pbapply", "rgdal", "rgeos", "rJava", "sp", "XML")
+install.packages(dep.pck, repos="http://cran.us.r-project.org", type="binary")
+
+# Install Rstox:
 install.packages("ftp://ftp.imr.no/StoX/Download/Rstox/Versions/Alpha/Rstox_1.9.1/Rstox_1.9.1.tar.gz", repos=NULL)
+
 # Load Rstox:
 library(Rstox)
 
