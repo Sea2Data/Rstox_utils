@@ -769,10 +769,10 @@ copyStaged_Projects_original <- function(server, local, overwrite=TRUE, op="<", 
 	
 	# Get the latest local folder, to which staged projects on the server will be copied:
 	#localLatest <- getLatestDir(local, op="<", n=1)
-	localLatest <- file.path(local, getRstoxVersion("string"))
+	localLatest <- file.path(local, getRstoxVersionString())
 	
 	# Look for the corresponding folder on the server:
-	serverLatest <- file.path(server, getRstoxVersion("string"))
+	serverLatest <- file.path(server, getRstoxVersionString())
 	
 	
 	# Copy if 'serverLatest' exists and is not empty:
@@ -1035,6 +1035,18 @@ copyProjectRun <- function(projectName, progressFile, outputDir){
 	file.copy(from=from, to=to, overwrite=TRUE)
 	
 	cat("\n")
+}
+
+# Convenience function for getting the Rstox version string, which is a possible output from getRstoxVersion() as of approximately Rstox_1.9:
+getRstoxVersionString <- function(){
+	if(getRstoxVersion()$Rstox < "1.8.1"){
+		RstoxVersionString <- getRstoxVersion()
+		RstoxVersionString <- paste(names(RstoxVersionString), unlist(lapply(RstoxVersionString, as.character)), sep="_", collapse="_")
+	}
+	else{
+		RstoxVersionString <- getRstoxVersion("string")
+	}
+	RstoxVersionString
 }
 
 
@@ -1947,7 +1959,7 @@ automatedRstoxTest <- function(dir, root=list(windows="\\\\delphi", unix="/Volum
 	lapply(dirList, dir.create, recursive=TRUE, showWarnings=FALSE)
 	
 	# Name the folder for the output files by the time and Rstox version:
-	RstoxVersion <- getRstoxVersion("string")
+	RstoxVersionString <- getRstoxVersionString()
 	#folderName <- paste(names(RstoxVersion), unlist(lapply(RstoxVersion, as.character)), sep="_", collapse="_")
 	
 	# 1. Copy the latest original projects, outputs and diffs on the server to the local directory:
@@ -1991,7 +2003,7 @@ automatedRstoxTest <- function(dir, root=list(windows="\\\\delphi", unix="/Volum
 	
 	# Get the outputs directory and the sub directory of the new outputs:
 	Output <- dirList$Output
-	newOutput <- file.path(Output, folderName)
+	newOutput <- file.path(Output, RstoxVersionString)
 	
 	
 	# List all projects in the latest and new output directory:
@@ -2013,7 +2025,7 @@ automatedRstoxTest <- function(dir, root=list(windows="\\\\delphi", unix="/Volum
 	
 	# Copy the projects that were run to a new folder in the Projects_original, but first delete any output:
 	if("run" %in% process){
-		newProjectsDir_original <- file.path(dirname(ProjectsDir_original), folderName)
+		newProjectsDir_original <- file.path(dirname(ProjectsDir_original), RstoxVersionString)
 		suppressWarnings(dir.create(newProjectsDir_original))
 		ProjectsList <- list.dirs(ProjectsDir, recursive=FALSE)
 		
