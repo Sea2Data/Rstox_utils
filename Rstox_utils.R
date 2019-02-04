@@ -594,7 +594,7 @@ getTestFolderStructure <- function(x){
 	list(
 		Staged_Projects_original = file.path(x, "Staged_Projects_original"), 
 		Projects_original = file.path(x, platformFolderName, "Projects_original"), 
-		#Projects_original1 = file.path(x, platformFolderName, "Projects_original", "Rstox_1.0_StoXLib_1.0"), 
+		Projects_original1 = file.path(x, platformFolderName, "Projects_original", "Rstox_1.0_StoXLib_1.0"), 
 		Projects = file.path(x, platformFolderName, "Projects"), 
 		Output = file.path(x, platformFolderName, "Output"), 
 		Diff = file.path(x, platformFolderName, "Diff"))
@@ -1964,32 +1964,44 @@ automatedRstoxTest <- function(dir, root=list(windows="\\\\delphi", unix="/Volum
 	#if("run" %in% process && copyFromServer){
 	if(copyFromServer){
 		#cat("Copying original projects from \"", server, "\" to ", dir, "\n", sep="")
-		message("Copying original projects from \"", server, "\" to \"", dir, "\"\n")
+		#message("Copying original projects from \"", server, "\" to \"", dir, "\"\n")
 		copyStaged_Projects_original(dirname(server), dir)
 	}
 	
 	# Get the latest projects:
 	ProjectsDir_original <- getLatestDir(dirList$Projects_original, n=1)
+	Previous_ProjectsList_original <- list.dirs(ProjectsDir_original, recursive=FALSE)
+	newProjectsDir_original <- file.path(dirname(ProjectsDir_original), RstoxVersionString)
 	# Get paths to the original projects and previous output folders:
-	ProjectsList_original <- list.dirs(ProjectsDir_original, recursive=FALSE)
+	#ProjectsList_original <- list.dirs(ProjectsDir_original, recursive=FALSE)
 	ProjectsDir <- dirList$Projects
-	Staged_ProjectsDir_original <- file.path(dirList$Staged_Projects_original, basename(ProjectsDir_original))
+	Staged_ProjectsDir_original <- file.path(dirList$Staged_Projects_original, RstoxVersionString)
 	Staged_ProjectsList_original <- list.dirs(Staged_ProjectsDir_original, recursive=FALSE)
 	
 	# First copy all files from ProjectsDir_original to ProjectsDir
 	if("run" %in% process){
+		# Delete the Projects directory and the current Projects_original directory (which will be filled by the contents of the previous Projects_original directory and that of the current Staged_Projects directory):
 		unlink(ProjectsDir, recursive=TRUE, force=TRUE)
 		suppressWarnings(dir.create(ProjectsDir))
+		unlink(newProjectsDir_original, recursive=TRUE, force=TRUE)
+		suppressWarnings(dir.create(newProjectsDir_original))
 		
-		# Copy first staged projects:
-		if(length(Staged_ProjectsList_original)){
-			cat("Copying projects from \n\t\"", Staged_ProjectsDir_original, "\"\n to \n\t", ProjectsDir_original, "\n", sep="")
-			lapply(Staged_ProjectsList_original, file.copy, ProjectsDir_original, overwrite=TRUE, recursive=TRUE)
-			# Update ProjectsList_original:
-			ProjectsList_original <- list.dirs(ProjectsDir_original, recursive=FALSE)
+		
+		# Copy first projects from last run:
+		if(length(Previous_ProjectsList_original)){
+			cat("Copying projects from \n\t\"", ProjectsDir_original, "\"\n to \n\t", newProjectsDir_original, "\n", sep="")
+			lapply(Previous_ProjectsList_original, file.copy, newProjectsDir_original, overwrite=TRUE, recursive=TRUE)
 		}
 		
-		cat("Copying projects from \n\t\"", ProjectsDir_original, "\"\n to \n\t", ProjectsDir, "\n", sep="")
+		# Then copy staged projects:
+		if(length(Staged_ProjectsList_original)){
+			cat("Copying projects from \n\t\"", Staged_ProjectsDir_original, "\"\n to \n\t", newProjectsDir_original, "\n", sep="")
+			lapply(Staged_ProjectsList_original, file.copy, newProjectsDir_original, overwrite=TRUE, recursive=TRUE)
+		}
+		
+		# List files in the Projects_original:
+		ProjectsList_original <- list.dirs(newProjectsDir_original, recursive=FALSE)
+		cat("Copying projects from \n\t\"", newProjectsDir_original, "\"\n to \n\t", ProjectsDir, "\n", sep="")
 		lapply(ProjectsList_original, file.copy, ProjectsDir, overwrite=TRUE, recursive=TRUE)
 		
 		# Then delete all output files for safety:
@@ -2023,7 +2035,6 @@ automatedRstoxTest <- function(dir, root=list(windows="\\\\delphi", unix="/Volum
 	
 	# Copy the projects that were run to a new folder in the Projects_original, but first delete any output:
 	if("run" %in% process){
-		newProjectsDir_original <- file.path(dirname(ProjectsDir_original), RstoxVersionString)
 		suppressWarnings(dir.create(newProjectsDir_original))
 		ProjectsList <- list.dirs(ProjectsDir, recursive=FALSE)
 		
