@@ -1075,7 +1075,7 @@ file.path_Windwos10 <- function(...){
 #' @export
 #' @keywords internal
 #'
-automatedRstoxTest <- function(root=list(windows="\\\\delphi", unix="/Volumes"), path="pc_prog/S2D/stox/StoX_version_test/Automated_testing", copyFromServer=TRUE, process=c("run", "diff"),  diffs=c("Rdata", "images", "text", "baseline"), nlines=50, mem.size=16e9, nwarnings=10000, n=1L){
+automatedRstoxTest <- function(root=list(windows="\\\\delphi", unix="/Volumes"), path="pc_prog/S2D/stox/StoX_version_test/Automated_testing", copyFromServer=TRUE, process=c("run", "diff"),  diffs=c("Rdata", "images", "text", "baseline"), nlines=50, mem.size=16e9, nwarnings=10000, n=1L, skipError=FALSE){
 #automatedRstoxTest <- function(dir, copyFromServer=TRUE, process=c("run", "diff"),  nlines=-1L, root=list(windows="\\\\delphi", unix="/Volumes"), path="pc_prog/S2D/stox/StoXAutoTest"){
 	
 	# Load image packages:
@@ -2050,14 +2050,19 @@ automatedRstoxTest <- function(root=list(windows="\\\\delphi", unix="/Volumes"),
 		}
 		for(i in seq_along(projectPaths)){
 			
-		    tryCatch({
-		      runProject(projectName=projectPaths[i], progressFile=progressFile, outputDir=newOutputList[i], ind=i)
-		    },
-		    error = function(e) {
-		    },
-		    finally = function(e) {
-		    })
+			if(skipError){
+			    tryCatch({
+			      runProject(projectName=projectPaths[i], progressFile=progressFile, outputDir=newOutputList[i], ind=i)
+			    },
+			    error = function(e) {
+			    },
+			    finally = function(e) {
+			    })
 			
+			}
+			else{
+				runProject(projectName=projectPaths[i], progressFile=progressFile, outputDir=newOutputList[i], ind=i)
+			}
 			
 			
 			#runProject(projectName=projectPaths[i], progressFile=progressFile, outputDir=newOutputList[i], ind=i)
