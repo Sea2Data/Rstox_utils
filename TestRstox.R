@@ -1,5 +1,7 @@
 # Script for automatic testing of Rstox on a selection of test projects. First working version completed on 2018-04-09:
 
+# WARNING: This script MUST be run in plain R, since Sys.info()["release"] returns "10 x64" in plain R and ">=8 x64" in R.app.
+
 # Certain rules apply for the test projects:
 # 1. There cannot be any spaces (" ") in the project paths
 # 2. There cannot be any underscores ("_") in the process names
@@ -75,15 +77,15 @@ install.packages(dep.pck, repos="http://cran.us.r-project.org", type="binary")
 # Install Rstox:
 install.packages("ftp://ftp.imr.no/StoX/Download/Rstox/Versions/Alpha/Rstox_1.9.2/Rstox_1.9.2.tar.gz", repos=NULL)
 
+# Load Rstox:
+library(Rstox)
+
 # Install Reca on Windows (on Mac there are several steps required, see GitHub, "Rstox_utils/Work/mac_binaries/README.txt"):
 ###devtools::install_github("NorskRegnesentral/Reca")
 # Install the Reca package you got via Wetransfer:
-# ecafolder <- file.path(getProjectPaths()$projectRoot, eca_0.11)
+# ecafolder <- file.path(getProjectPaths()$projectRoot, "eca_0.11")
 # install.packages(ecafolder, repos=NULL, type="source")
 
-
-# Load Rstox:
-library(Rstox)
 
 ##### Run the projects with Rstox 1.9.2 and diff with Rstox 1.8.1: #####
 source("https://raw.githubusercontent.com/Sea2Data/Rstox_utils/master/Rstox_utils.R")

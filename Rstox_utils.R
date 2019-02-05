@@ -569,13 +569,15 @@ build_Rstox <- function(buildDir, pkgName="Rstox", version="1.0", Rversion="3.3.
 #' @export
 #' @keywords internal
 #'
-getPlatformID <- function(var="release"){
-	paste(.Platform$OS.type, var, paste(strsplit(Sys.info()[var], " ", fixed=TRUE)[[1]], collapse="_"), sep="_")
+getPlatformID <- function(){
+	#getPlatformID <- function(var="release"){
+	# 2019-02-05: Removed the 'release' to make file paths shorter:
+	paste(.Platform$OS.type, paste(strsplit(Sys.info()["release"], " ", fixed=TRUE)[[1]], collapse="_"), sep="_")
 }
 
 #*********************************************
 #*********************************************
-#' Small funciton to get a list of the file paths to the sub folders of the test directory (Projects_original, Projects, Output, Diff)
+#' Small funciton to get a list of the file paths to the sub folders of the test directory (ProjOrig, Proj, Output, Diff)
 #'
 #' @param x	The test directory
 #'
@@ -585,17 +587,17 @@ getPlatformID <- function(var="release"){
 getTestFolderStructure <- function(x){
 	
 	# Accept the platform specific directory:
-	if("Projects_original" %in% list.dirs(x, recursive=FALSE, full.names=FALSE)){
+	if("ProjOrig" %in% list.dirs(x, recursive=FALSE, full.names=FALSE)){
 		x <- dirname(x)
 	}
 	
 	platformFolderName <- getPlatformID()
 	
 	list(
-		Staged_Projects_original = file.path(x, "Staged_Projects_original"), 
-		Projects_original = file.path(x, platformFolderName, "Projects_original"), 
-		Projects_original1 = file.path(x, platformFolderName, "Projects_original", "Rstox_1.0_StoXLib_1.0"), 
-		Projects = file.path(x, platformFolderName, "Projects"), 
+		Staged_Projects_original = file.path(x, "StagedProjOrig"), 
+		Projects_original = file.path(x, platformFolderName, "ProjOrig"), 
+		Projects_original1 = file.path(x, platformFolderName, "ProjOrig", "Rstox_1.0_StoXLib_1.0"), 
+		Projects = file.path(x, platformFolderName, "Proj"), 
 		Output = file.path(x, platformFolderName, "Output"), 
 		Diff = file.path(x, platformFolderName, "Diff"))
 }
@@ -734,7 +736,7 @@ getLatestDir <- function(dir, op="<", n=1){
 #' @export
 #' @keywords internal
 #'
-copyLatestToServer <- function(local, server, toCopy=c("Diff", "Output", "Projects_original"), overwrite=TRUE, msg=FALSE, op="<", n=1){
+copyLatestToServer <- function(local, server, toCopy=c("Diff", "Output", "ProjOrig"), overwrite=TRUE, msg=FALSE, op="<", n=1){
 	
 	# Function for copying from one subdirectory:
 	copyLatestOne <- function(folder, local, server, overwrite=TRUE, msg=FALSE, op=op, n=1){
@@ -804,7 +806,7 @@ copyStaged_Projects_original <- function(server, local, overwrite=TRUE, op="<", 
 #' @export
 #' @keywords internal
 #'
-getServerPath <- function(root=list(windows="\\\\delphi", unix="/Volumes"), path="pc_prog/S2D/stox/StoX_version_test/Automated_testing"){
+getServerPath <- function(root=list(windows="\\\\delphi", unix="/Volumes"), path="pc_prog/S2D/stox/StoXVerTest"){
 	root <- root[[.Platform$OS.type]]
 	if(length(root)==0){
 		stop(paste0("The OS.type ", .Platform$OS.type, " does not match any of the names of 'root' (", paste(names(root), collapse=", "), ")"))
@@ -832,7 +834,7 @@ getServerPath <- function(root=list(windows="\\\\delphi", unix="/Volumes"), path
 #' @export
 #' @keywords internal
 #'
-copyCurrentToServer <- function(dir, root=list(windows="\\\\delphi", unix="/Volumes"), path="pc_prog/S2D/stox/StoX_version_test/Automated_testing", toCopy=c("Diff", "Output", "Projects_original"), overwrite=FALSE, msg=FALSE, n=1){
+copyCurrentToServer <- function(dir, root=list(windows="\\\\delphi", unix="/Volumes"), path="pc_prog/S2D/stox/StoXVerTest", toCopy=c("Diff", "Output", "ProjOrig"), overwrite=FALSE, msg=FALSE, n=1){
 	server <- getServerPath(root=root, path=path)
 	copyLatestToServer(dir, server, toCopy=toCopy, overwrite=overwrite, msg=msg, op="<=", n=n)
 }
@@ -1075,7 +1077,7 @@ file.path_Windwos10 <- function(...){
 #' @export
 #' @keywords internal
 #'
-automatedRstoxTest <- function(root=list(windows="\\\\delphi", unix="/Volumes"), path="pc_prog/S2D/stox/StoX_version_test/Automated_testing", copyFromServer=TRUE, process=c("run", "diff"),  diffs=c("Rdata", "images", "text", "baseline"), projectInd=NULL, nlines=50, mem.size=16e9, nwarnings=10000, n=1L, skipError=FALSE){
+automatedRstoxTest <- function(root=list(windows="\\\\delphi", unix="/Volumes"), path="pc_prog/S2D/stox/StoXVerTest", copyFromServer=TRUE, process=c("run", "diff"),  diffs=c("Rdata", "images", "text", "baseline"), projectInd=NULL, nlines=50, mem.size=16e9, nwarnings=10000, n=1L, skipError=FALSE){
 #automatedRstoxTest <- function(dir, copyFromServer=TRUE, process=c("run", "diff"),  nlines=-1L, root=list(windows="\\\\delphi", unix="/Volumes"), path="pc_prog/S2D/stox/StoXAutoTest"){
 	
 	# Load image packages:
@@ -1899,7 +1901,7 @@ automatedRstoxTest <- function(root=list(windows="\\\\delphi", unix="/Volumes"),
 	# Changed from using a 'dir' parameter to using the default workspace:
 	#dir <- path.expand(dir)
 	dir <- getProjectPaths()$projectRoot
-	dir <- file.path(dir, "Automated_testing")
+	dir <- file.path(dir, "StoXVerTest")
 	#suppressWarnings(dir.create(dir))
 	
 	dirList <- getTestFolderStructure(dir)
