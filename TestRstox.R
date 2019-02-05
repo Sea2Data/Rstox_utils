@@ -78,7 +78,8 @@ install.packages("ftp://ftp.imr.no/StoX/Download/Rstox/Versions/Alpha/Rstox_1.9.
 # Install Reca on Windows (on Mac there are several steps required, see GitHub, "Rstox_utils/Work/mac_binaries/README.txt"):
 ###devtools::install_github("NorskRegnesentral/Reca")
 # Install the Reca package you got via Wetransfer:
-# install.packages("~/Code/Github/Reca/eca_0.11", repos=NULL, type="source")
+# ecafolder <- file.path(getProjectPaths()$projectRoot, eca_0.11)
+# install.packages(ecafolder, repos=NULL, type="source")
 
 
 # Load Rstox:
