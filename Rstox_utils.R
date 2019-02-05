@@ -1075,7 +1075,7 @@ file.path_Windwos10 <- function(...){
 #' @export
 #' @keywords internal
 #'
-automatedRstoxTest <- function(root=list(windows="\\\\delphi", unix="/Volumes"), path="pc_prog/S2D/stox/StoX_version_test/Automated_testing", copyFromServer=TRUE, process=c("run", "diff"),  diffs=c("Rdata", "images", "text", "baseline"), nlines=50, mem.size=16e9, nwarnings=10000, n=1L, skipError=FALSE){
+automatedRstoxTest <- function(root=list(windows="\\\\delphi", unix="/Volumes"), path="pc_prog/S2D/stox/StoX_version_test/Automated_testing", copyFromServer=TRUE, process=c("run", "diff"),  diffs=c("Rdata", "images", "text", "baseline"), projectInd=NULL, nlines=50, mem.size=16e9, nwarnings=10000, n=1L, skipError=FALSE){
 #automatedRstoxTest <- function(dir, copyFromServer=TRUE, process=c("run", "diff"),  nlines=-1L, root=list(windows="\\\\delphi", unix="/Volumes"), path="pc_prog/S2D/stox/StoXAutoTest"){
 	
 	# Load image packages:
@@ -1232,76 +1232,6 @@ automatedRstoxTest <- function(root=list(windows="\\\\delphi", unix="/Volumes"),
 		
 		out
 	}
-	
-	# Function for running the r scripts of a project and copying the relevant output files to the "Output" directory:
-	###runProject <- function(projectName, progressFile, outputDir){
-	###	
-	###	RstoxVersion <- getRstoxVersion()
-	###	
-	###	cat(paste0("\n\n------------------------------------------------------------\nRunning project ", i, ": ", projectName, ":\n"))
-	###	
-	###	# Run the baseline and baseline report (the latter with input=NULL):
-	###	# The parameter 'modelType', enabling reading Baseline Report, was introduced in 1.8.1:
-	###	# 2018-04-19 Added saveProject() since we wish to pick up changes in the project.xml files:
-	###	if(RstoxVersion$Rstox > "1.8"){
-	###		write(paste0(now(TRUE), "Running Baseline and Baseline Report"), progressFile, append=TRUE)
-	###		baselineOutput <- getBaseline(projectName, exportCSV=TRUE, modelType="baseline", input=NULL, drop=FALSE)
-	###		saveProject(projectName)
-	###		baselineReportOutput <- getBaseline(projectName, exportCSV=TRUE, modelType="report", input=NULL, drop=FALSE)
-	###		saveProject(projectName)
-	###	}
-	###	else{
-	###		write(paste0(now(TRUE), "Running Baseline"), progressFile, append=TRUE)
-	###		baselineOutput <- getBaseline(projectName, exportCSV=TRUE, input=NULL, drop=FALSE)
-	###		saveProject(projectName)
-	###	}
-	###	
-	###	# Get the path to the scripts to run:
-	###	r_script <- file.path(projectName, "output", "R", "r.R")
-	###	rreport_script <- file.path(projectName, "output", "R", "r-report.R")
-	###	# Generate the r scripts:
-	###	generateRScripts(projectName)
-	###
-	###	# Run the scripts and print info to the progress file:
-	###	write(paste0(now(TRUE), "Starting project ", i, ": ", projectName), progressFile, append=TRUE)
-	###	
-	###	
-	###	write(paste0(now(TRUE), "Running r.R"), progressFile, append=TRUE)
-	###	if(file.exists(r_script)){
-	###		source(r_script)
-	###	}
-	###	write(paste0(now(TRUE), "Running r-report.R"), progressFile, append=TRUE)
-	###	if(file.exists(rreport_script)){
-	###		source(rreport_script)
-	###	}
-	###	write(paste0(now(TRUE), "Ending project ", i, ": ", projectName), progressFile, append=TRUE)
-	###	write("", progressFile, append=TRUE)
-	###	closeProject(projectName)
-	###	
-	###	# Copy output files to the output directory:
-	###	unlink(outputDir, recursive=TRUE, force=TRUE)
-	###	suppressWarnings(dir.create(outputDir, recursive=TRUE))
-	###	output <- file.path(projectName, "output")
-	###	file.copy(output, outputDir, recursive=TRUE)
-	###	
-	###	# Delete trash:
-	###	trash <- list.dirs(outputDir)
-	###	trash <- trash[grep("trash", trash)]
-	###	unlink(trash, recursive=TRUE, force=TRUE)
-	###	
-	###	# Save also the output from baseline and baseline report to an RData file:
-	###	save(baselineOutput, file=file.path(outputDir, "baselineOutput.RData"))
-	###	if(RstoxVersion$Rstox > "1.8"){
-	###		save(baselineReportOutput, file=file.path(outputDir, "baselineReportOutput.RData"))
-	###	}
-	###	
-	###	# Copy the project.xml file:
-	###	from <- getProjectPaths(projectName)$projectXML
-	###	to <- file.path(outputDir, "project.xml")
-	###	file.copy(from=from, to=to, overwrite=TRUE)
-	###	
-	###	cat("\n")
-	###}
 	
 	printProjectName <- function(x, progressFile){
 		cat(x$projectName, "...", "\n", sep="")
@@ -2048,7 +1978,18 @@ automatedRstoxTest <- function(root=list(windows="\\\\delphi", unix="/Volumes"),
 		if(length(projectPaths)==0){
 			stop("'Projects' folder empty or invalid")
 		}
-		for(i in seq_along(projectPaths)){
+		
+		if(length(projectInd) == 0){
+			projectInd <- seq_along(projectPaths)
+		}
+		else if(is.function(projectInd)){
+			projectInd <- projectInd(seq_along(projectPaths))
+		}
+		else{
+			projectInd <- subset(projectInd, projectInd >= 1 & projectInd <= length(projectPaths))
+		}
+		
+		for(i in projectInd){
 			
 			if(skipError){
 			    tryCatch({
