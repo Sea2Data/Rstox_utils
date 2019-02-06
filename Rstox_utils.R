@@ -823,7 +823,6 @@ getServerPath <- function(root=list(windows="\\\\delphi", unix="/Volumes"), path
 #*********************************************
 #' Copy the test run to the central srever.
 #'
-#' @param dir		The local directory holding the version testing.
 #' @param root		A list of specifyers for the root directory to the central server.
 #' @param path		The relative path from the root.
 #' @param toCopy	The sub folders to copy files from.
@@ -834,8 +833,12 @@ getServerPath <- function(root=list(windows="\\\\delphi", unix="/Volumes"), path
 #' @export
 #' @keywords internal
 #'
-copyCurrentToServer <- function(dir, root=list(windows="\\\\delphi", unix="/Volumes"), path="pc_prog/S2D/stox/StoXVerTest", toCopy=c("Diff", "Output", "ProjOrig"), overwrite=FALSE, msg=FALSE, n=1){
+copyCurrentToServer <- function(root=list(windows="\\\\delphi", unix="/Volumes"), path="pc_prog/S2D/stox/StoXVerTest", toCopy=c("Diff", "Output", "ProjOrig"), overwrite=FALSE, msg=FALSE, n=1){
 	server <- getServerPath(root=root, path=path)
+	
+	dir <- getProjectPaths()$projectRoot
+	dir <- file.path(dir, "StoXVerTest")
+	
 	copyLatestToServer(dir, server, toCopy=toCopy, overwrite=overwrite, msg=msg, op="<=", n=n)
 }
 
@@ -918,124 +921,6 @@ runProject <- function(projectName, progressFile, outputDir, ind=NULL){
 	
 	cat("\n")
 }
-runProjectNew <- function(projectName, save=FALSE, msg=TRUE, close=FALSE){
-	
-	writeMessageToConsoleOrFile <- function(text, msg, add.time=FALSE){
-		if(is.character(msg) && file.exists(msg)){
-			write(paste0(if(add.time) now(TRUE), text), msg, append=TRUE)
-		}
-		else if(isTRUE(msg)){
-			message(text)
-		}
-	}
-	
-	
-	RstoxVersion <- getRstoxVersion()
-	
-	# Run the baseline and baseline report (the latter with input=NULL):
-	# The parameter 'modelType', enabling reading Baseline Report, was introduced in 1.8.1:
-	# 2018-04-19 Added saveProject() since we wish to pick up changes in the project.xml files:
-	baselineReportOutput <- NULL
-	if(RstoxVersion$Rstox > "1.8"){
-		if(f(progressFile)){
-			write(paste0(now(TRUE), "Running Baseline and Baseline Report"), progressFile, append=TRUE)
-		}
-		else if(msg){
-			message("Running Baseline and Baseline Report")
-		}
-		baselineOutput <- getBaseline(projectName, exportCSV=TRUE, modelType="baseline", input=NULL, drop=FALSE)
-		if(save){
-			saveProject(projectName)
-		}
-		
-		baselineReportOutput <- getBaseline(projectName, exportCSV=TRUE, modelType="report", input=NULL, drop=FALSE)
-		if(save){
-			saveProject(projectName)
-		}
-	}
-	else{
-		if(length(progressFile)){
-			write(paste0(now(TRUE), "Running Baseline"), progressFile, append=TRUE)
-		}
-		else if(msg){
-			message("Running Baseline")
-		}
-		baselineOutput <- getBaseline(projectName, exportCSV=TRUE, input=NULL, drop=FALSE)
-		if(save){
-			saveProject(projectName)
-		}
-	}
-	
-	# Get the path to the scripts to run:
-	r_script <- file.path(projectName, "output", "R", "r.R")
-	rreport_script <- file.path(projectName, "output", "R", "r-report.R")
-	# Generate the r scripts:
-	generateRScripts(projectName)
-
-	# Run the scripts and print info to the progress file:
-	if(length(progressFile)){
-		write(paste0(now(TRUE), "Starting project ", i, ": ", projectName), progressFile, append=TRUE)
-	}
-	
-	if(length(progressFile)){
-		write(paste0(now(TRUE), "Running r.R"), progressFile, append=TRUE)
-	}
-	else if(msg){
-		message("Running r.R")
-	}
-	if(file.exists(r_script)){
-		source(r_script)
-	}
-	
-	if(length(progressFile)){
-		write(paste0(now(TRUE), "Running r-report.R"), progressFile, append=TRUE)
-	}
-	else if(msg){
-		message("Running r-report.R")
-	}
-	if(file.exists(rreport_script)){
-		source(rreport_script)
-	}
-	
-	if(length(progressFile)){
-		write(paste0(now(TRUE), "Ending project ", i, ": ", projectName), progressFile, append=TRUE)
-		write("", progressFile, append=TRUE)
-	}
-	
-	if(close){
-		closeProject(projectName)
-	}
-	
-	list(baselineOutput=baselineOutput, baselineReportOutput=baselineReportOutput)
-}
-copyProjectRun <- function(projectName, progressFile, outputDir){
-	
-	run <- runProject(projectName, save=TRUE, progressFile=progressFile, msg=TRUE, close=TRUE)
-		
-	# Copy output files to the output directory:
-	unlink(outputDir, recursive=TRUE, force=TRUE)
-	suppressWarnings(dir.create(outputDir, recursive=TRUE))
-	output <- file.path(projectName, "output")
-	file.copy(output, outputDir, recursive=TRUE)
-	
-	# Delete trash:
-	trash <- list.dirs(outputDir)
-	trash <- trash[grep("trash", trash)]
-	unlink(trash, recursive=TRUE, force=TRUE)
-	
-	# Save also the output from baseline and baseline report to an RData file:
-	save(run$baselineOutput, file=file.path(outputDir, "baselineOutput.RData"))
-	if(length(run$baselineReportOutput)){
-		save(run$baselineReportOutput, file=file.path(outputDir, "baselineReportOutput.RData"))
-	}
-	
-	# Copy the project.xml file:
-	from <- getProjectPaths(projectName)$projectXML
-	to <- file.path(outputDir, "project.xml")
-	file.copy(from=from, to=to, overwrite=TRUE)
-	
-	cat("\n")
-}
 
 # Convenience function for getting the Rstox version string, which is a possible output from getRstoxVersion() as of approximately Rstox_1.9:
 getRstoxVersionString <- function(){
@@ -1049,7 +934,6 @@ getRstoxVersionString <- function(){
 	RstoxVersionString
 }
 
-
 # On Windows 10 the file.path() using .Platform$file.sep is "/", but cmd fc only accepts "\\". Thus we hach the file.path funciton to accommodate this:
 file.path_Windwos10 <- function(...){
 	release <- Sys.info()["release"]
@@ -1061,6 +945,7 @@ file.path_Windwos10 <- function(...){
 	}
 }
 
+# Function for deleting all output files of a project:
 deleteOutput <- function(x){
 	if(length(x)==1 && !isProject(x[1])){
 		x <- list.dirs(x, recursive=FALSE)
@@ -1075,7 +960,6 @@ deleteOutput <- function(x){
 #*********************************************
 #' Function for running all test projects and comparing outputs with previous outputs.
 #'
-#' @param dir				The local directory holding the version testing.
 #' @param root				A list of specifyers for the root directory to the central server.
 #' @param path				The relative path from the root.
 #' @param copyFromServer	Logical: If TRUE, copy the latest original projects, outputs and diffs in the server to the local directory.
@@ -1936,19 +1820,19 @@ automatedRstoxTest <- function(root=list(windows="\\\\delphi", unix="/Volumes"),
 		
 		# Copy first projects from last run:
 		if(length(Previous_ProjectsList_original)){
-			cat("Copying projects from \n\t\"", ProjectsDir_original, "\"\n to \n\t", newProjectsDir_original, "\n", sep="")
+			message("Copying projects from \n\t\"", ProjectsDir_original, "\"\n to \n\t", newProjectsDir_original, "\n")
 			lapply(Previous_ProjectsList_original, file.copy, newProjectsDir_original, overwrite=TRUE, recursive=TRUE)
 		}
 		
 		# Then copy staged projects:
 		if(length(Staged_ProjectsList_original)){
-			cat("Copying projects from \n\t\"", Staged_ProjectsDir_original, "\"\n to \n\t", newProjectsDir_original, "\n", sep="")
+			message("Copying projects from \n\t\"", Staged_ProjectsDir_original, "\"\n to \n\t", newProjectsDir_original, "\n")
 			lapply(Staged_ProjectsList_original, file.copy, newProjectsDir_original, overwrite=TRUE, recursive=TRUE)
 		}
 		
 		# List files in the Projects_original:
 		ProjectsList_original <- list.dirs(newProjectsDir_original, recursive=FALSE)
-		cat("Copying projects from \n\t\"", newProjectsDir_original, "\"\n to \n\t", ProjectsDir, "\n", sep="")
+		message("Copying projects from \n\t\"", newProjectsDir_original, "\"\n to \n\t", ProjectsDir, "\n")
 		lapply(ProjectsList_original, file.copy, ProjectsDir, overwrite=TRUE, recursive=TRUE)
 		
 		# Then delete all output files for safety:
@@ -2037,7 +1921,7 @@ automatedRstoxTest <- function(root=list(windows="\\\\delphi", unix="/Volumes"),
 		printHeader("1. Common and differing projects and files", progressFile)
 		write("{", file=progressFile, append=TRUE)
 		
-		cat("Comparing\n", newOutput, "\nand\n", latestOutput, "\n")
+		message("Comparing\n", newOutput, "\nand\n", latestOutput, "\n")
 		
 		allFiles <- getAllFiles(newOutput, latestOutput, progressFile)
 		write("}", file=progressFile, append=TRUE)

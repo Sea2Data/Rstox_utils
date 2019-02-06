@@ -104,6 +104,6 @@ system.time(automatedRstoxTest(copyFromServer=TRUE, process=c("run", "diff"), nl
 
 
 # Run this at the office while connected with a cable. 
-#copyCurrentToServer(dir="~/workspace/stox/project/Automated_testing", root=list(windows="\\\\delphi", unix="/Volumes"), path="pc_prog/S2D/stox/StoX_version_test/Automated_testing", toCopy=c("Diff", "Output", "Projects_original"), msg=TRUE, n=3)
+copyCurrentToServer(dir="~/workspace/stox/project/Automated_testing", root=list(windows="\\\\delphi", unix="/Volumes"), path="pc_prog/S2D/stox/StoX_version_test/Automated_testing", toCopy=c("Diff", "Output", "Projects_original"), msg=TRUE, n=3)
 
 	
