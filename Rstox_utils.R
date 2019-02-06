@@ -1068,6 +1068,7 @@ deleteOutput <- function(x){
 	output <- file.path(x, "output")
 	files <- list.files(output, recursive=TRUE, full.names=TRUE)
 	unlink(files)
+	invisible(files)
 }
 
 #*********************************************

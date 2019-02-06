@@ -93,7 +93,7 @@ source("https://raw.githubusercontent.com/Sea2Data/Rstox_utils/master/Rstox_util
 
 
 # system.time(automatedRstoxTest(dir="~/workspace/stox/project/Automated_testing", copyFromServer=TRUE, process=c("run", "diff"), nlines=50))
-system.time(automatedRstoxTest(copyFromServer=TRUE, process=c("run", "diff"), nlines=50))
+system.time(automatedRstoxTest(copyFromServer=TRUE, process=c("run", "diff"), nlines=50, skipError=TRUE))
 #     user   system  elapsed 
 # 2044.219  394.894 4639.868 
 # New mac
