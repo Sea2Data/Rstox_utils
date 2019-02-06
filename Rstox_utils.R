@@ -739,7 +739,7 @@ getLatestDir <- function(dir, op="<", n=1){
 copyLatestToServer <- function(local, server, toCopy=c("Diff", "Output", "ProjOrig"), overwrite=TRUE, msg=FALSE, op="<", n=1){
 	
 	# Function for copying from one subdirectory:
-	copyLatestOne <- function(folder, local, server, overwrite=TRUE, msg=FALSE, op=op, n=1){
+	copyLatestOne <- function(folder, local, server, overwrite=TRUE, msg=FALSE, op="<", n=1){
 		local <- getLatestDir(local[[folder]], op=op, n=n)
 		if(length(local)){
 			# Check for the existence of the folder (as opposed to using 'overwrite' in file.copy(), which copies all files which do not exist in the destination).
@@ -760,7 +760,7 @@ copyLatestToServer <- function(local, server, toCopy=c("Diff", "Output", "ProjOr
 	server <- getTestFolderStructure(path.expand(server))
 	
 	# Copy for all specified subdirectories:
-	invisible(lapply(toCopy, copyLatestOne, local, server, overwrite=overwrite, msg=msg))
+	invisible(lapply(toCopy, copyLatestOne, local, server, overwrite=overwrite, msg=msg, op=op))
 }
 copyStaged_Projects_original <- function(server, local, overwrite=TRUE, op="<", n=1){
 	
