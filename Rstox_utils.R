@@ -1061,6 +1061,14 @@ file.path_Windwos10 <- function(...){
 	}
 }
 
+deleteOutput <- function(x){
+	if(length(x)==1 && !isProject(x[1])){
+		x <- list.dirs(x, recursive=FALSE)
+	}
+	output <- file.path(x, "output")
+	files <- list.files(output, recursive=TRUE, full.names=TRUE)
+	unlink(files)
+}
 
 #*********************************************
 #*********************************************
@@ -1150,21 +1158,7 @@ automatedRstoxTest <- function(root=list(windows="\\\\delphi", unix="/Volumes"),
 		}
 	}
 	
-	deleteOutput <- function(dir){
-		unlink(list.files(file.path(dir, "output"), full.names=TRUE, recursive=TRUE), force=TRUE)
-		#unlink(file.path(dir, "output", "baseline"), recursive=TRUE, force=TRUE)
-		#unlink(file.path(dir, "output", "r"), recursive=TRUE, force=TRUE)
-	}
-	deleteOutput <- function(x){
-		if(length(x)==1 && !isProject(x[1])){
-			x <- list.dirs(x, recursive=FALSE)
-		}
-		output <- file.path(x, "output")
-		files <- list.files(output, recursive=TRUE, full.names=TRUE)
-		unlink(files)
-	}
-	
-	pasteAndHash <- function(...){
+	asteAndHash <- function(...){
 		out <- paste0("# ", c(...))
 		out <- paste0(out, collapse="\n")
 		out
