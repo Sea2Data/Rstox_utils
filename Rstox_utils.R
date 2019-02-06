@@ -671,7 +671,18 @@ getLatestDir <- function(dir, op="<", n=1){
 		x
 	}
 	extractVersionstrings <- function(x){
-		x[seq(2, length(x), by=2)]
+		# Remove duplicated, since the diff paths have e.g. Rstox twice in the folder name:
+		packageAndVersion <- data.frame(
+			package = x[seq(1, length(x), by=2)], 
+			version = x[seq(2, length(x), by=2)], 
+			stringsAsFactors = FALSE
+		)
+		
+		
+		dup <- duplicated(packageAndVersion$package)
+		packageAndVersion <- packageAndVersion[!dup, ]
+		
+		packageAndVersion$version
 	}
 	versionScaled <- function(x){
 		sum(x * 10^(10 * seq(length(x) - 1, 0)))
@@ -680,6 +691,8 @@ getLatestDir <- function(dir, op="<", n=1){
 	if(length(dir)==0){
 		return(NULL)
 	}
+	
+	
 	# Get the Rstox and stox-lib versions:
 	current <- sapply(getRstoxVersion(), as.character)
 	currentString <- paste(current, sep="_", collapse="_")
@@ -692,6 +705,7 @@ getLatestDir <- function(dir, op="<", n=1){
 	if(length(All)==0){
 		warning(paste0("No projects in the test folder '", dir, "'"))
 	}
+	
 	
 	# Get the Rstox and stox-lib versions encoded in the folder names:
 	versions <- strsplit(basename(All), "_")
@@ -764,7 +778,7 @@ copyLatestToServer <- function(local, server, toCopy=c("Diff", "Output", "ProjOr
 	lapply(server, dir.create, recursive=TRUE, showWarnings=FALSE)
 	
 	# Copy for all specified subdirectories:
-	invisible(lapply(toCopy, copyLatestOne, local, server, overwrite=overwrite, msg=msg, op=op))
+	invisible(lapply(toCopy, copyLatestOne, local, server, overwrite=overwrite, msg=msg, op=op, n=n))
 }
 copyStaged_Projects_original <- function(server, local, overwrite=TRUE, op="<", n=1){
 	
