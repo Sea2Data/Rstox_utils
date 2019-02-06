@@ -104,6 +104,6 @@ system.time(automatedRstoxTest(copyFromServer=TRUE, process=c("run", "diff"), nl
 
 
 # Run this at the office while connected with a cable. 
-copyCurrentToServer(toCopy=c("Diff", "Output", "Projects_original"), msg=TRUE, n=3)
+copyCurrentToServer(toCopy=c("Diff", "Output", "ProjOrig"), msg=TRUE, n=3)
 
 	
