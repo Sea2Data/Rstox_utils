@@ -755,11 +755,13 @@ copyLatestToServer <- function(local, server, toCopy=c("Diff", "Output", "ProjOr
 		}
 	}
 	
+
 	# Get the folder structure of the local and central directory:
 	local <- getTestFolderStructure(path.expand(local))
 	#server <- getTestFolderStructure(path.expand(server))
 	# Quick fix of duplicated consecutive platform ID:
 	server <- getTestFolderStructure(path.expand(dirname(server)))
+	lapply(server, dir.create, recursive=TRUE, showWarnings=FALSE)
 	
 	# Copy for all specified subdirectories:
 	invisible(lapply(toCopy, copyLatestOne, local, server, overwrite=overwrite, msg=msg, op=op))
