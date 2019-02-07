@@ -106,4 +106,17 @@ system.time(automatedRstoxTest(copyFromServer=TRUE, process=c("run", "diff"), nl
 # Run this at the office while connected with a cable. 
 copyCurrentToServer(toCopy=c("Diff", "Output", "ProjOrig", "Notes"), msg=TRUE, n=3, overwrite=TRUE)
 
-	
+
+
+
+source("https://raw.githubusercontent.com/Sea2Data/Rstox_utils/master/Rstox_utils.R")
+
+ 
+ 
+# List all directories:
+dir = file.path(getProjectPaths()$projectRoot, "StoXVerTest")
+dirList <- getTestFolderStructure(dir)
+latest <- getLatestDir(dirList$Output, n=1)
+latest
+
+
