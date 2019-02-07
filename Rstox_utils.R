@@ -658,7 +658,7 @@ getLatestDir <- function(dir, op="<", n=1){
 	
 	# Get the Rstox and stox-lib versions:
 	current <- sapply(getRstoxVersion(), as.character)
-	current <- data.frame(package=names(d), version=unlist(d), stringsAsFactors=FALSE)
+	current <- data.frame(package=names(current), version=unlist(current), stringsAsFactors=FALSE)
 	currentString <- paste(current$version, sep="_", collapse="_")
 	currentNumeric <- version2numeric(current)
 	current <- versionScaled(currentNumeric)
