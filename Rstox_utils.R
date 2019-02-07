@@ -970,7 +970,7 @@ deleteOutput <- function(x){
 }
 
 all.equal2 <- function(target, current){
-	out <- all.equal2(target, current)
+	out <- all.equal(target, current)
 	gsub("“|”", "\"", out)
 }
 
