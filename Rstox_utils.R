@@ -614,63 +614,9 @@ getTestFolderStructure <- function(x){
 #' @export
 #' @keywords internal
 #'
-getLatestDir_old <- function(dir, op="<", n=1){
-	
-	# Function for converting the Rstox version to a numeric value suitable for sorting, by multiplying each digit in the version number by scaling factor which are largest for the first digits (e.g., Rstox_1.10.3 gives 1 * 1e4 + 10 * 1e2 + 3 = 11003):
-	version2numeric <- function(x){
-		x <- lapply(strsplit(x, ".", fixed=TRUE), as.numeric)
-		x <- sapply(x, function(y) sum(y * 10^(6 - 2 * seq_along(y))))
-		x
-	}
-	
-	if(length(dir)==0){
-		return(NULL)
-	}
-	# Get the Rstox and stox-lib versions:
-	current <- lapply(getRstoxVersion(), as.character)
-	currentString <- paste(current, sep="_", collapse="_")
-	currentRstox <- version2numeric(current$Rstox)
-	currentStoXLib <- version2numeric(current$StoXLib)
-	# Weight Rstox higher:
-	current <- 10^10 * currentRstox + currentStoXLib
-	
-	# List all directories:
-	All <- list.dirs(dir, recursive=FALSE)
-	if(length(All)==0){
-		warning(paste0("No projects in the test folder '", dir, "'"))
-	}
-	
-	# Get the Rstox and stox-lib versions encoded in the folder names:
-	RstoxVersions <- sapply(strsplit(basename(All), "_"), "[", 2)
-	if(length(RstoxVersions)==0){
-		return(NULL)
-	}
-	StoXLibVersions <- sapply(strsplit(basename(All), "_"), "[", 4)
-	RstoxVersions <- version2numeric(RstoxVersions)
-	StoXLibVersions <- version2numeric(StoXLibVersions)
-	# Weight Rstox higher:
-	Versions <- 10^10 * RstoxVersions + StoXLibVersions
-	
-	# There has to be at least one previous version:
-	latest <- do.call(op, list(Versions, current))
-	if(!any(is.na(latest)) && any(latest)){
-		#return(All[max(which(latest))])
-		return(All[tail(sort(which(latest)), n)])
-	}
-	else{
-		warning(paste0("No directories with Rstox version before Rstox_StoXLib version \"", currentString, "\" in the directory \"", dir, "\""))
-		return(NULL)
-	}
-}
-
 getLatestDir <- function(dir, op="<", n=1){
 	
 	# Function for converting the Rstox version to a numeric value suitable for sorting, by multiplying each digit in the version number by scaling factor which are largest for the first digits (e.g., Rstox_1.10.3 gives 1 * 1e4 + 10 * 1e2 + 3 = 11003):
-	version2numeric <- function(x){
-		x <- lapply(strsplit(x, ".", fixed=TRUE), as.numeric)
-		x <- sapply(x, function(y) sum(y * 10^(6 - 2 * seq_along(y))))
-		x
-	}
 	extractVersionstrings <- function(x){
 		# Remove duplicated, since the diff paths have e.g. Rstox twice in the folder name:
 		packageAndVersion <- data.frame(
@@ -683,10 +629,26 @@ getLatestDir <- function(dir, op="<", n=1){
 		dup <- duplicated(packageAndVersion$package)
 		packageAndVersion <- packageAndVersion[!dup, ]
 		
-		packageAndVersion$version
+		# packageAndVersion$version
+		packageAndVersion
+	}
+	version2numeric <- function(x){
+		temp <- lapply(strsplit(x$version, ".", fixed=TRUE), as.numeric)
+		x$version <- sapply(temp, function(y) sum(y * 10^(6 - 2 * seq_along(y))))
+		x
 	}
 	versionScaled <- function(x){
-		sum(x * 10^(10 * seq(length(x) - 1, 0)))
+		power <- list(
+			Rstox = 3, 
+			StoXLib = 2, 
+			eca = 1
+		)
+		
+		scale <- unlist(power[x$package])
+		
+		scale <- 10^(7 * scale)
+		
+		sum(x$version * scale)
 	}
 	
 	if(length(dir)==0){
@@ -696,8 +658,9 @@ getLatestDir <- function(dir, op="<", n=1){
 	
 	# Get the Rstox and stox-lib versions:
 	current <- sapply(getRstoxVersion(), as.character)
-	currentString <- paste(current, sep="_", collapse="_")
-	currentNumeric <- sapply(current, version2numeric)
+	current <- data.frame(package=names(d), version=unlist(d), stringsAsFactors=FALSE)
+	currentString <- paste(current$version, sep="_", collapse="_")
+	currentNumeric <- version2numeric(current)
 	current <- versionScaled(currentNumeric)
 	
 	# List all directories:
@@ -1925,7 +1888,7 @@ automatedRstoxTest <- function(root=list(windows="\\\\delphi", unix="/Volumes"),
 	}
 	
 	# Get the lastest sub directory of the previously generated outputs:
-	latestOutput <- getLatestDir(dirList$Output, n=n)
+	latestOutput <- getLatestDir(dirList$Output, n=1)
 	
 	if("diff" %in% process && length(latestOutput)){
 		VersionComparisonString <- paste(basename(newOutput), basename(latestOutput), sep="_")
