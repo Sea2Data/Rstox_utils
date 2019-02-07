@@ -1278,7 +1278,8 @@ automatedRstoxTest <- function(root=list(windows="\\\\delphi", unix="/Volumes"),
 			out <- paste0(c("# (Code 0) No differences in the following RData files: ", file1, "# and", file2), collapse="\n")
 			
 			# Print info about different names:
-			if(!identical(x1, x2)){
+			#if(!identical(x1, x2)){
+			if(!isTRUE(all.equal(x1, x2))){
 				objectList1 <- paste0("# OBJECTS: ", paste0(x1, collapse=", "), ":")
 				objectList2 <- paste0("# OBJECTS: ", paste0(x2, collapse=", "), ":")
 				out <- paste0(c("# (Code 1) Non-identical object NAMES in the following RData files: ", file1, objectList1, "# and", file2, objectList2), collapse="\n")
