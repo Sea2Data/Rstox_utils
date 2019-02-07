@@ -8,7 +8,7 @@
 
 
 # Load image packages:
-install.packages(c("png", "jpeg", "tiff", "tools", "R.utils", "Rcpp", "rlang"))
+install.packages(c("png", "jpeg", "tiff", "R.utils", "Rcpp", "rlang"))
 
 
 
@@ -64,7 +64,7 @@ system.time(automatedRstoxTest(copyFromServer=TRUE, process=c("run", "diff"), nl
 
 
 #################################
-########## Rstox_1.9.2 ##########
+########## Rstox_1.9.3 ##########
 #################################
 
 ###### RESTART R/Rstudio!!! ######
@@ -75,7 +75,7 @@ dep.pck <- c("data.table", "ggplot2", "pbapply", "rgdal", "rgeos", "rJava", "sp"
 install.packages(dep.pck, repos="http://cran.us.r-project.org", type="binary")
 
 # Install Rstox:
-install.packages("ftp://ftp.imr.no/StoX/Download/Rstox/Versions/Alpha/Rstox_1.9.2/Rstox_1.9.2.tar.gz", repos=NULL)
+install.packages("ftp://ftp.imr.no/StoX/Download/Rstox/Versions/Alpha/Rstox_1.9.3/Rstox_1.9.3.tar.gz", repos=NULL)
 
 # Load Rstox:
 library(Rstox)
@@ -87,7 +87,7 @@ library(Rstox)
 # install.packages(ecafolder, repos=NULL, type="source")
 
 
-##### Run the projects with Rstox 1.9.2 and diff with Rstox 1.8.1: #####
+##### Run the projects with Rstox 1.9.3 and diff with Rstox 1.8.1: #####
 source("https://raw.githubusercontent.com/Sea2Data/Rstox_utils/master/Rstox_utils.R")
 #source('~/Code/Github/Rstox_utils/Rstox_utils/Rstox_utils.R', chdir = TRUE)
 

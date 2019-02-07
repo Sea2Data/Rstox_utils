@@ -594,10 +594,11 @@ getTestFolderStructure <- function(x){
 	platformFolderName <- getPlatformID()
 	
 	list(
-		Staged_Projects_original = file.path(x, "StagedProjOrig"), 
-		Projects_original = file.path(x, platformFolderName, "ProjOrig"), 
-		Projects_original1 = file.path(x, platformFolderName, "ProjOrig", "Rstox_1.0_StoXLib_1.0"), 
-		Projects = file.path(x, platformFolderName, "Proj"), 
+		StagedProjOrig = file.path(x, "StagedProjOrig"), 
+		Notes = file.path(x, platformFolderName, "Notes"), 
+		ProjOrig = file.path(x, platformFolderName, "ProjOrig"), 
+		ProjOrig1 = file.path(x, platformFolderName, "ProjOrig", "Rstox_1.0_StoXLib_1.0"), 
+		Proj = file.path(x, platformFolderName, "Proj"), 
 		Output = file.path(x, platformFolderName, "Output"), 
 		Diff = file.path(x, platformFolderName, "Diff"))
 }
@@ -782,8 +783,8 @@ copyLatestToServer <- function(local, server, toCopy=c("Diff", "Output", "ProjOr
 }
 copyStaged_Projects_original <- function(server, local, overwrite=TRUE, op="<", n=1){
 	
-	local <- getTestFolderStructure(path.expand(local))$Staged_Projects_original
-	server <- getTestFolderStructure(path.expand(server))$Staged_Projects_original
+	local <- getTestFolderStructure(path.expand(local))$StagedProjOrig
+	server <- getTestFolderStructure(path.expand(server))$StagedProjOrig
 	
 	# Get the latest local folder, to which staged projects on the server will be copied:
 	#localLatest <- getLatestDir(local, op="<", n=1)
@@ -796,7 +797,7 @@ copyStaged_Projects_original <- function(server, local, overwrite=TRUE, op="<", 
 	# Copy if 'serverLatest' exists and is not empty:
 	serverLatestDirs <- list.dirs(serverLatest, recursive=FALSE)
 	if(length(serverLatestDirs)){
-		# Delete the local Staged_Projects_original:
+		# Delete the local StagedProjOrig:
 		unlink(localLatest, recursive=TRUE, force=TRUE)
 	
 		message("Copying the following projects from the server to the local system:\n\t", paste(serverLatestDirs, collapse="\n\t"))
@@ -806,12 +807,6 @@ copyStaged_Projects_original <- function(server, local, overwrite=TRUE, op="<", 
 	else{
 		message("No staged original projects copied from the server to the local system")
 	}
-	
-	
-	### # Delete the local Staged_Projects_original:
-	### unlink(local, recursive=TRUE, force=TRUE)
-	### 
-	### file.copy(server, dirname(local), recursive=TRUE, overwrite=overwrite)
 }
 
 #*********************************************
@@ -973,6 +968,12 @@ deleteOutput <- function(x){
 	unlink(files)
 	invisible(files)
 }
+
+all.equal2 <- function(target, current){
+	out <- all.equal2(target, current)
+	gsub("“|”", "\"", out)
+}
+
 
 #*********************************************
 #*********************************************
@@ -1289,7 +1290,7 @@ automatedRstoxTest <- function(root=list(windows="\\\\delphi", unix="/Volumes"),
 		diffRData <- function(i, files, progressFile){
 			all.equalOne <- function(name, progressFile){
 				#write(paste0("\tObject: ", name), file=progressFile, append=TRUE)
-				all.equal(tempenvironment1[[name]], tempenvironment2[[name]])
+				all.equal2(tempenvironment1[[name]], tempenvironment2[[name]])
 			}
 			
 			file <- files$commonFiles[i]
@@ -1314,7 +1315,7 @@ automatedRstoxTest <- function(root=list(windows="\\\\delphi", unix="/Volumes"),
 			out <- paste0(c("# (Code 0) No differences in the following RData files: ", file1, "# and", file2), collapse="\n")
 			
 			# Print info about different names:
-			if(!all.equal(x1, x2)){
+			if(!all.equal2(x1, x2)){
 				objectList1 <- paste0("# OBJECTS: ", paste0(x1, collapse=", "), ":")
 				objectList2 <- paste0("# OBJECTS: ", paste0(x2, collapse=", "), ":")
 				out <- paste0(c("# (Code 1) Non-identical object NAMES in the following RData files: ", file1, objectList1, "# and", file2, objectList2), collapse="\n")
@@ -1667,7 +1668,7 @@ automatedRstoxTest <- function(root=list(windows="\\\\delphi", unix="/Volumes"),
 		
 		all.equalRstoxStoX <- function(Rstox, StoX, name, progressFile){
 			write_all.equal <- function(name, x, y, progressFile){
-				d <- all.equal(x[[name]], y[[name]])
+				d <- all.equal2(x[[name]], y[[name]])
 				Code <- 0
 				write("{", file=progressFile, append=TRUE)
 				if(!isTRUE(d)){
@@ -1818,18 +1819,18 @@ automatedRstoxTest <- function(root=list(windows="\\\\delphi", unix="/Volumes"),
 	}
 	
 	# Get the latest projects:
-	ProjectsDir_original <- getLatestDir(dirList$Projects_original, n=1)
+	ProjectsDir_original <- getLatestDir(dirList$ProjOrig, n=1)
 	Previous_ProjectsList_original <- list.dirs(ProjectsDir_original, recursive=FALSE)
 	newProjectsDir_original <- file.path(dirname(ProjectsDir_original), RstoxVersionString)
 	# Get paths to the original projects and previous output folders:
 	#ProjectsList_original <- list.dirs(ProjectsDir_original, recursive=FALSE)
-	ProjectsDir <- dirList$Projects
-	Staged_ProjectsDir_original <- file.path(dirList$Staged_Projects_original, RstoxVersionString)
+	ProjectsDir <- dirList$Proj
+	Staged_ProjectsDir_original <- file.path(dirList$StagedProjOrig, RstoxVersionString)
 	Staged_ProjectsList_original <- list.dirs(Staged_ProjectsDir_original, recursive=FALSE)
 	
 	# First copy all files from ProjectsDir_original to ProjectsDir
 	if("run" %in% process){
-		# Delete the Projects directory and the current Projects_original directory (which will be filled by the contents of the previous Projects_original directory and that of the current Staged_Projects directory):
+		# Delete the Proj directory and the current ProjOrig directory (which will be filled by the contents of the previous ProjOrig directory and that of the current Staged_Projects directory):
 		unlink(ProjectsDir, recursive=TRUE, force=TRUE)
 		suppressWarnings(dir.create(ProjectsDir))
 		unlink(newProjectsDir_original, recursive=TRUE, force=TRUE)
@@ -1848,7 +1849,7 @@ automatedRstoxTest <- function(root=list(windows="\\\\delphi", unix="/Volumes"),
 			lapply(Staged_ProjectsList_original, file.copy, newProjectsDir_original, overwrite=TRUE, recursive=TRUE)
 		}
 		
-		# List files in the Projects_original:
+		# List files in the ProjOrig:
 		ProjectsList_original <- list.dirs(newProjectsDir_original, recursive=FALSE)
 		message("Copying projects from \n\t\"", newProjectsDir_original, "\"\n to \n\t", ProjectsDir, "\n")
 		lapply(ProjectsList_original, file.copy, ProjectsDir, overwrite=TRUE, recursive=TRUE)
@@ -1875,7 +1876,7 @@ automatedRstoxTest <- function(root=list(windows="\\\\delphi", unix="/Volumes"),
 	
 	if("run" %in% process){
 		if(length(projectPaths)==0){
-			stop("'Projects' folder empty or invalid")
+			stop("'Proj' folder empty or invalid")
 		}
 		
 		if(length(projectInd) == 0){
@@ -1909,7 +1910,7 @@ automatedRstoxTest <- function(root=list(windows="\\\\delphi", unix="/Volumes"),
 		}
 	}
 	
-	# Copy the projects that were run to a new folder in the Projects_original, but first delete any output:
+	# Copy the projects that were run to a new folder in the ProjOrig, but first delete any output:
 	if("run" %in% process){
 		suppressWarnings(dir.create(newProjectsDir_original))
 		ProjectsList <- list.dirs(ProjectsDir, recursive=FALSE)
@@ -1919,7 +1920,7 @@ automatedRstoxTest <- function(root=list(windows="\\\\delphi", unix="/Volumes"),
 		
 		lapply(ProjectsList, file.copy, newProjectsDir_original, overwrite=TRUE, recursive=TRUE)
 		
-		# Also delete the projects in "Projects":
+		# Also delete the projects in "Proj":
 		#unlink(ProjectsDir, recursive=TRUE, force=TRUE)
 	}
 	
@@ -2000,7 +2001,7 @@ automatedRstoxTest <- function(root=list(windows="\\\\delphi", unix="/Volumes"),
 		# Copy the progress file to the current diff directory:
 		finalProgressFile <- file.path(diffdir, paste0("PROGRESS_", VersionComparisonString, ".R"))
 		# The notesFile is a copy of the progress file, in which the reviewer should input comments to each diff. This will be made more automatic in later versions, where the diff will be saved in a list of strings which wil be numbered and each diff must be approved or resolved.
-		finalNotesFile <- file.path(dirname(dirList$Diff), paste0("NOTES_", VersionComparisonString, ".R"))
+		finalNotesFile <- file.path(dirList$Notes, paste0("NOTES_", VersionComparisonString, ".R"))
 		
 		file.copy(progressFile, finalProgressFile, overwrite=TRUE)
 		file.copy(progressFile, finalNotesFile, overwrite=TRUE)
