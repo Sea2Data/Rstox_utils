@@ -678,6 +678,11 @@ getLatestDir <- function(dir, op="<", n=1){
 	versionStrings <- lapply(versionStrings, version2numeric)
 	versions <- sapply(versionStrings, versionScaled)
 	
+	# Order All and versions in increasing order by the scale:
+	o <- order(versions)
+	versions <- versions[o]
+	All <- All[o]
+	
 	# There has to be at least one previous version:
 	latest <- do.call(op, list(versions, current))
 	if(!any(is.na(latest)) && any(latest)){
