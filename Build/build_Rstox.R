@@ -71,5 +71,9 @@ source(file.path(dir[[Sys.info()["user"]]]$Rstox_utils, "Rstox_utils.R"))
 
 
 # Build 1.9.3:
-build_Rstox(dir[[Sys.info()["user"]]]$Rstox, version="1.9.3", Rversion="3.5.2", pckversion=list(data.table="1.10.4-3"), official=FALSE, suggests=c("ggmap", "ncdf4", "pgirmess", "eca", "plotrix"), check=FALSE)
+#build_Rstox(dir[[Sys.info()["user"]]]$Rstox, version="1.9.3", Rversion="3.5.2", pckversion=list(data.table="1.10.4-3"), official=FALSE, suggests=c("ggmap", "ncdf4", "pgirmess", "eca", "plotrix"), check=FALSE)
+
+# Build 1.9.4:
+# Changed to Rversion="3.5" as per the warning during build with chekc=TRUE, where patch number os recommended against:
+build_Rstox(dir[[Sys.info()["user"]]]$Rstox, version="1.9.4", Rversion="3.5", pckversion=list(data.table="1.10.4-3"), official=FALSE, suggests=c("ggmap", "ncdf4", "pgirmess", "eca", "plotrix"), check=FALSE)
 
