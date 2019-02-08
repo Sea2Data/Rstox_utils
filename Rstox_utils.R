@@ -595,7 +595,7 @@ getTestFolderStructure <- function(x){
 	
 	list(
 		StagedProjOrig = file.path(x, "StagedProjOrig"), 
-		Notes = file.path(x, platformFolderName, "Notes"), 
+		#Notes = file.path(x, platformFolderName, "Notes"), 
 		ProjOrig = file.path(x, platformFolderName, "ProjOrig"), 
 		ProjOrig1 = file.path(x, platformFolderName, "ProjOrig", "Rstox_1.0_StoXLib_1.0"), 
 		Proj = file.path(x, platformFolderName, "Proj"), 
@@ -1970,10 +1970,10 @@ automatedRstoxTest <- function(root=list(windows="\\\\delphi", unix="/Volumes"),
 		# Copy the progress file to the current diff directory:
 		finalProgressFile <- file.path(diffdir, paste0("PROGRESS_", VersionComparisonString, ".R"))
 		# The notesFile is a copy of the progress file, in which the reviewer should input comments to each diff. This will be made more automatic in later versions, where the diff will be saved in a list of strings which wil be numbered and each diff must be approved or resolved.
-		finalNotesFile <- file.path(dirList$Notes, paste0("NOTES_", VersionComparisonString, ".R"))
+		#finalNotesFile <- file.path(dirList$Notes, paste0("NOTES_", VersionComparisonString, ".R"))
 		
 		file.copy(progressFile, finalProgressFile, overwrite=TRUE)
-		file.copy(progressFile, finalNotesFile, overwrite=TRUE)
+		#file.copy(progressFile, finalNotesFile, overwrite=TRUE)
 		unlink(progressFile, force=TRUE)
 	}
 	
