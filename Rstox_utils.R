@@ -616,41 +616,6 @@ getTestFolderStructure <- function(x){
 #'
 getLatestDir <- function(dir, op="<", n=1){
 	
-	# Function for converting the Rstox version to a numeric value suitable for sorting, by multiplying each digit in the version number by scaling factor which are largest for the first digits (e.g., Rstox_1.10.3 gives 1 * 1e4 + 10 * 1e2 + 3 = 11003):
-	extractVersionstrings <- function(x){
-		# Remove duplicated, since the diff paths have e.g. Rstox twice in the folder name:
-		packageAndVersion <- data.frame(
-			package = x[seq(1, length(x), by=2)], 
-			version = x[seq(2, length(x), by=2)], 
-			stringsAsFactors = FALSE
-		)
-		
-		
-		dup <- duplicated(packageAndVersion$package)
-		packageAndVersion <- packageAndVersion[!dup, ]
-		
-		# packageAndVersion$version
-		packageAndVersion
-	}
-	version2numeric <- function(x){
-		temp <- lapply(strsplit(x$version, ".", fixed=TRUE), as.numeric)
-		x$version <- sapply(temp, function(y) sum(y * 10^(6 - 2 * seq_along(y))))
-		x
-	}
-	versionScaled <- function(x){
-		power <- list(
-			Rstox = 3, 
-			StoXLib = 2, 
-			eca = 1
-		)
-		
-		scale <- unlist(power[x$package])
-		
-		scale <- 10^(7 * scale)
-		
-		sum(x$version * scale)
-	}
-	
 	if(length(dir)==0){
 		return(NULL)
 	}
@@ -703,7 +668,46 @@ getLatestDir <- function(dir, op="<", n=1){
 	}
 }
 
-
+# Function for converting the Rstox version to a numeric value suitable for sorting, by multiplying each digit in the version number by scaling factor which are largest for the first digits (e.g., Rstox_1.10.3 gives 1 * 1e4 + 10 * 1e2 + 3 = 11003):
+extractVersionstrings <- function(x){
+	# Remove duplicated, since the diff paths have e.g. Rstox twice in the folder name:
+	packageAndVersion <- data.frame(
+		package = x[seq(1, length(x), by=2)], 
+		version = x[seq(2, length(x), by=2)], 
+		stringsAsFactors = FALSE
+	)
+	
+	
+	dup <- duplicated(packageAndVersion$package)
+	packageAndVersion <- packageAndVersion[!dup, ]
+	
+	# packageAndVersion$version
+	packageAndVersion
+}
+version2numeric <- function(x){
+	if(is.data.frame(x)){
+		temp <- lapply(strsplit(x$version, ".", fixed=TRUE), as.numeric)
+		x$version <- sapply(temp, function(y) sum(y * 10^(6 - 2 * seq_along(y))))
+	}
+	else{
+		temp <- lapply(strsplit(x, ".", fixed=TRUE), as.numeric)
+		x <- sapply(temp, function(y) sum(y * 10^(6 - 2 * seq_along(y))))
+	}
+	x
+}
+versionScaled <- function(x){
+	power <- list(
+		Rstox = 3, 
+		StoXLib = 2, 
+		eca = 1
+	)
+	
+	scale <- unlist(power[x$package])
+	
+	scale <- 10^(7 * scale)
+	
+	sum(x$version * scale)
+}
 
 #*********************************************
 #*********************************************
@@ -847,7 +851,8 @@ runProject <- function(projectName, progressFile, outputDir, ind=NULL){
 	# Run the baseline and baseline report (the latter with input=NULL):
 	# The parameter 'modelType', enabling reading Baseline Report, was introduced in 1.8.1:
 	# 2018-04-19 Added saveProject() since we wish to pick up changes in the project.xml files:
-	if(RstoxVersion$Rstox > "1.8"){
+	#if(RstoxVersion$Rstox > "1.8"){
+	if(version2numeric(getRstoxVersion()$Rstox) > version2numeric("1.8")){
 		write(paste0(now(TRUE), "Running Baseline and Baseline Report"), progressFile, append=TRUE)
 		baselineOutput <- getBaseline(projectName, exportCSV=TRUE, modelType="baseline", input=c("par", "proc"), drop=FALSE)
 		saveProject(projectName)
@@ -891,7 +896,8 @@ runProject <- function(projectName, progressFile, outputDir, ind=NULL){
 	
 	# Save also the output from baseline and baseline report to an RData file:
 	save(baselineOutput, file=file.path(outputDir, "baselineOutput.RData"))
-	if(RstoxVersion$Rstox > "1.8"){
+	#if(RstoxVersion$Rstox > "1.8"){
+	if(version2numeric(getRstoxVersion()$Rstox) > version2numeric("1.8")){
 		save(baselineReportOutput, file=file.path(outputDir, "baselineReportOutput.RData"))
 	}
 	
@@ -905,7 +911,8 @@ runProject <- function(projectName, progressFile, outputDir, ind=NULL){
 
 # Convenience function for getting the Rstox version string, which is a possible output from getRstoxVersion() as of approximately Rstox_1.9:
 getRstoxVersionString <- function(){
-	if(getRstoxVersion()$Rstox < "1.8.1"){
+	#if(getRstoxVersion()$Rstox < "1.8.1"){
+	if(version2numeric(getRstoxVersion()$Rstox) < version2numeric("1.8.1")){
 		RstoxVersionString <- getRstoxVersion()
 		RstoxVersionString <- paste(names(RstoxVersionString), unlist(lapply(RstoxVersionString, as.character)), sep="_", collapse="_")
 	}
@@ -976,7 +983,8 @@ automatedRstoxTest <- function(root=list(windows="\\\\delphi", unix="/Volumes"),
 	options(nwarnings=nwarnings)  
 	
 	# The function readBaselineFiles() was introduced in Rstox 1.8.1:
-	if(getRstoxVersion()$Rstox <= "1.8"){
+	#if(getRstoxVersion()$Rstox <= "1.8"){
+	if(version2numeric(getRstoxVersion()$Rstox) <= version2numeric("1.8")){
 		readBaselineFiles <- function(x){
 			# Return NULL if no files are given:
 			if(length(x)==0){
@@ -1655,6 +1663,7 @@ automatedRstoxTest <- function(root=list(windows="\\\\delphi", unix="/Volumes"),
 				Code
 			}
 			
+			
 			namesRstox <- names(Rstox)
 			namesStoX <- names(StoX)
 			commonDF <- intersect(namesRstox, namesStoX)
@@ -1736,7 +1745,8 @@ automatedRstoxTest <- function(root=list(windows="\\\\delphi", unix="/Volumes"),
 		write("{", file=progressFile, append=TRUE)
 		Code <- unlist(lapply(names(dataFromRstox), function(x) all.equalRstoxStoX(Rstox=dataFromRstox[[x]], StoX=dataFromStoX[[x]], name=x, progressFile=progressFile)))
 		
-		if(any(Code==2) && RstoxVersion$Rstox > "1.8"){
+		#if(any(Code==2) && RstoxVersion$Rstox > "1.8"){
+		if(any(Code==2) && version2numeric(getRstoxVersion()$Rstox) > version2numeric("1.8")){
 			howToInspect <- c(
 				paste0("dataFromRstox <- unlist(lapply(c(", paste0("\"", baselineOutputFiles, "\"", collapse=", "), "), function(x) mget(load(x))), recursive=FALSE)"),
 				"dataFromRstox <- lapply(dataFromRstox, \"[[\", \"outputData\")", 
