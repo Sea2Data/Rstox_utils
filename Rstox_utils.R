@@ -939,7 +939,10 @@ deleteOutput <- function(x){
 
 all.equal2 <- function(target, current){
 	out <- all.equal(target, current)
-	gsub("“|”", "\"", out)
+	if(!isTRUE(out)){
+		out <- gsub("“|”", "\"", out)
+	}
+	out
 }
 
 
@@ -1272,7 +1275,6 @@ automatedRstoxTest <- function(root=list(windows="\\\\delphi", unix="/Volumes"),
 			assign("tempenvironment2", new.env(), envir=.GlobalEnv)
 			x1 <- load(file1, envir=tempenvironment1)
 			x2 <- load(file2, envir=tempenvironment2)
-			
 			
 			diffs <- lapply(x1, all.equalOne, progressFile=progressFile)
 			nodiff <- unlist(lapply(diffs, isTRUE))
