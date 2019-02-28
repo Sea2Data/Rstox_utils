@@ -11,11 +11,15 @@ library("devtools")
 
 # Define the directory of the working copy:
 dir <- list(
-	arnejh = list(
-		Rstox = "~/Code/Github/Rstox/Rstox", 
-		Rstox_utils = "~/Code/Github/Rstox_utils/Rstox_utils"
-	), 
-	edvinf = list(
+  arnejh = list(
+    Rstox = "~/Code/Github/Rstox/Rstox", 
+    Rstox_utils = "~/Code/Github/Rstox_utils/Rstox_utils"
+  ), 
+  atlet = list(
+    Rstox = "F:/GIT/Rstox", 
+    Rstox_utils = "F:/GIT/Rstox_utils"
+  ), 
+  edvinf = list(
 		Rstox = "~/code/github/rstox_/", 
 		Rstox_utils = "~/code/github/Rstox_utils/"
 	)
