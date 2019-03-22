@@ -201,7 +201,7 @@ build_pelfoss <- function(buildDir, pkgName="pelfoss", version="1.0", Rversion="
 	file.rename(pkgFileVer, pkgFileVerHyphen)
 	
 	##### Unload the package: #####
-	unload(buildDir)
+	unload(pkgName)
 	##########
 	
 	##### Install local source package by utils (independent of dev-tools), and check that it loads: #####
@@ -543,7 +543,7 @@ build_Rstox <- function(buildDir, pkgName="Rstox", version="1.0", Rversion="3.3.
 	file.rename(pkgFileVer, pkgFileVerHyphen)
 	
 	##### Unload the package: #####
-	unload(buildDir)
+	unload(pkgName)
 	##########
 	
 	##### Install local source package by utils (independent of dev-tools), and check that it loads: #####

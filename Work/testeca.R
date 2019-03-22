@@ -2,7 +2,7 @@
 #' @param file file with eca formatted data
 #' @param runfiledir direcotry to use for eca output
 testEcaFormatted <- function(file, runfiledir){
-  require(eca)
+  require(Reca)
   write(paste("Loading from file:", file), stderr())
   load(file)
   GlobalParameters$resultdir <- runfiledir
