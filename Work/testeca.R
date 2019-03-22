@@ -86,5 +86,11 @@ runAllTests <- function(testfiles="./testfiles", tmpdir="./tmp"){
   }
   write("######", stdout())
 }
-#runAllTests()
+
+# If not already done, clone https://github.com/Sea2Data/Rstox_utils.
+# Change directory to the folder "Work" in the local Rstox_utils (on Holmin's computer this is setwd("~/Code/Github/Rstox_utils/Rstox_utils/Work"))
+# Run a preliminary test:
 runTest("herring_2015_tempfixed_gearrandom_100samples.Rdata")
+
+# Run the full test, which takes half an hour:
+#runAllTests()
