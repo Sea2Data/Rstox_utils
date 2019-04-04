@@ -1,5 +1,5 @@
-#devtools::install_github("Sea2Data/Rstox", ref="develop")
-#devtools::install_github("NorskRegnesentral/Reca", ref="master")
+devtools::install_github("Sea2Data/Rstox", ref="develop")
+devtools::install_github("NorskRegnesentral/Reca", ref="master")
 
 #
 # Mac
