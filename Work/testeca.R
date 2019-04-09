@@ -86,9 +86,10 @@ runAllTests <- function(testfiles="./testfiles", tmpdir="./tmp"){
   }
   write("######", stdout())
 }
-
 # If not already done, clone https://github.com/Sea2Data/Rstox_utils.
 # Change directory to the folder "Work" in the local Rstox_utils (on Holmin's computer this is setwd("~/Code/Github/Rstox_utils/Rstox_utils/Work"))
+# setwd(dirname(sys.frame(1)$ofile)) #only works when sourcing
+if (!file.exists("testfiles")){stop("Set wd to location of script")}
 # Run a preliminary test:
 runTest("herring_2015_tempfixed_gearrandom_100samples.Rdata")
 
