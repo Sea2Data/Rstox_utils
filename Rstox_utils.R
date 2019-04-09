@@ -211,174 +211,174 @@ build_pelfoss <- function(buildDir, pkgName="pelfoss", version="1.0", Rversion="
 }
 
 
+########## Functions ##########
+# Function used for writing the README file automatically, including package dependencies, R and Rstox version and release notes:
+writeRstoxREADME <- function(READMEfile, NEWSfile, version, Rversion, betaAlpha, betaAlphaString, imports, official=FALSE){
+	# Write Rstox and R version in the first two lines. THIS SHOULD NEVER BE CHANGED, SINCE STOX READS THESE TWO LINES TO CHECK VERSIONS:
+	write(paste0("# Rstox version: ", version, " (latest ", betaAlphaString, ", ", format(Sys.time(), "%Y-%m-%d"), ")"), READMEfile)
+	write(paste0("# R version: ", Rversion), READMEfile, append=TRUE)
+	
+	write("", READMEfile, append=TRUE)
+	# Package description and installation code:
+	write("# The package Rstox contains most of the functionality of the stock assesment utility StoX, which is an open source approach to acoustic and swept area survey calculations. Download Rstox from ftp://ftp.imr.no/StoX/Download/Rstox or install by running the following commands in R:", READMEfile, append=TRUE)
+	
+	write("", READMEfile, append=TRUE)
+	write("# Install the packages that Rstox depends on. Note that this updates all the specified packages to the latest (binary) version:", READMEfile, append=TRUE)
+	write(paste0("dep.pck <- c(\"", paste0(imports, collapse="\", \""), "\")"), READMEfile, append=TRUE)
+	# WARNING: IT IS CRUSIAL TO ENCLUDE THE repos IN THIS CALL, FOR STOX TO SOURCE THE README FILE PROPERLY (RESULTS IN AN ERROR IF ABSENT) IT SEEMS "R CMD BATCH source(TheReadMeFile)" RETURNS AN ERROR WHEN repos IS NOT SET (2016-12-16):
+	write("install.packages(dep.pck, repos=\"http://cran.us.r-project.org\", type=\"binary\")", READMEfile, append=TRUE)
+	#write("install.packages(dep.pck, type=\"binary\")", READMEfile, append=TRUE)
+	
+	write("", READMEfile, append=TRUE)
+	write("# Install Rstox:", READMEfile, append=TRUE)
+	# Get the version string, the name of the Rstox tar file, the ftp root and, finally, the ftp directory and full path to the Rstox tar file:
+	# Changed added to make the package name identical to the name of the GitHub release:
+	#versionString <- paste0("Rstox_", version)
+	versionString <- paste("Rstox", version, sep="_")
+	tarName <- paste0(versionString, ".tar.gz")
+	ftpRoot <- "ftp://ftp.imr.no/StoX/Download/Rstox"
+	if(betaAlpha==3){
+		ftpDir <- file.path(ftpRoot, "Versions", "Alpha", versionString)
+	}
+	else{
+		if(official){
+			ftpDir <- ftpRoot
+		}
+		else{
+			ftpDir <- file.path(ftpRoot, "Versions", versionString)
+		}
+	}
+	tarFile <- file.path(ftpDir, tarName)
+	# Write the Rstox install command:
+	write(paste0("install.packages(\"", tarFile, "\", repos=NULL)"), READMEfile, append=TRUE)
+	
+	write("", READMEfile, append=TRUE)
+	write("# Alternatively, install the latest development version from GitHub.", READMEfile, append=TRUE)
+	write(paste0("# Note that this does not guarantee a stable version."), READMEfile, append=TRUE)
+	write(paste0("# For official versions of Rstox, refer to the ftp server ", ftpDir, " as described above."), READMEfile, append=TRUE)
+	write("# Install from github using the devtools package:", READMEfile, append=TRUE)
+	write("# devtools::install_github(\"Sea2Data/Rstox\", ref=\"develop\")", READMEfile, append=TRUE)
+	write("", READMEfile, append=TRUE)
+	write("# R should be installed as the 64 bit version. On Windows 10, ONLY the 64 bit version should be used.", READMEfile, append=TRUE)
+	write("# To do this, uncheck the box \"32-bit Files\" when selecting components to install.", READMEfile, append=TRUE)
+	write("# If you are re-installing an R that has both 32 and 64 bit, you will need to uninstall R first.", READMEfile, append=TRUE)
+	write("", READMEfile, append=TRUE)
+	write("# On Windows systems with adminstrator requirements, it is recommended to install R in C:/users/<user>/documents/R.", READMEfile, append=TRUE)
+	write("# Also if you are using Rstudio, please make sure that you are using the correct R version (in case you have", READMEfile, append=TRUE)
+	write("# multiple versions installed). The R version can be selected in Tools > Global Options.", READMEfile, append=TRUE)
+	write("", READMEfile, append=TRUE)
+	write("# Note that 64 bit Java is required to run Rstox", READMEfile, append=TRUE)
+	write("", READMEfile, append=TRUE)
+	write("# On Windows, install Java from this webpage: https://www.java.com/en/download/windows-64bit.jsp,", READMEfile, append=TRUE)
+	write("# or follow the instructions found on ftp://ftp.imr.no/StoX/Tutorials/", READMEfile, append=TRUE)
+	write("", READMEfile, append=TRUE)
+	write("# On Mac, getting Java and Rstox to communicate can be challenging.", READMEfile, append=TRUE)
+	write("# If you run into problems such as \"Unsupported major.minor version ...\", try the following:", READMEfile, append=TRUE)
+	write("# Update java, on", READMEfile, append=TRUE)
+	write("# \thttp://www.oracle.com/technetwork/java/javase/downloads/jre8-downloads-2133155.html", READMEfile, append=TRUE)
+	write("# If this does not work install first the JDK and then the JRE:", READMEfile, append=TRUE)
+	write("# \thttp://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html", READMEfile, append=TRUE)
+	write("# \thttp://www.oracle.com/technetwork/java/javase/downloads/jre8-downloads-2133155.html", READMEfile, append=TRUE)
+	write("# Rstox sohuld also work with Java 11, presently available only as Development Kit:", READMEfile, append=TRUE)
+	write("# \thttps://www.oracle.com/technetwork/java/javase/downloads/jdk11-downloads-5066655.html", READMEfile, append=TRUE)
+	write("# You may want to check that the downloaded version is first in the list by running the following in the Terminal:", READMEfile, append=TRUE)
+	write("# \t/usr/libexec/java_home -V", READMEfile, append=TRUE)
+	write("# \tjava -version", READMEfile, append=TRUE)
+	write("# Then run this in the Terminal.app (you will be asked for password, but the password will not show as you type.", READMEfile, append=TRUE)
+	write("# It is possible to type the password in a text editor first and then paste it into the Terminal.):", READMEfile, append=TRUE)
+	write("# \tsudo ln -s $(/usr/libexec/java_home)/jre/lib/server/libjvm.dylib /usr/local/lib", READMEfile, append=TRUE)
+	write("# \tsudo R CMD javareconf", READMEfile, append=TRUE)
+	write("# Open R (close and then open if already open) and install rJava:", READMEfile, append=TRUE)
+	#write("# \tinstall.packages('rJava', type='source')", READMEfile, append=TRUE)
+	write("# \tinstall.packages('rJava', type=\"binary\")", READMEfile, append=TRUE)
+	write("# If this fails, try installing from source instead using install.packages('rJava', type='source')", READMEfile, append=TRUE)
+	write("# Then the installed Rstox should work.", READMEfile, append=TRUE)
+	
+	# Write release notes:
+	write("", READMEfile, append=TRUE)
+	write("", READMEfile, append=TRUE)
+	write(paste0("# Release notes Rstox_", version, ":"), READMEfile, append=TRUE)
+
+	# Read the changes:
+	l <- readLines(NEWSfile)
+	# Split into vesions:
+	atversion <- which(substr(l, 1, 1) == "#")
+	# Strip off "#", and extract the version string:
+	versionStringInChanges <- l[atversion]
+	startversion <- regexpr("Version ", versionStringInChanges)
+	startversion <- startversion + attributes(startversion)$match.length
+	versionStringInChanges <- substring(versionStringInChanges, startversion)
+	endversion <- regexpr(" ", versionStringInChanges) - 1
+	versionStringInChanges <- substr(versionStringInChanges, 1, endversion)
+	# Split into versions and format to insert into the README file:
+	l <- split(l, findInterval(seq_along(l), c(atversion, length(l)+1)))
+	names(l) <- versionStringInChanges
+	# Remove the version line:
+	l <- lapply(l, function(xx) xx[substr(xx, 1, 1) != "#"])
+	thisl <- l[[version]]
+	hasText <- which(nchar(thisl)>1)
+	thisl[hasText] <- paste0("# ", seq_along(hasText), ". ", thisl[hasText])
+	write(thisl, READMEfile, append=TRUE)
+	
+	if(official){
+		NEWSlink <- "https://github.com/Sea2Data/Rstox/blob/master/NEWS"
+	}
+	else{
+		NEWSlink <- "https://github.com/Sea2Data/Rstox/blob/alpha/NEWS"
+	}
+	
+	write("", READMEfile, append=TRUE)
+	write(paste0("# For historical release notes see ", NEWSlink), READMEfile, append=TRUE)
+
+}
+
+# Functions used for extracting the imports in Rstox, in order to inform about these in the README file. This will not be needed once the package is on CRAN:
+discardBasePackages <- function(x){
+	inst <- installed.packages()
+	Base <- inst[, "Package"][inst[,"Priority"] %in% c("base", "recommended")]
+	sort(setdiff(x, Base))
+}
+getImports <- function(buildDir, version=list()){
+	# Read the NAMESPACE file and get the package dependencies:
+	buildDirList <- list.files(buildDir, recursive=TRUE, full.names=TRUE)
+	imports <- NULL
+	if(length(buildDirList)){
+		print(buildDirList[basename(buildDirList) == "NAMESPACE"])
+		NAMESPACE <- readLines(buildDirList[basename(buildDirList) == "NAMESPACE"])
+		atImports <- grep("import", NAMESPACE)
+		imports <- NAMESPACE[atImports]
+		imports <- sapply(strsplit(imports, "(", fixed=TRUE), "[", 2)
+		imports <- sapply(strsplit(imports, ")", fixed=TRUE), "[", 1)
+		imports <- unique(sapply(strsplit(imports, ",", fixed=TRUE), "[", 1))
+		#inst <- installed.packages()
+		#Base <- inst[, "Package"][inst[,"Priority"] %in% c("base", "recommended")]
+		#imports <- sort(setdiff(imports, Base))
+		imports <- discardBasePackages(imports)
+		#notBase <- inst[, "Package"][!(inst[,"Priority"]) %in% "base"]
+		#imports <- sort(imports[!imports %in% notBase])
+	}
+	
+	# Add required version for packages:
+	if(length(version)){
+		# Remove version information for packages that are not present in the imports:
+		if(!all(names(version) %in% imports)){
+			warning("Not all package versions specified in 'version' are present as imports.")
+		}
+		version <- version[names(version) %in% imports]
+		atversion <- match(names(version), imports)
+		for(i in seq_along(version)){
+			imports[atversion[i]] <- paste0(imports[atversion[i]], " (>= ", version[i], ")")
+		}
+	}
+	return(imports)
+}
+########## End of functions ##########
+
+
 # Function used for building and testing the Rstox package. 
 # Use this in the continous development of Rstox. 
 # Rstox can also be built from the develop brach of Sea2Data/Rstox, but the function build_Rstox() generates the README and DESCRIPTION file, treats dependencies and tests the package and examples if check=TRUE:
 build_Rstox <- function(buildDir, pkgName="Rstox", version="1.0", Rversion="3.3.1", pckversion=list(), official=FALSE, check=FALSE, exportDir=NULL, suggests=NULL) {
-	
-	########## Functions ##########
-	# Function used for writing the README file automatically, including package dependencies, R and Rstox version and release notes:
-	writeRstoxREADME <- function(READMEfile, NEWSfile, version, Rversion, betaAlpha, betaAlphaString, imports, official=FALSE){
-		# Write Rstox and R version in the first two lines. THIS SHOULD NEVER BE CHANGED, SINCE STOX READS THESE TWO LINES TO CHECK VERSIONS:
-		write(paste0("# Rstox version: ", version, " (latest ", betaAlphaString, ", ", format(Sys.time(), "%Y-%m-%d"), ")"), READMEfile)
-		write(paste0("# R version: ", Rversion), READMEfile, append=TRUE)
-		
-		write("", READMEfile, append=TRUE)
-		# Package description and installation code:
-		write("# The package Rstox contains most of the functionality of the stock assesment utility StoX, which is an open source approach to acoustic and swept area survey calculations. Download Rstox from ftp://ftp.imr.no/StoX/Download/Rstox or install by running the following commands in R:", READMEfile, append=TRUE)
-		
-		write("", READMEfile, append=TRUE)
-		write("# Install the packages that Rstox depends on. Note that this updates all the specified packages to the latest (binary) version:", READMEfile, append=TRUE)
-		write(paste0("dep.pck <- c(\"", paste0(imports, collapse="\", \""), "\")"), READMEfile, append=TRUE)
-		# WARNING: IT IS CRUSIAL TO ENCLUDE THE repos IN THIS CALL, FOR STOX TO SOURCE THE README FILE PROPERLY (RESULTS IN AN ERROR IF ABSENT) IT SEEMS "R CMD BATCH source(TheReadMeFile)" RETURNS AN ERROR WHEN repos IS NOT SET (2016-12-16):
-		write("install.packages(dep.pck, repos=\"http://cran.us.r-project.org\", type=\"binary\")", READMEfile, append=TRUE)
-		#write("install.packages(dep.pck, type=\"binary\")", READMEfile, append=TRUE)
-		
-		write("", READMEfile, append=TRUE)
-		write("# Install Rstox:", READMEfile, append=TRUE)
-		# Get the version string, the name of the Rstox tar file, the ftp root and, finally, the ftp directory and full path to the Rstox tar file:
-		# Changed added to make the package name identical to the name of the GitHub release:
-		#versionString <- paste0("Rstox_", version)
-		versionString <- paste("Rstox", version, sep="_")
-		tarName <- paste0(versionString, ".tar.gz")
-		ftpRoot <- "ftp://ftp.imr.no/StoX/Download/Rstox"
-		if(betaAlpha==3){
-			ftpDir <- file.path(ftpRoot, "Versions", "Alpha", versionString)
-		}
-		else{
-			if(official){
-				ftpDir <- ftpRoot
-			}
-			else{
-				ftpDir <- file.path(ftpRoot, "Versions", versionString)
-			}
-		}
-		tarFile <- file.path(ftpDir, tarName)
-		# Write the Rstox install command:
-		write(paste0("install.packages(\"", tarFile, "\", repos=NULL)"), READMEfile, append=TRUE)
-		
-		write("", READMEfile, append=TRUE)
-		write("# Alternatively, install the latest development version from GitHub.", READMEfile, append=TRUE)
-		write(paste0("# Note that this does not guarantee a stable version."), READMEfile, append=TRUE)
-		write(paste0("# For official versions of Rstox, refer to the ftp server ", ftpDir, " as described above."), READMEfile, append=TRUE)
-		write("# Install from github using the devtools package:", READMEfile, append=TRUE)
-		write("# devtools::install_github(\"Sea2Data/Rstox\", ref=\"develop\")", READMEfile, append=TRUE)
-		write("", READMEfile, append=TRUE)
-		write("# R should be installed as the 64 bit version. On Windows 10, ONLY the 64 bit version should be used.", READMEfile, append=TRUE)
-		write("# To do this, uncheck the box \"32-bit Files\" when selecting components to install.", READMEfile, append=TRUE)
-		write("# If you are re-installing an R that has both 32 and 64 bit, you will need to uninstall R first.", READMEfile, append=TRUE)
-		write("", READMEfile, append=TRUE)
-		write("# On Windows systems with adminstrator requirements, it is recommended to install R in C:/users/<user>/documents/R.", READMEfile, append=TRUE)
-		write("# Also if you are using Rstudio, please make sure that you are using the correct R version (in case you have", READMEfile, append=TRUE)
-		write("# multiple versions installed). The R version can be selected in Tools > Global Options.", READMEfile, append=TRUE)
-		write("", READMEfile, append=TRUE)
-		write("# Note that 64 bit Java is required to run Rstox", READMEfile, append=TRUE)
-		write("", READMEfile, append=TRUE)
-		write("# On Windows, install Java from this webpage: https://www.java.com/en/download/windows-64bit.jsp,", READMEfile, append=TRUE)
-		write("# or follow the instructions found on ftp://ftp.imr.no/StoX/Tutorials/", READMEfile, append=TRUE)
-		write("", READMEfile, append=TRUE)
-		write("# On Mac, getting Java and Rstox to communicate can be challenging.", READMEfile, append=TRUE)
-		write("# If you run into problems such as \"Unsupported major.minor version ...\", try the following:", READMEfile, append=TRUE)
-		write("# Update java, on", READMEfile, append=TRUE)
-		write("# \thttp://www.oracle.com/technetwork/java/javase/downloads/jre8-downloads-2133155.html", READMEfile, append=TRUE)
-		write("# If this does not work install first the JDK and then the JRE:", READMEfile, append=TRUE)
-		write("# \thttp://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html", READMEfile, append=TRUE)
-		write("# \thttp://www.oracle.com/technetwork/java/javase/downloads/jre8-downloads-2133155.html", READMEfile, append=TRUE)
-		write("# Rstox sohuld also work with Java 11, presently available only as Development Kit:", READMEfile, append=TRUE)
-		write("# \thttps://www.oracle.com/technetwork/java/javase/downloads/jdk11-downloads-5066655.html", READMEfile, append=TRUE)
-		write("# You may want to check that the downloaded version is first in the list by running the following in the Terminal:", READMEfile, append=TRUE)
-		write("# \t/usr/libexec/java_home -V", READMEfile, append=TRUE)
-		write("# \tjava -version", READMEfile, append=TRUE)
-		write("# Then run this in the Terminal.app (you will be asked for password, but the password will not show as you type.", READMEfile, append=TRUE)
-		write("# It is possible to type the password in a text editor first and then paste it into the Terminal.):", READMEfile, append=TRUE)
-		write("# \tsudo ln -s $(/usr/libexec/java_home)/jre/lib/server/libjvm.dylib /usr/local/lib", READMEfile, append=TRUE)
-		write("# \tsudo R CMD javareconf", READMEfile, append=TRUE)
-		write("# Open R (close and then open if already open) and install rJava:", READMEfile, append=TRUE)
-		#write("# \tinstall.packages('rJava', type='source')", READMEfile, append=TRUE)
-		write("# \tinstall.packages('rJava', type=\"binary\")", READMEfile, append=TRUE)
-		write("# If this fails, try installing from source instead using install.packages('rJava', type='source')", READMEfile, append=TRUE)
-		write("# Then the installed Rstox should work.", READMEfile, append=TRUE)
-		
-		# Write release notes:
-		write("", READMEfile, append=TRUE)
-		write("", READMEfile, append=TRUE)
-		write(paste0("# Release notes Rstox_", version, ":"), READMEfile, append=TRUE)
-	
-		# Read the changes:
-		l <- readLines(NEWSfile)
-		# Split into vesions:
-		atversion <- which(substr(l, 1, 1) == "#")
-		# Strip off "#", and extract the version string:
-		versionStringInChanges <- l[atversion]
-		startversion <- regexpr("Version ", versionStringInChanges)
-		startversion <- startversion + attributes(startversion)$match.length
-		versionStringInChanges <- substring(versionStringInChanges, startversion)
-		endversion <- regexpr(" ", versionStringInChanges) - 1
-		versionStringInChanges <- substr(versionStringInChanges, 1, endversion)
-		# Split into versions and format to insert into the README file:
-		l <- split(l, findInterval(seq_along(l), c(atversion, length(l)+1)))
-		names(l) <- versionStringInChanges
-		# Remove the version line:
-		l <- lapply(l, function(xx) xx[substr(xx, 1, 1) != "#"])
-		thisl <- l[[version]]
-		hasText <- which(nchar(thisl)>1)
-		thisl[hasText] <- paste0("# ", seq_along(hasText), ". ", thisl[hasText])
-		write(thisl, READMEfile, append=TRUE)
-		
-		if(official){
-			NEWSlink <- "https://github.com/Sea2Data/Rstox/blob/master/NEWS"
-		}
-		else{
-			NEWSlink <- "https://github.com/Sea2Data/Rstox/blob/alpha/NEWS"
-		}
-		
-		write("", READMEfile, append=TRUE)
-		write(paste0("# For historical release notes see ", NEWSlink), READMEfile, append=TRUE)
-	
-	}
-	
-	# Functions used for extracting the imports in Rstox, in order to inform about these in the README file. This will not be needed once the package is on CRAN:
-	discardBasePackages <- function(x){
-		inst <- installed.packages()
-		Base <- inst[, "Package"][inst[,"Priority"] %in% c("base", "recommended")]
-		sort(setdiff(x, Base))
-	}
-	getImports <- function(buildDir, version=list()){
-		# Read the NAMESPACE file and get the package dependencies:
-		buildDirList <- list.files(buildDir, recursive=TRUE, full.names=TRUE)
-		imports <- NULL
-		if(length(buildDirList)){
-			print(buildDirList[basename(buildDirList) == "NAMESPACE"])
-			NAMESPACE <- readLines(buildDirList[basename(buildDirList) == "NAMESPACE"])
-			atImports <- grep("import", NAMESPACE)
-			imports <- NAMESPACE[atImports]
-			imports <- sapply(strsplit(imports, "(", fixed=TRUE), "[", 2)
-			imports <- sapply(strsplit(imports, ")", fixed=TRUE), "[", 1)
-			imports <- unique(sapply(strsplit(imports, ",", fixed=TRUE), "[", 1))
-			#inst <- installed.packages()
-			#Base <- inst[, "Package"][inst[,"Priority"] %in% c("base", "recommended")]
-			#imports <- sort(setdiff(imports, Base))
-			imports <- discardBasePackages(imports)
-			#notBase <- inst[, "Package"][!(inst[,"Priority"]) %in% "base"]
-			#imports <- sort(imports[!imports %in% notBase])
-		}
-		
-		# Add required version for packages:
-		if(length(version)){
-			# Remove version information for packages that are not present in the imports:
-			if(!all(names(version) %in% imports)){
-				warning("Not all package versions specified in 'version' are present as imports.")
-			}
-			version <- version[names(version) %in% imports]
-			atversion <- match(names(version), imports)
-			for(i in seq_along(version)){
-				imports[atversion[i]] <- paste0(imports[atversion[i]], " (>= ", version[i], ")")
-			}
-		}
-		return(imports)
-	}
-	########## End of functions ##########
-	
 	
 	# Clear the installed package:
 	try(lapply(.libPaths(), function(xx) remove.packages(pkgName, xx)), silent=TRUE)
@@ -407,36 +407,6 @@ build_Rstox <- function(buildDir, pkgName="Rstox", version="1.0", Rversion="3.3.
 	
 	
 	##### Save the following content to the onLoad.R file in the "R" directory: #####
-	# JAVA_HOME is unset to be able to load rJava.dll in R CMD BATCH
-	# jPackage is moved to rstox.init for dynamic import of rJava
-	# The local Rstox environment is created here, in which all useful outputs from functions are placed, and saved at the end of any code:
-	#onLoadText = paste(
-	#	".onLoad <- function(libname, pkgname){",
-	#	"	",
-	#	"	if(Sys.getenv(\"JAVA_HOME\")!=\"\") Sys.setenv(JAVA_HOME=\"\")",
-	#	"	# options(java.parameters=\"-Xmx2g\")",
-	#	"# Create a Rstox environment in which the baseline objects of the various projects are placed. This allows for a check for previously run baseline models and avoids memory leakage:", 
-	#	"	assign(\"RstoxEnv\", new.env(), envir=.GlobalEnv)",
-	#	"	# Assign fundamental variables to the RstoxEnv:",
-	#	"	Definitions <- list(",
-	#	"		JavaMem = 2e9, ",
-	#	"		StoXFolders = c(\"input\", \"output\", \"process\"), ",
-	#	"		NMD_data_types = c(\"echosounder\", \"biotic\", \"landing\"), ",
-	#	"		StoX_data_types = c(\"acoustic\", \"biotic\", \"landing\"), ",
-	#	"		StoX_data_type_keys = c(acoustic=\"echosounder_dataset\", biotic=\"missions xmlns\", landing=\"Sluttseddel\"), ",
-	#	"		project_types = c(\"AcousticTrawl\", \"SweptAreaLength\", \"SweptAreaTotal\"), ",
-	#	"		processLevels = c(\"bootstrap\", \"bootstrapImpute\"), ",
-	#	"		modelTypeJavaNames = c(\"baseline\", \"baseline-report\", \"r\", \"r-report\", \"name\"), ",
-	#	"		modelTypeJavaFuns = c(\"getBaseline\", \"getBaselineReport\", \"getRModel\", \"getRModelReport\", \"getProjectName\")",
-	#	"		)",
-	#	"	assign(\"Definitions\", Definitions, envir=get(\"RstoxEnv\"))",
-	#	"	assign(\"Projects\", list(), envir=get(\"RstoxEnv\"))",
-	#	"	# Set the Java memory:",
-	#	"	setJavaMemory(Definitions$JavaMem)", 
-	#	"	print(initiateRstoxEnv)", 
-	#	"}", 
-	#	sep="\n"
-	#)
 	onLoadText = paste(
 		".onLoad <- function(libname, pkgname){",
 		"	",
@@ -548,8 +518,13 @@ build_Rstox <- function(buildDir, pkgName="Rstox", version="1.0", Rversion="3.3.
 	
 	##### Install local source package by utils (independent of dev-tools), and check that it loads: #####
 	install.packages(pkgFileVerHyphen, repos=NULL, type="source", lib=.libPaths()[1])
-	library(Rstox)
+	# Build documentation pdf:
+	lib <- file.path(.libPaths()[1], pkgName)
+	devtools::build_manual(pkg=lib, path=lib)
 	##########
+	
+	# Load the package:
+	library(pkgName, character.only=TRUE)
 }
 
 

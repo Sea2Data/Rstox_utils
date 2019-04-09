@@ -100,4 +100,4 @@ source(file.path(dir[[Sys.info()["user"]]]$Rstox_utils, "Rstox_utils.R"))
 
 
 # Build 1.11.1:
-build_Rstox(dir[[Sys.info()["user"]]]$Rstox, version="1.11.1", Rversion="3.5", pckversion=list(data.table="1.10.4-3"), official=FALSE, suggests=c("ggmap", "ncdf4", "pgirmess", "eca", "plotrix"), check=FALSE)
+build_Rstox(dir[[Sys.info()["user"]]]$Rstox, version="1.11.1", Rversion="3.5", pckversion=list(data.table="1.10.4-3"), official=FALSE, suggests=c("ggmap", "ncdf4", "pgirmess", "Reca", "plotrix"), check=FALSE)
