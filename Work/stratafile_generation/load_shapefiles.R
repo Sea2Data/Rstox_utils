@@ -5,8 +5,8 @@ homr_tom2017 <- readOGR("data/FDIR_HOMR_tom2017", "Hovedomr_der _t.o.m. 2017_")
 homr_fom2018 <- readOGR("data/FDIR_HOMR_fom2018", "Hovedomr_der _f.o.m. 2018_")
 loc_fom2018 <- readOGR("data/FDIR_lokasjoner_fom2018", "Lokasjoner _f.o.m. 2018_")
 loc_tom2017 <- readOGR("data/FDIR_lokasjoner_tom2017", "Lokasjoner _t.o.m. 2017_")
+ices_fom2018_all <- readOGR("data/ICES_omr_fom2018", "ICES-omr_der _f.o.m. 2018_") #different area coding schemes needs to be simplified
 ices_tom2017 <- readOGR("data/ICES_omr_tom2017", "ices_areas_simplifiedt")
-ices_fom2018 <- readOGR("data/ICES_omr_fom2018", "ICES-omr_der _f.o.m. 2018_")
 
 testplotshapefiles <- function(projection=" +proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs +towgs84=0,0,0"){
   # had to mix and match a bit from fdir downloads, so testing to see if OK.
