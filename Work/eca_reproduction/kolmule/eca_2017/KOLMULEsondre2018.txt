@@ -1,0 +1,127 @@
+### stage 1 parameters ###
+### used in reading STUV files ###
+#Konverteringsfaktor lengde for produkttype definert ved LMAAL på STUV slik at korrigert lengde 
+#l=a*l'+b hvor l' er lengden registrert på skjema. SJEKK M OFFISIELLE KONVERTERINGSFAKTORER
+length correction
+nfac
+1
+LMAAL a b
+K 1.289 1.414
+#Konverteringsfaktor vekt for produkttype definert ved VEKTVOL på STUV slik at korrigert vekt 
+#v=a*v' hvor v' er vekten registrert på skjema
+weight correction
+nfac
+3
+VEKTVOL a
+1 1
+3 1.5
+4 1.18
+########################################################
+### stage 2 parameters ###
+### used in creating project data ###
+minn
+10
+minlength
+0
+maxlength
+240
+minage
+1
+maxage
+20
+areagroups
+ngroups
+1
+groups
+8 9 28 41 42 4 5 6 7 12 30 31 34 36 37 43 47 48 49
+geargroups
+ngroups
+1
+groups
+35 37 31
+seasongroups
+ngroups
+2
+groups
+1
+2 3 4
+#Parametre basert på vonBertanlanffy vekstmodell L=Linf(1-exp(-K*age))*exp(epsilon); epsilon~N(0,sigma^2) som brukes til å fjerne uteliggende datapunkt
+#sigma angir hvor stort avvik fra gjennomsnitt som aksepteres
+length age parameters
+nfac
+1
+Linf K sigma k
+37.2490509 0.3128122 0.009681094 4
+#Parametre basert på modellen log(W)=alfa+beta*log(L) som brukes til å fjerne uteliggende datapunkt
+#sigma angir hvor stort avvik fra gjennomsnitt som aksepteres
+weight length parameters
+nfac
+1
+logalfa beta sigma k
+-5.0061 3.0716 0.1454 4
+##################################################
+### stage 3 parameters ###
+### used in fitting model ###
+int.len
+0.5
+#Setting probability of misclassification NEA cod vs coastal cod
+#Only relevant for cod
+classification probabilities coastal cod/NEA cod
+nfac
+1
+ptype1.CC ptype2.CC ptype4.CC ptype5.CC
+1 0.7 0.7 1
+######################################################
+### stage 4 parameters ###
+### used predicting catch-at-age ###
+plusgroup
+15
+#Det følgende styrer beregning av output for ønskelige vanlige grupperinger av redskap og områder. Brukes i "Run catch at age".
+outputgrouping
+gears
+ngroups
+1
+traal
+35 37 31
+areas
+ngroups
+9
+IIIa
+9
+IVa
+8 28 42
+IVb
+41
+IIa
+4 5 6 7 12 30 34 36 37
+Vb
+31 
+VIa
+43
+VIb
+47
+VIIc
+48 
+VIIk
+49
+Age error matrix
+0.7,0.2,0.1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+0.2,0.5,0.2,0.1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+0.1,0.2,0.4,0.2,0.1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+0,0.1,0.2,0.4,0.2,0.1,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+0,0,0.1,0.2,0.4,0.2,0.1,0,0,0,0,0,0,0,0,0,0,0,0,0
+0,0,0,0.1,0.2,0.4,0.2,0.1,0,0,0,0,0,0,0,0,0,0,0,0
+0,0,0,0,0.1,0.2,0.4,0.2,0.1,0,0,0,0,0,0,0,0,0,0,0
+0,0,0,0,0,0.1,0.2,0.4,0.2,0.1,0,0,0,0,0,0,0,0,0,0
+0,0,0,0,0,0,0.1,0.2,0.4,0.2,0.1,0,0,0,0,0,0,0,0,0
+0,0,0,0,0,0,0,0.1,0.2,0.4,0.2,0.1,0,0,0,0,0,0,0,0
+0,0,0,0,0,0,0,0,0.1,0.2,0.4,0.2,0.1,0,0,0,0,0,0,0
+0,0,0,0,0,0,0,0,0,0.1,0.2,0.4,0.2,0.1,0,0,0,0,0,0
+0,0,0,0,0,0,0,0,0,0,0.1,0.2,0.4,0.2,0.1,0,0,0,0,0
+0,0,0,0,0,0,0,0,0,0,0,0.1,0.2,0.4,0.2,0.1,0,0,0,0
+0,0,0,0,0,0,0,0,0,0,0,0,0.1,0.2,0.4,0.2,0.1,0,0,0
+0,0,0,0,0,0,0,0,0,0,0,0,0,0.1,0.2,0.4,0.2,0.1,0,0
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0.1,0.2,0.4,0.2,0.1,0
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0.1,0.2,0.4,0.2,0.1
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0.1,0.2,0.5,0.2
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0.1,0.2,0.7
