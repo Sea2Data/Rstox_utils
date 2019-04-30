@@ -1,0 +1,272 @@
+PELAGIC RUNS 2018
+I.e. for data 2017
+
+Uses:
+library(caa,lib.loc="/media/sondre/OS/CatchAtAge/caa_svn070915/Rlib")
+ECAgui(orig.data.folder="/media/sondre/OS/IMRData/",ECA.folder="/media/sondre/OS/ECAPELAGIC/",Initburnin=50,Initnsamples=100)
+
+
+DATA
+pelagisk_kommersiell:
+2017	37000	40000	
+
+Referanseflaate:
+2017	86000	96999
+
+Foruten om Makrell hvor egne intervaller er sendt av Kjell. Disse er inkludert i intervallene ovenfor:
+Om jeg prøver å likevel bruke de ovenfor krasjer det. Det skjer fordi dataene tydeligvis ikke er komplette; dvs T linja sier det eksisterer data som ikke har kommet inn på V (ennå?). Selv om jeg bruker Kjells intervaller blir det trøbbel for Makrell. se nedenfor.
+#--------------------------------------------------------------------------------#
+NVG:
+#--------------------------------------------------------------------------------#
+Datafiltrering:
+
+Removes 5 stations:
+ 39036 39044 39048 39059 39064 
+ i.e. gears:
+ NA 
+due to no definition of geargroups in file. 
+
+#
+[1] "Data on V, but not on U for: 39012"
+OBS: ERROR IN INPUT DATA:
+T-form says that there are length measurements, but not found on U-form:
+SERIENR: 39012 , and DELNR: 1 
+OBS: ERROR IN INPUT DATA:
+T-form says that there are age/weight measurements, but not found on V-form:
+SERIENR: 39012 , and DELNR: 1 
+This may take a while: Estimated time remaining 1.577 secs 
+
+
+NO DEBUG
+
+OBS...
+In ark-file:
+Mix in separators: ',' and ';'
+Corrected: CHECK!!
+NEW AREAS : 8,9,36
+Removes gear 36
+
+Make new parameterfile: sondreA2018
+
+
+length(unique(caadata$data$SERIENR))
+[1] 91
+> sort(unique(caadata$data$SERIENR))
+ [1] 39001 39002 39003 39004 39005 39006 39007 39008 39009 39010 39011 39013
+[13] 39014 39015 39016 39017 39018 39019 39020 39021 39022 39023 39024 39025
+[25] 39026 39027 39028 39029 39030 39031 39032 39033 39034 39035 39037 39038
+[37] 39039 39040 39041 39042 39043 39045 39046 39047 39049 39050 39051 39052
+[49] 39053 39054 39055 39056 39057 39058 39060 39061 39062 39063 39065 39066
+[61] 39067 94051 94052 94053 94056 94060 94062 94064 94068 94072 94452 94454
+[73] 94455 94456 94851 94854 94855 94857 94858 94860 94862 94863 94865 94866
+[85] 94868 94869 95087 95091 95093 95095 95098
+
+
+#BRUKER BARE DATA KODET SOM AGELENGTH OG TAR BARE UT ALDERSPRØVENE
+
+tmp<-caadata$data
+tmp<-tmp[tmp$INDSAMPLE=="agelength",]
+tmp<-tmp[!is.na(tmp$ALDER),]
+length(unique(tmp$SERIENR))
+sort(unique(tmp$SERIENR))
+
+tmp<-caadata$data
+tmp<-tmp[tmp$INDSAMPLE=="agelength",]
+tmp<-tmp[!is.na(tmp$ALDER),]
+length(unique(tmp$SERIENR))
+sort(unique(tmp$SERIENR))
+
+
+Data: bruker SILDG'03sondreA2018
+Fit: bruker bare aldersdata, 1000 burnin, 500 samples, båteffekt, season as fixed
+
+No predictions for combinations with 0 catches!
+#------------------------------------------------------------------------------#
+MAKRELL:
+
+Bruker Serienummerintervaller sendt av Kjell:
+Referanseflåte:
+
+pelagisk kommersiell:
+
+
+REferanseflåte:
+Removes 33 stations:
+ 86589 86644 86646:86648 86651 86662:86665 86676 87365 87624 91576 94086:94088 94091 94092 94094 94095 94099 94101 94102 94104:94108 94117:94119 94200 
+ i.e. gears:
+ 3131 3159 3176 3400 4141 
+due to no definition of geargroups in file. 
+Removes 97 stations:
+ 86494:86496 86499 86515:86522 86524:86526 86528:86533 86541 86632 86638 86658 86660 86673 86677 87385 87387 87462 87488 87490 87493 87494 87499 87513 87515 87516 87518 87519 87521 87522 87524 87525 87531 87533 87534 87536 87539 87541 87546 87547 87549 87608 88170 94051:94053 94059 94213 94216 94218 94222 94240 94243 94244 94247 94250 94253 94254 94260 94261 94264 94265 94281 94285 94286 94295 94297 94303 94574 94585 94998:95006 95008 95055 95079 95086 95089 
+
+pelagisk_kommersiell
+Removes 1 stations:
+ 38062 
+ i.e. gears:
+ 4110 
+
+Kjell lager ny 'geargroups.txt' som inkluderer redskapskodene ovenfor..
+
+Krasjer når objektet tas videre til fit...
+
+Debugging:---
+makedata(infilepath='/media/sondre/OS/ECAPELAGIC//Data/Rdata//DataByPlatform/',outdatapath='/media/sondre/OS/ECAPELAGIC//Data/Rdata//Formatteddata/',readtypes='pelagisk_kommersiell',readyears=2017,readcountries=58,readspecies='MAKRELL',rmnullobs=TRUE,bycountry=TRUE,byplatformspecific=TRUE,byvessel=TRUE,bygeargroups=TRUE,byptype=TRUE,RmDiscardData=TRUE,stat.no.path='/media/sondre/OS/ECAPELAGIC//Data/Resources/',stat.pos.path='/media/sondre/OS/ECAPELAGIC//Data/Resources/',parfile.path='/media/sondre/OS/ECAPELAGIC//Data/Resources//parameters',parfileext=2018,gear.group.path='/media/sondre/OS/ECAPELAGIC//Data/Resources/',FilterOptionPath='/media/sondre/OS/ECAPELAGIC//Data/Resources/',Rfileext='.RData')
+
+makedata2(infile,outdatapath, readtypes[[it]], readyears[[iy]], readspecies,readcountries,
+                          rmnullobs,
+	bycountry,byplatformspecific,byvessel,bygeargroups,byptype,RmDiscardData,call,dato,
+stat.no.path,stat.pos.path,parfile.path,parfileext,gear.group.path,FilterOptionPath)
+
+table(mydata$ST$ART)
+
+hu<-makeagelengthdata(k1,k2,k3,plotprogress=F,accept.data.error=T)
+i<-38018
+k1[k1$SERIENR==i,]
+k2[k2$SERIENR==i,]
+k3[k3$SERIENR==i,]
+
+MÅ BRUKE KJELLS DEF AV SERIENUMMER!!!
+table(unlist(caadata$data$INTERVAL))
+
+   2    3 
+2026  128 
+
+Dette fører til at det senere krasjer ved fitmodel!!
+
+Men av en eller grunn så er INTERVAL vektoren lagret som ei liste... Skjønner ikke hvorfor. 
+DET ER FORDI DET ER LENGDEMÅLT FISK MED ULIK INTERVAL INNEN SAMME SERIENUMMER!!!
+DVS: KODEN FOR INTERVAL ER ULIK OM MAN SAMMENLIGNER T OG U SKJEMA!!! ALTSÅ FEIL I DATA
+
+load("/media/sondre/OS/ECAPELAGIC/Data/Rdata/Projectdata/MAKRELL2017")
+caadata$data$INTERVAL<-unlist(caadata$data$INTERVAL)
+table(caadata$data$INTERVAL)
+t1<-unlist(lapply(caadata$data$INTERVAL,FUN=function(x)length(unique(x))))
+
+FIX:
+tmp<-caadata$data$INTERVAL
+tmp<-lapply(tmp,FUN=function(x)x[1])
+dim(caadata$data)
+length(unlist(tmp))
+caadata$data$INTERVAL<-unlist(tmp)
+save(caadata,file="/media/sondre/OS/ECAPELAGIC/Data/Rdata/Projectdata/MAKRELL2017")
+
+
+length(unique(caadata$data$SERIENR))
+sort(unique(caadata$data$SERIENR))
+
+length(unique(caadata$data$SERIENR))
+[1] 57
+> sort(unique(caadata$data$SERIENR))
+ [1] 38071 38072 38073 38074 38075 38076 38077 38078 38079 38080 38081 38082
+[13] 38083 38084 38085 38086 38087 38088 38089 38090 38092 38093 38094 38095
+[25] 38096 38097 38098 38101 38103 38104 86651 87520 87523 87543 87545 87548
+[37] 88043 88141 89677 89727 91938 91945 91956 91963 91992 94221 94248 94294
+[49] 94309 94310 94317 94573 94575 94578 95078 95082 95085
+
+#BRUKER BARE DATA KODET SOM AGELENGTH OG TAR BARE UT ALDERSPRØVENE
+tmp<-caadata$data
+tmp<-tmp[tmp$INDSAMPLE=="agelength",]
+tmp<-tmp[!is.na(tmp$ALDER),]
+length(unique(tmp$SERIENR))
+sort(unique(tmp$SERIENR))
+
+length(unique(tmp$SERIENR))
+[1] 37
+> sort(unique(tmp$SERIENR))
+ [1] 38071 38072 38073 38074 38075 38076 38077 38078 38079 38080 38081 38082
+[13] 38083 38084 38085 38086 38087 38088 38089 38090 38092 38093 38094 38095
+[25] 38096 38097 38098 38101 38103 38104 94309 94573 94575 94578 95078 95082
+[37] 95085
+
+
+IKKE data for kvartal 1 og 2: Moderllerer sesong som random:
+
+Fit: bruker bare aldersdata, 1000 burnin, 500 samples, båteffekt, season as random
+
+No predictions for combinations with 0 catches!
+
+#------------------------------------------------------------------------------#
+HESTMAKRELL:
+
+Finner ingen aldersdata!
+
+#------------------------------------------------------------------------------#
+KOLMULE:
+Altfor lite data basert på parameterfil sendt av Åge/Are. Må lage ny hvor områder og sesonger kollapses mer...
+
+Kollapser kvartal 2 - 4...
+Kollapser alle områder til ett!
+
+Bruker KOLMULEsondre2018
+
+length(unique(caadata$data$SERIENR))
+sort(unique(caadata$data$SERIENR))
+
+#BRUKER BARE DATA KODET SOM AGELENGTH OG TAR BARE UT ALDERSPRØVENE
+
+tmp<-caadata$data
+tmp<-tmp[tmp$INDSAMPLE=="agelength",]
+tmp<-tmp[!is.na(tmp$ALDER),]
+length(unique(tmp$SERIENR))
+sort(unique(tmp$SERIENR))
+
+tmp<-caadata$data
+tmp<-tmp[tmp$INDSAMPLE=="agelength",]
+tmp<-tmp[!is.na(tmp$ALDER),]
+length(unique(tmp$SERIENR))
+sort(unique(tmp$SERIENR))
+
+
+length(unique(caadata$data$SERIENR))
+[1] 237
+There were 46 warnings (use warnings() to see them)
+> sort(unique(caadata$data$SERIENR))
+  [1] 39501 39502 39503 39504 39505 39506 39507 39508 39509 39510 39511 39512
+ [13] 39513 39514 39515 39516 39517 39518 39519 39520 39521 39522 39523 39524
+ [25] 39525 39526 39527 39528 39529 39530 39531 39532 39533 39534 86474 86475
+ [37] 86477 86478 86481 86483 86486 86487 86489 86542 86544 86546 86548 86554
+ [49] 86556 86558 86560 86562 86564 86566 86568 86570 86572 86578 86580 86582
+ [61] 86584 86586 86588 86590 86592 86594 86596 86597 86599 86601 86603 86607
+ [73] 86608 86610 86612 86613 86615 86617 86619 86621 86622 86624 86625 86627
+ [85] 86629 86631 86633 86635 86637 86639 86640 86641 86643 86645 86649 86653
+ [97] 86655 86657 86659 86661 86663 86665 86667 86668 86670 86672 86674 86676
+[109] 86678 86680 86682 86684 86686 86687 86689 86692 86695 86697 86699 86701
+[121] 86703 86705 86707 86708 88800 88804 89663 89669 89677 89685 89689 89691
+[133] 89697 89701 89705 89709 89711 89717 89996 91938 94073 94074 94075 94076
+[145] 94121 94133 94136 94137 94140 94141 94144 94146 94147 94150 94151 94152
+[157] 94156 94157 94158 94159 94163 94165 94168 94171 94172 94173 94176 94177
+[169] 94181 94182 94185 94189 94190 94193 94194 94197 94198 94201 94202 94205
+[181] 94206 94209 94211 94213 94217 94221 94223 94224 94227 94229 94231 94232
+[193] 94237 94238 94241 94242 94245 94246 94248 94249 94251 94252 94255 94256
+[205] 94258 94259 94262 94263 94265 94266 94267 94269 94270 94276 94277 94280
+[217] 94283 94284 94286 94287 94289 94291 94292 94293 94294 94296 94298 94299
+[229] 94301 94302 94304 94305 94307 94314 94315 94316 94317
+> 
+> #BRUKER BARE DATA KODET SOM AGELENGTH OG TAR BARE UT ALDERSPRØVENE
+> 
+> tmp<-caadata$data
+> tmp<-tmp[tmp$INDSAMPLE=="agelength",]
+> tmp<-tmp[!is.na(tmp$ALDER),]
+> length(unique(tmp$SERIENR))
+[1] 41
+> sort(unique(tmp$SERIENR))
+ [1] 39501 39502 39503 39504 39505 39506 39507 39508 39509 39510 39511 39512
+[13] 39513 39514 39515 39516 39517 39518 39519 39520 39521 39522 39523 39524
+[25] 39525 39526 39527 39528 39529 39530 39531 39532 39533 39534 94074 94121
+[37] 94137 94177 94265 94286 94292
+> 
+> tmp<-caadata$data
+> tmp<-tmp[tmp$INDSAMPLE=="agelength",]
+> tmp<-tmp[!is.na(tmp$ALDER),]
+> length(unique(tmp$SERIENR))
+[1] 41
+> sort(unique(tmp$SERIENR))
+ [1] 39501 39502 39503 39504 39505 39506 39507 39508 39509 39510 39511 39512
+[13] 39513 39514 39515 39516 39517 39518 39519 39520 39521 39522 39523 39524
+[25] 39525 39526 39527 39528 39529 39530 39531 39532 39533 39534 94074 94121
+[37] 94137 94177 94265 94286 94292
+
+
+
+
+
