@@ -6,7 +6,7 @@
 #' Check that assumptions on fit.params are met
 #' @keywords internal
 check <- function(fp){
-  if (!all(fp$pars$minage:fp$pars$maxage == fit.params$age.vec)){
+  if (!all(fp$pars$minage:fp$pars$maxage == fp$age.vec)){
     stop("age.vec does not match parameters in pars")
   }
   

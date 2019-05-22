@@ -27,9 +27,9 @@ extract_polygons <- function(wkt_file){
 
 #' Extract a neighbour matrix from a SpatialPolygonsDataFrama as returned by extract_polygons
 #' @return binary matrix (0: not neighbours, 1: neighbours), with strata names as rows and columns
-extract_neighbours <- function(polygons){
-  poly <- extract_polygons(wkt_file)
-  row.names(poly) <- as.character(poly$name)
+extract_neighbours <- function(polygons, namecol){
+  poly <- polygons
+  row.names(poly) <- as.character(poly[[namecol]])
   nb <- poly2nb(poly)
   mat <- nb2mat(nb, style="B")
   colnames(mat) <- rownames(mat)
@@ -40,13 +40,11 @@ extract_neighbours <- function(polygons){
 save_neighbours <- function(neighbourmatrix, outfile){
   out <- file(outfile, open="w")
   write("stratum\tneighbours", out)
-  write("\n")
   for (i in 1:nrow(neighbourmatrix)){
     write(paste(rownames(neighbourmatrix)[i], paste(colnames(neighbourmatrix)[neighbourmatrix[i,]==1], collapse=","), sep="\t"), out)
-    write("\n")
   }
   close(out)
 }
 
-wkt_file = "data/mainarea.txt"
-save_neighbours(extract_neighbours(extract_polygons(wkt_file)), "mainarea_neighbour.txt")
+#wkt_file = "data/mainarea.txt"
+#save_neighbours(extract_neighbours(extract_polygons(wkt_file)), "mainarea_neighbour.txt")

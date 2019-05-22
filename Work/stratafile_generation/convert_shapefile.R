@@ -14,6 +14,6 @@ convertToWKT <- function(shapefile, output, namecol, projection=targetprojection
   
 }
 
-convertToWKT(homr_fom2018, file.path("output", "mainarea_fdir_fom2018_stratafile.txt"), "HAVOMR")
-convertToWKT(homr_tom2017, file.path("output", "mainarea_fdir_tom2017_stratafile.txt"), "HAVOMR")
-convertToWKT(ices_tom2017, file.path("output", "icesarea_tom2017_stratafile.txt"), "ICES_area")
+#convertToWKT(homr_fom2018, file.path("output", "mainarea_fdir_fom2018_stratafile.txt"), "HAVOMR")
+#convertToWKT(homr_tom2017, file.path("output", "mainarea_fdir_tom2017_stratafile.txt"), "HAVOMR")
+#convertToWKT(ices_tom2017, file.path("output", "icesarea_tom2017_stratafile.txt"), "ICES_area")

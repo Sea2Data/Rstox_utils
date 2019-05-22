@@ -36,9 +36,3 @@ merge_polygons <- function(shapes, groups, namecol){
 # ll<-as.list(as.character(unique(ices_fom2018_all$SubArea)))
 # names(ll) <- unlist(ll)
 
-#
-# area merge for RECA kolmule 2017, based on Sondre Aanes parameter file for the old eca
-#
-kolmulemapping <- list()
-kolmulemapping[["allareas"]] <- c("08", "09", "28", "41", "42", "04", "05", "06", "07", "12", "30", "31", "34", "36", "37", "43", "47", "48", "49")
-kolmule2017 <- merge_polygons(homr_tom2017, kolmulemapping, "HAVOMR")
