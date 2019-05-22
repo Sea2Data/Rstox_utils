@@ -15,12 +15,14 @@ check <- function(fp){
   
   #check that Slp only exists if correpsond Int exists
   
+  #check that covariate levels are the same for wgl and (wglindex) and agl (index)
+  
 }
 
 #'
 #' @keywords internal
 get_covariates <- function(model){
-  covs <- names(model$Int)
+  covs <- names(model$Int[unlist(model$Int)])
   return(covs[!(covs %in% c("cell", "haul"))])
 }
 
@@ -50,6 +52,8 @@ load_info_oldECA <- function(fit.params, model){
   }
   if (!is.null(info["boat",])){
     info["boat","random"] <- 1
+    warning("Not setting nlev for boat")
+    info["boat","nlev"]<-NA
   }
   
   
@@ -67,8 +71,19 @@ load_info_oldECA <- function(fit.params, model){
     info["gear", "interaction"]<-1
   }
   
-  warning("Not setting nlev")
-  info[,"nlev"]<-NA
+  if (!is.null(info["gear",])){
+    info["gear", "nlev"] <- max(fit.params$covtabs$Gear$index)
+  }
+  if (!is.null(info["area",])){
+    info["area", "nlev"] <- max(fit.params$covtabs$Area$index)
+  }
+  if (!is.null(info["seas",])){
+    info["seas", "nlev"] <- max(fit.params$covtabs$Season$index)
+  }
+  if (!is.null(info["year",])){
+    info["year", "nlev"] <- max(fit.params$covtabs$Year$index)
+  }
+  
   
   return(info)
 }
@@ -124,6 +139,8 @@ load_old_config_fit <- function(file){
   print(weightLenghtInfo)
   print("GlobalParameters")
   print(GlobalParameters)
+  print("Grouping")
+  print(fit.params$covtabs)
 }
 
 load_old_config_fit("~/hi_sync/bunnfisk/nssk_2019/North_Sea/ECA/Analysis/predict/HYSE2018_ns_v00.fit.2018_allgears_27fire_season1234.params")
