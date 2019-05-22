@@ -1,0 +1,1005 @@
+==69269== Memcheck, a memory error detector
+==69269== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al.
+==69269== Using Valgrind-3.14.0 and LibVEX; rerun with -h for copyright info
+==69269== Command: /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1 cfiles/
+==69269== 
+Start C program: estimating age and length-given-age model
+
+Read input data from file: cfiles/common_par_fit_ascii
+Read input data from file: cfiles/stoxdata_age
+==69269== Conditional jump or move depends on uninitialised value(s)
+==69269==    at 0x1004673A6: strnlen (in /usr/lib/system/libsystem_c.dylib)
+==69269==    by 0x1004ABA77: __vfprintf (in /usr/lib/system/libsystem_c.dylib)
+==69269==    by 0x1004D3058: __v2printf (in /usr/lib/system/libsystem_c.dylib)
+==69269==    by 0x1004B834A: _vsnprintf (in /usr/lib/system/libsystem_c.dylib)
+==69269==    by 0x1004B83FD: vsnprintf (in /usr/lib/system/libsystem_c.dylib)
+==69269==    by 0x1004E80AC: __sprintf_chk (in /usr/lib/system/libsystem_c.dylib)
+==69269==    by 0x10001C509: read_bin_var (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==    by 0x10001C8FD: readdata_age_lga (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==    by 0x1000011CC: main (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269== 
+==69269== Conditional jump or move depends on uninitialised value(s)
+==69269==    at 0x1004673D2: strnlen (in /usr/lib/system/libsystem_c.dylib)
+==69269==    by 0x1004ABA77: __vfprintf (in /usr/lib/system/libsystem_c.dylib)
+==69269==    by 0x1004D3058: __v2printf (in /usr/lib/system/libsystem_c.dylib)
+==69269==    by 0x1004B834A: _vsnprintf (in /usr/lib/system/libsystem_c.dylib)
+==69269==    by 0x1004B83FD: vsnprintf (in /usr/lib/system/libsystem_c.dylib)
+==69269==    by 0x1004E80AC: __sprintf_chk (in /usr/lib/system/libsystem_c.dylib)
+==69269==    by 0x10001C509: read_bin_var (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==    by 0x10001C8FD: readdata_age_lga (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==    by 0x1000011CC: main (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269== 
+==69269== Conditional jump or move depends on uninitialised value(s)
+==69269==    at 0x1004ABA99: __vfprintf (in /usr/lib/system/libsystem_c.dylib)
+==69269==    by 0x1004D3058: __v2printf (in /usr/lib/system/libsystem_c.dylib)
+==69269==    by 0x1004B834A: _vsnprintf (in /usr/lib/system/libsystem_c.dylib)
+==69269==    by 0x1004B83FD: vsnprintf (in /usr/lib/system/libsystem_c.dylib)
+==69269==    by 0x1004E80AC: __sprintf_chk (in /usr/lib/system/libsystem_c.dylib)
+==69269==    by 0x10001C509: read_bin_var (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==    by 0x10001C8FD: readdata_age_lga (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==    by 0x1000011CC: main (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269== 
+==69269== Conditional jump or move depends on uninitialised value(s)
+==69269==    at 0x1004AC613: __vfprintf (in /usr/lib/system/libsystem_c.dylib)
+==69269==    by 0x1004D3058: __v2printf (in /usr/lib/system/libsystem_c.dylib)
+==69269==    by 0x1004B834A: _vsnprintf (in /usr/lib/system/libsystem_c.dylib)
+==69269==    by 0x1004B83FD: vsnprintf (in /usr/lib/system/libsystem_c.dylib)
+==69269==    by 0x1004E80AC: __sprintf_chk (in /usr/lib/system/libsystem_c.dylib)
+==69269==    by 0x10001C509: read_bin_var (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==    by 0x10001C8FD: readdata_age_lga (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==    by 0x1000011CC: main (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269== 
+==69269== Conditional jump or move depends on uninitialised value(s)
+==69269==    at 0x1004AC632: __vfprintf (in /usr/lib/system/libsystem_c.dylib)
+==69269==    by 0x1004D3058: __v2printf (in /usr/lib/system/libsystem_c.dylib)
+==69269==    by 0x1004B834A: _vsnprintf (in /usr/lib/system/libsystem_c.dylib)
+==69269==    by 0x1004B83FD: vsnprintf (in /usr/lib/system/libsystem_c.dylib)
+==69269==    by 0x1004E80AC: __sprintf_chk (in /usr/lib/system/libsystem_c.dylib)
+==69269==    by 0x10001C509: read_bin_var (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==    by 0x10001C8FD: readdata_age_lga (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==    by 0x1000011CC: main (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269== 
+==69269== Conditional jump or move depends on uninitialised value(s)
+==69269==    at 0x1004ACC47: __vfprintf (in /usr/lib/system/libsystem_c.dylib)
+==69269==    by 0x1004D3058: __v2printf (in /usr/lib/system/libsystem_c.dylib)
+==69269==    by 0x1004B834A: _vsnprintf (in /usr/lib/system/libsystem_c.dylib)
+==69269==    by 0x1004B83FD: vsnprintf (in /usr/lib/system/libsystem_c.dylib)
+==69269==    by 0x1004E80AC: __sprintf_chk (in /usr/lib/system/libsystem_c.dylib)
+==69269==    by 0x10001C509: read_bin_var (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==    by 0x10001C8FD: readdata_age_lga (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==    by 0x1000011CC: main (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269== 
+==69269== Conditional jump or move depends on uninitialised value(s)
+==69269==    at 0x1004AE5EA: __vfprintf (in /usr/lib/system/libsystem_c.dylib)
+==69269==    by 0x1004D3058: __v2printf (in /usr/lib/system/libsystem_c.dylib)
+==69269==    by 0x1004B834A: _vsnprintf (in /usr/lib/system/libsystem_c.dylib)
+==69269==    by 0x1004B83FD: vsnprintf (in /usr/lib/system/libsystem_c.dylib)
+==69269==    by 0x1004E80AC: __sprintf_chk (in /usr/lib/system/libsystem_c.dylib)
+==69269==    by 0x10001C509: read_bin_var (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==    by 0x10001C8FD: readdata_age_lga (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==    by 0x1000011CC: main (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269== 
+==69269== Conditional jump or move depends on uninitialised value(s)
+==69269==    at 0x1004A4794: __sfvwrite (in /usr/lib/system/libsystem_c.dylib)
+==69269==    by 0x1004AE5FE: __vfprintf (in /usr/lib/system/libsystem_c.dylib)
+==69269==    by 0x1004D3058: __v2printf (in /usr/lib/system/libsystem_c.dylib)
+==69269==    by 0x1004B834A: _vsnprintf (in /usr/lib/system/libsystem_c.dylib)
+==69269==    by 0x1004B83FD: vsnprintf (in /usr/lib/system/libsystem_c.dylib)
+==69269==    by 0x1004E80AC: __sprintf_chk (in /usr/lib/system/libsystem_c.dylib)
+==69269==    by 0x10001C509: read_bin_var (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==    by 0x10001C8FD: readdata_age_lga (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==    by 0x1000011CC: main (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269== 
+==69269== Conditional jump or move depends on uninitialised value(s)
+==69269==    at 0x1004A4800: __sfvwrite (in /usr/lib/system/libsystem_c.dylib)
+==69269==    by 0x1004AE5FE: __vfprintf (in /usr/lib/system/libsystem_c.dylib)
+==69269==    by 0x1004D3058: __v2printf (in /usr/lib/system/libsystem_c.dylib)
+==69269==    by 0x1004B834A: _vsnprintf (in /usr/lib/system/libsystem_c.dylib)
+==69269==    by 0x1004B83FD: vsnprintf (in /usr/lib/system/libsystem_c.dylib)
+==69269==    by 0x1004E80AC: __sprintf_chk (in /usr/lib/system/libsystem_c.dylib)
+==69269==    by 0x10001C509: read_bin_var (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==    by 0x10001C8FD: readdata_age_lga (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==    by 0x1000011CC: main (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269== 
+==69269== Conditional jump or move depends on uninitialised value(s)
+==69269==    at 0x1004A48D8: __sfvwrite (in /usr/lib/system/libsystem_c.dylib)
+==69269==    by 0x1004AE5FE: __vfprintf (in /usr/lib/system/libsystem_c.dylib)
+==69269==    by 0x1004D3058: __v2printf (in /usr/lib/system/libsystem_c.dylib)
+==69269==    by 0x1004B834A: _vsnprintf (in /usr/lib/system/libsystem_c.dylib)
+==69269==    by 0x1004B83FD: vsnprintf (in /usr/lib/system/libsystem_c.dylib)
+==69269==    by 0x1004E80AC: __sprintf_chk (in /usr/lib/system/libsystem_c.dylib)
+==69269==    by 0x10001C509: read_bin_var (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==    by 0x10001C8FD: readdata_age_lga (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==    by 0x1000011CC: main (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269== 
+==69269== Conditional jump or move depends on uninitialised value(s)
+==69269==    at 0x100814F30: _platform_memmove$VARIANT$Haswell (in /usr/lib/system/libsystem_platform.dylib)
+==69269==    by 0x1004A48EA: __sfvwrite (in /usr/lib/system/libsystem_c.dylib)
+==69269==    by 0x1004AE5FE: __vfprintf (in /usr/lib/system/libsystem_c.dylib)
+==69269==    by 0x1004D3058: __v2printf (in /usr/lib/system/libsystem_c.dylib)
+==69269==    by 0x1004B834A: _vsnprintf (in /usr/lib/system/libsystem_c.dylib)
+==69269==    by 0x1004B83FD: vsnprintf (in /usr/lib/system/libsystem_c.dylib)
+==69269==    by 0x1004E80AC: __sprintf_chk (in /usr/lib/system/libsystem_c.dylib)
+==69269==    by 0x10001C509: read_bin_var (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==    by 0x10001C8FD: readdata_age_lga (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==    by 0x1000011CC: main (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269== 
+==69269== Conditional jump or move depends on uninitialised value(s)
+==69269==    at 0x100814F36: _platform_memmove$VARIANT$Haswell (in /usr/lib/system/libsystem_platform.dylib)
+==69269==    by 0x1004A48EA: __sfvwrite (in /usr/lib/system/libsystem_c.dylib)
+==69269==    by 0x1004AE5FE: __vfprintf (in /usr/lib/system/libsystem_c.dylib)
+==69269==    by 0x1004D3058: __v2printf (in /usr/lib/system/libsystem_c.dylib)
+==69269==    by 0x1004B834A: _vsnprintf (in /usr/lib/system/libsystem_c.dylib)
+==69269==    by 0x1004B83FD: vsnprintf (in /usr/lib/system/libsystem_c.dylib)
+==69269==    by 0x1004E80AC: __sprintf_chk (in /usr/lib/system/libsystem_c.dylib)
+==69269==    by 0x10001C509: read_bin_var (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==    by 0x10001C8FD: readdata_age_lga (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==    by 0x1000011CC: main (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269== 
+==69269== Conditional jump or move depends on uninitialised value(s)
+==69269==    at 0x100814F6B: _platform_memmove$VARIANT$Haswell (in /usr/lib/system/libsystem_platform.dylib)
+==69269==    by 0x1004A48EA: __sfvwrite (in /usr/lib/system/libsystem_c.dylib)
+==69269==    by 0x1004AE5FE: __vfprintf (in /usr/lib/system/libsystem_c.dylib)
+==69269==    by 0x1004D3058: __v2printf (in /usr/lib/system/libsystem_c.dylib)
+==69269==    by 0x1004B834A: _vsnprintf (in /usr/lib/system/libsystem_c.dylib)
+==69269==    by 0x1004B83FD: vsnprintf (in /usr/lib/system/libsystem_c.dylib)
+==69269==    by 0x1004E80AC: __sprintf_chk (in /usr/lib/system/libsystem_c.dylib)
+==69269==    by 0x10001C509: read_bin_var (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==    by 0x10001C8FD: readdata_age_lga (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==    by 0x1000011CC: main (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269== 
+==69269== Conditional jump or move depends on uninitialised value(s)
+==69269==    at 0x100814FC7: _platform_memmove$VARIANT$Haswell (in /usr/lib/system/libsystem_platform.dylib)
+==69269==    by 0x1004A48EA: __sfvwrite (in /usr/lib/system/libsystem_c.dylib)
+==69269==    by 0x1004AE5FE: __vfprintf (in /usr/lib/system/libsystem_c.dylib)
+==69269==    by 0x1004D3058: __v2printf (in /usr/lib/system/libsystem_c.dylib)
+==69269==    by 0x1004B834A: _vsnprintf (in /usr/lib/system/libsystem_c.dylib)
+==69269==    by 0x1004B83FD: vsnprintf (in /usr/lib/system/libsystem_c.dylib)
+==69269==    by 0x1004E80AC: __sprintf_chk (in /usr/lib/system/libsystem_c.dylib)
+==69269==    by 0x10001C509: read_bin_var (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==    by 0x10001C8FD: readdata_age_lga (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==    by 0x1000011CC: main (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269== 
+==69269== Use of uninitialised value of size 8
+==69269==    at 0x100814FCC: _platform_memmove$VARIANT$Haswell (in /usr/lib/system/libsystem_platform.dylib)
+==69269==    by 0x1004A48EA: __sfvwrite (in /usr/lib/system/libsystem_c.dylib)
+==69269==    by 0x1004AE5FE: __vfprintf (in /usr/lib/system/libsystem_c.dylib)
+==69269==    by 0x1004D3058: __v2printf (in /usr/lib/system/libsystem_c.dylib)
+==69269==    by 0x1004B834A: _vsnprintf (in /usr/lib/system/libsystem_c.dylib)
+==69269==    by 0x1004B83FD: vsnprintf (in /usr/lib/system/libsystem_c.dylib)
+==69269==    by 0x1004E80AC: __sprintf_chk (in /usr/lib/system/libsystem_c.dylib)
+==69269==    by 0x10001C509: read_bin_var (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==    by 0x10001C8FD: readdata_age_lga (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==    by 0x1000011CC: main (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269== 
+==69269== Conditional jump or move depends on uninitialised value(s)
+==69269==    at 0x1004A494F: __sfvwrite (in /usr/lib/system/libsystem_c.dylib)
+==69269==    by 0x1004AE5FE: __vfprintf (in /usr/lib/system/libsystem_c.dylib)
+==69269==    by 0x1004D3058: __v2printf (in /usr/lib/system/libsystem_c.dylib)
+==69269==    by 0x1004B834A: _vsnprintf (in /usr/lib/system/libsystem_c.dylib)
+==69269==    by 0x1004B83FD: vsnprintf (in /usr/lib/system/libsystem_c.dylib)
+==69269==    by 0x1004E80AC: __sprintf_chk (in /usr/lib/system/libsystem_c.dylib)
+==69269==    by 0x10001C509: read_bin_var (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==    by 0x10001C8FD: readdata_age_lga (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==    by 0x1000011CC: main (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269== 
+==69269== Use of uninitialised value of size 8
+==69269==    at 0x1004B8357: _vsnprintf (in /usr/lib/system/libsystem_c.dylib)
+==69269==    by 0x1004B83FD: vsnprintf (in /usr/lib/system/libsystem_c.dylib)
+==69269==    by 0x1004E80AC: __sprintf_chk (in /usr/lib/system/libsystem_c.dylib)
+==69269==    by 0x10001C509: read_bin_var (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==    by 0x10001C8FD: readdata_age_lga (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==    by 0x1000011CC: main (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269== 
+==69269== Conditional jump or move depends on uninitialised value(s)
+==69269==    at 0x1004E80AF: __sprintf_chk (in /usr/lib/system/libsystem_c.dylib)
+==69269==    by 0x10001C509: read_bin_var (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==    by 0x10001C8FD: readdata_age_lga (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==    by 0x1000011CC: main (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269== 
+==69269== Conditional jump or move depends on uninitialised value(s)
+==69269==    at 0x1004E80B7: __sprintf_chk (in /usr/lib/system/libsystem_c.dylib)
+==69269==    by 0x10001C509: read_bin_var (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==    by 0x10001C8FD: readdata_age_lga (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==    by 0x1000011CC: main (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269== 
+==69269== Invalid read of size 1
+==69269==    at 0x10026CB48: _platform_strcmp (in /usr/local/Cellar/valgrind/3.14.0/lib/valgrind/vgpreload_memcheck-amd64-darwin.so)
+==69269==    by 0x10001C93E: readdata_age_lga (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==    by 0x1000011CC: main (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==  Address 0x104a5e060 is on thread 1's stack
+==69269==  2048 bytes below stack pointer
+==69269== 
+==69269== Invalid read of size 1
+==69269==    at 0x10026CB48: _platform_strcmp (in /usr/local/Cellar/valgrind/3.14.0/lib/valgrind/vgpreload_memcheck-amd64-darwin.so)
+==69269==    by 0x10001C980: readdata_age_lga (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==    by 0x1000011CC: main (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==  Address 0x104a5e060 is on thread 1's stack
+==69269==  2048 bytes below stack pointer
+==69269== 
+==69269== Invalid read of size 1
+==69269==    at 0x10026CB48: _platform_strcmp (in /usr/local/Cellar/valgrind/3.14.0/lib/valgrind/vgpreload_memcheck-amd64-darwin.so)
+==69269==    by 0x10001C9C2: readdata_age_lga (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==    by 0x1000011CC: main (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==  Address 0x104a5e060 is on thread 1's stack
+==69269==  2048 bytes below stack pointer
+==69269== 
+==69269== Invalid read of size 1
+==69269==    at 0x10026CB48: _platform_strcmp (in /usr/local/Cellar/valgrind/3.14.0/lib/valgrind/vgpreload_memcheck-amd64-darwin.so)
+==69269==    by 0x10001C9F5: readdata_age_lga (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==    by 0x1000011CC: main (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==  Address 0x104a5e060 is on thread 1's stack
+==69269==  2048 bytes below stack pointer
+==69269== 
+==69269== Invalid read of size 1
+==69269==    at 0x10026CB48: _platform_strcmp (in /usr/local/Cellar/valgrind/3.14.0/lib/valgrind/vgpreload_memcheck-amd64-darwin.so)
+==69269==    by 0x10001CA28: readdata_age_lga (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==    by 0x1000011CC: main (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==  Address 0x104a5e060 is on thread 1's stack
+==69269==  2048 bytes below stack pointer
+==69269== 
+==69269== Invalid read of size 1
+==69269==    at 0x10026CB59: _platform_strcmp (in /usr/local/Cellar/valgrind/3.14.0/lib/valgrind/vgpreload_memcheck-amd64-darwin.so)
+==69269==    by 0x10001CA28: readdata_age_lga (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==    by 0x1000011CC: main (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==  Address 0x104a5e061 is on thread 1's stack
+==69269==  2047 bytes below stack pointer
+==69269== 
+==69269== Invalid read of size 1
+==69269==    at 0x10026CB48: _platform_strcmp (in /usr/local/Cellar/valgrind/3.14.0/lib/valgrind/vgpreload_memcheck-amd64-darwin.so)
+==69269==    by 0x10001CA6B: readdata_age_lga (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==    by 0x1000011CC: main (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==  Address 0x104a5e060 is on thread 1's stack
+==69269==  2048 bytes below stack pointer
+==69269== 
+==69269== Invalid read of size 1
+==69269==    at 0x10026CB48: _platform_strcmp (in /usr/local/Cellar/valgrind/3.14.0/lib/valgrind/vgpreload_memcheck-amd64-darwin.so)
+==69269==    by 0x10001CA9E: readdata_age_lga (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==    by 0x1000011CC: main (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==  Address 0x104a5e060 is on thread 1's stack
+==69269==  2048 bytes below stack pointer
+==69269== 
+==69269== Invalid read of size 1
+==69269==    at 0x10026CB48: _platform_strcmp (in /usr/local/Cellar/valgrind/3.14.0/lib/valgrind/vgpreload_memcheck-amd64-darwin.so)
+==69269==    by 0x10001CAD1: readdata_age_lga (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==    by 0x1000011CC: main (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==  Address 0x104a5e060 is on thread 1's stack
+==69269==  2048 bytes below stack pointer
+==69269== 
+==69269== Invalid read of size 1
+==69269==    at 0x10026CB59: _platform_strcmp (in /usr/local/Cellar/valgrind/3.14.0/lib/valgrind/vgpreload_memcheck-amd64-darwin.so)
+==69269==    by 0x10001CAD1: readdata_age_lga (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==    by 0x1000011CC: main (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==  Address 0x104a5e061 is on thread 1's stack
+==69269==  2047 bytes below stack pointer
+==69269== 
+==69269== Invalid read of size 1
+==69269==    at 0x10026CB48: _platform_strcmp (in /usr/local/Cellar/valgrind/3.14.0/lib/valgrind/vgpreload_memcheck-amd64-darwin.so)
+==69269==    by 0x10001CB04: readdata_age_lga (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==    by 0x1000011CC: main (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==  Address 0x104a5e060 is on thread 1's stack
+==69269==  2048 bytes below stack pointer
+==69269== 
+==69269== Invalid read of size 1
+==69269==    at 0x10026CB48: _platform_strcmp (in /usr/local/Cellar/valgrind/3.14.0/lib/valgrind/vgpreload_memcheck-amd64-darwin.so)
+==69269==    by 0x10001CB3A: readdata_age_lga (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==    by 0x1000011CC: main (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==  Address 0x104a5e060 is on thread 1's stack
+==69269==  2048 bytes below stack pointer
+==69269== 
+==69269== Invalid read of size 1
+==69269==    at 0x10026CB59: _platform_strcmp (in /usr/local/Cellar/valgrind/3.14.0/lib/valgrind/vgpreload_memcheck-amd64-darwin.so)
+==69269==    by 0x10001CB3A: readdata_age_lga (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==    by 0x1000011CC: main (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==  Address 0x104a5e061 is on thread 1's stack
+==69269==  2047 bytes below stack pointer
+==69269== 
+==69269== Invalid read of size 1
+==69269==    at 0x10026CB48: _platform_strcmp (in /usr/local/Cellar/valgrind/3.14.0/lib/valgrind/vgpreload_memcheck-amd64-darwin.so)
+==69269==    by 0x10001CC27: readdata_age_lga (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==    by 0x1000011CC: main (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==  Address 0x104a5e060 is on thread 1's stack
+==69269==  2048 bytes below stack pointer
+==69269== 
+==69269== Invalid read of size 1
+==69269==    at 0x10026CB59: _platform_strcmp (in /usr/local/Cellar/valgrind/3.14.0/lib/valgrind/vgpreload_memcheck-amd64-darwin.so)
+==69269==    by 0x10001CC27: readdata_age_lga (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==    by 0x1000011CC: main (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==  Address 0x104a5e061 is on thread 1's stack
+==69269==  2047 bytes below stack pointer
+==69269== 
+==69269== Invalid read of size 1
+==69269==    at 0x10026CB48: _platform_strcmp (in /usr/local/Cellar/valgrind/3.14.0/lib/valgrind/vgpreload_memcheck-amd64-darwin.so)
+==69269==    by 0x10001D0F9: readdata_age_lga (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==    by 0x1000011CC: main (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==  Address 0x104a5e060 is on thread 1's stack
+==69269==  2048 bytes below stack pointer
+==69269== 
+==69269== Invalid read of size 1
+==69269==    at 0x10026CB48: _platform_strcmp (in /usr/local/Cellar/valgrind/3.14.0/lib/valgrind/vgpreload_memcheck-amd64-darwin.so)
+==69269==    by 0x10001D1BD: readdata_age_lga (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==    by 0x1000011CC: main (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==  Address 0x104a5e060 is on thread 1's stack
+==69269==  2048 bytes below stack pointer
+==69269== 
+==69269== Invalid read of size 1
+==69269==    at 0x10026CB48: _platform_strcmp (in /usr/local/Cellar/valgrind/3.14.0/lib/valgrind/vgpreload_memcheck-amd64-darwin.so)
+==69269==    by 0x10001D281: readdata_age_lga (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==    by 0x1000011CC: main (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==  Address 0x104a5e060 is on thread 1's stack
+==69269==  2048 bytes below stack pointer
+==69269== 
+==69269== Invalid read of size 1
+==69269==    at 0x10026CB48: _platform_strcmp (in /usr/local/Cellar/valgrind/3.14.0/lib/valgrind/vgpreload_memcheck-amd64-darwin.so)
+==69269==    by 0x10001D345: readdata_age_lga (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==    by 0x1000011CC: main (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==  Address 0x104a5e060 is on thread 1's stack
+==69269==  2048 bytes below stack pointer
+==69269== 
+==69269== Invalid read of size 1
+==69269==    at 0x10026CB48: _platform_strcmp (in /usr/local/Cellar/valgrind/3.14.0/lib/valgrind/vgpreload_memcheck-amd64-darwin.so)
+==69269==    by 0x10001D409: readdata_age_lga (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==    by 0x1000011CC: main (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==  Address 0x104a5e060 is on thread 1's stack
+==69269==  2048 bytes below stack pointer
+==69269== 
+==69269== Invalid read of size 1
+==69269==    at 0x10026CB48: _platform_strcmp (in /usr/local/Cellar/valgrind/3.14.0/lib/valgrind/vgpreload_memcheck-amd64-darwin.so)
+==69269==    by 0x10001D440: readdata_age_lga (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==    by 0x1000011CC: main (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==  Address 0x104a5e060 is on thread 1's stack
+==69269==  2048 bytes below stack pointer
+==69269== 
+==69269== Invalid read of size 1
+==69269==    at 0x10026CB48: _platform_strcmp (in /usr/local/Cellar/valgrind/3.14.0/lib/valgrind/vgpreload_memcheck-amd64-darwin.so)
+==69269==    by 0x10001D504: readdata_age_lga (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==    by 0x1000011CC: main (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==  Address 0x104a5e060 is on thread 1's stack
+==69269==  2048 bytes below stack pointer
+==69269== 
+==69269== Invalid read of size 1
+==69269==    at 0x10026CB48: _platform_strcmp (in /usr/local/Cellar/valgrind/3.14.0/lib/valgrind/vgpreload_memcheck-amd64-darwin.so)
+==69269==    by 0x10001D53B: readdata_age_lga (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==    by 0x1000011CC: main (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==  Address 0x104a5e060 is on thread 1's stack
+==69269==  2048 bytes below stack pointer
+==69269== 
+==69269== Invalid read of size 1
+==69269==    at 0x10026CB48: _platform_strcmp (in /usr/local/Cellar/valgrind/3.14.0/lib/valgrind/vgpreload_memcheck-amd64-darwin.so)
+==69269==    by 0x10001D572: readdata_age_lga (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==    by 0x1000011CC: main (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==  Address 0x104a5e060 is on thread 1's stack
+==69269==  2048 bytes below stack pointer
+==69269== 
+==69269== Invalid read of size 1
+==69269==    at 0x10026CB59: _platform_strcmp (in /usr/local/Cellar/valgrind/3.14.0/lib/valgrind/vgpreload_memcheck-amd64-darwin.so)
+==69269==    by 0x10001D572: readdata_age_lga (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==    by 0x1000011CC: main (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==  Address 0x104a5e061 is on thread 1's stack
+==69269==  2047 bytes below stack pointer
+==69269== 
+==69269== Invalid read of size 1
+==69269==    at 0x10026CB48: _platform_strcmp (in /usr/local/Cellar/valgrind/3.14.0/lib/valgrind/vgpreload_memcheck-amd64-darwin.so)
+==69269==    by 0x10001D5D2: readdata_age_lga (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==    by 0x1000011CC: main (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==  Address 0x104a5e060 is on thread 1's stack
+==69269==  2048 bytes below stack pointer
+==69269== 
+==69269== Invalid read of size 1
+==69269==    at 0x10026CB59: _platform_strcmp (in /usr/local/Cellar/valgrind/3.14.0/lib/valgrind/vgpreload_memcheck-amd64-darwin.so)
+==69269==    by 0x10001D5D2: readdata_age_lga (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==    by 0x1000011CC: main (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==  Address 0x104a5e061 is on thread 1's stack
+==69269==  2047 bytes below stack pointer
+==69269== 
+==69269== Invalid read of size 1
+==69269==    at 0x10026CB48: _platform_strcmp (in /usr/local/Cellar/valgrind/3.14.0/lib/valgrind/vgpreload_memcheck-amd64-darwin.so)
+==69269==    by 0x10001D68A: readdata_age_lga (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==    by 0x1000011CC: main (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==  Address 0x104a5e060 is on thread 1's stack
+==69269==  2048 bytes below stack pointer
+==69269== 
+==69269== Invalid read of size 1
+==69269==    at 0x10026CB48: _platform_strcmp (in /usr/local/Cellar/valgrind/3.14.0/lib/valgrind/vgpreload_memcheck-amd64-darwin.so)
+==69269==    by 0x10001D742: readdata_age_lga (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==    by 0x1000011CC: main (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==  Address 0x104a5e060 is on thread 1's stack
+==69269==  2048 bytes below stack pointer
+==69269== 
+==69269== Invalid read of size 1
+==69269==    at 0x10026CB48: _platform_strcmp (in /usr/local/Cellar/valgrind/3.14.0/lib/valgrind/vgpreload_memcheck-amd64-darwin.so)
+==69269==    by 0x10001D79E: readdata_age_lga (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==    by 0x1000011CC: main (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==  Address 0x104a5e060 is on thread 1's stack
+==69269==  2048 bytes below stack pointer
+==69269== 
+==69269== Invalid read of size 1
+==69269==    at 0x10026CB48: _platform_strcmp (in /usr/local/Cellar/valgrind/3.14.0/lib/valgrind/vgpreload_memcheck-amd64-darwin.so)
+==69269==    by 0x10001D7D1: readdata_age_lga (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==    by 0x1000011CC: main (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==  Address 0x104a5e060 is on thread 1's stack
+==69269==  2048 bytes below stack pointer
+==69269== 
+==69269== Invalid read of size 1
+==69269==    at 0x10026CB59: _platform_strcmp (in /usr/local/Cellar/valgrind/3.14.0/lib/valgrind/vgpreload_memcheck-amd64-darwin.so)
+==69269==    by 0x10001C93E: readdata_age_lga (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==    by 0x1000011CC: main (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==  Address 0x104a5e061 is on thread 1's stack
+==69269==  2047 bytes below stack pointer
+==69269== 
+==69269== Invalid read of size 1
+==69269==    at 0x10026CB59: _platform_strcmp (in /usr/local/Cellar/valgrind/3.14.0/lib/valgrind/vgpreload_memcheck-amd64-darwin.so)
+==69269==    by 0x10001C980: readdata_age_lga (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==    by 0x1000011CC: main (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==  Address 0x104a5e061 is on thread 1's stack
+==69269==  2047 bytes below stack pointer
+==69269== 
+==69269== Invalid read of size 1
+==69269==    at 0x10026CB59: _platform_strcmp (in /usr/local/Cellar/valgrind/3.14.0/lib/valgrind/vgpreload_memcheck-amd64-darwin.so)
+==69269==    by 0x10001CA6B: readdata_age_lga (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==    by 0x1000011CC: main (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==  Address 0x104a5e061 is on thread 1's stack
+==69269==  2047 bytes below stack pointer
+==69269== 
+==69269== Invalid read of size 1
+==69269==    at 0x10026CB59: _platform_strcmp (in /usr/local/Cellar/valgrind/3.14.0/lib/valgrind/vgpreload_memcheck-amd64-darwin.so)
+==69269==    by 0x10001C9F5: readdata_age_lga (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==    by 0x1000011CC: main (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==  Address 0x104a5e061 is on thread 1's stack
+==69269==  2047 bytes below stack pointer
+==69269== 
+==69269== Invalid read of size 1
+==69269==    at 0x10026CB59: _platform_strcmp (in /usr/local/Cellar/valgrind/3.14.0/lib/valgrind/vgpreload_memcheck-amd64-darwin.so)
+==69269==    by 0x10001C9C2: readdata_age_lga (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==    by 0x1000011CC: main (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==  Address 0x104a5e061 is on thread 1's stack
+==69269==  2047 bytes below stack pointer
+==69269== 
+==69269== Invalid read of size 1
+==69269==    at 0x10026CB59: _platform_strcmp (in /usr/local/Cellar/valgrind/3.14.0/lib/valgrind/vgpreload_memcheck-amd64-darwin.so)
+==69269==    by 0x10001CB04: readdata_age_lga (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==    by 0x1000011CC: main (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==  Address 0x104a5e061 is on thread 1's stack
+==69269==  2047 bytes below stack pointer
+==69269== 
+==69269== Invalid read of size 1
+==69269==    at 0x10026CB59: _platform_strcmp (in /usr/local/Cellar/valgrind/3.14.0/lib/valgrind/vgpreload_memcheck-amd64-darwin.so)
+==69269==    by 0x10001CA9E: readdata_age_lga (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==    by 0x1000011CC: main (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==  Address 0x104a5e061 is on thread 1's stack
+==69269==  2047 bytes below stack pointer
+==69269== 
+==69269== Invalid read of size 1
+==69269==    at 0x10026CB48: _platform_strcmp (in /usr/local/Cellar/valgrind/3.14.0/lib/valgrind/vgpreload_memcheck-amd64-darwin.so)
+==69269==    by 0x10001CEB9: readdata_age_lga (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==    by 0x1000011CC: main (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==  Address 0x104a5e060 is on thread 1's stack
+==69269==  2048 bytes below stack pointer
+==69269== 
+==69269== Invalid read of size 1
+==69269==    at 0x10026CB59: _platform_strcmp (in /usr/local/Cellar/valgrind/3.14.0/lib/valgrind/vgpreload_memcheck-amd64-darwin.so)
+==69269==    by 0x10001CEB9: readdata_age_lga (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==    by 0x1000011CC: main (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==  Address 0x104a5e061 is on thread 1's stack
+==69269==  2047 bytes below stack pointer
+==69269== 
+==69269== Conditional jump or move depends on uninitialised value(s)
+==69269==    at 0x1004E80AF: __sprintf_chk (in /usr/lib/system/libsystem_c.dylib)
+==69269==    by 0x10001C509: read_bin_var (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==    by 0x10001CDB1: readdata_age_lga (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==    by 0x1000011CC: main (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269== 
+==69269== Conditional jump or move depends on uninitialised value(s)
+==69269==    at 0x1004E80B7: __sprintf_chk (in /usr/lib/system/libsystem_c.dylib)
+==69269==    by 0x10001C509: read_bin_var (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==    by 0x10001CDB1: readdata_age_lga (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==    by 0x1000011CC: main (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269== 
+==69269== Invalid read of size 1
+==69269==    at 0x10026CB59: _platform_strcmp (in /usr/local/Cellar/valgrind/3.14.0/lib/valgrind/vgpreload_memcheck-amd64-darwin.so)
+==69269==    by 0x10001D504: readdata_age_lga (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==    by 0x1000011CC: main (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==  Address 0x104a5e061 is on thread 1's stack
+==69269==  2047 bytes below stack pointer
+==69269== 
+==69269== Invalid read of size 1
+==69269==    at 0x10026CB59: _platform_strcmp (in /usr/local/Cellar/valgrind/3.14.0/lib/valgrind/vgpreload_memcheck-amd64-darwin.so)
+==69269==    by 0x10001D281: readdata_age_lga (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==    by 0x1000011CC: main (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==  Address 0x104a5e061 is on thread 1's stack
+==69269==  2047 bytes below stack pointer
+==69269== 
+==69269== Invalid read of size 1
+==69269==    at 0x10026CB59: _platform_strcmp (in /usr/local/Cellar/valgrind/3.14.0/lib/valgrind/vgpreload_memcheck-amd64-darwin.so)
+==69269==    by 0x10001D53B: readdata_age_lga (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==    by 0x1000011CC: main (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==  Address 0x104a5e061 is on thread 1's stack
+==69269==  2047 bytes below stack pointer
+==69269== 
+==69269== Conditional jump or move depends on uninitialised value(s)
+==69269==    at 0x100814FDD: _platform_memmove$VARIANT$Haswell (in /usr/lib/system/libsystem_platform.dylib)
+==69269==    by 0x1004A48EA: __sfvwrite (in /usr/lib/system/libsystem_c.dylib)
+==69269==    by 0x1004AE5FE: __vfprintf (in /usr/lib/system/libsystem_c.dylib)
+==69269==    by 0x1004D3058: __v2printf (in /usr/lib/system/libsystem_c.dylib)
+==69269==    by 0x1004B834A: _vsnprintf (in /usr/lib/system/libsystem_c.dylib)
+==69269==    by 0x1004B83FD: vsnprintf (in /usr/lib/system/libsystem_c.dylib)
+==69269==    by 0x1004E80AC: __sprintf_chk (in /usr/lib/system/libsystem_c.dylib)
+==69269==    by 0x10001C509: read_bin_var (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==    by 0x10001C8FD: readdata_age_lga (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==    by 0x1000011CC: main (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269== 
+==69269== Conditional jump or move depends on uninitialised value(s)
+==69269==    at 0x100814FEE: _platform_memmove$VARIANT$Haswell (in /usr/lib/system/libsystem_platform.dylib)
+==69269==    by 0x1004A48EA: __sfvwrite (in /usr/lib/system/libsystem_c.dylib)
+==69269==    by 0x1004AE5FE: __vfprintf (in /usr/lib/system/libsystem_c.dylib)
+==69269==    by 0x1004D3058: __v2printf (in /usr/lib/system/libsystem_c.dylib)
+==69269==    by 0x1004B834A: _vsnprintf (in /usr/lib/system/libsystem_c.dylib)
+==69269==    by 0x1004B83FD: vsnprintf (in /usr/lib/system/libsystem_c.dylib)
+==69269==    by 0x1004E80AC: __sprintf_chk (in /usr/lib/system/libsystem_c.dylib)
+==69269==    by 0x10001C509: read_bin_var (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==    by 0x10001C8FD: readdata_age_lga (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==    by 0x1000011CC: main (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269== 
+==69269== Conditional jump or move depends on uninitialised value(s)
+==69269==    at 0x100815002: _platform_memmove$VARIANT$Haswell (in /usr/lib/system/libsystem_platform.dylib)
+==69269==    by 0x1004A48EA: __sfvwrite (in /usr/lib/system/libsystem_c.dylib)
+==69269==    by 0x1004AE5FE: __vfprintf (in /usr/lib/system/libsystem_c.dylib)
+==69269==    by 0x1004D3058: __v2printf (in /usr/lib/system/libsystem_c.dylib)
+==69269==    by 0x1004B834A: _vsnprintf (in /usr/lib/system/libsystem_c.dylib)
+==69269==    by 0x1004B83FD: vsnprintf (in /usr/lib/system/libsystem_c.dylib)
+==69269==    by 0x1004E80AC: __sprintf_chk (in /usr/lib/system/libsystem_c.dylib)
+==69269==    by 0x10001C509: read_bin_var (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==    by 0x10001C8FD: readdata_age_lga (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==    by 0x1000011CC: main (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269== 
+==69269== Invalid read of size 1
+==69269==    at 0x10026CB59: _platform_strcmp (in /usr/local/Cellar/valgrind/3.14.0/lib/valgrind/vgpreload_memcheck-amd64-darwin.so)
+==69269==    by 0x10001D0F9: readdata_age_lga (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==    by 0x1000011CC: main (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==  Address 0x104a5e061 is on thread 1's stack
+==69269==  2047 bytes below stack pointer
+==69269== 
+==69269== Invalid read of size 1
+==69269==    at 0x10026CB59: _platform_strcmp (in /usr/local/Cellar/valgrind/3.14.0/lib/valgrind/vgpreload_memcheck-amd64-darwin.so)
+==69269==    by 0x10001D1BD: readdata_age_lga (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==    by 0x1000011CC: main (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==  Address 0x104a5e061 is on thread 1's stack
+==69269==  2047 bytes below stack pointer
+==69269== 
+==69269== Invalid read of size 1
+==69269==    at 0x10026CB59: _platform_strcmp (in /usr/local/Cellar/valgrind/3.14.0/lib/valgrind/vgpreload_memcheck-amd64-darwin.so)
+==69269==    by 0x10001D345: readdata_age_lga (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==    by 0x1000011CC: main (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==  Address 0x104a5e061 is on thread 1's stack
+==69269==  2047 bytes below stack pointer
+==69269== 
+==69269== Invalid read of size 1
+==69269==    at 0x10026CB59: _platform_strcmp (in /usr/local/Cellar/valgrind/3.14.0/lib/valgrind/vgpreload_memcheck-amd64-darwin.so)
+==69269==    by 0x10001D409: readdata_age_lga (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==    by 0x1000011CC: main (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==  Address 0x104a5e061 is on thread 1's stack
+==69269==  2047 bytes below stack pointer
+==69269== 
+==69269== Invalid read of size 1
+==69269==    at 0x10026CB59: _platform_strcmp (in /usr/local/Cellar/valgrind/3.14.0/lib/valgrind/vgpreload_memcheck-amd64-darwin.so)
+==69269==    by 0x10001D440: readdata_age_lga (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==    by 0x1000011CC: main (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==  Address 0x104a5e061 is on thread 1's stack
+==69269==  2047 bytes below stack pointer
+==69269== 
+==69269== Invalid read of size 1
+==69269==    at 0x10026CB59: _platform_strcmp (in /usr/local/Cellar/valgrind/3.14.0/lib/valgrind/vgpreload_memcheck-amd64-darwin.so)
+==69269==    by 0x10001D7D1: readdata_age_lga (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==    by 0x1000011CC: main (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==  Address 0x104a5e061 is on thread 1's stack
+==69269==  2047 bytes below stack pointer
+==69269== 
+==69269== Invalid read of size 1
+==69269==    at 0x10026CB59: _platform_strcmp (in /usr/local/Cellar/valgrind/3.14.0/lib/valgrind/vgpreload_memcheck-amd64-darwin.so)
+==69269==    by 0x10001D68A: readdata_age_lga (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==    by 0x1000011CC: main (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==  Address 0x104a5e061 is on thread 1's stack
+==69269==  2047 bytes below stack pointer
+==69269== 
+==69269== Invalid read of size 1
+==69269==    at 0x10026CB59: _platform_strcmp (in /usr/local/Cellar/valgrind/3.14.0/lib/valgrind/vgpreload_memcheck-amd64-darwin.so)
+==69269==    by 0x10001D742: readdata_age_lga (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==    by 0x1000011CC: main (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==  Address 0x104a5e061 is on thread 1's stack
+==69269==  2047 bytes below stack pointer
+==69269== 
+Read input data from file: cfiles/stoxdata_lga
+==69269== Conditional jump or move depends on uninitialised value(s)
+==69269==    at 0x1004E80AF: __sprintf_chk (in /usr/lib/system/libsystem_c.dylib)
+==69269==    by 0x10001C509: read_bin_var (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==    by 0x10001DA8C: readdata_lga (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==    by 0x100001278: main (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269== 
+==69269== Conditional jump or move depends on uninitialised value(s)
+==69269==    at 0x1004E80B7: __sprintf_chk (in /usr/lib/system/libsystem_c.dylib)
+==69269==    by 0x10001C509: read_bin_var (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==    by 0x10001DA8C: readdata_lga (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==    by 0x100001278: main (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269== 
+==69269== Invalid read of size 1
+==69269==    at 0x10026CB48: _platform_strcmp (in /usr/local/Cellar/valgrind/3.14.0/lib/valgrind/vgpreload_memcheck-amd64-darwin.so)
+==69269==    by 0x10001DABE: readdata_lga (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==    by 0x100001278: main (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==  Address 0x104a5e080 is on thread 1's stack
+==69269==  2048 bytes below stack pointer
+==69269== 
+==69269== Invalid read of size 1
+==69269==    at 0x10026CB48: _platform_strcmp (in /usr/local/Cellar/valgrind/3.14.0/lib/valgrind/vgpreload_memcheck-amd64-darwin.so)
+==69269==    by 0x10001DAF8: readdata_lga (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==    by 0x100001278: main (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==  Address 0x104a5e080 is on thread 1's stack
+==69269==  2048 bytes below stack pointer
+==69269== 
+==69269== Invalid read of size 1
+==69269==    at 0x10026CB48: _platform_strcmp (in /usr/local/Cellar/valgrind/3.14.0/lib/valgrind/vgpreload_memcheck-amd64-darwin.so)
+==69269==    by 0x10001DB32: readdata_lga (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==    by 0x100001278: main (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==  Address 0x104a5e080 is on thread 1's stack
+==69269==  2048 bytes below stack pointer
+==69269== 
+==69269== Invalid read of size 1
+==69269==    at 0x10026CB48: _platform_strcmp (in /usr/local/Cellar/valgrind/3.14.0/lib/valgrind/vgpreload_memcheck-amd64-darwin.so)
+==69269==    by 0x10001DB95: readdata_lga (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==    by 0x100001278: main (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==  Address 0x104a5e080 is on thread 1's stack
+==69269==  2048 bytes below stack pointer
+==69269== 
+==69269== Invalid read of size 1
+==69269==    at 0x10026CB59: _platform_strcmp (in /usr/local/Cellar/valgrind/3.14.0/lib/valgrind/vgpreload_memcheck-amd64-darwin.so)
+==69269==    by 0x10001DB95: readdata_lga (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==    by 0x100001278: main (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==  Address 0x104a5e081 is on thread 1's stack
+==69269==  2047 bytes below stack pointer
+==69269== 
+==69269== Invalid read of size 1
+==69269==    at 0x10026CB48: _platform_strcmp (in /usr/local/Cellar/valgrind/3.14.0/lib/valgrind/vgpreload_memcheck-amd64-darwin.so)
+==69269==    by 0x10001DBF0: readdata_lga (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==    by 0x100001278: main (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==  Address 0x104a5e080 is on thread 1's stack
+==69269==  2048 bytes below stack pointer
+==69269== 
+==69269== Invalid read of size 1
+==69269==    at 0x10026CB59: _platform_strcmp (in /usr/local/Cellar/valgrind/3.14.0/lib/valgrind/vgpreload_memcheck-amd64-darwin.so)
+==69269==    by 0x10001DBF0: readdata_lga (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==    by 0x100001278: main (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==  Address 0x104a5e081 is on thread 1's stack
+==69269==  2047 bytes below stack pointer
+==69269== 
+==69269== Invalid read of size 1
+==69269==    at 0x10026CB48: _platform_strcmp (in /usr/local/Cellar/valgrind/3.14.0/lib/valgrind/vgpreload_memcheck-amd64-darwin.so)
+==69269==    by 0x10001DC4C: readdata_lga (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==    by 0x100001278: main (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==  Address 0x104a5e080 is on thread 1's stack
+==69269==  2048 bytes below stack pointer
+==69269== 
+==69269== Invalid read of size 1
+==69269==    at 0x10026CB59: _platform_strcmp (in /usr/local/Cellar/valgrind/3.14.0/lib/valgrind/vgpreload_memcheck-amd64-darwin.so)
+==69269==    by 0x10001DC4C: readdata_lga (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==    by 0x100001278: main (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==  Address 0x104a5e081 is on thread 1's stack
+==69269==  2047 bytes below stack pointer
+==69269== 
+==69269== Invalid read of size 1
+==69269==    at 0x10026CB48: _platform_strcmp (in /usr/local/Cellar/valgrind/3.14.0/lib/valgrind/vgpreload_memcheck-amd64-darwin.so)
+==69269==    by 0x10001DCA8: readdata_lga (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==    by 0x100001278: main (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==  Address 0x104a5e080 is on thread 1's stack
+==69269==  2048 bytes below stack pointer
+==69269== 
+==69269== Invalid read of size 1
+==69269==    at 0x10026CB59: _platform_strcmp (in /usr/local/Cellar/valgrind/3.14.0/lib/valgrind/vgpreload_memcheck-amd64-darwin.so)
+==69269==    by 0x10001DCA8: readdata_lga (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==    by 0x100001278: main (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==  Address 0x104a5e081 is on thread 1's stack
+==69269==  2047 bytes below stack pointer
+==69269== 
+==69269== Invalid read of size 1
+==69269==    at 0x10026CB48: _platform_strcmp (in /usr/local/Cellar/valgrind/3.14.0/lib/valgrind/vgpreload_memcheck-amd64-darwin.so)
+==69269==    by 0x10001DD04: readdata_lga (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==    by 0x100001278: main (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==  Address 0x104a5e080 is on thread 1's stack
+==69269==  2048 bytes below stack pointer
+==69269== 
+==69269== Invalid read of size 1
+==69269==    at 0x10026CB59: _platform_strcmp (in /usr/local/Cellar/valgrind/3.14.0/lib/valgrind/vgpreload_memcheck-amd64-darwin.so)
+==69269==    by 0x10001DD04: readdata_lga (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==    by 0x100001278: main (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==  Address 0x104a5e081 is on thread 1's stack
+==69269==  2047 bytes below stack pointer
+==69269== 
+==69269== Invalid read of size 1
+==69269==    at 0x10026CB48: _platform_strcmp (in /usr/local/Cellar/valgrind/3.14.0/lib/valgrind/vgpreload_memcheck-amd64-darwin.so)
+==69269==    by 0x10001DD60: readdata_lga (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==    by 0x100001278: main (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==  Address 0x104a5e080 is on thread 1's stack
+==69269==  2048 bytes below stack pointer
+==69269== 
+==69269== Invalid read of size 1
+==69269==    at 0x10026CB59: _platform_strcmp (in /usr/local/Cellar/valgrind/3.14.0/lib/valgrind/vgpreload_memcheck-amd64-darwin.so)
+==69269==    by 0x10001DD60: readdata_lga (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==    by 0x100001278: main (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==  Address 0x104a5e081 is on thread 1's stack
+==69269==  2047 bytes below stack pointer
+==69269== 
+==69269== Invalid read of size 1
+==69269==    at 0x10026CB59: _platform_strcmp (in /usr/local/Cellar/valgrind/3.14.0/lib/valgrind/vgpreload_memcheck-amd64-darwin.so)
+==69269==    by 0x10001DABE: readdata_lga (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==    by 0x100001278: main (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==  Address 0x104a5e081 is on thread 1's stack
+==69269==  2047 bytes below stack pointer
+==69269== 
+==69269== Invalid read of size 1
+==69269==    at 0x10026CB59: _platform_strcmp (in /usr/local/Cellar/valgrind/3.14.0/lib/valgrind/vgpreload_memcheck-amd64-darwin.so)
+==69269==    by 0x10001DAF8: readdata_lga (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==    by 0x100001278: main (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==  Address 0x104a5e081 is on thread 1's stack
+==69269==  2047 bytes below stack pointer
+==69269== 
+==69269== Invalid read of size 1
+==69269==    at 0x10026CB59: _platform_strcmp (in /usr/local/Cellar/valgrind/3.14.0/lib/valgrind/vgpreload_memcheck-amd64-darwin.so)
+==69269==    by 0x10001DB32: readdata_lga (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==    by 0x100001278: main (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==  Address 0x104a5e081 is on thread 1's stack
+==69269==  2047 bytes below stack pointer
+==69269== 
+Read input data from file: cfiles/priorList
+==69269== Conditional jump or move depends on uninitialised value(s)
+==69269==    at 0x1004E80AF: __sprintf_chk (in /usr/lib/system/libsystem_c.dylib)
+==69269==    by 0x10001C509: read_bin_var (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==    by 0x10001F5EF: readdata_prior (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==    by 0x1000013DF: main (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269== 
+==69269== Conditional jump or move depends on uninitialised value(s)
+==69269==    at 0x1004E80B7: __sprintf_chk (in /usr/lib/system/libsystem_c.dylib)
+==69269==    by 0x10001C509: read_bin_var (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==    by 0x10001F5EF: readdata_prior (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==    by 0x1000013DF: main (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269== 
+==69269== Invalid read of size 1
+==69269==    at 0x10026CB48: _platform_strcmp (in /usr/local/Cellar/valgrind/3.14.0/lib/valgrind/vgpreload_memcheck-amd64-darwin.so)
+==69269==    by 0x10001F621: readdata_prior (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==    by 0x1000013DF: main (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==  Address 0x104a5e090 is on thread 1's stack
+==69269==  2048 bytes below stack pointer
+==69269== 
+==69269== Invalid read of size 1
+==69269==    at 0x10026CB59: _platform_strcmp (in /usr/local/Cellar/valgrind/3.14.0/lib/valgrind/vgpreload_memcheck-amd64-darwin.so)
+==69269==    by 0x10001F621: readdata_prior (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==    by 0x1000013DF: main (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==  Address 0x104a5e091 is on thread 1's stack
+==69269==  2047 bytes below stack pointer
+==69269== 
+==69269== Invalid read of size 1
+==69269==    at 0x10026CB48: _platform_strcmp (in /usr/local/Cellar/valgrind/3.14.0/lib/valgrind/vgpreload_memcheck-amd64-darwin.so)
+==69269==    by 0x10001F653: readdata_prior (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==    by 0x1000013DF: main (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==  Address 0x104a5e090 is on thread 1's stack
+==69269==  2048 bytes below stack pointer
+==69269== 
+==69269== 
+==69269== More than 100 errors detected.  Subsequent errors
+==69269== will still be recorded, but in less detail than before.
+==69269== Invalid read of size 1
+==69269==    at 0x10026CB59: _platform_strcmp (in /usr/local/Cellar/valgrind/3.14.0/lib/valgrind/vgpreload_memcheck-amd64-darwin.so)
+==69269==    by 0x10001F653: readdata_prior (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==    by 0x1000013DF: main (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==  Address 0x104a5e091 is on thread 1's stack
+==69269==  2047 bytes below stack pointer
+==69269== 
+==69269== Invalid read of size 1
+==69269==    at 0x10026CB48: _platform_strcmp (in /usr/local/Cellar/valgrind/3.14.0/lib/valgrind/vgpreload_memcheck-amd64-darwin.so)
+==69269==    by 0x10001F686: readdata_prior (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==    by 0x1000013DF: main (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==  Address 0x104a5e090 is on thread 1's stack
+==69269==  2048 bytes below stack pointer
+==69269== 
+==69269== Invalid read of size 1
+==69269==    at 0x10026CB59: _platform_strcmp (in /usr/local/Cellar/valgrind/3.14.0/lib/valgrind/vgpreload_memcheck-amd64-darwin.so)
+==69269==    by 0x10001F686: readdata_prior (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==    by 0x1000013DF: main (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==  Address 0x104a5e091 is on thread 1's stack
+==69269==  2047 bytes below stack pointer
+==69269== 
+==69269== Invalid read of size 1
+==69269==    at 0x10026CB48: _platform_strcmp (in /usr/local/Cellar/valgrind/3.14.0/lib/valgrind/vgpreload_memcheck-amd64-darwin.so)
+==69269==    by 0x10001F6B9: readdata_prior (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==    by 0x1000013DF: main (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==  Address 0x104a5e090 is on thread 1's stack
+==69269==  2048 bytes below stack pointer
+==69269== 
+==69269== Invalid read of size 1
+==69269==    at 0x10026CB59: _platform_strcmp (in /usr/local/Cellar/valgrind/3.14.0/lib/valgrind/vgpreload_memcheck-amd64-darwin.so)
+==69269==    by 0x10001F6B9: readdata_prior (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==    by 0x1000013DF: main (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==  Address 0x104a5e091 is on thread 1's stack
+==69269==  2047 bytes below stack pointer
+==69269== 
+==69269== Invalid read of size 1
+==69269==    at 0x10026CB48: _platform_strcmp (in /usr/local/Cellar/valgrind/3.14.0/lib/valgrind/vgpreload_memcheck-amd64-darwin.so)
+==69269==    by 0x10001F6EC: readdata_prior (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==    by 0x1000013DF: main (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==  Address 0x104a5e090 is on thread 1's stack
+==69269==  2048 bytes below stack pointer
+==69269== 
+==69269== Invalid read of size 1
+==69269==    at 0x10026CB59: _platform_strcmp (in /usr/local/Cellar/valgrind/3.14.0/lib/valgrind/vgpreload_memcheck-amd64-darwin.so)
+==69269==    by 0x10001F6EC: readdata_prior (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==    by 0x1000013DF: main (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==  Address 0x104a5e091 is on thread 1's stack
+==69269==  2047 bytes below stack pointer
+==69269== 
+==69269== Invalid read of size 1
+==69269==    at 0x10026CB48: _platform_strcmp (in /usr/local/Cellar/valgrind/3.14.0/lib/valgrind/vgpreload_memcheck-amd64-darwin.so)
+==69269==    by 0x10001F71F: readdata_prior (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==    by 0x1000013DF: main (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==  Address 0x104a5e090 is on thread 1's stack
+==69269==  2048 bytes below stack pointer
+==69269== 
+==69269== Invalid read of size 1
+==69269==    at 0x10026CB59: _platform_strcmp (in /usr/local/Cellar/valgrind/3.14.0/lib/valgrind/vgpreload_memcheck-amd64-darwin.so)
+==69269==    by 0x10001F71F: readdata_prior (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==    by 0x1000013DF: main (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==  Address 0x104a5e091 is on thread 1's stack
+==69269==  2047 bytes below stack pointer
+==69269== 
+==69269== Invalid read of size 1
+==69269==    at 0x10026CB48: _platform_strcmp (in /usr/local/Cellar/valgrind/3.14.0/lib/valgrind/vgpreload_memcheck-amd64-darwin.so)
+==69269==    by 0x10001F752: readdata_prior (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==    by 0x1000013DF: main (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==  Address 0x104a5e090 is on thread 1's stack
+==69269==  2048 bytes below stack pointer
+==69269== 
+==69269== Invalid read of size 1
+==69269==    at 0x10026CB59: _platform_strcmp (in /usr/local/Cellar/valgrind/3.14.0/lib/valgrind/vgpreload_memcheck-amd64-darwin.so)
+==69269==    by 0x10001F752: readdata_prior (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==    by 0x1000013DF: main (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==  Address 0x104a5e091 is on thread 1's stack
+==69269==  2047 bytes below stack pointer
+==69269== 
+==69269== Invalid read of size 1
+==69269==    at 0x10026CB48: _platform_strcmp (in /usr/local/Cellar/valgrind/3.14.0/lib/valgrind/vgpreload_memcheck-amd64-darwin.so)
+==69269==    by 0x10001F785: readdata_prior (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==    by 0x1000013DF: main (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==  Address 0x104a5e090 is on thread 1's stack
+==69269==  2048 bytes below stack pointer
+==69269== 
+==69269== Invalid read of size 1
+==69269==    at 0x10026CB59: _platform_strcmp (in /usr/local/Cellar/valgrind/3.14.0/lib/valgrind/vgpreload_memcheck-amd64-darwin.so)
+==69269==    by 0x10001F785: readdata_prior (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==    by 0x1000013DF: main (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==  Address 0x104a5e091 is on thread 1's stack
+==69269==  2047 bytes below stack pointer
+==69269== 
+==69269== Invalid read of size 1
+==69269==    at 0x10026CB48: _platform_strcmp (in /usr/local/Cellar/valgrind/3.14.0/lib/valgrind/vgpreload_memcheck-amd64-darwin.so)
+==69269==    by 0x10001F7B8: readdata_prior (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==    by 0x1000013DF: main (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==  Address 0x104a5e090 is on thread 1's stack
+==69269==  2048 bytes below stack pointer
+==69269== 
+==69269== Invalid read of size 1
+==69269==    at 0x10026CB59: _platform_strcmp (in /usr/local/Cellar/valgrind/3.14.0/lib/valgrind/vgpreload_memcheck-amd64-darwin.so)
+==69269==    by 0x10001F7B8: readdata_prior (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==    by 0x1000013DF: main (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==  Address 0x104a5e091 is on thread 1's stack
+==69269==  2047 bytes below stack pointer
+==69269== 
+==69269== Invalid read of size 1
+==69269==    at 0x10026CB48: _platform_strcmp (in /usr/local/Cellar/valgrind/3.14.0/lib/valgrind/vgpreload_memcheck-amd64-darwin.so)
+==69269==    by 0x10001F7EB: readdata_prior (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==    by 0x1000013DF: main (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==  Address 0x104a5e090 is on thread 1's stack
+==69269==  2048 bytes below stack pointer
+==69269== 
+==69269== Invalid read of size 1
+==69269==    at 0x10026CB59: _platform_strcmp (in /usr/local/Cellar/valgrind/3.14.0/lib/valgrind/vgpreload_memcheck-amd64-darwin.so)
+==69269==    by 0x10001F7EB: readdata_prior (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==    by 0x1000013DF: main (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==  Address 0x104a5e091 is on thread 1's stack
+==69269==  2047 bytes below stack pointer
+==69269== 
+==69269== Invalid read of size 1
+==69269==    at 0x10026CB48: _platform_strcmp (in /usr/local/Cellar/valgrind/3.14.0/lib/valgrind/vgpreload_memcheck-amd64-darwin.so)
+==69269==    by 0x10001F81E: readdata_prior (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==    by 0x1000013DF: main (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==  Address 0x104a5e090 is on thread 1's stack
+==69269==  2048 bytes below stack pointer
+==69269== 
+==69269== Invalid read of size 1
+==69269==    at 0x10026CB59: _platform_strcmp (in /usr/local/Cellar/valgrind/3.14.0/lib/valgrind/vgpreload_memcheck-amd64-darwin.so)
+==69269==    by 0x10001F81E: readdata_prior (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==    by 0x1000013DF: main (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==  Address 0x104a5e091 is on thread 1's stack
+==69269==  2047 bytes below stack pointer
+==69269== 
+==69269== Invalid read of size 1
+==69269==    at 0x10026CB48: _platform_strcmp (in /usr/local/Cellar/valgrind/3.14.0/lib/valgrind/vgpreload_memcheck-amd64-darwin.so)
+==69269==    by 0x10001F851: readdata_prior (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==    by 0x1000013DF: main (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==  Address 0x104a5e090 is on thread 1's stack
+==69269==  2048 bytes below stack pointer
+==69269== 
+==69269== Invalid read of size 1
+==69269==    at 0x10026CB59: _platform_strcmp (in /usr/local/Cellar/valgrind/3.14.0/lib/valgrind/vgpreload_memcheck-amd64-darwin.so)
+==69269==    by 0x10001F851: readdata_prior (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==    by 0x1000013DF: main (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==  Address 0x104a5e091 is on thread 1's stack
+==69269==  2047 bytes below stack pointer
+==69269== 
+WARNING: Season=0
+WARNING: Season=0
+WARNING: Season=0
+WARNING: Season=0
+WARNING: Season=0
+WARNING: Season=0
+WARNING: Season=0
+WARNING: Season=0
+WARNING: Season=0
+WARNING: Season=0
+WARNING: Season=0
+WARNING: Season=0
+WARNING: Season=0
+WARNING: Season=0
+WARNING: Season=0
+WARNING: Season=0
+WARNING: Season=0
+WARNING: Season=0
+WARNING: Season=0
+WARNING: Season=0
+--69269-- UNKNOWN mach_msg unhandled MACH_SEND_TRAILER option
+--69269-- UNKNOWN mach_msg unhandled MACH_SEND_TRAILER option (repeated 2 times)
+--69269-- UNKNOWN mach_msg unhandled MACH_SEND_TRAILER option (repeated 4 times)
+==69269== Invalid read of size 8
+==69269==    at 0x100039DBC: sample_ages_init (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==    by 0x100015B15: MCMC_model1_init (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==    by 0x1000062D2: main_model1 (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==    by 0x1000014C5: main (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==  Address 0x102339208 is 8 bytes before a block of size 112 alloc'd
+==69269==    at 0x10026B086: malloc (in /usr/local/Cellar/valgrind/3.14.0/lib/valgrind/vgpreload_memcheck-amd64-darwin.so)
+==69269==    by 0x100096659: Mmatrix_2d (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==    by 0x10009684B: Mmatrix_3d (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==    by 0x100039B72: sample_ages_init (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==    by 0x100015B15: MCMC_model1_init (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==    by 0x1000062D2: main_model1 (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==    by 0x1000014C5: main (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269== 
+==69269== Invalid read of size 8
+==69269==    at 0x100039DC4: sample_ages_init (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==    by 0x100015B15: MCMC_model1_init (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==    by 0x1000062D2: main_model1 (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==    by 0x1000014C5: main (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==  Address 0x418 is not stack'd, malloc'd or (recently) free'd
+==69269== 
+==69269== 
+==69269== Process terminating with default action of signal 11 (SIGSEGV)
+==69269==  Access not within mapped region at address 0x418
+==69269==    at 0x100039DC4: sample_ages_init (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==    by 0x100015B15: MCMC_model1_init (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==    by 0x1000062D2: main_model1 (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==    by 0x1000014C5: main (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1)
+==69269==  If you believe this happened as a result of a stack
+==69269==  overflow in your program's main thread (unlikely but
+==69269==  possible), you can try to increase the size of the
+==69269==  main thread stack using the --main-stacksize= flag.
+==69269==  The main thread stack size used in this run was 8388608.
+==69269== 
+==69269== HEAP SUMMARY:
+==69269==     in use at exit: 11,547,423 bytes in 4,736 blocks
+==69269==   total heap usage: 8,935 allocs, 4,199 frees, 21,778,812 bytes allocated
+==69269== 
+==69269== LEAK SUMMARY:
+==69269==    definitely lost: 19,309 bytes in 32 blocks
+==69269==    indirectly lost: 6,864 bytes in 7 blocks
+==69269==      possibly lost: 72 bytes in 3 blocks
+==69269==    still reachable: 11,510,322 bytes in 4,554 blocks
+==69269==         suppressed: 10,856 bytes in 140 blocks
+==69269== Rerun with --leak-check=full to see details of leaked memory
+==69269== 
+==69269== For counts of detected and suppressed errors, rerun with: -v
+==69269== Use --track-origins=yes to see where uninitialised values come from
+==69269== ERROR SUMMARY: 1553 errors from 123 contexts (suppressed: 4 from 4)

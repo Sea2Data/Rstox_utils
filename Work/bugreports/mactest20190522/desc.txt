@@ -1,0 +1,34 @@
+Krasjer i caa_main_model1.
+
+Dataset: hyse_nssk_2018.Rdata
+valgrind rapport: valgrind_report.txt
+
+output ved kjøring fra kommanolinje
+HI-08998:ecat a5362$ /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_model1 cfiles/
+Start C program: estimating age and length-given-age model
+
+Read input data from file: cfiles/common_par_fit_ascii
+Read input data from file: cfiles/stoxdata_age
+Read input data from file: cfiles/stoxdata_lga
+Read input data from file: cfiles/priorList
+WARNING: Season=0
+WARNING: Season=0
+WARNING: Season=0
+WARNING: Season=0
+WARNING: Season=0
+WARNING: Season=0
+WARNING: Season=0
+WARNING: Season=0
+WARNING: Season=0
+WARNING: Season=0
+WARNING: Season=0
+WARNING: Season=0
+WARNING: Season=0
+WARNING: Season=0
+WARNING: Season=0
+WARNING: Season=0
+WARNING: Season=0
+WARNING: Season=0
+WARNING: Season=0
+WARNING: Season=0
+Segmentation fault: 11
