@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project template="" rstoxversion="1.11.1" xmlns="http://www.imr.no/formats/stox/v1" lastmodified="23/05/19 07:14" rversion="3.5.0" stoxversion="2.7" resourceversion="1.87">
+<project template="" rstoxversion="1.11.1" xmlns="http://www.imr.no/formats/stox/v1" lastmodified="23/05/19 10:49" rversion="3.5.0" stoxversion="2.7" resourceversion="1.87">
   <model name="baseline">
     <process name="ReadProcessData">
       <function>ReadProcessData</function>
@@ -142,9 +142,9 @@
       <enabled>true</enabled>
       <respondingui>true</respondingui>
       <breakingui>false</breakingui>
-      <parameter name="burnin">200</parameter>
+      <parameter name="burnin">1500</parameter>
       <parameter name="caa.burnin">0</parameter>
-      <parameter name="nSamples">700</parameter>
+      <parameter name="nSamples">500</parameter>
       <parameter name="thin">1</parameter>
       <parameter name="fitfile">fit</parameter>
       <parameter name="predfile">pred</parameter>
