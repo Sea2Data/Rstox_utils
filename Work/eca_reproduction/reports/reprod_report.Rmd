@@ -43,6 +43,7 @@ Configuring estimates for reproduction has revealed some usability issues that s
 * Grouping of areas are common in the configurations I have attempted to reproduce. Currently this require generation of new stratafiles and neighbourmatrices in StoX, which is cumbersome for users. A user interface for redefining spatial covariate and neighbour-matrices should be considered. Alternativelty scripts for generating regrouping of common strata systems could be provided
 * Some confiugrations use grouping of seasons. Defining odd temporal configurations are not straightforward in StoX, and I had to resort to manipulating the process-file, in order define temporal coviarates spanning several quarters.
 * Configuration of reports. It is common to configure ECA to decompose estimates on other covariates then those configured for the model (e.g. configure model for F.dir-areas, and reports for ICES areas). Stox-processes to support that should be considered.
+* ECA 3.x reports both total catch and the catch used for estimation. While these are usually the same, filtering out small fractions that precludes preffered model configurations can be desirable. In Stox-Reca this is currently cumbersome to facilitate.
 * Estimates for specific stocks often require filtering data by area. If only position is available, this is best done after stratum is assigned. But this requires filtering on variables added to the data in StoX, which I think is not supported.
 * At the end of the prepareRECA process, data checks are performed and reports on potential data issues are compiled. Currently prepareRECA halts on some of these data issues, which precludes the reports from being compiled. Extracting data issue-reporting to a process run prior to prepareRECA should be considered.
 * Bug in StoX (STOX-218). Workaround implemented in prepareRECA, but this does not support non-seasonal temporal covaraite.
@@ -83,12 +84,12 @@ comppar("kolmule2017", "sd")
 
 
 ### Reproduction of saithe NSSK 2018
-ECA 3.x estimates were prepared by Åge Fotland who provided results for reproduction analysis. This included ECA 3.x .param files. The ECA 3.x estimates used logbook-adjusted landings and had weight-length model configured with different geargroupings than the age-length model, neither of which is currently supported by StoX-Reca. Parameters extracted from ECA 3.x config-files suggest the model was configured with season and gear as fixed effects, but I did not have enough aged samples in the data compiled for reproduction to configure it like that. I configured the temporal covariate as a random effect in stead.
+ECA 3.x estimates were prepared by Åge Fotland who provided results for reproduction analysis. This included ECA 3.x .param files. The ECA 3.x estimates used logbook-adjusted landings and had weight-length model configured with different geargroupings than the age-length model, neither of which is currently supported by StoX-Reca. Parameters extracted from ECA 3.x .param files suggest the model was configured with season and gear as fixed effects, but I did not have enough aged samples in the data compiled for reproduction to configure it like that. I configured the temporal covariate as a random effect in stead.
 
 * Total catch used in ECA 3.x estimate was 40 kt
 * Total catch used in StoX-Reca estimate was 34 kt 
 
-The discrepancy seem to be due to difference in landings data from Fdir, and not logbook-adjustment of catches. Estimates will be revisited with converted data later. But for now we can conclude that we se somewhat higher values for some age groups for the ECA 3.x estimate for both mean and standard deviation. This is expected from the differences in the landing total.
+The discrepancy seem to be due to difference in landings data versions from Fdir, and not logbook-adjustment of catches. Estimates will be revisited with converted data later. But for now we can conclude that we se somewhat higher values for some age groups for the ECA 3.x estimate for both mean and standard deviation. This is expected from the differences in the landing total.
 
 ```{r sei means, fig.cap={"Estimates for mean catch in millions per age group of saithe in the North Sea and Skagerak 2018."}, echo=FALSE}
 
@@ -99,3 +100,13 @@ comppar("sei.nssk.2018", "mean")
 
 comppar("sei.nssk.2018", "sd")
 ```
+
+### Reproduction of haddock NSSK 2018
+ECA 3.x estimates were prepared by Åge Fotland who provided results for reproduction analysis. This included ECA 3.x .param files. The ECA 3.x estimates used logbook-adjusted landings, which is not currently supported by StoX-Reca. Parameters extracted from ECA 3.x .param files suggest the model was configured with season and gear as fixed effects, but I did not have enough aged samples in the data compiled for reproduction to configure it like that. I configured the temporal covariate as a random effect in stead.
+
+* Total catch used in ECA 3.x estimate was 1399 t
+* Total catch used in StoX-Reca estimate was 1198 t
+
+I did not check, but assume this discrepancy is due to difference in landings data versions from Fdir.
+
+Running this configuration triggered a bug in the RECA library. This will be reported to the Norwegian Computing Centre and Estimates will be revisited when a revised library is delivered.
