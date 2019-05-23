@@ -40,7 +40,7 @@ comppar <- function(estimate, parameter){
     }
   }
   
-  plot(ecabase$age, ecabase[[ecaparname]], ylim=c(0,ymax), col="black", xlab="age", ylab="estimate", type="n", main=paste(parameter, "estimates", estimate))
+  plot(ecabase$age, ecabase[[ecaparname]], ylim=c(0,ymax), col="black", xlab="age", ylab=parameter, type="n", main=paste(parameter, "estimates", estimate))
   for (n in names(stoxest)){
     points(stoxages[[n]], stoxest[[n]], ylim=c(0,ymax), col="grey", pch=1)
   }
