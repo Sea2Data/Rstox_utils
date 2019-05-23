@@ -65,7 +65,7 @@ Using the criteria outlned above, I aim to reproduce the following estimates:
 I will just give brief descriptions of configurations below. Consult StoX process files for details.
 
 ### Reproduction of blue whiting 2017
-ECA 3.x estimate from 2017. Model was configured and run by Sondre Aanes and results provided by Are Salthaug. ECA 3.x .param files was not kept. Based on Sondres notes, I have configured the model with only temporal (season) and platform (boat) as covariates, and verified that station selection (serial numbers) was identical between the two estimates. Quarter 2-4 was collapsed to one value. I used samples from HRF (High-seas reference fleet) and commercial samples, and ran 1500 burnin iterations and 500 sampling iterations.
+ECA 3.x estimate from 2017. Model was configured and run by Sondre Aanes and results provided by Are Salthaug. ECA 3.x .param files was not kept. Based on Sondres notes, I have configured the model with only temporal (season) and platform (boat) as covariates, and verified that station selection (serial numbers) was identical between the two estimates. Quarter 2-4 was collapsed to one value. I used samples from HRF (High-seas reference fleet) and commercial samples, and ran 1500 burnin iterations and 500 sampling iterations, with the log-linear growth model.
 
 * Total catch used in ECA 3.x estimate was 399 kt
 * Total catch used in StoX-Reca estimae was 399 kt
