@@ -1,0 +1,67 @@
+---
+title: "Reproduction of eca estimates"
+author: "Edvin Fuglebakk"
+date: "5/23/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+source("../compare_results_multiple_stox_runs.R")
+eca_results <- list()
+eca_results$kolmule2017 <- "../kolmule/eca_2017/KOLMULE2017.fit.2017_allgears_totalarea_season1234.caa.txt"
+stox_results <- list()
+stox_results$kolmule2017 <- "../kolmule/stox_2017/results"
+
+```
+
+## Background
+ECA 3.x are implementations of The ECA model (Hirst et al. 2004, 2005 and 2012) developed by the Norwegian Computing Centre for IMR. ECA 3.x has been used for catch at age estimations for several species. The Norwegian Computing Centre has developed an new implementation of ECA delivered to IMR and the REDUS project as an R-package which I will refer to as RECA. As part oif the REDUS project an data APIs and a user interface for configuring and running Reca has been implemented in StoX. I will refer to estimates produced via this interfaces as StoX-Reca estimates. The StoX-Reca integration aims to achieve several goals:
+
+* Provide an implementation of ECA that is acceptable for user that have decided on using ECA for catch at age estimates.
+* Provide a user interface familiar to StoX users.
+* Separate data handling and estimation, so that filtering and transformation are exposed to users.
+* Document all model parameters and data versions for purposes of recomputability.
+
+The first StoX-Reca version has been delivered and has been tested during the spring of 2019.
+
+### Design decisions
+Some decisions was made during the StoX-Reca implementation that excludes certain model and date configurations possible with the ECA 3.x. 
+
+* It has not yet been implemented a procedure for adjusting landings data with logbook records. A procedure that was supported with separate scripts for ECA 3.x.
+* Grouping of covariate values is not supported in StoX-Reca, rather it allows for redefinig variables. In most cases this is equivalent to grouping
+* Configuring covariates differently for the underlying ECA models ("length given age" and "weight given lengt") is not supported in StoX-Reca, as this requires support for grouping covariate values.
+* Not all filters that are supported by ECA 3.x are implemented in StoX-Reca. Notably filtering for outliers in the age-length scatter.
+
+## Usability testing
+Configuring estimates for reproduction has revealed some usability issues that should be considered for further StoX-Reca development.
+
+* Grouping of areas are common in the configurations I have attempted to reproduce. Currently this require generation of new stratafiles and neighbourmatrices in StoX, which is cumbersome for users. A user interface for redefining spatial covariate and neighbour-matrices should be considered. Alternativelty scripts for generating regrouping of common strata systems could be provided
+* Some confiugrations use grouping of seasons. Defining odd-temporal configurations are not straightforward in StoX, and I had to resort to manipulating the process-file, in order define temporal coviarates spanning several quarters.
+* Configuration of reports. It is common to configure ECA to decompose estimates on other covariates then those configured for the model (e.g. configure model for F.dir-areas, and reports for ICES areas). Stox-processes to support that should be considered.
+* Estimates for specific stocks often require filtering data by area. If only position is available, this is best done after stratum is assigned. But this requires filtering on variables added to the data in StoX, which I think is not supported.
+* At the end of the prepareRECA process, data checks are performed and reports on potential data issues are compiled. Currently prepareRECA halts on some of these data issues, which precludes the reports from being compiled. Extracting data issue-reporting to a process run prior to prepareRECA should be considered.
+* Bug in StoX (STOX-218). Workaround implemented in prepareRECA, but this does not support non-seasonal temporal covaraite.
+* Traceplots for inspecting stabiloity of estimates should be considered. Such plots are produced by ECA 3.x.
+* Reports on data issues complies report for common covariates, without checking if these are configured. Consider if this can be avoided.
+
+## Reproduction of ECA 3.x results
+As part of assuring the quality of the StoX-Reca implementations, I have attempted to configure StoX-Reca projects that mimic ECA 3.x estimates that has been used for advice. I have yet to identify all data and all model configurations from previous ECA 3.x runs, and it may be that this is not possible. Re-running estimates with both implementations can possibly provide additional assurance that we are comparing like with like. ECA estimates are however dependent not only on model configuration and data, but also on random parameter exploration in the Monte Carlo simulations. Difference i estimated parameters that are smaller than random differences in parameter exploration does not affect valid interpretations of the results and I will therefore compare ECA 3.x estimates to multiple StoX-Reca estimates, egnerated with different random seed, and be content with the reproduction if the ECA 3.x estimate does not seem very unlikely given the distribution of StoX-Reca estimates. I have not formulated a formal criteria for reproduction, but will conclude based on inspection of plots. This validation criteria may pass for models that are not configured exactly the same way, which is useful for evaluating whether ECA 3.x feautres not yet implemented needs to be added to StoX-Reca. The validation apporach does however rest upon the assumption that the implementations sensitivity to random seed is acceptable for adaptation of StoX-Reca. This would follow from acceptance of ECA 3.x if ECA 3.x display similar sensitivity. We should inquire with the Norwegian Computing Centre if they have performed that kind of analysis.
+
+I will just give brief descriptions of configurations below. Consult StoX process files for details.
+
+### Reproduction of blue whiting 2017
+ECA 3.x estimate from 2017. Model was configured and run by Sondre Aanes and results provided by Are Salthaug. From Sondres notes, I have konfigured the model with only temporal (season) and platform (boat) as covariates. Quarter 2-4 was collapsed to one value. I ran 1500 burnin iterations and 500 sampling iterations.
+
+
+```{r kolmule means, fig.cap={"Estimates for mean catch in millions per age group of blue whiting in 2017."}, echo=FALSE}
+
+comppar("kolmule2017", "mean")
+```
+
+```{r kolmule sd, fig.cap={"standard deviation of marginal posterior distribution of catch in millions per age group of blue whiting in 2017."}, echo=FALSE}
+
+comppar("kolmule2017", "sd")
+```
+
+

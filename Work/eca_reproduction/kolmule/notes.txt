@@ -1,0 +1,1 @@
+Har sjekket serienummer mot det som står listet under kolmule i PelagicRuns (41 stasjoner for AgeLength). De er identiske

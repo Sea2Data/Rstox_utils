@@ -1,0 +1,240 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project template="" rstoxversion="1.11.1" xmlns="http://www.imr.no/formats/stox/v1" lastmodified="23/05/19 10:49" rversion="3.5.0" stoxversion="2.7" resourceversion="1.87">
+  <model name="baseline">
+    <process name="ReadProcessData">
+      <function>ReadProcessData</function>
+      <enabled>true</enabled>
+      <respondingui>false</respondingui>
+      <breakingui>false</breakingui>
+      <output>ProcessData</output>
+    </process>
+    <process name="ReadBioticXML">
+      <function>ReadBioticXML</function>
+      <enabled>true</enabled>
+      <respondingui>false</respondingui>
+      <breakingui>false</breakingui>
+      <fileoutput>false</fileoutput>
+      <parameter name="FileName1">input/biotic/biotic_year_2017_species_164774.xml</parameter>
+      <output>BioticData</output>
+    </process>
+    <process name="FilterBiotic">
+      <function>FilterBiotic</function>
+      <enabled>true</enabled>
+      <respondingui>true</respondingui>
+      <breakingui>false</breakingui>
+      <fileoutput>true</fileoutput>
+      <parameter name="BioticData">Process(ReadBioticXML)</parameter>
+      <parameter name="FishStationExpr">fs.hasCatch('kolmule')  &amp;&amp; fs.getCount('kolmule') &gt; 9 &amp;&amp; missiontype =~['1', '3'] &amp;&amp; startdate!=null &amp;&amp; gear!=null &amp;&amp; area!='20'</parameter>
+      <parameter name="CatchExpr">species =='164774' &amp;&amp; weight&gt;0</parameter>
+      <parameter name="IndExpr">age==null || age&gt;1</parameter>
+      <output>BioticData</output>
+    </process>
+    <process name="ReadLandingXML">
+      <function>ReadLandingXML</function>
+      <enabled>true</enabled>
+      <respondingui>false</respondingui>
+      <breakingui>false</breakingui>
+      <fileoutput>false</fileoutput>
+      <parameter name="FileName1">input/landing/kolmule_2017.xml</parameter>
+      <output>LandingData</output>
+    </process>
+    <process name="FilterLanding">
+      <function>FilterLanding</function>
+      <enabled>true</enabled>
+      <respondingui>false</respondingui>
+      <breakingui>false</breakingui>
+      <fileoutput>true</fileoutput>
+      <parameter name="LandingData">Process(ReadLandingXML)</parameter>
+      <parameter name="LandingExpr">rundvekt&gt;0  &amp;&amp; fiskernasjonalitetkode=='NOR' &amp;&amp; artkode=='1038'</parameter>
+      <output>LandingData</output>
+    </process>
+    <process name="DefineTemporalLanding">
+      <function>DefineTemporal</function>
+      <enabled>true</enabled>
+      <respondingui>false</respondingui>
+      <breakingui>false</breakingui>
+      <parameter name="ProcessData">Process(ReadProcessData)</parameter>
+      <parameter name="SourceType">Landing</parameter>
+      <parameter name="CovariateType">Fixed</parameter>
+      <parameter name="DefinitionMethod">UseProcessData</parameter>
+      <parameter name="LandingData">Process(FilterLanding)</parameter>
+      <parameter name="BioticData"></parameter>
+      <parameter name="TimeInterval">Quarter</parameter>
+      <parameter name="Seasonal">true</parameter>
+      <output>ProcessData</output>
+    </process>
+    <process name="DefineTemporalBiotic">
+      <function>DefineTemporal</function>
+      <enabled>true</enabled>
+      <respondingui>false</respondingui>
+      <breakingui>false</breakingui>
+      <parameter name="ProcessData">Process(ReadProcessData)</parameter>
+      <parameter name="SourceType">Biotic</parameter>
+      <parameter name="CovariateType">Fixed</parameter>
+      <parameter name="DefinitionMethod">UseProcessData</parameter>
+      <parameter name="LandingData"></parameter>
+      <parameter name="BioticData"></parameter>
+      <parameter name="Seasonal">true</parameter>
+      <output>ProcessData</output>
+    </process>
+    <process name="DefinePlatform">
+      <function>DefinePlatform</function>
+      <enabled>true</enabled>
+      <respondingui>true</respondingui>
+      <breakingui>false</breakingui>
+      <parameter name="ProcessData">Process(ReadProcessData)</parameter>
+      <parameter name="SourceType">Biotic</parameter>
+      <parameter name="CovariateType">Random</parameter>
+      <parameter name="DefinitionMethod">UseData</parameter>
+      <parameter name="BioticData">Process(FilterBiotic)</parameter>
+      <output>ProcessData</output>
+    </process>
+    <process name="BioticCovData">
+      <function>BioticCovData</function>
+      <enabled>true</enabled>
+      <respondingui>false</respondingui>
+      <breakingui>false</breakingui>
+      <fileoutput>true</fileoutput>
+      <parameter name="ProcessData">Process(ReadProcessData)</parameter>
+      <parameter name="BioticData">Process(FilterBiotic)</parameter>
+      <output>BioticCovData</output>
+    </process>
+    <process name="LandingCovData">
+      <function>LandingCovData</function>
+      <enabled>true</enabled>
+      <respondingui>false</respondingui>
+      <breakingui>false</breakingui>
+      <fileoutput>true</fileoutput>
+      <parameter name="ProcessData">Process(ReadProcessData)</parameter>
+      <parameter name="LandingData">Process(FilterLanding)</parameter>
+      <output>LandingCovData</output>
+    </process>
+    <process name="WriteProcessData">
+      <function>WriteProcessData</function>
+      <enabled>true</enabled>
+      <respondingui>false</respondingui>
+      <breakingui>false</breakingui>
+      <fileoutput>true</fileoutput>
+      <output>ProcessData</output>
+    </process>
+  </model>
+  <model name="r">
+    <process name="prepareECA">
+      <function>prepareRECA</function>
+      <enabled>true</enabled>
+      <respondingui>true</respondingui>
+      <breakingui>false</breakingui>
+      <parameter name="minage">1</parameter>
+      <parameter name="maxage">20</parameter>
+      <parameter name="delta.age">0.001</parameter>
+      <parameter name="maxlength"></parameter>
+      <parameter name="hatchDaySlashMonth">01/01</parameter>
+      <parameter name="temporalresolution">92</parameter>
+    </process>
+    <process name="saveProjectData">
+      <function>saveProjectData</function>
+      <enabled>true</enabled>
+      <respondingui>true</respondingui>
+      <breakingui>false</breakingui>
+    </process>
+    <process name="runRECA">
+      <function>runRECA</function>
+      <enabled>true</enabled>
+      <respondingui>true</respondingui>
+      <breakingui>false</breakingui>
+      <parameter name="burnin">1500</parameter>
+      <parameter name="caa.burnin">0</parameter>
+      <parameter name="nSamples">500</parameter>
+      <parameter name="thin">1</parameter>
+      <parameter name="fitfile">fit</parameter>
+      <parameter name="predfile">pred</parameter>
+      <parameter name="lgamodel">log-linear</parameter>
+      <parameter name="CC">false</parameter>
+      <parameter name="CCError">false</parameter>
+      <parameter name="seed"></parameter>
+      <parameter name="age.error">false</parameter>
+    </process>
+    <process name="saveProjectData">
+      <function>saveProjectData</function>
+      <enabled>true</enabled>
+      <respondingui>true</respondingui>
+      <breakingui>false</breakingui>
+    </process>
+  </model>
+  <model name="baseline-report">
+  </model>
+  <model name="r-report">
+    <process name="getPlots">
+      <function>getPlots</function>
+      <enabled>true</enabled>
+      <respondingui>true</respondingui>
+      <breakingui>false</breakingui>
+      <parameter name="out">all</parameter>
+    </process>
+    <process name="getReports">
+      <function>getReports</function>
+      <enabled>true</enabled>
+      <respondingui>true</respondingui>
+      <breakingui>false</breakingui>
+      <parameter name="out">all</parameter>
+    </process>
+  </model>
+  <processdata>
+    <bioticassignment>
+    </bioticassignment>
+    <suassignment>
+    </suassignment>
+    <assignmentresolution>
+    </assignmentresolution>
+    <edsupsu>
+    </edsupsu>
+    <psustratum>
+    </psustratum>
+    <stratumpolygon>
+    </stratumpolygon>
+    <temporal>
+      <value covariatesourcetype="Biotic" covariate="Q1">01/01-31/03</value>
+      <value covariatesourcetype="Biotic" covariate="Q2-Q4">01/04-31/12</value>
+      <value covariatesourcetype="Landing" covariate="Q1">01/01-31/03</value>
+      <value covariatesourcetype="Landing" covariate="Q2-Q4">01/04-31/12</value>
+    </temporal>
+    <gearfactor>
+    </gearfactor>
+    <spatial>
+    </spatial>
+    <platformfactor>
+      <value covariatesourcetype="Biotic" covariate="1208">1208</value>
+      <value covariatesourcetype="Biotic" covariate="2490">2490</value>
+      <value covariatesourcetype="Biotic" covariate="2588">2588</value>
+      <value covariatesourcetype="Biotic" covariate="2704">2704</value>
+      <value covariatesourcetype="Biotic" covariate="2872">2872</value>
+      <value covariatesourcetype="Biotic" covariate="2889">2889</value>
+      <value covariatesourcetype="Biotic" covariate="3050">3050</value>
+      <value covariatesourcetype="Biotic" covariate="3222">3222</value>
+      <value covariatesourcetype="Biotic" covariate="3223">3223</value>
+      <value covariatesourcetype="Biotic" covariate="3322">3322</value>
+      <value covariatesourcetype="Biotic" covariate="3487">3487</value>
+      <value covariatesourcetype="Biotic" covariate="3623">3623</value>
+      <value covariatesourcetype="Biotic" covariate="3627">3627</value>
+      <value covariatesourcetype="Biotic" covariate="3672">3672</value>
+      <value covariatesourcetype="Biotic" covariate="3740">3740</value>
+      <value covariatesourcetype="Biotic" covariate="4406">4406</value>
+      <value covariatesourcetype="Biotic" covariate="4584">4584</value>
+      <value covariatesourcetype="Biotic" covariate="4593">4593</value>
+      <value covariatesourcetype="Biotic" covariate="4613">4613</value>
+      <value covariatesourcetype="Biotic" covariate="9103">9103</value>
+      <value covariatesourcetype="Biotic" covariate="9116">9116</value>
+      <value covariatesourcetype="Biotic" covariate="9117">9117</value>
+      <value covariatesourcetype="Biotic" covariate="9125">9125</value>
+      <value covariatesourcetype="Biotic" covariate="9316">9316</value>
+    </platformfactor>
+    <covparam>
+      <value covariatetable="platformfactor" parameter="CovariateType">Random</value>
+      <value covariatetable="temporal" parameter="CovariateType">Fixed</value>
+    </covparam>
+    <ageerror>
+    </ageerror>
+    <stratumneighbour>
+    </stratumneighbour>
+  </processdata>
+</project>

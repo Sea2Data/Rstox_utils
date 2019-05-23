@@ -1,0 +1,667 @@
+==29205== Memcheck, a memory error detector
+==29205== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al.
+==29205== Using Valgrind-3.14.0 and LibVEX; rerun with -h for copyright info
+==29205== Command: /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_predict cfiles/
+==29205== 
+Start C program: predicting catch-at-age
+Read input data from file: cfiles/common_par_predict_ascii
+Read input data from file: cfiles/data_catch
+==29205== Conditional jump or move depends on uninitialised value(s)
+==29205==    at 0x1004723A6: strnlen (in /usr/lib/system/libsystem_c.dylib)
+==29205==    by 0x1004B6A77: __vfprintf (in /usr/lib/system/libsystem_c.dylib)
+==29205==    by 0x1004DE058: __v2printf (in /usr/lib/system/libsystem_c.dylib)
+==29205==    by 0x1004C334A: _vsnprintf (in /usr/lib/system/libsystem_c.dylib)
+==29205==    by 0x1004C33FD: vsnprintf (in /usr/lib/system/libsystem_c.dylib)
+==29205==    by 0x1004F30AC: __sprintf_chk (in /usr/lib/system/libsystem_c.dylib)
+==29205==    by 0x10001C469: read_bin_var (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_predict)
+==29205==    by 0x10002091C: readdata_catch (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_predict)
+==29205==    by 0x100001240: main (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_predict)
+==29205== 
+==29205== Conditional jump or move depends on uninitialised value(s)
+==29205==    at 0x1004723D2: strnlen (in /usr/lib/system/libsystem_c.dylib)
+==29205==    by 0x1004B6A77: __vfprintf (in /usr/lib/system/libsystem_c.dylib)
+==29205==    by 0x1004DE058: __v2printf (in /usr/lib/system/libsystem_c.dylib)
+==29205==    by 0x1004C334A: _vsnprintf (in /usr/lib/system/libsystem_c.dylib)
+==29205==    by 0x1004C33FD: vsnprintf (in /usr/lib/system/libsystem_c.dylib)
+==29205==    by 0x1004F30AC: __sprintf_chk (in /usr/lib/system/libsystem_c.dylib)
+==29205==    by 0x10001C469: read_bin_var (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_predict)
+==29205==    by 0x10002091C: readdata_catch (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_predict)
+==29205==    by 0x100001240: main (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_predict)
+==29205== 
+==29205== Conditional jump or move depends on uninitialised value(s)
+==29205==    at 0x1004B6A99: __vfprintf (in /usr/lib/system/libsystem_c.dylib)
+==29205==    by 0x1004DE058: __v2printf (in /usr/lib/system/libsystem_c.dylib)
+==29205==    by 0x1004C334A: _vsnprintf (in /usr/lib/system/libsystem_c.dylib)
+==29205==    by 0x1004C33FD: vsnprintf (in /usr/lib/system/libsystem_c.dylib)
+==29205==    by 0x1004F30AC: __sprintf_chk (in /usr/lib/system/libsystem_c.dylib)
+==29205==    by 0x10001C469: read_bin_var (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_predict)
+==29205==    by 0x10002091C: readdata_catch (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_predict)
+==29205==    by 0x100001240: main (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_predict)
+==29205== 
+==29205== Conditional jump or move depends on uninitialised value(s)
+==29205==    at 0x1004B7613: __vfprintf (in /usr/lib/system/libsystem_c.dylib)
+==29205==    by 0x1004DE058: __v2printf (in /usr/lib/system/libsystem_c.dylib)
+==29205==    by 0x1004C334A: _vsnprintf (in /usr/lib/system/libsystem_c.dylib)
+==29205==    by 0x1004C33FD: vsnprintf (in /usr/lib/system/libsystem_c.dylib)
+==29205==    by 0x1004F30AC: __sprintf_chk (in /usr/lib/system/libsystem_c.dylib)
+==29205==    by 0x10001C469: read_bin_var (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_predict)
+==29205==    by 0x10002091C: readdata_catch (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_predict)
+==29205==    by 0x100001240: main (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_predict)
+==29205== 
+==29205== Conditional jump or move depends on uninitialised value(s)
+==29205==    at 0x1004B7632: __vfprintf (in /usr/lib/system/libsystem_c.dylib)
+==29205==    by 0x1004DE058: __v2printf (in /usr/lib/system/libsystem_c.dylib)
+==29205==    by 0x1004C334A: _vsnprintf (in /usr/lib/system/libsystem_c.dylib)
+==29205==    by 0x1004C33FD: vsnprintf (in /usr/lib/system/libsystem_c.dylib)
+==29205==    by 0x1004F30AC: __sprintf_chk (in /usr/lib/system/libsystem_c.dylib)
+==29205==    by 0x10001C469: read_bin_var (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_predict)
+==29205==    by 0x10002091C: readdata_catch (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_predict)
+==29205==    by 0x100001240: main (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_predict)
+==29205== 
+==29205== Conditional jump or move depends on uninitialised value(s)
+==29205==    at 0x1004B7C47: __vfprintf (in /usr/lib/system/libsystem_c.dylib)
+==29205==    by 0x1004DE058: __v2printf (in /usr/lib/system/libsystem_c.dylib)
+==29205==    by 0x1004C334A: _vsnprintf (in /usr/lib/system/libsystem_c.dylib)
+==29205==    by 0x1004C33FD: vsnprintf (in /usr/lib/system/libsystem_c.dylib)
+==29205==    by 0x1004F30AC: __sprintf_chk (in /usr/lib/system/libsystem_c.dylib)
+==29205==    by 0x10001C469: read_bin_var (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_predict)
+==29205==    by 0x10002091C: readdata_catch (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_predict)
+==29205==    by 0x100001240: main (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_predict)
+==29205== 
+==29205== Conditional jump or move depends on uninitialised value(s)
+==29205==    at 0x1004B95EA: __vfprintf (in /usr/lib/system/libsystem_c.dylib)
+==29205==    by 0x1004DE058: __v2printf (in /usr/lib/system/libsystem_c.dylib)
+==29205==    by 0x1004C334A: _vsnprintf (in /usr/lib/system/libsystem_c.dylib)
+==29205==    by 0x1004C33FD: vsnprintf (in /usr/lib/system/libsystem_c.dylib)
+==29205==    by 0x1004F30AC: __sprintf_chk (in /usr/lib/system/libsystem_c.dylib)
+==29205==    by 0x10001C469: read_bin_var (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_predict)
+==29205==    by 0x10002091C: readdata_catch (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_predict)
+==29205==    by 0x100001240: main (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_predict)
+==29205== 
+==29205== Conditional jump or move depends on uninitialised value(s)
+==29205==    at 0x1004AF794: __sfvwrite (in /usr/lib/system/libsystem_c.dylib)
+==29205==    by 0x1004B95FE: __vfprintf (in /usr/lib/system/libsystem_c.dylib)
+==29205==    by 0x1004DE058: __v2printf (in /usr/lib/system/libsystem_c.dylib)
+==29205==    by 0x1004C334A: _vsnprintf (in /usr/lib/system/libsystem_c.dylib)
+==29205==    by 0x1004C33FD: vsnprintf (in /usr/lib/system/libsystem_c.dylib)
+==29205==    by 0x1004F30AC: __sprintf_chk (in /usr/lib/system/libsystem_c.dylib)
+==29205==    by 0x10001C469: read_bin_var (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_predict)
+==29205==    by 0x10002091C: readdata_catch (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_predict)
+==29205==    by 0x100001240: main (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_predict)
+==29205== 
+==29205== Conditional jump or move depends on uninitialised value(s)
+==29205==    at 0x1004AF800: __sfvwrite (in /usr/lib/system/libsystem_c.dylib)
+==29205==    by 0x1004B95FE: __vfprintf (in /usr/lib/system/libsystem_c.dylib)
+==29205==    by 0x1004DE058: __v2printf (in /usr/lib/system/libsystem_c.dylib)
+==29205==    by 0x1004C334A: _vsnprintf (in /usr/lib/system/libsystem_c.dylib)
+==29205==    by 0x1004C33FD: vsnprintf (in /usr/lib/system/libsystem_c.dylib)
+==29205==    by 0x1004F30AC: __sprintf_chk (in /usr/lib/system/libsystem_c.dylib)
+==29205==    by 0x10001C469: read_bin_var (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_predict)
+==29205==    by 0x10002091C: readdata_catch (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_predict)
+==29205==    by 0x100001240: main (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_predict)
+==29205== 
+==29205== Conditional jump or move depends on uninitialised value(s)
+==29205==    at 0x1004AF8D8: __sfvwrite (in /usr/lib/system/libsystem_c.dylib)
+==29205==    by 0x1004B95FE: __vfprintf (in /usr/lib/system/libsystem_c.dylib)
+==29205==    by 0x1004DE058: __v2printf (in /usr/lib/system/libsystem_c.dylib)
+==29205==    by 0x1004C334A: _vsnprintf (in /usr/lib/system/libsystem_c.dylib)
+==29205==    by 0x1004C33FD: vsnprintf (in /usr/lib/system/libsystem_c.dylib)
+==29205==    by 0x1004F30AC: __sprintf_chk (in /usr/lib/system/libsystem_c.dylib)
+==29205==    by 0x10001C469: read_bin_var (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_predict)
+==29205==    by 0x10002091C: readdata_catch (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_predict)
+==29205==    by 0x100001240: main (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_predict)
+==29205== 
+==29205== Conditional jump or move depends on uninitialised value(s)
+==29205==    at 0x10081FF30: _platform_memmove$VARIANT$Haswell (in /usr/lib/system/libsystem_platform.dylib)
+==29205==    by 0x1004AF8EA: __sfvwrite (in /usr/lib/system/libsystem_c.dylib)
+==29205==    by 0x1004B95FE: __vfprintf (in /usr/lib/system/libsystem_c.dylib)
+==29205==    by 0x1004DE058: __v2printf (in /usr/lib/system/libsystem_c.dylib)
+==29205==    by 0x1004C334A: _vsnprintf (in /usr/lib/system/libsystem_c.dylib)
+==29205==    by 0x1004C33FD: vsnprintf (in /usr/lib/system/libsystem_c.dylib)
+==29205==    by 0x1004F30AC: __sprintf_chk (in /usr/lib/system/libsystem_c.dylib)
+==29205==    by 0x10001C469: read_bin_var (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_predict)
+==29205==    by 0x10002091C: readdata_catch (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_predict)
+==29205==    by 0x100001240: main (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_predict)
+==29205== 
+==29205== Conditional jump or move depends on uninitialised value(s)
+==29205==    at 0x10081FF36: _platform_memmove$VARIANT$Haswell (in /usr/lib/system/libsystem_platform.dylib)
+==29205==    by 0x1004AF8EA: __sfvwrite (in /usr/lib/system/libsystem_c.dylib)
+==29205==    by 0x1004B95FE: __vfprintf (in /usr/lib/system/libsystem_c.dylib)
+==29205==    by 0x1004DE058: __v2printf (in /usr/lib/system/libsystem_c.dylib)
+==29205==    by 0x1004C334A: _vsnprintf (in /usr/lib/system/libsystem_c.dylib)
+==29205==    by 0x1004C33FD: vsnprintf (in /usr/lib/system/libsystem_c.dylib)
+==29205==    by 0x1004F30AC: __sprintf_chk (in /usr/lib/system/libsystem_c.dylib)
+==29205==    by 0x10001C469: read_bin_var (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_predict)
+==29205==    by 0x10002091C: readdata_catch (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_predict)
+==29205==    by 0x100001240: main (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_predict)
+==29205== 
+==29205== Conditional jump or move depends on uninitialised value(s)
+==29205==    at 0x10081FF6B: _platform_memmove$VARIANT$Haswell (in /usr/lib/system/libsystem_platform.dylib)
+==29205==    by 0x1004AF8EA: __sfvwrite (in /usr/lib/system/libsystem_c.dylib)
+==29205==    by 0x1004B95FE: __vfprintf (in /usr/lib/system/libsystem_c.dylib)
+==29205==    by 0x1004DE058: __v2printf (in /usr/lib/system/libsystem_c.dylib)
+==29205==    by 0x1004C334A: _vsnprintf (in /usr/lib/system/libsystem_c.dylib)
+==29205==    by 0x1004C33FD: vsnprintf (in /usr/lib/system/libsystem_c.dylib)
+==29205==    by 0x1004F30AC: __sprintf_chk (in /usr/lib/system/libsystem_c.dylib)
+==29205==    by 0x10001C469: read_bin_var (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_predict)
+==29205==    by 0x10002091C: readdata_catch (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_predict)
+==29205==    by 0x100001240: main (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_predict)
+==29205== 
+==29205== Conditional jump or move depends on uninitialised value(s)
+==29205==    at 0x10081FFC7: _platform_memmove$VARIANT$Haswell (in /usr/lib/system/libsystem_platform.dylib)
+==29205==    by 0x1004AF8EA: __sfvwrite (in /usr/lib/system/libsystem_c.dylib)
+==29205==    by 0x1004B95FE: __vfprintf (in /usr/lib/system/libsystem_c.dylib)
+==29205==    by 0x1004DE058: __v2printf (in /usr/lib/system/libsystem_c.dylib)
+==29205==    by 0x1004C334A: _vsnprintf (in /usr/lib/system/libsystem_c.dylib)
+==29205==    by 0x1004C33FD: vsnprintf (in /usr/lib/system/libsystem_c.dylib)
+==29205==    by 0x1004F30AC: __sprintf_chk (in /usr/lib/system/libsystem_c.dylib)
+==29205==    by 0x10001C469: read_bin_var (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_predict)
+==29205==    by 0x10002091C: readdata_catch (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_predict)
+==29205==    by 0x100001240: main (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_predict)
+==29205== 
+==29205== Conditional jump or move depends on uninitialised value(s)
+==29205==    at 0x10081FFDD: _platform_memmove$VARIANT$Haswell (in /usr/lib/system/libsystem_platform.dylib)
+==29205==    by 0x1004AF8EA: __sfvwrite (in /usr/lib/system/libsystem_c.dylib)
+==29205==    by 0x1004B95FE: __vfprintf (in /usr/lib/system/libsystem_c.dylib)
+==29205==    by 0x1004DE058: __v2printf (in /usr/lib/system/libsystem_c.dylib)
+==29205==    by 0x1004C334A: _vsnprintf (in /usr/lib/system/libsystem_c.dylib)
+==29205==    by 0x1004C33FD: vsnprintf (in /usr/lib/system/libsystem_c.dylib)
+==29205==    by 0x1004F30AC: __sprintf_chk (in /usr/lib/system/libsystem_c.dylib)
+==29205==    by 0x10001C469: read_bin_var (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_predict)
+==29205==    by 0x10002091C: readdata_catch (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_predict)
+==29205==    by 0x100001240: main (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_predict)
+==29205== 
+==29205== Conditional jump or move depends on uninitialised value(s)
+==29205==    at 0x10081FFEE: _platform_memmove$VARIANT$Haswell (in /usr/lib/system/libsystem_platform.dylib)
+==29205==    by 0x1004AF8EA: __sfvwrite (in /usr/lib/system/libsystem_c.dylib)
+==29205==    by 0x1004B95FE: __vfprintf (in /usr/lib/system/libsystem_c.dylib)
+==29205==    by 0x1004DE058: __v2printf (in /usr/lib/system/libsystem_c.dylib)
+==29205==    by 0x1004C334A: _vsnprintf (in /usr/lib/system/libsystem_c.dylib)
+==29205==    by 0x1004C33FD: vsnprintf (in /usr/lib/system/libsystem_c.dylib)
+==29205==    by 0x1004F30AC: __sprintf_chk (in /usr/lib/system/libsystem_c.dylib)
+==29205==    by 0x10001C469: read_bin_var (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_predict)
+==29205==    by 0x10002091C: readdata_catch (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_predict)
+==29205==    by 0x100001240: main (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_predict)
+==29205== 
+==29205== Conditional jump or move depends on uninitialised value(s)
+==29205==    at 0x100820002: _platform_memmove$VARIANT$Haswell (in /usr/lib/system/libsystem_platform.dylib)
+==29205==    by 0x1004AF8EA: __sfvwrite (in /usr/lib/system/libsystem_c.dylib)
+==29205==    by 0x1004B95FE: __vfprintf (in /usr/lib/system/libsystem_c.dylib)
+==29205==    by 0x1004DE058: __v2printf (in /usr/lib/system/libsystem_c.dylib)
+==29205==    by 0x1004C334A: _vsnprintf (in /usr/lib/system/libsystem_c.dylib)
+==29205==    by 0x1004C33FD: vsnprintf (in /usr/lib/system/libsystem_c.dylib)
+==29205==    by 0x1004F30AC: __sprintf_chk (in /usr/lib/system/libsystem_c.dylib)
+==29205==    by 0x10001C469: read_bin_var (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_predict)
+==29205==    by 0x10002091C: readdata_catch (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_predict)
+==29205==    by 0x100001240: main (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_predict)
+==29205== 
+==29205== Conditional jump or move depends on uninitialised value(s)
+==29205==    at 0x1004AF94F: __sfvwrite (in /usr/lib/system/libsystem_c.dylib)
+==29205==    by 0x1004B95FE: __vfprintf (in /usr/lib/system/libsystem_c.dylib)
+==29205==    by 0x1004DE058: __v2printf (in /usr/lib/system/libsystem_c.dylib)
+==29205==    by 0x1004C334A: _vsnprintf (in /usr/lib/system/libsystem_c.dylib)
+==29205==    by 0x1004C33FD: vsnprintf (in /usr/lib/system/libsystem_c.dylib)
+==29205==    by 0x1004F30AC: __sprintf_chk (in /usr/lib/system/libsystem_c.dylib)
+==29205==    by 0x10001C469: read_bin_var (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_predict)
+==29205==    by 0x10002091C: readdata_catch (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_predict)
+==29205==    by 0x100001240: main (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_predict)
+==29205== 
+==29205== Use of uninitialised value of size 8
+==29205==    at 0x1004C3357: _vsnprintf (in /usr/lib/system/libsystem_c.dylib)
+==29205==    by 0x1004C33FD: vsnprintf (in /usr/lib/system/libsystem_c.dylib)
+==29205==    by 0x1004F30AC: __sprintf_chk (in /usr/lib/system/libsystem_c.dylib)
+==29205==    by 0x10001C469: read_bin_var (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_predict)
+==29205==    by 0x10002091C: readdata_catch (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_predict)
+==29205==    by 0x100001240: main (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_predict)
+==29205== 
+==29205== Conditional jump or move depends on uninitialised value(s)
+==29205==    at 0x1004F30AF: __sprintf_chk (in /usr/lib/system/libsystem_c.dylib)
+==29205==    by 0x10001C469: read_bin_var (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_predict)
+==29205==    by 0x10002091C: readdata_catch (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_predict)
+==29205==    by 0x100001240: main (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_predict)
+==29205== 
+==29205== Conditional jump or move depends on uninitialised value(s)
+==29205==    at 0x1004F30B7: __sprintf_chk (in /usr/lib/system/libsystem_c.dylib)
+==29205==    by 0x10001C469: read_bin_var (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_predict)
+==29205==    by 0x10002091C: readdata_catch (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_predict)
+==29205==    by 0x100001240: main (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_predict)
+==29205== 
+==29205== Invalid read of size 1
+==29205==    at 0x100277B48: _platform_strcmp (in /usr/local/Cellar/valgrind/3.14.0/lib/valgrind/vgpreload_memcheck-amd64-darwin.so)
+==29205==    by 0x10002095D: readdata_catch (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_predict)
+==29205==    by 0x100001240: main (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_predict)
+==29205==  Address 0x104a69040 is on thread 1's stack
+==29205==  2048 bytes below stack pointer
+==29205== 
+==29205== Invalid read of size 1
+==29205==    at 0x100277B59: _platform_strcmp (in /usr/local/Cellar/valgrind/3.14.0/lib/valgrind/vgpreload_memcheck-amd64-darwin.so)
+==29205==    by 0x10002095D: readdata_catch (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_predict)
+==29205==    by 0x100001240: main (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_predict)
+==29205==  Address 0x104a69041 is on thread 1's stack
+==29205==  2047 bytes below stack pointer
+==29205== 
+==29205== Use of uninitialised value of size 8
+==29205==    at 0x10081FFCC: _platform_memmove$VARIANT$Haswell (in /usr/lib/system/libsystem_platform.dylib)
+==29205==    by 0x1004AF8EA: __sfvwrite (in /usr/lib/system/libsystem_c.dylib)
+==29205==    by 0x1004B95FE: __vfprintf (in /usr/lib/system/libsystem_c.dylib)
+==29205==    by 0x1004DE058: __v2printf (in /usr/lib/system/libsystem_c.dylib)
+==29205==    by 0x1004C334A: _vsnprintf (in /usr/lib/system/libsystem_c.dylib)
+==29205==    by 0x1004C33FD: vsnprintf (in /usr/lib/system/libsystem_c.dylib)
+==29205==    by 0x1004F30AC: __sprintf_chk (in /usr/lib/system/libsystem_c.dylib)
+==29205==    by 0x10001C469: read_bin_var (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_predict)
+==29205==    by 0x10002091C: readdata_catch (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_predict)
+==29205==    by 0x100001240: main (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_predict)
+==29205== 
+==29205== Invalid read of size 1
+==29205==    at 0x100277B48: _platform_strcmp (in /usr/local/Cellar/valgrind/3.14.0/lib/valgrind/vgpreload_memcheck-amd64-darwin.so)
+==29205==    by 0x100020A0C: readdata_catch (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_predict)
+==29205==    by 0x100001240: main (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_predict)
+==29205==  Address 0x104a69040 is on thread 1's stack
+==29205==  2048 bytes below stack pointer
+==29205== 
+==29205== Invalid read of size 1
+==29205==    at 0x100277B59: _platform_strcmp (in /usr/local/Cellar/valgrind/3.14.0/lib/valgrind/vgpreload_memcheck-amd64-darwin.so)
+==29205==    by 0x100020A0C: readdata_catch (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_predict)
+==29205==    by 0x100001240: main (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_predict)
+==29205==  Address 0x104a69041 is on thread 1's stack
+==29205==  2047 bytes below stack pointer
+==29205== 
+==29205== Invalid read of size 1
+==29205==    at 0x100277B48: _platform_strcmp (in /usr/local/Cellar/valgrind/3.14.0/lib/valgrind/vgpreload_memcheck-amd64-darwin.so)
+==29205==    by 0x100020ABB: readdata_catch (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_predict)
+==29205==    by 0x100001240: main (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_predict)
+==29205==  Address 0x104a69040 is on thread 1's stack
+==29205==  2048 bytes below stack pointer
+==29205== 
+==29205== Invalid read of size 1
+==29205==    at 0x100277B59: _platform_strcmp (in /usr/local/Cellar/valgrind/3.14.0/lib/valgrind/vgpreload_memcheck-amd64-darwin.so)
+==29205==    by 0x100020ABB: readdata_catch (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_predict)
+==29205==    by 0x100001240: main (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_predict)
+==29205==  Address 0x104a69041 is on thread 1's stack
+==29205==  2047 bytes below stack pointer
+==29205== 
+==29205== Invalid read of size 1
+==29205==    at 0x100277B48: _platform_strcmp (in /usr/local/Cellar/valgrind/3.14.0/lib/valgrind/vgpreload_memcheck-amd64-darwin.so)
+==29205==    by 0x100020AEE: readdata_catch (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_predict)
+==29205==    by 0x100001240: main (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_predict)
+==29205==  Address 0x104a69040 is on thread 1's stack
+==29205==  2048 bytes below stack pointer
+==29205== 
+==29205== Invalid read of size 1
+==29205==    at 0x100277B59: _platform_strcmp (in /usr/local/Cellar/valgrind/3.14.0/lib/valgrind/vgpreload_memcheck-amd64-darwin.so)
+==29205==    by 0x100020AEE: readdata_catch (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_predict)
+==29205==    by 0x100001240: main (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_predict)
+==29205==  Address 0x104a69041 is on thread 1's stack
+==29205==  2047 bytes below stack pointer
+==29205== 
+==29205== Invalid read of size 1
+==29205==    at 0x100277B48: _platform_strcmp (in /usr/local/Cellar/valgrind/3.14.0/lib/valgrind/vgpreload_memcheck-amd64-darwin.so)
+==29205==    by 0x100020B21: readdata_catch (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_predict)
+==29205==    by 0x100001240: main (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_predict)
+==29205==  Address 0x104a69040 is on thread 1's stack
+==29205==  2048 bytes below stack pointer
+==29205== 
+==29205== Invalid read of size 1
+==29205==    at 0x100277B59: _platform_strcmp (in /usr/local/Cellar/valgrind/3.14.0/lib/valgrind/vgpreload_memcheck-amd64-darwin.so)
+==29205==    by 0x100020B21: readdata_catch (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_predict)
+==29205==    by 0x100001240: main (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_predict)
+==29205==  Address 0x104a69041 is on thread 1's stack
+==29205==  2047 bytes below stack pointer
+==29205== 
+==29205== Invalid read of size 1
+==29205==    at 0x100277B48: _platform_strcmp (in /usr/local/Cellar/valgrind/3.14.0/lib/valgrind/vgpreload_memcheck-amd64-darwin.so)
+==29205==    by 0x100020B54: readdata_catch (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_predict)
+==29205==    by 0x100001240: main (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_predict)
+==29205==  Address 0x104a69040 is on thread 1's stack
+==29205==  2048 bytes below stack pointer
+==29205== 
+==29205== Invalid read of size 1
+==29205==    at 0x100277B59: _platform_strcmp (in /usr/local/Cellar/valgrind/3.14.0/lib/valgrind/vgpreload_memcheck-amd64-darwin.so)
+==29205==    by 0x100020B54: readdata_catch (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_predict)
+==29205==    by 0x100001240: main (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_predict)
+==29205==  Address 0x104a69041 is on thread 1's stack
+==29205==  2047 bytes below stack pointer
+==29205== 
+==29205== Invalid read of size 1
+==29205==    at 0x100277B48: _platform_strcmp (in /usr/local/Cellar/valgrind/3.14.0/lib/valgrind/vgpreload_memcheck-amd64-darwin.so)
+==29205==    by 0x100020B87: readdata_catch (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_predict)
+==29205==    by 0x100001240: main (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_predict)
+==29205==  Address 0x104a69040 is on thread 1's stack
+==29205==  2048 bytes below stack pointer
+==29205== 
+==29205== Invalid read of size 1
+==29205==    at 0x100277B59: _platform_strcmp (in /usr/local/Cellar/valgrind/3.14.0/lib/valgrind/vgpreload_memcheck-amd64-darwin.so)
+==29205==    by 0x100020B87: readdata_catch (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_predict)
+==29205==    by 0x100001240: main (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_predict)
+==29205==  Address 0x104a69041 is on thread 1's stack
+==29205==  2047 bytes below stack pointer
+==29205== 
+==29205== Invalid read of size 1
+==29205==    at 0x100277B48: _platform_strcmp (in /usr/local/Cellar/valgrind/3.14.0/lib/valgrind/vgpreload_memcheck-amd64-darwin.so)
+==29205==    by 0x100020BBA: readdata_catch (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_predict)
+==29205==    by 0x100001240: main (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_predict)
+==29205==  Address 0x104a69040 is on thread 1's stack
+==29205==  2048 bytes below stack pointer
+==29205== 
+==29205== Invalid read of size 1
+==29205==    at 0x100277B59: _platform_strcmp (in /usr/local/Cellar/valgrind/3.14.0/lib/valgrind/vgpreload_memcheck-amd64-darwin.so)
+==29205==    by 0x100020BBA: readdata_catch (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_predict)
+==29205==    by 0x100001240: main (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_predict)
+==29205==  Address 0x104a69041 is on thread 1's stack
+==29205==  2047 bytes below stack pointer
+==29205== 
+==29205== Invalid read of size 1
+==29205==    at 0x100277B48: _platform_strcmp (in /usr/local/Cellar/valgrind/3.14.0/lib/valgrind/vgpreload_memcheck-amd64-darwin.so)
+==29205==    by 0x100020BED: readdata_catch (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_predict)
+==29205==    by 0x100001240: main (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_predict)
+==29205==  Address 0x104a69040 is on thread 1's stack
+==29205==  2048 bytes below stack pointer
+==29205== 
+==29205== Invalid read of size 1
+==29205==    at 0x100277B59: _platform_strcmp (in /usr/local/Cellar/valgrind/3.14.0/lib/valgrind/vgpreload_memcheck-amd64-darwin.so)
+==29205==    by 0x100020BED: readdata_catch (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_predict)
+==29205==    by 0x100001240: main (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_predict)
+==29205==  Address 0x104a69041 is on thread 1's stack
+==29205==  2047 bytes below stack pointer
+==29205== 
+==29205== Invalid read of size 1
+==29205==    at 0x100277B48: _platform_strcmp (in /usr/local/Cellar/valgrind/3.14.0/lib/valgrind/vgpreload_memcheck-amd64-darwin.so)
+==29205==    by 0x100020D28: readdata_catch (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_predict)
+==29205==    by 0x100001240: main (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_predict)
+==29205==  Address 0x104a69040 is on thread 1's stack
+==29205==  2048 bytes below stack pointer
+==29205== 
+==29205== Invalid read of size 1
+==29205==    at 0x100277B59: _platform_strcmp (in /usr/local/Cellar/valgrind/3.14.0/lib/valgrind/vgpreload_memcheck-amd64-darwin.so)
+==29205==    by 0x100020D28: readdata_catch (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_predict)
+==29205==    by 0x100001240: main (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_predict)
+==29205==  Address 0x104a69041 is on thread 1's stack
+==29205==  2047 bytes below stack pointer
+==29205== 
+==29205== Invalid read of size 1
+==29205==    at 0x100277B48: _platform_strcmp (in /usr/local/Cellar/valgrind/3.14.0/lib/valgrind/vgpreload_memcheck-amd64-darwin.so)
+==29205==    by 0x100020D5B: readdata_catch (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_predict)
+==29205==    by 0x100001240: main (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_predict)
+==29205==  Address 0x104a69040 is on thread 1's stack
+==29205==  2048 bytes below stack pointer
+==29205== 
+==29205== Invalid read of size 1
+==29205==    at 0x100277B48: _platform_strcmp (in /usr/local/Cellar/valgrind/3.14.0/lib/valgrind/vgpreload_memcheck-amd64-darwin.so)
+==29205==    by 0x100020D99: readdata_catch (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_predict)
+==29205==    by 0x100001240: main (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_predict)
+==29205==  Address 0x104a69040 is on thread 1's stack
+==29205==  2048 bytes below stack pointer
+==29205== 
+==29205== Invalid read of size 1
+==29205==    at 0x100277B59: _platform_strcmp (in /usr/local/Cellar/valgrind/3.14.0/lib/valgrind/vgpreload_memcheck-amd64-darwin.so)
+==29205==    by 0x100020D99: readdata_catch (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_predict)
+==29205==    by 0x100001240: main (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_predict)
+==29205==  Address 0x104a69041 is on thread 1's stack
+==29205==  2047 bytes below stack pointer
+==29205== 
+Read input data from file: cfiles/dist_cell
+==29205== Conditional jump or move depends on uninitialised value(s)
+==29205==    at 0x1004F30AF: __sprintf_chk (in /usr/lib/system/libsystem_c.dylib)
+==29205==    by 0x10001C469: read_bin_var (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_predict)
+==29205==    by 0x10002121C: readdata_cell (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_predict)
+==29205==    by 0x1000012E5: main (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_predict)
+==29205== 
+==29205== Conditional jump or move depends on uninitialised value(s)
+==29205==    at 0x1004F30B7: __sprintf_chk (in /usr/lib/system/libsystem_c.dylib)
+==29205==    by 0x10001C469: read_bin_var (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_predict)
+==29205==    by 0x10002121C: readdata_cell (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_predict)
+==29205==    by 0x1000012E5: main (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_predict)
+==29205== 
+==29205== Invalid read of size 1
+==29205==    at 0x100277B48: _platform_strcmp (in /usr/local/Cellar/valgrind/3.14.0/lib/valgrind/vgpreload_memcheck-amd64-darwin.so)
+==29205==    by 0x10002124E: readdata_cell (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_predict)
+==29205==    by 0x1000012E5: main (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_predict)
+==29205==  Address 0x104a69050 is on thread 1's stack
+==29205==  2048 bytes below stack pointer
+==29205== 
+==29205== Invalid read of size 1
+==29205==    at 0x100277B59: _platform_strcmp (in /usr/local/Cellar/valgrind/3.14.0/lib/valgrind/vgpreload_memcheck-amd64-darwin.so)
+==29205==    by 0x10002124E: readdata_cell (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_predict)
+==29205==    by 0x1000012E5: main (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_predict)
+==29205==  Address 0x104a69051 is on thread 1's stack
+==29205==  2047 bytes below stack pointer
+==29205== 
+==29205== Invalid read of size 1
+==29205==    at 0x100277B48: _platform_strcmp (in /usr/local/Cellar/valgrind/3.14.0/lib/valgrind/vgpreload_memcheck-amd64-darwin.so)
+==29205==    by 0x1000212D3: readdata_cell (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_predict)
+==29205==    by 0x1000012E5: main (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_predict)
+==29205==  Address 0x104a69050 is on thread 1's stack
+==29205==  2048 bytes below stack pointer
+==29205== 
+==29205== Invalid read of size 1
+==29205==    at 0x100277B59: _platform_strcmp (in /usr/local/Cellar/valgrind/3.14.0/lib/valgrind/vgpreload_memcheck-amd64-darwin.so)
+==29205==    by 0x1000212D3: readdata_cell (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_predict)
+==29205==    by 0x1000012E5: main (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_predict)
+==29205==  Address 0x104a69051 is on thread 1's stack
+==29205==  2047 bytes below stack pointer
+==29205== 
+==29205== Invalid read of size 1
+==29205==    at 0x100277B48: _platform_strcmp (in /usr/local/Cellar/valgrind/3.14.0/lib/valgrind/vgpreload_memcheck-amd64-darwin.so)
+==29205==    by 0x100021359: readdata_cell (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_predict)
+==29205==    by 0x1000012E5: main (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_predict)
+==29205==  Address 0x104a69050 is on thread 1's stack
+==29205==  2048 bytes below stack pointer
+==29205== 
+==29205== Invalid read of size 1
+==29205==    at 0x100277B59: _platform_strcmp (in /usr/local/Cellar/valgrind/3.14.0/lib/valgrind/vgpreload_memcheck-amd64-darwin.so)
+==29205==    by 0x100021359: readdata_cell (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_predict)
+==29205==    by 0x1000012E5: main (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_predict)
+==29205==  Address 0x104a69051 is on thread 1's stack
+==29205==  2047 bytes below stack pointer
+==29205== 
+==29205== Invalid read of size 1
+==29205==    at 0x100277B48: _platform_strcmp (in /usr/local/Cellar/valgrind/3.14.0/lib/valgrind/vgpreload_memcheck-amd64-darwin.so)
+==29205==    by 0x100021408: readdata_cell (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_predict)
+==29205==    by 0x1000012E5: main (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_predict)
+==29205==  Address 0x104a69050 is on thread 1's stack
+==29205==  2048 bytes below stack pointer
+==29205== 
+==29205== Invalid read of size 1
+==29205==    at 0x100277B59: _platform_strcmp (in /usr/local/Cellar/valgrind/3.14.0/lib/valgrind/vgpreload_memcheck-amd64-darwin.so)
+==29205==    by 0x100021408: readdata_cell (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_predict)
+==29205==    by 0x1000012E5: main (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_predict)
+==29205==  Address 0x104a69051 is on thread 1's stack
+==29205==  2047 bytes below stack pointer
+==29205== 
+==29205== Invalid read of size 1
+==29205==    at 0x100277B48: _platform_strcmp (in /usr/local/Cellar/valgrind/3.14.0/lib/valgrind/vgpreload_memcheck-amd64-darwin.so)
+==29205==    by 0x10002143B: readdata_cell (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_predict)
+==29205==    by 0x1000012E5: main (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_predict)
+==29205==  Address 0x104a69050 is on thread 1's stack
+==29205==  2048 bytes below stack pointer
+==29205== 
+==29205== Invalid read of size 1
+==29205==    at 0x100277B48: _platform_strcmp (in /usr/local/Cellar/valgrind/3.14.0/lib/valgrind/vgpreload_memcheck-amd64-darwin.so)
+==29205==    by 0x10002146E: readdata_cell (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_predict)
+==29205==    by 0x1000012E5: main (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_predict)
+==29205==  Address 0x104a69050 is on thread 1's stack
+==29205==  2048 bytes below stack pointer
+==29205== 
+==29205== Invalid read of size 1
+==29205==    at 0x100277B48: _platform_strcmp (in /usr/local/Cellar/valgrind/3.14.0/lib/valgrind/vgpreload_memcheck-amd64-darwin.so)
+==29205==    by 0x1000214CA: readdata_cell (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_predict)
+==29205==    by 0x1000012E5: main (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_predict)
+==29205==  Address 0x104a69050 is on thread 1's stack
+==29205==  2048 bytes below stack pointer
+==29205== 
+==29205== Invalid read of size 1
+==29205==    at 0x100277B48: _platform_strcmp (in /usr/local/Cellar/valgrind/3.14.0/lib/valgrind/vgpreload_memcheck-amd64-darwin.so)
+==29205==    by 0x1000214FD: readdata_cell (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_predict)
+==29205==    by 0x1000012E5: main (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_predict)
+==29205==  Address 0x104a69050 is on thread 1's stack
+==29205==  2048 bytes below stack pointer
+==29205== 
+==29205== Invalid read of size 1
+==29205==    at 0x100277B48: _platform_strcmp (in /usr/local/Cellar/valgrind/3.14.0/lib/valgrind/vgpreload_memcheck-amd64-darwin.so)
+==29205==    by 0x100021530: readdata_cell (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_predict)
+==29205==    by 0x1000012E5: main (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_predict)
+==29205==  Address 0x104a69050 is on thread 1's stack
+==29205==  2048 bytes below stack pointer
+==29205== 
+==29205== Invalid read of size 1
+==29205==    at 0x100277B59: _platform_strcmp (in /usr/local/Cellar/valgrind/3.14.0/lib/valgrind/vgpreload_memcheck-amd64-darwin.so)
+==29205==    by 0x100021530: readdata_cell (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_predict)
+==29205==    by 0x1000012E5: main (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_predict)
+==29205==  Address 0x104a69051 is on thread 1's stack
+==29205==  2047 bytes below stack pointer
+==29205== 
+==29205== Invalid read of size 1
+==29205==    at 0x100277B48: _platform_strcmp (in /usr/local/Cellar/valgrind/3.14.0/lib/valgrind/vgpreload_memcheck-amd64-darwin.so)
+==29205==    by 0x10002158C: readdata_cell (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_predict)
+==29205==    by 0x1000012E5: main (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_predict)
+==29205==  Address 0x104a69050 is on thread 1's stack
+==29205==  2048 bytes below stack pointer
+==29205== 
+==29205== Invalid read of size 1
+==29205==    at 0x100277B59: _platform_strcmp (in /usr/local/Cellar/valgrind/3.14.0/lib/valgrind/vgpreload_memcheck-amd64-darwin.so)
+==29205==    by 0x10002158C: readdata_cell (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_predict)
+==29205==    by 0x1000012E5: main (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_predict)
+==29205==  Address 0x104a69051 is on thread 1's stack
+==29205==  2047 bytes below stack pointer
+==29205== 
+==29205== Invalid read of size 1
+==29205==    at 0x100277B48: _platform_strcmp (in /usr/local/Cellar/valgrind/3.14.0/lib/valgrind/vgpreload_memcheck-amd64-darwin.so)
+==29205==    by 0x1000215BF: readdata_cell (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_predict)
+==29205==    by 0x1000012E5: main (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_predict)
+==29205==  Address 0x104a69050 is on thread 1's stack
+==29205==  2048 bytes below stack pointer
+==29205== 
+==29205== Invalid read of size 1
+==29205==    at 0x100277B59: _platform_strcmp (in /usr/local/Cellar/valgrind/3.14.0/lib/valgrind/vgpreload_memcheck-amd64-darwin.so)
+==29205==    by 0x1000215BF: readdata_cell (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_predict)
+==29205==    by 0x1000012E5: main (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_predict)
+==29205==  Address 0x104a69051 is on thread 1's stack
+==29205==  2047 bytes below stack pointer
+==29205== 
+==29205== Invalid read of size 1
+==29205==    at 0x100277B48: _platform_strcmp (in /usr/local/Cellar/valgrind/3.14.0/lib/valgrind/vgpreload_memcheck-amd64-darwin.so)
+==29205==    by 0x1000215F2: readdata_cell (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_predict)
+==29205==    by 0x1000012E5: main (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_predict)
+==29205==  Address 0x104a69050 is on thread 1's stack
+==29205==  2048 bytes below stack pointer
+==29205== 
+==29205== Invalid read of size 1
+==29205==    at 0x100277B48: _platform_strcmp (in /usr/local/Cellar/valgrind/3.14.0/lib/valgrind/vgpreload_memcheck-amd64-darwin.so)
+==29205==    by 0x10002164E: readdata_cell (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_predict)
+==29205==    by 0x1000012E5: main (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_predict)
+==29205==  Address 0x104a69050 is on thread 1's stack
+==29205==  2048 bytes below stack pointer
+==29205== 
+==29205== Invalid read of size 1
+==29205==    at 0x100277B48: _platform_strcmp (in /usr/local/Cellar/valgrind/3.14.0/lib/valgrind/vgpreload_memcheck-amd64-darwin.so)
+==29205==    by 0x100021681: readdata_cell (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_predict)
+==29205==    by 0x1000012E5: main (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_predict)
+==29205==  Address 0x104a69050 is on thread 1's stack
+==29205==  2048 bytes below stack pointer
+==29205== 
+==29205== Invalid read of size 1
+==29205==    at 0x100277B48: _platform_strcmp (in /usr/local/Cellar/valgrind/3.14.0/lib/valgrind/vgpreload_memcheck-amd64-darwin.so)
+==29205==    by 0x1000216B4: readdata_cell (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_predict)
+==29205==    by 0x1000012E5: main (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_predict)
+==29205==  Address 0x104a69050 is on thread 1's stack
+==29205==  2048 bytes below stack pointer
+==29205== 
+==29205== Invalid read of size 1
+==29205==    at 0x100277B59: _platform_strcmp (in /usr/local/Cellar/valgrind/3.14.0/lib/valgrind/vgpreload_memcheck-amd64-darwin.so)
+==29205==    by 0x1000216B4: readdata_cell (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_predict)
+==29205==    by 0x1000012E5: main (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_predict)
+==29205==  Address 0x104a69051 is on thread 1's stack
+==29205==  2047 bytes below stack pointer
+==29205== 
+==29205== Invalid read of size 1
+==29205==    at 0x100277B48: _platform_strcmp (in /usr/local/Cellar/valgrind/3.14.0/lib/valgrind/vgpreload_memcheck-amd64-darwin.so)
+==29205==    by 0x100021710: readdata_cell (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_predict)
+==29205==    by 0x1000012E5: main (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_predict)
+==29205==  Address 0x104a69050 is on thread 1's stack
+==29205==  2048 bytes below stack pointer
+==29205== 
+==29205== Invalid read of size 1
+==29205==    at 0x100277B59: _platform_strcmp (in /usr/local/Cellar/valgrind/3.14.0/lib/valgrind/vgpreload_memcheck-amd64-darwin.so)
+==29205==    by 0x100021710: readdata_cell (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_predict)
+==29205==    by 0x1000012E5: main (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_predict)
+==29205==  Address 0x104a69051 is on thread 1's stack
+==29205==  2047 bytes below stack pointer
+==29205== 
+==29205== Invalid read of size 1
+==29205==    at 0x100277B48: _platform_strcmp (in /usr/local/Cellar/valgrind/3.14.0/lib/valgrind/vgpreload_memcheck-amd64-darwin.so)
+==29205==    by 0x100021746: readdata_cell (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_predict)
+==29205==    by 0x1000012E5: main (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_predict)
+==29205==  Address 0x104a69050 is on thread 1's stack
+==29205==  2048 bytes below stack pointer
+==29205== 
+==29205== Invalid read of size 1
+==29205==    at 0x100277B59: _platform_strcmp (in /usr/local/Cellar/valgrind/3.14.0/lib/valgrind/vgpreload_memcheck-amd64-darwin.so)
+==29205==    by 0x100021746: readdata_cell (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_predict)
+==29205==    by 0x1000012E5: main (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_predict)
+==29205==  Address 0x104a69051 is on thread 1's stack
+==29205==  2047 bytes below stack pointer
+==29205== 
+==29205== Invalid read of size 1
+==29205==    at 0x100277B59: _platform_strcmp (in /usr/local/Cellar/valgrind/3.14.0/lib/valgrind/vgpreload_memcheck-amd64-darwin.so)
+==29205==    by 0x10002146E: readdata_cell (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_predict)
+==29205==    by 0x1000012E5: main (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_predict)
+==29205==  Address 0x104a69051 is on thread 1's stack
+==29205==  2047 bytes below stack pointer
+==29205== 
+==29205== Invalid read of size 1
+==29205==    at 0x100277B59: _platform_strcmp (in /usr/local/Cellar/valgrind/3.14.0/lib/valgrind/vgpreload_memcheck-amd64-darwin.so)
+==29205==    by 0x1000214CA: readdata_cell (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_predict)
+==29205==    by 0x1000012E5: main (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_predict)
+==29205==  Address 0x104a69051 is on thread 1's stack
+==29205==  2047 bytes below stack pointer
+==29205== 
+==29205== Invalid read of size 1
+==29205==    at 0x100277B59: _platform_strcmp (in /usr/local/Cellar/valgrind/3.14.0/lib/valgrind/vgpreload_memcheck-amd64-darwin.so)
+==29205==    by 0x10002143B: readdata_cell (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_predict)
+==29205==    by 0x1000012E5: main (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_predict)
+==29205==  Address 0x104a69051 is on thread 1's stack
+==29205==  2047 bytes below stack pointer
+==29205== 
+==29205== Invalid read of size 1
+==29205==    at 0x100277B59: _platform_strcmp (in /usr/local/Cellar/valgrind/3.14.0/lib/valgrind/vgpreload_memcheck-amd64-darwin.so)
+==29205==    by 0x1000214FD: readdata_cell (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_predict)
+==29205==    by 0x1000012E5: main (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_predict)
+==29205==  Address 0x104a69051 is on thread 1's stack
+==29205==  2047 bytes below stack pointer
+==29205== 
+predict: Open /Users/a5362/workspace/stox/project/ECA_kolmule_2017/output/r/data/reca/resfiles/fit_mcmc1 for reading age and lga parameters
+==29205== Invalid read of size 8
+==29205==    at 0x100028DAB: makedata_g_a (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_predict)
+==29205==    by 0x1000255F4: read_mcmc1 (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_predict)
+==29205==    by 0x1000016EB: predict (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_predict)
+==29205==    by 0x100001345: main (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_predict)
+==29205==  Address 0x0 is not stack'd, malloc'd or (recently) free'd
+==29205== 
+==29205== 
+==29205== Process terminating with default action of signal 11 (SIGSEGV)
+==29205==  Access not within mapped region at address 0x0
+==29205==    at 0x100028DAB: makedata_g_a (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_predict)
+==29205==    by 0x1000255F4: read_mcmc1 (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_predict)
+==29205==    by 0x1000016EB: predict (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_predict)
+==29205==    by 0x100001345: main (in /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_predict)
+==29205==  If you believe this happened as a result of a stack
+==29205==  overflow in your program's main thread (unlikely but
+==29205==  possible), you can try to increase the size of the
+==29205==  main thread stack using the --main-stacksize= flag.
+==29205==  The main thread stack size used in this run was 8388608.
+==29205== 
+==29205== HEAP SUMMARY:
+==29205==     in use at exit: 186,505 bytes in 246 blocks
+==29205==   total heap usage: 276 allocs, 30 frees, 391,585 bytes allocated
+==29205== 
+==29205== LEAK SUMMARY:
+==29205==    definitely lost: 412 bytes in 9 blocks
+==29205==    indirectly lost: 6,864 bytes in 7 blocks
+==29205==      possibly lost: 72 bytes in 3 blocks
+==29205==    still reachable: 168,301 bytes in 87 blocks
+==29205==         suppressed: 10,856 bytes in 140 blocks
+==29205== Rerun with --leak-check=full to see details of leaked memory
+==29205== 
+==29205== For counts of detected and suppressed errors, rerun with: -v
+==29205== Use --track-origins=yes to see where uninitialised values come from
+==29205== ERROR SUMMARY: 901 errors from 79 contexts (suppressed: 4 from 4)

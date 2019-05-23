@@ -1,0 +1,13 @@
+Sett krasjer på mac når konfigurert med lgamodel="non-linear", fungerer med lgamodel="log-linear"
+
+Sett: kolmule_nonlinear.Rdata
+rapport fra valgrind: valgrind_report.txt
+
+output kommandolinjekjøring:
+HI-08998:reca a5362$ /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_predict cfiles/
+Start C program: predicting catch-at-age
+Read input data from file: cfiles/common_par_predict_ascii
+Read input data from file: cfiles/data_catch
+Read input data from file: cfiles/dist_cell
+predict: Open /Users/a5362/workspace/stox/project/ECA_kolmule_2017/output/r/data/reca/resfiles/fit_mcmc1 for reading age and lga parameters
+Segmentation fault: 11
