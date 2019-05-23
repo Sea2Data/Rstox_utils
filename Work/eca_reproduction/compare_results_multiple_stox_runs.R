@@ -42,7 +42,7 @@ comppar <- function(estimate, parameter){
   
   plot(ecabase$age, ecabase[[ecaparname]], ylim=c(0,ymax), col="black", xlab="age", ylab=parameter, type="n", main=paste(parameter, "estimates", estimate))
   for (n in names(stoxest)){
-    points(stoxages[[n]], stoxest[[n]], ylim=c(0,ymax), col="grey", pch=1)
+    points(stoxages[[n]], stoxest[[n]], col="grey", pch=1)
   }
   points(ecabase$age, ecabase[[ecaparname]], col="black", pch=4)
   legend("topright", col=c("black", "grey"), legend = c("eca", "stox.Reca"), pch=c(4,1))
@@ -65,4 +65,3 @@ compareCaa <- function(){
   }
   
 }
-compareCaa()
