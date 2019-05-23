@@ -57,7 +57,7 @@ Using the criteria outlned above, I aim to reproduce the following estimates:
 * blue whiting 2017: Done
 * mackerel 2017:
 * Norwegian Spring Spawning Herring 2017:
-* NSSK saithe 2018: 
+* NSSK saithe 2018: Preliminary
 * NSSK cod 2018:
 * NSSK haddock 2018:
 
