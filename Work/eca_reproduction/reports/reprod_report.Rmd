@@ -59,7 +59,7 @@ ECA 3.x estimate from 2017. Model was configured and run by Sondre Aanes and res
 comppar("kolmule2017", "mean")
 ```
 
-```{r kolmule sd, fig.cap={"Estimates for sd of posteried distribution of catch in millions per age group of blue whiting in 2017."}, echo=FALSE}
+```{r kolmule sd, fig.cap={"Estimates for sd of marginal posterior distribution of catch in millions per age group of blue whiting in 2017."}, echo=FALSE}
 
 comppar("kolmule2017", "sd")
 ```
