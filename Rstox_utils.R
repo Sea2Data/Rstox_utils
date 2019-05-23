@@ -500,7 +500,7 @@ build_Rstox <- function(buildDir, pkgName="Rstox", version="1.0", Rversion="3.3.
 	betaAlpha <- length(gregexpr(".", version, fixed=TRUE)[[1]]) + 1
 	betaAlphaString <- c("", "beta", "alpha")[betaAlpha]
 	# Read the NAMESPACE file and get the package dependencies. This is needed since we are not on CRAN:
-	writeRstoxREADME(READMEfile, NEWSfile, version, Rversion, betaAlpha, betaAlphaString, imports=getImports(buildDir), official=official)
+	writeRstoxREADME(READMEfile, NEWSfile, version, Rversion, betaAlpha, betaAlphaString, imports=getImports(buildDir, version=pckversion), official=official)
 	file.copy(READMEfile, READMEfileExport, overwrite=TRUE)
 	##########
 	
@@ -1975,5 +1975,4 @@ now <- function(brackets=FALSE){
 	}
 	out
 }
-
 

@@ -3,30 +3,35 @@
 
 
 ##### Load devtools: #####
-library("devtools")
+#library("RstoxBuild")
+#
+## Source the utility functions:
+##source("https://raw.githubusercontent.com/Sea2Data/Rstox_utils/master/Rstox_utils.R")
+#
+#
+## Define the directory of the working copy:
+##dir <- list(
+##  arnejh = list(
+##    Rstox = "~/Code/Github/Rstox/Rstox", 
+##    Rstox_utils = "~/Code/Github/Rstox_utils/Rstox_utils"
+##  ), 
+##  atlet = list(
+##    Rstox = "F:/GIT/Rstox", 
+##    Rstox_utils = "F:/GIT/Rstox_utils"
+##  ), 
+##  edvinf = list(
+##		Rstox = "~/code/github/rstox_/", 
+##		Rstox_utils = "~/code/github/Rstox_utils/"
+##	)
+##)
+#dir <- list(
+#  arnejh = "~/Code/Github/Rstox/Rstox", 
+#  atlet = "F:/GIT/Rstox", 
+#  edvinf = "~/code/github/rstox_/"
+#)
 
-# Source the utility functions:
-#source("https://raw.githubusercontent.com/Sea2Data/Rstox_utils/master/Rstox_utils.R")
 
-
-# Define the directory of the working copy:
-dir <- list(
-  arnejh = list(
-    Rstox = "~/Code/Github/Rstox/Rstox", 
-    Rstox_utils = "~/Code/Github/Rstox_utils/Rstox_utils"
-  ), 
-  atlet = list(
-    Rstox = "F:/GIT/Rstox", 
-    Rstox_utils = "F:/GIT/Rstox_utils"
-  ), 
-  edvinf = list(
-		Rstox = "~/code/github/rstox_/", 
-		Rstox_utils = "~/code/github/Rstox_utils/"
-	)
-)
-
-
-source(file.path(dir[[Sys.info()["user"]]]$Rstox_utils, "Rstox_utils.R"))
+#source(file.path(dir[[Sys.info()["user"]]]$Rstox_utils, "Rstox_utils.R"))
 
 # Build 1.6.2:
 # build_Rstox(dir_Rstox, version="1.6.2", Rversion="3.3.3", official=FALSE, check=FALSE)
@@ -100,4 +105,35 @@ source(file.path(dir[[Sys.info()["user"]]]$Rstox_utils, "Rstox_utils.R"))
 
 
 # Build 1.11.1:
-build_Rstox(dir[[Sys.info()["user"]]]$Rstox, version="1.11.1", Rversion="3.5", pckversion=list(data.table="1.10.4-3"), official=FALSE, suggests=c("ggmap", "ncdf4", "pgirmess", "Reca", "plotrix"), check=FALSE)
+#build_Rstox(dir[[Sys.info()["user"]]]$Rstox, version="1.11.1", Rversion="3.5", pckversion=list(data.table="1.10.4-3"), official=FALSE, suggests=c("ggmap", "ncdf4", "pgirmess", "Reca", "plotrix"), check=FALSE)
+
+
+
+
+
+# Build 1.11.1:
+RstoxBuild::build_Rstox_package("Rstox", version="1.11.1", Rversion="3.5", pckversion=list(data.table="1.10.4-3"), suggests=c("ncdf4", "pgirmess", "Reca", "plotrix"), check=FALSE)
+
+# Before moving to the new account!!!!!!!!!!!!111:
+RstoxBuild::build_Rstox_package("Rstox", version="1.11.1", Rversion="3.5", pckversion=list(data.table="1.10.4-3"), suggests=c("ncdf4", "pgirmess", "Reca", "plotrix"), check=FALSE, githubRoot = "https://github.com/IMR-StoX")
+
+
+
+
+
+RstoxBuild::build_Rstox_package("RstoxFramework", version="1.0", Rversion="3.5", pckversion=list(data.table="1.10.4-3"), check=FALSE)
+
+RstoxBuild::build_Rstox_package("RstoxData", version="1.0", Rversion="3.5", pckversion=list(data.table="1.10.4-3"), check=FALSE)
+
+RstoxBuild::build_Rstox_package("RstoxECA", version="1.0", Rversion="3.5", pckversion=list(data.table="1.10.4-3"), check=FALSE)
+
+RstoxBuild::build_Rstox_package("RstoxSurveyPlanner", version="1.0", Rversion="3.5", pckversion=list(data.table="1.10.4-3"), check=FALSE)
+
+RstoxBuild::build_Rstox_package("RstoxTempdoc", version="1.0", Rversion="3.5", check=FALSE)
+
+RstoxBuild::build_Rstox_package("RstoxBuild", version="1.0", Rversion="3.5", check=FALSE)
+
+
+
+
+# build_Rstox_package("RstoxBuild", version="1.0", Rversion="3.5", check=FALSE, rootDir="~/Code/Github")
