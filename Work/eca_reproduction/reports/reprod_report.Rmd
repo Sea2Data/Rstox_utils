@@ -102,6 +102,14 @@ comppar("makrell2017", "mean")
 comppar("makrell2017", "sd")
 ```
 
+### Reproduction of Norwegian Spring Spawning herring 2017
+ECA 3.x estimate from 2017. Model was configured and run by Sondre Aanes and results provided by Are Salthaug. ECA 3.x .param files was not kept. ased on Sondres notes, I have filtered an exact serialnumber list, grouped Gillnet with Trawl, grouped seasons 1 with two and 3 with 4 and run 1000 burnin iterations and 500 sampling iterations with non-linear growth model.
+
+* Total catch used in ECA 3.x estimate was 389 kt
+* Total catch used in StoX-Reca estimate was 389 kt
+
+Running this configuration triggered a bug in the RECA library. This will be reported to the Norwegian Computing Centre and Estimates will be revisited when a revised library is delivered.
+
 ### Reproduction of saithe NSSK 2018
 ECA 3.x estimates were prepared by Åge Fotland who provided results for reproduction analysis. This included ECA 3.x .param files. The ECA 3.x estimates used logbook-adjusted landings and had weight-length model configured with different geargroupings than the age-length model, neither of which is currently supported by StoX-Reca. Parameters extracted from ECA 3.x .param files suggest the model was configured with season and gear as fixed effects, but I did not have enough aged samples in the data compiled for reproduction to configure it like that. I configured the temporal covariate as a random effect in stead.
 
