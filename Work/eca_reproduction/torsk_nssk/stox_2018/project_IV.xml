@@ -1,0 +1,624 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project template="" rstoxversion="1.11.1" xmlns="http://www.imr.no/formats/stox/v1" lastmodified="24/05/19 18:27" rversion="3.5.0" stoxversion="2.7" resourceversion="1.87">
+  <model name="baseline">
+    <process name="ReadProcessData">
+      <function>ReadProcessData</function>
+      <enabled>true</enabled>
+      <respondingui>false</respondingui>
+      <breakingui>false</breakingui>
+      <output>ProcessData</output>
+    </process>
+    <process name="DefineAgeErrorMatrix">
+      <function>DefineAgeErrorMatrix</function>
+      <enabled>true</enabled>
+      <respondingui>false</respondingui>
+      <breakingui>false</breakingui>
+      <parameter name="ProcessData">Process(ReadProcessData)</parameter>
+      <parameter name="DefinitionMethod">ResourceFile</parameter>
+      <parameter name="FileName">${STOX}/reference/age/kolmule/kolmule_sa_2017.txt</parameter>
+      <output>ProcessData</output>
+    </process>
+    <process name="DefineStrata">
+      <function>DefineStrata</function>
+      <enabled>true</enabled>
+      <respondingui>true</respondingui>
+      <breakingui>false</breakingui>
+      <parameter name="ProcessData">Process(ReadProcessData)</parameter>
+      <parameter name="UseProcessData">false</parameter>
+      <parameter name="FileName">${STOX}/reference/stratum/RECA_nssk_2018_stratafile.txt</parameter>
+      <output>ProcessData</output>
+    </process>
+    <process name="ReadBioticXML">
+      <function>ReadBioticXML</function>
+      <enabled>true</enabled>
+      <respondingui>false</respondingui>
+      <breakingui>false</breakingui>
+      <fileoutput>false</fileoutput>
+      <parameter name="FileName1">input/biotic/biotic_year_2018_species_164712.xml</parameter>
+      <output>BioticData</output>
+    </process>
+    <process name="FilterBiotic">
+      <function>FilterBiotic</function>
+      <enabled>true</enabled>
+      <respondingui>true</respondingui>
+      <breakingui>false</breakingui>
+      <fileoutput>true</fileoutput>
+      <parameter name="BioticData">Process(ReadBioticXML)</parameter>
+      <parameter name="FishStationExpr">fs.hasCatch('torsk')  &amp;&amp; missiontype =~['1','2', '3','9','10','11','12','13'] &amp;&amp; system==2 &amp;&amp; area=~['8','28','42','41','40','9']  &amp;&amp; startdate!=null</parameter>
+      <parameter name="CatchExpr">species =='164712' &amp;&amp; weight&gt;0</parameter>
+      <parameter name="SampleExpr">lengthsampleweight&gt;0</parameter>
+      <parameter name="IndExpr">age==null || age&gt;1</parameter>
+      <output>BioticData</output>
+    </process>
+    <process name="DefineStratumNeighbour">
+      <function>DefineStratumNeighbour</function>
+      <enabled>true</enabled>
+      <respondingui>false</respondingui>
+      <breakingui>false</breakingui>
+      <parameter name="ProcessData">Process(ReadProcessData)</parameter>
+      <parameter name="DefinitionMethod">ResourceFile</parameter>
+      <parameter name="FileName">${STOX}/reference/stratumneighbour/RECA_nssk_2018_neighbours.txt</parameter>
+      <output>ProcessData</output>
+    </process>
+    <process name="ReadLandingXML">
+      <function>ReadLandingXML</function>
+      <enabled>true</enabled>
+      <respondingui>false</respondingui>
+      <breakingui>false</breakingui>
+      <fileoutput>false</fileoutput>
+      <parameter name="FileName1">input/landing/torsk_2018.xml</parameter>
+      <output>LandingData</output>
+    </process>
+    <process name="FilterLanding">
+      <function>FilterLanding</function>
+      <enabled>true</enabled>
+      <respondingui>false</respondingui>
+      <breakingui>false</breakingui>
+      <fileoutput>true</fileoutput>
+      <parameter name="LandingData">Process(ReadLandingXML)</parameter>
+      <parameter name="LandingExpr">rundvekt&gt;0  &amp;&amp; fiskernasjonalitetkode=='NOR' &amp;&amp; artkode=~['1022','102201','102202','102203','102204'] &amp;&amp; hovedomraadekode =~['08','28','42','41','40', '09'] &amp;&amp; kysthavkode=='0'</parameter>
+      <output>LandingData</output>
+    </process>
+    <process name="ApplyPosToLanding">
+      <function>ApplyPosToData</function>
+      <enabled>true</enabled>
+      <respondingui>false</respondingui>
+      <breakingui>false</breakingui>
+      <parameter name="SourceType">Landing</parameter>
+      <parameter name="AreaCoding">MainArea</parameter>
+      <parameter name="LandingData">Process(FilterLanding)</parameter>
+      <parameter name="BioticData"></parameter>
+      <parameter name="FileName">${STOX}/reference/stratumpos/mainarea_fdir_from_2018_incl.txt</parameter>
+    </process>
+    <process name="ApplyPosToBiotic">
+      <function>ApplyPosToData</function>
+      <enabled>true</enabled>
+      <respondingui>false</respondingui>
+      <breakingui>false</breakingui>
+      <parameter name="SourceType">Biotic</parameter>
+      <parameter name="AreaCoding">MainArea</parameter>
+      <parameter name="LandingData"></parameter>
+      <parameter name="BioticData">Process(FilterBiotic)</parameter>
+      <parameter name="FileName">${STOX}/reference/stratumpos/mainarea_fdir_to_2017_incl.txt</parameter>
+    </process>
+    <process name="AssignLandingToStratum">
+      <function>AssignDataToStratum</function>
+      <enabled>true</enabled>
+      <respondingui>false</respondingui>
+      <breakingui>false</breakingui>
+      <parameter name="ProcessData">Process(ReadProcessData)</parameter>
+      <parameter name="SourceType">Landing</parameter>
+      <parameter name="LandingData">Process(FilterLanding)</parameter>
+      <parameter name="BioticData"></parameter>
+    </process>
+    <process name="AssignBioticToStratum">
+      <function>AssignDataToStratum</function>
+      <enabled>true</enabled>
+      <respondingui>false</respondingui>
+      <breakingui>false</breakingui>
+      <parameter name="ProcessData">Process(ReadProcessData)</parameter>
+      <parameter name="SourceType">Biotic</parameter>
+      <parameter name="LandingData"></parameter>
+      <parameter name="BioticData">Process(FilterBiotic)</parameter>
+    </process>
+    <process name="DefineTemporalLanding">
+      <function>DefineTemporal</function>
+      <enabled>true</enabled>
+      <respondingui>false</respondingui>
+      <breakingui>false</breakingui>
+      <parameter name="ProcessData">Process(ReadProcessData)</parameter>
+      <parameter name="SourceType">Landing</parameter>
+      <parameter name="CovariateType">Fixed</parameter>
+      <parameter name="DefinitionMethod">UseData</parameter>
+      <parameter name="LandingData">Process(FilterLanding)</parameter>
+      <parameter name="BioticData"></parameter>
+      <parameter name="TimeInterval">Quarter</parameter>
+      <parameter name="Seasonal">true</parameter>
+      <output>ProcessData</output>
+    </process>
+    <process name="DefineTemporalBiotic">
+      <function>DefineTemporal</function>
+      <enabled>true</enabled>
+      <respondingui>false</respondingui>
+      <breakingui>false</breakingui>
+      <parameter name="ProcessData">Process(ReadProcessData)</parameter>
+      <parameter name="SourceType">Biotic</parameter>
+      <parameter name="CovariateType">Random</parameter>
+      <parameter name="DefinitionMethod">CopyFromLanding</parameter>
+      <parameter name="LandingData"></parameter>
+      <parameter name="BioticData"></parameter>
+      <parameter name="Seasonal">true</parameter>
+      <output>ProcessData</output>
+    </process>
+    <process name="DefineGearLanding">
+      <function>DefineGearFactor</function>
+      <enabled>true</enabled>
+      <respondingui>false</respondingui>
+      <breakingui>false</breakingui>
+      <parameter name="ProcessData">Process(ReadProcessData)</parameter>
+      <parameter name="SourceType">Landing</parameter>
+      <parameter name="CovariateType">Random</parameter>
+      <parameter name="DefinitionMethod">ResourceFile</parameter>
+      <parameter name="FileName">${STOX}/reference/gearfactor/gearfactor_nssk_2018.txt</parameter>
+      <output>ProcessData</output>
+    </process>
+    <process name="DefineGearBiotic">
+      <function>DefineGearFactor</function>
+      <enabled>true</enabled>
+      <respondingui>false</respondingui>
+      <breakingui>false</breakingui>
+      <parameter name="ProcessData">Process(ReadProcessData)</parameter>
+      <parameter name="SourceType">Biotic</parameter>
+      <parameter name="CovariateType">Fixed</parameter>
+      <parameter name="DefinitionMethod">ResourceFile</parameter>
+      <parameter name="FileName">${STOX}/reference/gearfactor/gearfactor_nssk_2018.txt</parameter>
+      <output>ProcessData</output>
+    </process>
+    <process name="DefineSpatialLanding">
+      <function>DefineSpatial</function>
+      <enabled>true</enabled>
+      <respondingui>true</respondingui>
+      <breakingui>false</breakingui>
+      <parameter name="ProcessData">Process(ReadProcessData)</parameter>
+      <parameter name="SourceType">Landing</parameter>
+      <parameter name="CovariateType">Fixed</parameter>
+      <parameter name="UseStratumNeighbour">false</parameter>
+      <parameter name="DefinitionMethod">UseData</parameter>
+      <parameter name="LandingData">Process(FilterLanding)</parameter>
+      <parameter name="BioticData"></parameter>
+      <output>ProcessData</output>
+    </process>
+    <process name="DefineSpatialBiotic">
+      <function>DefineSpatial</function>
+      <enabled>true</enabled>
+      <respondingui>true</respondingui>
+      <breakingui>false</breakingui>
+      <parameter name="ProcessData">Process(ReadProcessData)</parameter>
+      <parameter name="SourceType">Biotic</parameter>
+      <parameter name="CovariateType">Random</parameter>
+      <parameter name="UseStratumNeighbour">true</parameter>
+      <parameter name="DefinitionMethod">UseData</parameter>
+      <parameter name="LandingData"></parameter>
+      <parameter name="BioticData">Process(FilterBiotic)</parameter>
+      <output>ProcessData</output>
+    </process>
+    <process name="DefinePlatform">
+      <function>DefinePlatform</function>
+      <enabled>true</enabled>
+      <respondingui>true</respondingui>
+      <breakingui>false</breakingui>
+      <parameter name="ProcessData">Process(ReadProcessData)</parameter>
+      <parameter name="SourceType">Biotic</parameter>
+      <parameter name="CovariateType">Random</parameter>
+      <parameter name="DefinitionMethod">UseData</parameter>
+      <parameter name="BioticData">Process(FilterBiotic)</parameter>
+      <output>ProcessData</output>
+    </process>
+    <process name="BioticCovData">
+      <function>BioticCovData</function>
+      <enabled>true</enabled>
+      <respondingui>false</respondingui>
+      <breakingui>false</breakingui>
+      <fileoutput>true</fileoutput>
+      <parameter name="ProcessData">Process(ReadProcessData)</parameter>
+      <parameter name="BioticData">Process(FilterBiotic)</parameter>
+      <output>BioticCovData</output>
+    </process>
+    <process name="LandingCovData">
+      <function>LandingCovData</function>
+      <enabled>true</enabled>
+      <respondingui>false</respondingui>
+      <breakingui>false</breakingui>
+      <fileoutput>true</fileoutput>
+      <parameter name="ProcessData">Process(ReadProcessData)</parameter>
+      <parameter name="LandingData">Process(FilterLanding)</parameter>
+      <output>LandingCovData</output>
+    </process>
+    <process name="WriteProcessData">
+      <function>WriteProcessData</function>
+      <enabled>true</enabled>
+      <respondingui>false</respondingui>
+      <breakingui>false</breakingui>
+      <fileoutput>true</fileoutput>
+      <output>ProcessData</output>
+    </process>
+  </model>
+  <model name="r">
+    <process name="prepareECA">
+      <function>prepareRECA</function>
+      <enabled>true</enabled>
+      <respondingui>true</respondingui>
+      <breakingui>false</breakingui>
+      <parameter name="minage">1</parameter>
+      <parameter name="maxage">20</parameter>
+      <parameter name="delta.age">0.001</parameter>
+      <parameter name="maxlength">240</parameter>
+      <parameter name="hatchDaySlashMonth">01/01</parameter>
+      <parameter name="temporalresolution">92</parameter>
+    </process>
+    <process name="saveProjectData">
+      <function>saveProjectData</function>
+      <enabled>true</enabled>
+      <respondingui>true</respondingui>
+      <breakingui>false</breakingui>
+    </process>
+    <process name="runRECA">
+      <function>runRECA</function>
+      <enabled>true</enabled>
+      <respondingui>true</respondingui>
+      <breakingui>false</breakingui>
+      <parameter name="burnin">2100</parameter>
+      <parameter name="caa.burnin">0</parameter>
+      <parameter name="nSamples">400</parameter>
+      <parameter name="thin">1</parameter>
+      <parameter name="fitfile">fit</parameter>
+      <parameter name="predfile">pred</parameter>
+      <parameter name="lgamodel">log-linear</parameter>
+      <parameter name="CC">false</parameter>
+      <parameter name="CCError">false</parameter>
+      <parameter name="seed"></parameter>
+      <parameter name="age.error">false</parameter>
+    </process>
+    <process name="saveProjectData">
+      <function>saveProjectData</function>
+      <enabled>true</enabled>
+      <respondingui>true</respondingui>
+      <breakingui>false</breakingui>
+    </process>
+  </model>
+  <model name="baseline-report">
+  </model>
+  <model name="r-report">
+    <process name="getPlots">
+      <function>getPlots</function>
+      <enabled>true</enabled>
+      <respondingui>true</respondingui>
+      <breakingui>false</breakingui>
+      <parameter name="out">all</parameter>
+    </process>
+    <process name="getReports">
+      <function>getReports</function>
+      <enabled>true</enabled>
+      <respondingui>true</respondingui>
+      <breakingui>false</breakingui>
+      <parameter name="out">all</parameter>
+    </process>
+  </model>
+  <processdata>
+    <bioticassignment>
+    </bioticassignment>
+    <suassignment>
+    </suassignment>
+    <assignmentresolution>
+    </assignmentresolution>
+    <edsupsu>
+    </edsupsu>
+    <psustratum>
+    </psustratum>
+    <stratumpolygon>
+      <value polygonkey="Northsea" polygonvariable="includeintotal">true</value>
+      <value polygonkey="Northsea" polygonvariable="polygon">MULTIPOLYGON (((5.75 52.58333333, 5.66666667 52.54444444, 5.58333333 52.50555556, 5.5 52.46666667, 5.41666667 52.42777778, 5.33333333 52.38888889, 5.25 52.35, 5.16666667 52.31111111, 5.08333333 52.27222222, 5 52.23333333, 5 52.15555556, 5 52.07777778, 5 52, 5 51.9, 5 51.8, 5 51.7, 5 51.6, 5 51.5, 4.9047619 51.5, 4.80952381 51.5, 4.71428571 51.5, 4.61904762 51.5, 4.52380952 51.5, 4.42857143 51.5, 4.33333333 51.5, 4.33333333 51.4, 4.33333333 51.3, 4.33333333 51.2, 4.33333333 51.1, 4.33333333 51, 4.23809524 51, 4.14285714 51, 4.04761905 51, 3.95238095 51, 3.85714286 51, 3.76190476 51, 3.66666667 51, 3.57142857 51, 3.47619048 51, 3.38095238 51, 3.28571429 51, 3.19047619 51, 3.0952381 51, 3 51, 2.90909091 51, 2.81818182 51, 2.72727273 51, 2.63636364 51, 2.54545455 51, 2.45454545 51, 2.36363636 51, 2.27272727 51, 2.18181818 51, 2.09090909 51, 2 51, 1.9 51, 1.8 51, 1.7 51, 1.6 51, 1.5 51, 1.4 51, 1.3 51, 1.2 51, 1.1 51, 1 51, 0.9 51, 0.8 51, 0.7 51, 0.6 51, 0.5 51, 0.4 51, 0.3 51, 0.2 51, 0.1 51, 0 51, 0 51.1, 0 51.2, 0 51.3, 0 51.4, 0 51.5, 0 51.6, 0 51.7, 0 51.8, 0 51.9, 0 52, 0.1 52, 0.2 52, 0.3 52, 0.4 52, 0.5 52, 0.6 52, 0.7 52, 0.8 52, 0.9 52, 1 52, 1 52.1, 1 52.2, 1 52.3, 1 52.4, 1 52.5, 0.9 52.5, 0.8 52.5, 0.7 52.5, 0.6 52.5, 0.5 52.5, 0.4 52.5, 0.3 52.5, 0.2 52.5, 0.1 52.5, 0 52.5, 0 52.6, 0 52.7, 0 52.8, 0 52.9, 0 53, 0 53.1, 0 53.2, 0 53.3, 0 53.4, 0 53.5, -0.1 53.5, -0.2 53.5, -0.3 53.5, -0.4 53.5, -0.5 53.5, -0.6 53.5, -0.7 53.5, -0.8 53.5, -0.9 53.5, -1 53.5, -1 53.6, -1 53.7, -1 53.8, -1 53.9, -1 54, -1 54.1, -1 54.2, -1 54.3, -1 54.4, -1 54.5, -1.09090909 54.5, -1.18181818 54.5, -1.27272727 54.5, -1.36363636 54.5, -1.45454545 54.5, -1.54545455 54.5, -1.63636364 54.5, -1.72727273 54.5, -1.81818182 54.5, -1.90909091 54.5, -2 54.5, -2 54.58333333, -2 54.66666667, -2 54.75, -2 54.83333333, -2 54.91666667, -2 55, -2 55.1, -2 55.2, -2 55.3, -2 55.4, -2 55.5, -2.1 55.5, -2.2 55.5, -2.3 55.5, -2.4 55.5, -2.5 55.5, -2.6 55.5, -2.7 55.5, -2.8 55.5, -2.9 55.5, -3 55.5, -3 55.6, -3 55.7, -3 55.8, -3 55.9, -3 56, -3.1 56, -3.2 56, -3.3 56, -3.4 56, -3.5 56, -3.6 56, -3.7 56, -3.8 56, -3.9 56, -4 56, -4 55.9, -4 55.8, -4 55.7, -4 55.6, -4 55.5, -4 55.4, -4 55.3, -4 55.2, -4 55.1, -4 55, -4.1 55, -4.2 55, -4.3 55, -4.4 55, -4.5 55, -4.6 55, -4.7 55, -4.8 55, -4.9 55, -5 55, -5.09090909 55, -5.18181818 55, -5.27272727 55, -5.36363636 55, -5.45454545 55, -5.54545455 55, -5.63636364 55, -5.72727273 55, -5.81818182 55, -5.90909091 55, -6 55, -6.1 55, -6.2 55, -6.3 55, -6.4 55, -6.5 55, -6.6 55, -6.7 55, -6.8 55, -6.9 55, -7 55, -7.1 55, -7.2 55, -7.3 55, -7.4 55, -7.5 55, -7.6 55, -7.7 55, -7.8 55, -7.9 55, -8 55, -8 54.91666667, -8 54.83333333, -8 54.75, -8 54.66666667, -8 54.58333333, -8 54.5, -8.1 54.5, -8.2 54.5, -8.3 54.5, -8.4 54.5, -8.5 54.5, -8.6 54.5, -8.7 54.5, -8.8 54.5, -8.9 54.5, -9 54.5, -9.09090909 54.5, -9.18181818 54.5, -9.27272727 54.5, -9.36363636 54.5, -9.45454545 54.5, -9.54545455 54.5, -9.63636364 54.5, -9.72727273 54.5, -9.81818182 54.5, -9.90909091 54.5, -10 54.5, -10.1 54.5, -10.2 54.5, -10.3 54.5, -10.4 54.5, -10.5 54.5, -10.6 54.5, -10.7 54.5, -10.8 54.5, -10.9 54.5, -11 54.5, -11.1 54.5, -11.2 54.5, -11.3 54.5, -11.4 54.5, -11.5 54.5, -11.6 54.5, -11.7 54.5, -11.8 54.5, -11.9 54.5, -12 54.5, -12.1 54.5, -12.2 54.5, -12.3 54.5, -12.4 54.5, -12.5 54.5, -12.6 54.5, -12.7 54.5, -12.8 54.5, -12.9 54.5, -13 54.5, -13.1 54.5, -13.2 54.5, -13.3 54.5, -13.4 54.5, -13.5 54.5, -13.6 54.5, -13.7 54.5, -13.8 54.5, -13.9 54.5, -14 54.5, -14.09090909 54.5, -14.18181818 54.5, -14.27272727 54.5, -14.36363636 54.5, -14.45454545 54.5, -14.54545455 54.5, -14.63636364 54.5, -14.72727273 54.5, -14.81818182 54.5, -14.90909091 54.5, -15 54.5, -15.1 54.5, -15.2 54.5, -15.3 54.5, -15.4 54.5, -15.5 54.5, -15.6 54.5, -15.7 54.5, -15.8 54.5, -15.9 54.5, -16 54.5, -16.1 54.5, -16.2 54.5, -16.3 54.5, -16.4 54.5, -16.5 54.5, -16.6 54.5, -16.7 54.5, -16.8 54.5, -16.9 54.5, -17 54.5, -17.1 54.5, -17.2 54.5, -17.3 54.5, -17.4 54.5, -17.5 54.5, -17.6 54.5, -17.7 54.5, -17.8 54.5, -17.9 54.5, -18 54.5, -18 54.58333333, -18 54.66666667, -18 54.75, -18 54.83333333, -18 54.91666667, -18 55, -18 55.1, -18 55.2, -18 55.3, -18 55.4, -18 55.5, -18 55.6, -18 55.7, -18 55.8, -18 55.9, -18 56, -18 56.1, -18 56.2, -18 56.3, -18 56.4, -18 56.5, -18 56.6, -18 56.7, -18 56.8, -18 56.9, -18 57, -18 57.1, -18 57.2, -18 57.3, -18 57.4, -18 57.5, -18 57.6, -18 57.7, -18 57.8, -18 57.9, -18 58, -18 58.1, -18 58.2, -18 58.3, -18 58.4, -18 58.5, -18 58.58333333, -18 58.66666667, -18 58.75, -18 58.83333333, -18 58.91666667, -18 59, -18 59.1, -18 59.2, -18 59.3, -18 59.4, -18 59.5, -18 59.6, -18 59.7, -18 59.8, -18 59.9, -18 60, -17.9 60, -17.8 60, -17.7 60, -17.6 60, -17.5 60, -17.4 60, -17.3 60, -17.2 60, -17.1 60, -17 60, -16.9 60, -16.8 60, -16.7 60, -16.6 60, -16.5 60, -16.4 60, -16.3 60, -16.2 60, -16.1 60, -16 60, -15.9 60, -15.8 60, -15.7 60, -15.6 60, -15.5 60, -15.4 60, -15.3 60, -15.2 60, -15.1 60, -15 60, -14.90909091 60, -14.81818182 60, -14.72727273 60, -14.63636364 60, -14.54545455 60, -14.45454545 60, -14.36363636 60, -14.27272727 60, -14.18181818 60, -14.09090909 60, -14 60, -13.9 60, -13.8 60, -13.7 60, -13.6 60, -13.5 60, -13.4 60, -13.3 60, -13.2 60, -13.1 60, -13 60, -12.9 60, -12.8 60, -12.7 60, -12.6 60, -12.5 60, -12.4 60, -12.3 60, -12.2 60, -12.1 60, -12 60, -11.9 60, -11.8 60, -11.7 60, -11.6 60, -11.5 60, -11.4 60, -11.3 60, -11.2 60, -11.1 60, -11 60, -10.9 60, -10.8 60, -10.7 60, -10.6 60, -10.5 60, -10.4 60, -10.3 60, -10.2 60, -10.1 60, -10 60, -9.90909091 60, -9.81818182 60, -9.72727273 60, -9.63636364 60, -9.54545455 60, -9.45454545 60, -9.36363636 60, -9.27272727 60, -9.18181818 60, -9.09090909 60, -9 60, -8.9 60, -8.8 60, -8.7 60, -8.6 60, -8.5 60, -8.4 60, -8.3 60, -8.2 60, -8.1 60, -8 60, -7.9 60, -7.8 60, -7.7 60, -7.6 60, -7.5 60, -7.4 60, -7.3 60, -7.2 60, -7.1 60, -7 60, -6.9 60, -6.8 60, -6.7 60, -6.6 60, -6.5 60, -6.4 60, -6.3 60, -6.2 60, -6.1 60, -6 60, -5.90909091 60, -5.81818182 60, -5.72727273 60, -5.63636364 60, -5.54545455 60, -5.45454545 60, -5.36363636 60, -5.27272727 60, -5.18181818 60, -5.09090909 60, -5 60, -5 60.1, -5 60.2, -5 60.3, -5 60.4, -5 60.5, -4.9 60.5, -4.8 60.5, -4.7 60.5, -4.6 60.5, -4.5 60.5, -4.4 60.5, -4.3 60.5, -4.2 60.5, -4.1 60.5, -4 60.5, -4 60.6, -4 60.7, -4 60.8, -4 60.9, -4 61, -4 61.1, -4 61.2, -4 61.3, -4 61.4, -4 61.5, -4 61.6, -4 61.7, -4 61.8, -4 61.9, -4 62, -3.9 62, -3.8 62, -3.7 62, -3.6 62, -3.5 62, -3.4 62, -3.3 62, -3.2 62, -3.1 62, -3 62, -2.9 62, -2.8 62, -2.7 62, -2.6 62, -2.5 62, -2.4 62, -2.3 62, -2.2 62, -2.1 62, -2 62, -1.90909091 62, -1.81818182 62, -1.72727273 62, -1.63636364 62, -1.54545455 62, -1.45454545 62, -1.36363636 62, -1.27272727 62, -1.18181818 62, -1.09090909 62, -1 62, -0.9 62, -0.8 62, -0.7 62, -0.6 62, -0.5 62, -0.4 62, -0.3 62, -0.2 62, -0.1 62, 0 62, 0.1 62, 0.2 62, 0.3 62, 0.4 62, 0.5 62, 0.6 62, 0.7 62, 0.8 62, 0.9 62, 1 62, 1.1 62, 1.2 62, 1.3 62, 1.4 62, 1.5 62, 1.6 62, 1.7 62, 1.8 62, 1.9 62, 2 62, 2.09090909 62, 2.18181818 62, 2.27272727 62, 2.36363636 62, 2.45454545 62, 2.54545455 62, 2.63636364 62, 2.72727273 62, 2.81818182 62, 2.90909091 62, 3 62, 3.1 62, 3.2 62, 3.3 62, 3.4 62, 3.5 62, 3.6 62, 3.7 62, 3.8 62, 3.9 62, 4 62, 4.1 62, 4.2 62, 4.3 62, 4.4 62, 4.5 62, 4.6 62, 4.7 62, 4.8 62, 4.9 62, 5 62, 5.08333333 62, 5.08333333 61.93333333, 5.16666667 61.93333333, 5.25 61.93333333, 5.33333333 61.93333333, 5.36666667 62, 5.4627451 62, 5.55882353 62, 5.65490196 62, 5.75098039 62, 5.84705882 62, 5.94313725 62, 6.03921569 62, 6.13529412 62, 6.23137255 62, 6.32745098 62, 6.42352941 62, 6.51960784 62, 6.61568627 62, 6.71176471 62, 6.80784314 62, 6.90392157 62, 7 62, 7 61.91666667, 7 61.83333333, 7 61.75, 7 61.66666667, 6.90909091 61.66666667, 6.81818182 61.66666667, 6.72727273 61.66666667, 6.63636364 61.66666667, 6.54545455 61.66666667, 6.45454545 61.66666667, 6.36363636 61.66666667, 6.27272727 61.66666667, 6.18181818 61.66666667, 6.09090909 61.66666667, 6 61.66666667, 6 61.57777778, 6 61.48888889, 6 61.4, 5.91666667 61.4, 5.83333333 61.4, 5.75 61.4, 5.66666667 61.4, 5.66666667 61.33333333, 5.75925926 61.33333333, 5.85185185 61.33333333, 5.94444444 61.33333333, 6.03703704 61.33333333, 6.12962963 61.33333333, 6.22222222 61.33333333, 6.31481481 61.33333333, 6.40740741 61.33333333, 6.5 61.33333333, 6.5 61.41666667, 6.5 61.5, 6.6 61.5, 6.7 61.5, 6.8 61.5, 6.9 61.5, 7 61.5, 7.1 61.5, 7.2 61.5, 7.3 61.5, 7.4 61.5, 7.5 61.5, 7.6 61.5, 7.7 61.5, 7.8 61.5, 7.9 61.5, 8 61.5, 8 61.40625, 8 61.3125, 8 61.21875, 8 61.125, 8 61.03125, 8 60.9375, 8 60.84375, 8 60.75, 7.9047619 60.75, 7.80952381 60.75, 7.71428571 60.75, 7.61904762 60.75, 7.52380952 60.75, 7.42857143 60.75, 7.33333333 60.75, 7.23809524 60.75, 7.14285714 60.75, 7.04761905 60.75, 6.95238095 60.75, 6.85714286 60.75, 6.76190476 60.75, 6.66666667 60.75, 6.57142857 60.75, 6.47619048 60.75, 6.38095238 60.75, 6.28571429 60.75, 6.19047619 60.75, 6.0952381 60.75, 6 60.75, 6 60.65833333, 6 60.58333333, 6.09615385 60.58333333, 6.19230769 60.58333333, 6.28846154 60.58333333, 6.38461538 60.58333333, 6.48076923 60.58333333, 6.57692308 60.58333333, 6.67307692 60.58333333, 6.76923077 60.58333333, 6.86538462 60.58333333, 6.96153846 60.58333333, 7.05769231 60.58333333, 7.15384615 60.58333333, 7.25 60.58333333, 7.25 60.48809524, 7.25 60.39285714, 7.25 60.29761905, 7.25 60.20238095, 7.25 60.10714286, 7.25 60.01190476, 7.25 59.91666667, 7.16111111 59.91666667, 7.07222222 59.91666667, 6.98333333 59.91666667, 6.89444444 59.91666667, 6.80555556 59.91666667, 6.71666667 59.91666667, 6.71666667 59.83333333, 6.71666667 59.75, 6.71666667 59.66666667, 6.71666667 59.57222222, 6.71666667 59.47777778, 6.71666667 59.38333333, 6.71666667 59.28888889, 6.71666667 59.19444444, 6.71666667 59.1, 6.71666667 59.0125, 6.71666667 58.925, 6.71666667 58.8375, 6.71666667 58.75, 6.62708333 58.75, 6.5375 58.75, 6.44791667 58.75, 6.35833333 58.75, 6.26875 58.75, 6.17916667 58.75, 6.08958333 58.75, 6 58.75, 6 58.66666667, 6 58.58333333, 6 58.5, 6.09090909 58.5, 6.18181818 58.5, 6.27272727 58.5, 6.36363636 58.5, 6.45454545 58.5, 6.54545455 58.5, 6.63636364 58.5, 6.72727273 58.5, 6.81818182 58.5, 6.90909091 58.5, 7 58.5, 7.0625 58.4375, 7.125 58.375, 7.1875 58.3125, 7.25 58.25, 7.1875 58.19583333, 7.125 58.14166667, 7.0625 58.0875, 7 58.03333333, 7 58, 7 57.9, 7 57.8, 7 57.7, 7 57.6, 7 57.5, 7.1 57.5, 7.2 57.5, 7.3 57.5, 7.4 57.5, 7.5 57.5, 7.6 57.5, 7.7 57.5, 7.8 57.5, 7.9 57.5, 8 57.5, 8 57.4, 8 57.3, 8 57.2, 8 57.1, 8 57, 8.1 57, 8.2 57, 8.3 57, 8.4 57, 8.5 57, 8.6 57, 8.7 57, 8.8 57, 8.9 57, 9 57, 9 56.9, 9 56.8, 9 56.7, 9 56.6, 9 56.5, 9 56.4, 9 56.3, 9 56.2, 9 56.1, 9 56, 9 55.9, 9 55.8, 9 55.7, 9 55.6, 9 55.5, 9 55.4, 9 55.3, 9 55.2, 9 55.1, 9 55, 9 54.91666667, 9 54.83333333, 9 54.75, 9 54.66666667, 9 54.58333333, 9 54.5, 9 54.4, 9 54.3, 9 54.2, 9 54.1, 9 54, 9.1 54, 9.2 54, 9.3 54, 9.4 54, 9.5 54, 9.6 54, 9.7 54, 9.8 54, 9.9 54, 10 54, 10 53.9, 10 53.8, 10 53.7, 10 53.6, 10 53.5, 9.9 53.5, 9.8 53.5, 9.7 53.5, 9.6 53.5, 9.5 53.5, 9.4 53.5, 9.3 53.5, 9.2 53.5, 9.1 53.5, 9 53.5, 8.9 53.5, 8.8 53.5, 8.7 53.5, 8.6 53.5, 8.5 53.5, 8.4 53.5, 8.3 53.5, 8.2 53.5, 8.1 53.5, 8 53.5, 7.9 53.5, 7.8 53.5, 7.7 53.5, 7.6 53.5, 7.5 53.5, 7.41666667 53.5, 7.41666667 53.4, 7.41666667 53.3, 7.41666667 53.2, 7.41666667 53.1, 7.41666667 53, 7.32222222 53, 7.22777778 53, 7.13333333 53, 7.03888889 53, 6.94444444 53, 6.85 53, 6.75555556 53, 6.66111111 53, 6.56666667 53, 6.47222222 53, 6.37777778 53, 6.28333333 53, 6.18888889 53, 6.09444444 53, 6 53, 5.91666667 53, 5.83333333 53, 5.75 53, 5.75 52.91666667, 5.75 52.83333333, 5.75 52.75, 5.75 52.66666667, 5.75 52.58333333, -4 58.5, -4.1 58.5, -4.2 58.5, -4.3 58.5, -4.4 58.5, -4.5 58.5, -4.6 58.5, -4.7 58.5, -4.8 58.5, -4.9 58.5, -5 58.5, -5 58.4, -5 58.3, -5 58.2, -5 58.1, -5 58, -5 57.9, -5 57.8, -5 57.7, -5 57.6, -5 57.5, -5 57.4, -5 57.3, -5 57.2, -5 57.1, -5 57, -5 56.9, -5 56.8, -5 56.7, -5 56.6, -5 56.5, -4.9 56.5, -4.8 56.5, -4.7 56.5, -4.6 56.5, -4.5 56.5, -4.4 56.5, -4.3 56.5, -4.2 56.5, -4.1 56.5, -4 56.5, -3.9 56.5, -3.8 56.5, -3.7 56.5, -3.6 56.5, -3.5 56.5, -3.4 56.5, -3.3 56.5, -3.2 56.5, -3.1 56.5, -3 56.5, -3 56.6, -3 56.7, -3 56.8, -3 56.9, -3 57, -3 57.1, -3 57.2, -3 57.3, -3 57.4, -3 57.5, -2.9 57.5, -2.8 57.5, -2.7 57.5, -2.6 57.5, -2.5 57.5, -2.4 57.5, -2.3 57.5, -2.2 57.5, -2.1 57.5, -2 57.5, -2 57.575, -2 57.65, -2.1 57.65, -2.2 57.65, -2.3 57.65, -2.4 57.65, -2.5 57.65, -2.6 57.65, -2.7 57.65, -2.8 57.65, -2.9 57.65, -3 57.65, -3.09375 57.63020833, -3.1875 57.61041667, -3.28125 57.590625, -3.375 57.57083333, -3.46875 57.55104167, -3.5625 57.53125, -3.65625 57.51145833, -3.75 57.49166667, -3.84375 57.471875, -3.9375 57.45208333, -4.03125 57.43229167, -4.125 57.4125, -4.21875 57.39270833, -4.3125 57.37291667, -4.40625 57.353125, -4.5 57.33333333, -4.5 57.42857143, -4.5 57.52380952, -4.5 57.61904762, -4.5 57.71428571, -4.5 57.80952381, -4.5 57.9047619, -4.5 58, -4.4 58, -4.3 58, -4.2 58, -4.1 58, -4 58, -3.92121212 58.04545455, -3.84242424 58.09090909, -3.76363636 58.13636364, -3.68484848 58.18181818, -3.60606061 58.22727273, -3.52727273 58.27272727, -3.44848485 58.31818182, -3.36969697 58.36363636, -3.29090909 58.40909091, -3.21212121 58.45454545, -3.13333333 58.5, -3.22962963 58.5, -3.32592593 58.5, -3.42222222 58.5, -3.51851852 58.5, -3.61481481 58.5, -3.71111111 58.5, -3.80740741 58.5, -3.9037037 58.5, -4 58.5, 5.75 52.58333333)))</value>
+      <value polygonkey="Skageraak" polygonvariable="includeintotal">true</value>
+      <value polygonkey="Skageraak" polygonvariable="polygon">MULTIPOLYGON (((11 60, 11 59.9, 11 59.8, 11 59.7, 11 59.6, 11 59.5, 11.1 59.5, 11.2 59.5, 11.3 59.5, 11.4 59.5, 11.5 59.5, 11.6 59.5, 11.7 59.5, 11.8 59.5, 11.9 59.5, 12 59.5, 12 59.4, 12 59.3, 12 59.2, 12 59.1, 12 59, 12 58.91666667, 12 58.83333333, 12 58.75, 12 58.66666667, 12 58.58333333, 12 58.5, 12 58.4, 12 58.3, 12 58.2, 12 58.1, 12 58, 12 57.9, 12 57.8, 12 57.7, 12 57.6, 12 57.5, 12.1 57.5, 12.2 57.5, 12.3 57.5, 12.4 57.5, 12.5 57.5, 12.6 57.5, 12.7 57.5, 12.8 57.5, 12.9 57.5, 13 57.5, 13 57.4, 13 57.3, 13 57.2, 13 57.1, 13 57, 13 56.9, 13 56.8, 13 56.7, 13 56.6, 13 56.5, 13 56.4, 13 56.3, 13 56.2, 13 56.1, 13 56, 12.9 56, 12.8 56, 12.7 56, 12.6 56, 12.5 56, 12.4 56, 12.3 56, 12.2 56, 12.1 56, 12 56, 12.05 55.96666667, 12.1 55.93333333, 12.11666667 55.84166667, 12.13333333 55.75, 12.125 55.7, 12.11666667 55.65, 12.02 55.65, 11.92333333 55.65, 11.82666667 55.65, 11.73 55.65, 11.63333333 55.65, 11.62777778 55.73888889, 11.62222222 55.82777778, 11.61666667 55.91666667, 11.55 55.93333333, 11.48333333 55.95, 11.41666667 55.96666667, 11.34166667 55.98333333, 11.26666667 56, 11.17777778 56, 11.08888889 56, 11 56, 11 56.1, 11 56.2, 11 56.3, 11 56.4, 11 56.5, 10.90909091 56.5, 10.81818182 56.5, 10.72727273 56.5, 10.63636364 56.5, 10.54545455 56.5, 10.45454545 56.5, 10.36363636 56.5, 10.27272727 56.5, 10.18181818 56.5, 10.09090909 56.5, 10 56.5, 10 56.6, 10 56.7, 10 56.8, 10 56.9, 10 57, 9.9 57, 9.8 57, 9.7 57, 9.6 57, 9.5 57, 9.4 57, 9.3 57, 9.2 57, 9.1 57, 9 57, 8.9 57, 8.8 57, 8.7 57, 8.6 57, 8.5 57, 8.4 57, 8.3 57, 8.2 57, 8.1 57, 8 57, 8 57.1, 8 57.2, 8 57.3, 8 57.4, 8 57.5, 7.9 57.5, 7.8 57.5, 7.7 57.5, 7.6 57.5, 7.5 57.5, 7.4 57.5, 7.3 57.5, 7.2 57.5, 7.1 57.5, 7 57.5, 7 57.6, 7 57.7, 7 57.8, 7 57.9, 7 58, 7 58.03333333, 7.0625 58.0875, 7.125 58.14166667, 7.1875 58.19583333, 7.25 58.25, 7.35 58.25, 7.45 58.25, 7.55 58.25, 7.65 58.25, 7.75 58.25, 7.83333333 58.25, 7.91666667 58.25, 8 58.25, 8 58.33333333, 8 58.41666667, 8 58.5, 8.09259259 58.5, 8.18518519 58.5, 8.27777778 58.5, 8.37037037 58.5, 8.46296296 58.5, 8.55555556 58.5, 8.64814815 58.5, 8.74074074 58.5, 8.83333333 58.5, 8.83333333 58.59166667, 8.83333333 58.68333333, 8.91666667 58.68333333, 9 58.68333333, 9 58.7625, 9 58.84166667, 9 58.92083333, 9 59, 9 59.1, 9 59.2, 9 59.3, 9 59.4, 9 59.5, 9.1 59.5, 9.2 59.5, 9.3 59.5, 9.4 59.5, 9.5 59.5, 9.6 59.5, 9.7 59.5, 9.8 59.5, 9.9 59.5, 10 59.5, 10 59.6, 10 59.7, 10 59.8, 10 59.9, 10 60, 10.09090909 60, 10.18181818 60, 10.27272727 60, 10.36363636 60, 10.45454545 60, 10.54545455 60, 10.63636364 60, 10.72727273 60, 10.81818182 60, 10.90909091 60, 11 60)))</value>
+    </stratumpolygon>
+    <temporal>
+      <value covariatesourcetype="Biotic" covariate="Q1">01/01-31/03</value>
+      <value covariatesourcetype="Biotic" covariate="Q2">01/04-30/06</value>
+      <value covariatesourcetype="Biotic" covariate="Q3">01/07-30/09</value>
+      <value covariatesourcetype="Biotic" covariate="Q4">01/10-31/12</value>
+      <value covariatesourcetype="Landing" covariate="Q1">01/01-31/03</value>
+      <value covariatesourcetype="Landing" covariate="Q2">01/04-30/06</value>
+      <value covariatesourcetype="Landing" covariate="Q3">01/07-30/09</value>
+      <value covariatesourcetype="Landing" covariate="Q4">01/10-31/12</value>
+    </temporal>
+    <gearfactor>
+      <value covariatesourcetype="Biotic" covariate="Gillnet">4000,4144,4140,4143,4123,4115,4182,4114,4149,4125,4126,4183,4128,4142,4110,4141,4124,4127,4113,4134,4100,4180,4145,4121,4164,4129,4119,4146</value>
+      <value covariatesourcetype="Biotic" covariate="Trawl&amp;Others">3159,3158,3157,3100,3154,3155,3132,3127,3122,3131,3128,3103,3183,3135,3151,3149,3187,3148,3152,3141,3163,3162,3121,3136,3161,3126,3139,3137,3173,3170,3130,3210,3267,3213,3265,3230,3200,3212,3287,3252,3264,3266,3260,3272,3412,3410,3411,3400,3500,3530,3563,3510,3523,3580,3532,3590,3600,3601,3710,3700,3712,3711,3731,3713,3720,3714,5110,5121,5101,5141,5122,5120,5100,5211,5212,5210,4311,5363,5309,5366,5307,5335,6600,6685,5360,5305,5362,5365,5364,5300,5231,5200,5230,3186,3248,3244,3273,3242,3218</value>
+      <value covariatesourcetype="Landing" covariate="Gillnet">21,20,22</value>
+      <value covariatesourcetype="Landing" covariate="Trawl&amp;Others">55,51,52,57,56,54,50,53,58,59,61,11,12,14,10,15,31,35,32,33,42,84,44,71,34,43,30,90,41,85,73,80,81,83,70,40,45,80,81,82,99</value>
+    </gearfactor>
+    <spatial>
+      <value covariatesourcetype="Biotic" covariate="Northsea">Northsea</value>
+      <value covariatesourcetype="Biotic" covariate="Skageraak">Skageraak</value>
+      <value covariatesourcetype="Landing" covariate="Northsea">Northsea</value>
+      <value covariatesourcetype="Landing" covariate="Skageraak">Skageraak</value>
+    </spatial>
+    <platformfactor>
+      <value covariatesourcetype="Biotic" covariate="1620">1620</value>
+      <value covariatesourcetype="Biotic" covariate="1727">1727</value>
+      <value covariatesourcetype="Biotic" covariate="1755">1755</value>
+      <value covariatesourcetype="Biotic" covariate="1836">1836</value>
+      <value covariatesourcetype="Biotic" covariate="2413">2413</value>
+      <value covariatesourcetype="Biotic" covariate="2420">2420</value>
+      <value covariatesourcetype="Biotic" covariate="2464">2464</value>
+      <value covariatesourcetype="Biotic" covariate="2476">2476</value>
+      <value covariatesourcetype="Biotic" covariate="2478">2478</value>
+      <value covariatesourcetype="Biotic" covariate="2562">2562</value>
+      <value covariatesourcetype="Biotic" covariate="2609">2609</value>
+      <value covariatesourcetype="Biotic" covariate="2611">2611</value>
+      <value covariatesourcetype="Biotic" covariate="2614">2614</value>
+      <value covariatesourcetype="Biotic" covariate="2617">2617</value>
+      <value covariatesourcetype="Biotic" covariate="2752">2752</value>
+      <value covariatesourcetype="Biotic" covariate="2881">2881</value>
+      <value covariatesourcetype="Biotic" covariate="2882">2882</value>
+      <value covariatesourcetype="Biotic" covariate="2891">2891</value>
+      <value covariatesourcetype="Biotic" covariate="2932">2932</value>
+      <value covariatesourcetype="Biotic" covariate="2959">2959</value>
+      <value covariatesourcetype="Biotic" covariate="2984">2984</value>
+      <value covariatesourcetype="Biotic" covariate="3039">3039</value>
+      <value covariatesourcetype="Biotic" covariate="3058">3058</value>
+      <value covariatesourcetype="Biotic" covariate="3074">3074</value>
+      <value covariatesourcetype="Biotic" covariate="3097">3097</value>
+      <value covariatesourcetype="Biotic" covariate="3215">3215</value>
+      <value covariatesourcetype="Biotic" covariate="3313">3313</value>
+      <value covariatesourcetype="Biotic" covariate="3320">3320</value>
+      <value covariatesourcetype="Biotic" covariate="3487">3487</value>
+      <value covariatesourcetype="Biotic" covariate="3488">3488</value>
+      <value covariatesourcetype="Biotic" covariate="3516">3516</value>
+      <value covariatesourcetype="Biotic" covariate="3629">3629</value>
+      <value covariatesourcetype="Biotic" covariate="3652">3652</value>
+      <value covariatesourcetype="Biotic" covariate="3736">3736</value>
+      <value covariatesourcetype="Biotic" covariate="3740">3740</value>
+      <value covariatesourcetype="Biotic" covariate="3772">3772</value>
+      <value covariatesourcetype="Biotic" covariate="3820">3820</value>
+      <value covariatesourcetype="Biotic" covariate="3846">3846</value>
+      <value covariatesourcetype="Biotic" covariate="3879">3879</value>
+      <value covariatesourcetype="Biotic" covariate="3960">3960</value>
+      <value covariatesourcetype="Biotic" covariate="3965">3965</value>
+      <value covariatesourcetype="Biotic" covariate="3971">3971</value>
+      <value covariatesourcetype="Biotic" covariate="4001">4001</value>
+      <value covariatesourcetype="Biotic" covariate="4083">4083</value>
+      <value covariatesourcetype="Biotic" covariate="4111">4111</value>
+      <value covariatesourcetype="Biotic" covariate="4114">4114</value>
+      <value covariatesourcetype="Biotic" covariate="4134">4134</value>
+      <value covariatesourcetype="Biotic" covariate="4140">4140</value>
+      <value covariatesourcetype="Biotic" covariate="4150">4150</value>
+      <value covariatesourcetype="Biotic" covariate="4160">4160</value>
+      <value covariatesourcetype="Biotic" covariate="4218">4218</value>
+      <value covariatesourcetype="Biotic" covariate="4227">4227</value>
+      <value covariatesourcetype="Biotic" covariate="4277">4277</value>
+      <value covariatesourcetype="Biotic" covariate="4316">4316</value>
+      <value covariatesourcetype="Biotic" covariate="4346">4346</value>
+      <value covariatesourcetype="Biotic" covariate="4358">4358</value>
+      <value covariatesourcetype="Biotic" covariate="4408">4408</value>
+      <value covariatesourcetype="Biotic" covariate="4567">4567</value>
+      <value covariatesourcetype="Biotic" covariate="4574">4574</value>
+      <value covariatesourcetype="Biotic" covariate="4596">4596</value>
+      <value covariatesourcetype="Biotic" covariate="4653">4653</value>
+      <value covariatesourcetype="Biotic" covariate="4701">4701</value>
+      <value covariatesourcetype="Biotic" covariate="4780">4780</value>
+      <value covariatesourcetype="Biotic" covariate="4789">4789</value>
+      <value covariatesourcetype="Biotic" covariate="5020">5020</value>
+      <value covariatesourcetype="Biotic" covariate="5022">5022</value>
+      <value covariatesourcetype="Biotic" covariate="5027">5027</value>
+      <value covariatesourcetype="Biotic" covariate="5036">5036</value>
+      <value covariatesourcetype="Biotic" covariate="5108">5108</value>
+      <value covariatesourcetype="Biotic" covariate="5136">5136</value>
+      <value covariatesourcetype="Biotic" covariate="5207">5207</value>
+      <value covariatesourcetype="Biotic" covariate="5236">5236</value>
+      <value covariatesourcetype="Biotic" covariate="5269">5269</value>
+      <value covariatesourcetype="Biotic" covariate="5700">5700</value>
+      <value covariatesourcetype="Biotic" covariate="5738">5738</value>
+      <value covariatesourcetype="Biotic" covariate="5745">5745</value>
+      <value covariatesourcetype="Biotic" covariate="5796">5796</value>
+      <value covariatesourcetype="Biotic" covariate="5985">5985</value>
+      <value covariatesourcetype="Biotic" covariate="6081">6081</value>
+      <value covariatesourcetype="Biotic" covariate="6729">6729</value>
+      <value covariatesourcetype="Biotic" covariate="6730">6730</value>
+      <value covariatesourcetype="Biotic" covariate="6803">6803</value>
+      <value covariatesourcetype="Biotic" covariate="6876">6876</value>
+      <value covariatesourcetype="Biotic" covariate="6894">6894</value>
+      <value covariatesourcetype="Biotic" covariate="6898">6898</value>
+      <value covariatesourcetype="Biotic" covariate="6899">6899</value>
+      <value covariatesourcetype="Biotic" covariate="6904">6904</value>
+      <value covariatesourcetype="Biotic" covariate="6905">6905</value>
+      <value covariatesourcetype="Biotic" covariate="7050">7050</value>
+      <value covariatesourcetype="Biotic" covariate="7182">7182</value>
+      <value covariatesourcetype="Biotic" covariate="7329">7329</value>
+      <value covariatesourcetype="Biotic" covariate="7331">7331</value>
+      <value covariatesourcetype="Biotic" covariate="7335">7335</value>
+      <value covariatesourcetype="Biotic" covariate="7342">7342</value>
+      <value covariatesourcetype="Biotic" covariate="7378">7378</value>
+      <value covariatesourcetype="Biotic" covariate="7383">7383</value>
+      <value covariatesourcetype="Biotic" covariate="7431">7431</value>
+      <value covariatesourcetype="Biotic" covariate="7435">7435</value>
+      <value covariatesourcetype="Biotic" covariate="7447">7447</value>
+      <value covariatesourcetype="Biotic" covariate="7475">7475</value>
+      <value covariatesourcetype="Biotic" covariate="7488">7488</value>
+      <value covariatesourcetype="Biotic" covariate="7491">7491</value>
+      <value covariatesourcetype="Biotic" covariate="7498">7498</value>
+      <value covariatesourcetype="Biotic" covariate="7571">7571</value>
+      <value covariatesourcetype="Biotic" covariate="7588">7588</value>
+      <value covariatesourcetype="Biotic" covariate="7602">7602</value>
+      <value covariatesourcetype="Biotic" covariate="7614">7614</value>
+      <value covariatesourcetype="Biotic" covariate="7634">7634</value>
+      <value covariatesourcetype="Biotic" covariate="7647">7647</value>
+      <value covariatesourcetype="Biotic" covariate="7649">7649</value>
+      <value covariatesourcetype="Biotic" covariate="7650">7650</value>
+      <value covariatesourcetype="Biotic" covariate="7662">7662</value>
+      <value covariatesourcetype="Biotic" covariate="7672">7672</value>
+      <value covariatesourcetype="Biotic" covariate="7684">7684</value>
+      <value covariatesourcetype="Biotic" covariate="7692">7692</value>
+      <value covariatesourcetype="Biotic" covariate="7694">7694</value>
+      <value covariatesourcetype="Biotic" covariate="7695">7695</value>
+      <value covariatesourcetype="Biotic" covariate="7717">7717</value>
+      <value covariatesourcetype="Biotic" covariate="7734">7734</value>
+      <value covariatesourcetype="Biotic" covariate="7739">7739</value>
+      <value covariatesourcetype="Biotic" covariate="7761">7761</value>
+      <value covariatesourcetype="Biotic" covariate="7762">7762</value>
+      <value covariatesourcetype="Biotic" covariate="7763">7763</value>
+      <value covariatesourcetype="Biotic" covariate="7775">7775</value>
+      <value covariatesourcetype="Biotic" covariate="7777">7777</value>
+      <value covariatesourcetype="Biotic" covariate="7780">7780</value>
+      <value covariatesourcetype="Biotic" covariate="7781">7781</value>
+      <value covariatesourcetype="Biotic" covariate="9016">9016</value>
+      <value covariatesourcetype="Biotic" covariate="9064">9064</value>
+      <value covariatesourcetype="Biotic" covariate="9116">9116</value>
+      <value covariatesourcetype="Biotic" covariate="9128">9128</value>
+      <value covariatesourcetype="Biotic" covariate="9204">9204</value>
+      <value covariatesourcetype="Biotic" covariate="9258">9258</value>
+      <value covariatesourcetype="Biotic" covariate="9318">9318</value>
+      <value covariatesourcetype="Biotic" covariate="9320">9320</value>
+      <value covariatesourcetype="Biotic" covariate="9326">9326</value>
+      <value covariatesourcetype="Biotic" covariate="9360">9360</value>
+      <value covariatesourcetype="Biotic" covariate="9361">9361</value>
+      <value covariatesourcetype="Biotic" covariate="9362">9362</value>
+      <value covariatesourcetype="Biotic" covariate="9366">9366</value>
+      <value covariatesourcetype="Biotic" covariate="9369">9369</value>
+      <value covariatesourcetype="Biotic" covariate="9386">9386</value>
+      <value covariatesourcetype="Biotic" covariate="9460">9460</value>
+      <value covariatesourcetype="Biotic" covariate="9476">9476</value>
+      <value covariatesourcetype="Biotic" covariate="9480">9480</value>
+      <value covariatesourcetype="Biotic" covariate="9523">9523</value>
+      <value covariatesourcetype="Biotic" covariate="9532">9532</value>
+      <value covariatesourcetype="Biotic" covariate="9563">9563</value>
+      <value covariatesourcetype="Biotic" covariate="9564">9564</value>
+      <value covariatesourcetype="Biotic" covariate="9565">9565</value>
+      <value covariatesourcetype="Biotic" covariate="9626">9626</value>
+      <value covariatesourcetype="Biotic" covariate="9628">9628</value>
+      <value covariatesourcetype="Biotic" covariate="9630">9630</value>
+      <value covariatesourcetype="Biotic" covariate="9631">9631</value>
+      <value covariatesourcetype="Biotic" covariate="9632">9632</value>
+      <value covariatesourcetype="Biotic" covariate="9635">9635</value>
+      <value covariatesourcetype="Biotic" covariate="9647">9647</value>
+      <value covariatesourcetype="Biotic" covariate="9650">9650</value>
+      <value covariatesourcetype="Biotic" covariate="9652">9652</value>
+      <value covariatesourcetype="Biotic" covariate="9655">9655</value>
+      <value covariatesourcetype="Biotic" covariate="9685">9685</value>
+      <value covariatesourcetype="Biotic" covariate="9686">9686</value>
+      <value covariatesourcetype="Biotic" covariate="9701">9701</value>
+      <value covariatesourcetype="Biotic" covariate="9722">9722</value>
+      <value covariatesourcetype="Biotic" covariate="9723">9723</value>
+      <value covariatesourcetype="Biotic" covariate="9724">9724</value>
+      <value covariatesourcetype="Biotic" covariate="9726">9726</value>
+      <value covariatesourcetype="Biotic" covariate="9727">9727</value>
+    </platformfactor>
+    <covparam>
+      <value covariatetable="gearfactor" parameter="CovariateType">Fixed</value>
+      <value covariatetable="platformfactor" parameter="CovariateType">Random</value>
+      <value covariatetable="spatial" parameter="CovariateType">Random</value>
+      <value covariatetable="spatial" parameter="UseStratumNeighbour">true</value>
+      <value covariatetable="temporal" parameter="CovariateType">Random</value>
+    </covparam>
+    <ageerror>
+      <probability readage="1" realage="1">0.7</probability>
+      <probability readage="1" realage="2">0.2</probability>
+      <probability readage="1" realage="3">0.1</probability>
+      <probability readage="2" realage="1">0.2</probability>
+      <probability readage="2" realage="2">0.5</probability>
+      <probability readage="2" realage="3">0.2</probability>
+      <probability readage="2" realage="4">0.1</probability>
+      <probability readage="3" realage="1">0.1</probability>
+      <probability readage="3" realage="2">0.2</probability>
+      <probability readage="3" realage="3">0.4</probability>
+      <probability readage="3" realage="4">0.2</probability>
+      <probability readage="3" realage="5">0.1</probability>
+      <probability readage="4" realage="2">0.1</probability>
+      <probability readage="4" realage="3">0.2</probability>
+      <probability readage="4" realage="4">0.4</probability>
+      <probability readage="4" realage="5">0.2</probability>
+      <probability readage="4" realage="6">0.1</probability>
+      <probability readage="5" realage="3">0.1</probability>
+      <probability readage="5" realage="4">0.2</probability>
+      <probability readage="5" realage="5">0.4</probability>
+      <probability readage="5" realage="6">0.2</probability>
+      <probability readage="5" realage="7">0.1</probability>
+      <probability readage="6" realage="4">0.1</probability>
+      <probability readage="6" realage="5">0.2</probability>
+      <probability readage="6" realage="6">0.4</probability>
+      <probability readage="6" realage="7">0.2</probability>
+      <probability readage="6" realage="8">0.1</probability>
+      <probability readage="7" realage="5">0.1</probability>
+      <probability readage="7" realage="6">0.2</probability>
+      <probability readage="7" realage="7">0.4</probability>
+      <probability readage="7" realage="8">0.2</probability>
+      <probability readage="7" realage="9">0.1</probability>
+      <probability readage="8" realage="6">0.1</probability>
+      <probability readage="8" realage="7">0.2</probability>
+      <probability readage="8" realage="8">0.4</probability>
+      <probability readage="8" realage="9">0.2</probability>
+      <probability readage="8" realage="10">0.1</probability>
+      <probability readage="9" realage="7">0.1</probability>
+      <probability readage="9" realage="8">0.2</probability>
+      <probability readage="9" realage="9">0.4</probability>
+      <probability readage="9" realage="10">0.2</probability>
+      <probability readage="9" realage="11">0.1</probability>
+      <probability readage="10" realage="8">0.1</probability>
+      <probability readage="10" realage="9">0.2</probability>
+      <probability readage="10" realage="10">0.4</probability>
+      <probability readage="10" realage="11">0.2</probability>
+      <probability readage="10" realage="12">0.1</probability>
+      <probability readage="11" realage="9">0.1</probability>
+      <probability readage="11" realage="10">0.2</probability>
+      <probability readage="11" realage="11">0.4</probability>
+      <probability readage="11" realage="12">0.2</probability>
+      <probability readage="11" realage="13">0.1</probability>
+      <probability readage="12" realage="10">0.1</probability>
+      <probability readage="12" realage="11">0.2</probability>
+      <probability readage="12" realage="12">0.4</probability>
+      <probability readage="12" realage="13">0.2</probability>
+      <probability readage="12" realage="14">0.1</probability>
+      <probability readage="13" realage="11">0.1</probability>
+      <probability readage="13" realage="12">0.2</probability>
+      <probability readage="13" realage="13">0.4</probability>
+      <probability readage="13" realage="14">0.2</probability>
+      <probability readage="13" realage="15">0.1</probability>
+      <probability readage="14" realage="12">0.1</probability>
+      <probability readage="14" realage="13">0.2</probability>
+      <probability readage="14" realage="14">0.4</probability>
+      <probability readage="14" realage="15">0.2</probability>
+      <probability readage="14" realage="16">0.1</probability>
+      <probability readage="15" realage="13">0.1</probability>
+      <probability readage="15" realage="14">0.2</probability>
+      <probability readage="15" realage="15">0.4</probability>
+      <probability readage="15" realage="16">0.2</probability>
+      <probability readage="15" realage="17">0.1</probability>
+      <probability readage="16" realage="14">0.1</probability>
+      <probability readage="16" realage="15">0.2</probability>
+      <probability readage="16" realage="16">0.4</probability>
+      <probability readage="16" realage="17">0.2</probability>
+      <probability readage="16" realage="18">0.1</probability>
+      <probability readage="17" realage="15">0.1</probability>
+      <probability readage="17" realage="16">0.2</probability>
+      <probability readage="17" realage="17">0.4</probability>
+      <probability readage="17" realage="18">0.2</probability>
+      <probability readage="17" realage="19">0.1</probability>
+      <probability readage="18" realage="16">0.1</probability>
+      <probability readage="18" realage="17">0.2</probability>
+      <probability readage="18" realage="18">0.4</probability>
+      <probability readage="18" realage="19">0.2</probability>
+      <probability readage="18" realage="20">0.1</probability>
+      <probability readage="19" realage="17">0.1</probability>
+      <probability readage="19" realage="18">0.2</probability>
+      <probability readage="19" realage="19">0.5</probability>
+      <probability readage="19" realage="20">0.2</probability>
+      <probability readage="20" realage="18">0.1</probability>
+      <probability readage="20" realage="19">0.2</probability>
+      <probability readage="20" realage="20">0.7</probability>
+    </ageerror>
+    <stratumneighbour>
+      <value variable="Northsea">Skageraak</value>
+      <value variable="Skageraak">Northsea</value>
+    </stratumneighbour>
+  </processdata>
+</project>
