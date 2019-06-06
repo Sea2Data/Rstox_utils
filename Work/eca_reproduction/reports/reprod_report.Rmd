@@ -10,12 +10,14 @@ knitr::opts_chunk$set(echo = TRUE)
 source("../compare_results_multiple_stox_runs.R")
 eca_results <- list()
 eca_results$kolmule2017 <- "../kolmule/eca_2017/KOLMULE2017.fit.2017_allgears_totalarea_season1234.caa.txt"
-eca_results$makrell2017<- "../makrell/eca_2017/MAKRELL2017.fit.2017_allgears_totalarea_season1234.caa.txt"
-eca_results$sei.nssk.2018<- "../sei_nssk/eca_2018/SEI2018_ns_v00.fit.2018_allgears_totalarea_season1234.caa.txt"
+eca_results$makrell2017 <- "../makrell/eca_2017/MAKRELL2017.fit.2017_allgears_totalarea_season1234.caa.txt"
+eca_results$sei.nssk.2018 <- "../sei_nssk/eca_2018/SEI2018_ns_v00.fit.2018_allgears_totalarea_season1234.caa.txt"
+eca_results$hyse.nssk.2018 <- "../hyse_nssk/eca_2018/HYSE2018_ns_v00.fit.2018_allgears_27fire_season1234.caa.txt"
 stox_results <- list()
 stox_results$kolmule2017 <- "../kolmule/stox_2017/results"
 stox_results$makrell2017 <- "../makrell/stox_2017/results"
 stox_results$sei.nssk.2018 <- "../sei_nssk/stox_2018/results/"
+stox_results$hyse.nssk.2018 <- "../hyse_nssk/stox_2018/results/"
 
 ```
 
@@ -136,7 +138,13 @@ ECA 3.x estimates were prepared by Åge Fotland who provided results for reprodu
 
 I did not check, but assume this discrepancy is due to difference in landings data versions from Fdir.
 
-Running this configuration triggered a bug in the RECA library. This has been reported to the Norwegian Computing Centre and Estimates will be revisited when a revised library is delivered.
+Running this configuration triggered a bug in the RECA library. This has been fixed by the Norwegian Computing Centre and Estimates will be revisited.
+
+```{r hyse means, fig.cap={"Estimates for mean catch in millions per age group of haddock in the North Sea and Skagerak 2018."}, echo=FALSE}
+
+comppar("hyse.nssk.2018", "mean")
+```
+
 
 ### Reproduction of cod NSSK 2018
 ECA 3.x estimates were prepared by Åge Fotland who provided results for reproduction analysis. This included ECA 3.x .param files. The ECA 3.x estimates used logbook-adjusted landings, which is not currently supported by StoX-Reca. Results were only provided decomposed on ICES area III (Skagerak) and IV (North Sea). I recall from conversation with Åge that coastal regions are excluded from these estimates, so I filtered landings by kysthav-code. I included coastal samples, still.
@@ -149,5 +157,4 @@ Parameters extracted from ECA 3.x .param files suggest the model was configured 
 
 This difference seems to be mostly due to different version of Fdir landing file. I summed all cod over a landings file with version date close in time to when Åge run the NSSK estimates. The total weight of cod in ICES are IV, not in coastal regions were 5197 kt.
 
-Running this configuration triggered a bug in the RECA library. This will be reported to the Norwegian Computing Centre and Estimates will be revisited when a revised library is delivered.
-
+Running this configuration triggered a bug in the RECA library. This has been fixed by the Norwegian Computing Centre and Estimates will be revisited.
