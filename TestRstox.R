@@ -138,6 +138,41 @@ system.time(automatedRstoxTest(copyFromServer=TRUE, process=c("run", "diff"), nl
 
 
 
+#################################
+########## Rstox_1.11.1 ##########
+#################################
+
+###### RESTART R/Rstudio!!! ######
+
+##### Install the latest develop version of Rstox: #####
+# Install the packages that Rstox depends on. Note that this updates all the specified packages to the latest (binary) version:
+dep.pck <- c("data.table", "ggplot2", "pbapply", "rgdal", "rgeos", "rJava", "sp", "XML")
+install.packages(dep.pck, repos="http://cran.us.r-project.org", type="binary")
+
+# Install Rstox:
+devtools::install_github("Sea2Data/Rstox", ref="develop")
+
+# Load Rstox:
+library(Rstox)
+library(RstoxBuild)
+
+# Install Reca on Windows (on Mac there are several steps required, see GitHub, "Rstox_utils/Work/mac_binaries/README.txt"):
+###devtools::install_github("NorskRegnesentral/Reca")
+# Install the Reca package you got via Wetransfer:
+# ecafolder <- file.path(getProjectPaths()$projectRoot, "eca_0.11")
+# install.packages(ecafolder, repos=NULL, type="source")
+
+
+##### Run the projects with Rstox 1.10.1 and diff with Rstox 1.9.4: #####
+#source("https://raw.githubusercontent.com/Sea2Data/Rstox_utils/master/Rstox_utils.R")
+#source('~/Code/Github/Rstox_utils/Rstox_utils/Rstox_utils.R', chdir = TRUE)
+
+
+# system.time(automatedRstoxTest(dir="~/workspace/stox/project/Automated_testing", copyFromServer=TRUE, process=c("run", "diff"), nlines=50))
+system.time(automatedRstoxTest(copyFromServer=TRUE, process=c("run", "diff"), nlines=50, skipError=TRUE))
+
+
+
 
 
 
