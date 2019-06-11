@@ -33,15 +33,7 @@ library(Rstox)
 library(RstoxBuild)
 
 # Install Reca on Windows (on Mac there are several steps required, see GitHub, "Rstox_utils/Work/mac_binaries/README.txt"):
-###devtools::install_github("NorskRegnesentral/Reca")
-# Install the Reca package you got via Wetransfer:
-# ecafolder <- file.path(getProjectPaths()$projectRoot, "eca_0.11")
-# install.packages(ecafolder, repos=NULL, type="source")
-
-
-##### Run the projects with Rstox 1.10.1 and diff with Rstox 1.9.4: #####
-source("https://raw.githubusercontent.com/Sea2Data/Rstox_utils/master/Rstox_utils.R")
-#source('~/Code/Github/Rstox_utils/Rstox_utils/Rstox_utils.R', chdir = TRUE)
+devtools::install_github("NorskRegnesentral/Reca")
 
 
 # system.time(automatedRstoxTest(dir="~/workspace/stox/project/Automated_testing", copyFromServer=TRUE, process=c("run", "diff"), nlines=50))
@@ -69,10 +61,7 @@ library(Rstox)
 library(RstoxBuild)
 
 # Install Reca on Windows (on Mac there are several steps required, see GitHub, "Rstox_utils/Work/mac_binaries/README.txt"):
-###devtools::install_github("NorskRegnesentral/Reca")
-# Install the Reca package you got via Wetransfer:
-# ecafolder <- file.path(getProjectPaths()$projectRoot, "eca_0.11")
-# install.packages(ecafolder, repos=NULL, type="source")
+devtools::install_github("NorskRegnesentral/Reca")
 
 
 # system.time(automatedRstoxTest(dir="~/workspace/stox/project/Automated_testing", copyFromServer=TRUE, process=c("run", "diff"), nlines=50))
