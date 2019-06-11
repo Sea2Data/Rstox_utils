@@ -1,0 +1,13 @@
+Set krasjer i prediksjon på mac. Vekstomdell satt til non-linear.
+
+set: mactest20190524_sild.rdata
+valgrind report: valgrind_report.txt
+
+output:
+HI-08998:ecat a5362$ /Library/Frameworks/R.framework/Resources/library/Reca/bin/caa_main_predict cfiles/
+Start C program: predicting catch-at-age
+Read input data from file: cfiles/common_par_predict_ascii
+Read input data from file: cfiles/data_catch
+Read input data from file: cfiles/dist_cell
+predict: Open /Users/a5362/temp/ecat/resfiles/fit_mcmc1 for reading age and lga parameters
+Segmentation fault: 11

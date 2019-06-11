@@ -1,7 +1,14 @@
 eca_results <- list()
+
 eca_results$kolmule2017 <- "./kolmule/eca_2017/KOLMULE2017.fit.2017_allgears_totalarea_season1234.caa.txt"
+eca_results$makrell2017<- "./makrell/eca_2017/MAKRELL2017.fit.2017_allgears_totalarea_season1234.caa.txt"
+eca_results$sei.nssk.2018<- "./sei_nssk/eca_2018/SEI2018_ns_v00.fit.2018_allgears_totalarea_season1234.caa.txt"
+eca_results$hyse.nssk.2018 <- "./hyse_nssk/eca_2018/HYSE2018_ns_v00.fit.2018_allgears_27fire_season1234.caa.txt"
 stox_results <- list()
 stox_results$kolmule2017 <- "./kolmule/stox_2017/results"
+stox_results$makrell2017 <- "./makrell/stox_2017/results"
+stox_results$sei.nssk.2018 <- "./sei_nssk/stox_2018/results/"
+stox_results$hyse.nssk.2018 <- "./hyse_nssk/stox_2018/results/"
 
 parse_eca <- function(report){
   return(read.csv(report, sep="\t", header=T, stringsAsFactors = F, strip.white = T))
@@ -60,6 +67,7 @@ compareCaa <- function(){
   }
   
   for (n in names(eca_results)){
+    print(n)
     comppar(n, "mean")
     comppar(n, "sd")
   }
