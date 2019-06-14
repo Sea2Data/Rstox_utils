@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project template="" rstoxversion="1.11.1" xmlns="http://www.imr.no/formats/stox/v1" lastmodified="23/05/19 19:41" rversion="3.5.0" stoxversion="2.7" resourceversion="1.87">
+<project template="" rstoxversion="1.11.1" xmlns="http://www.imr.no/formats/stox/v1" lastmodified="13/06/19 13:07" rversion="3.5.0" stoxversion="2.7" resourceversion="1.87">
   <model name="baseline">
     <process name="ReadProcessData">
       <function>ReadProcessData</function>
@@ -44,7 +44,7 @@
       <breakingui>false</breakingui>
       <fileoutput>true</fileoutput>
       <parameter name="BioticData">Process(ReadBioticXML)</parameter>
-      <parameter name="FishStationExpr">fs.hasCatch('sei')  &amp;&amp; missiontype =~['1','2', '3','9','10','11','12','13'] &amp;&amp; system==2 &amp;&amp; area=~['8','28','42','41','40','9'] &amp;&amp; startdate!=null</parameter>
+      <parameter name="FishStationExpr">fs.hasCatch('sei')  &amp;&amp; missiontype =~['1','2','3','9','10','11','12','13'] &amp;&amp; system==2 &amp;&amp; area=~['8','28','42','41','40', '9', '43','47'] &amp;&amp; startdate!=null</parameter>
       <parameter name="CatchExpr">species =='164727'</parameter>
       <parameter name="SampleExpr">lengthsampleweight&gt;0</parameter>
       <parameter name="IndExpr">age==null || age&gt;1</parameter>
@@ -76,7 +76,7 @@
       <breakingui>false</breakingui>
       <fileoutput>true</fileoutput>
       <parameter name="LandingData">Process(ReadLandingXML)</parameter>
-      <parameter name="LandingExpr">rundvekt&gt;0  &amp;&amp; fiskernasjonalitetkode=='NOR' &amp;&amp; artkode=~['1032'] &amp;&amp; hovedomraadekode =~['08','28','42','41','40', '09']</parameter>
+      <parameter name="LandingExpr">rundvekt&gt;0  &amp;&amp; fiskernasjonalitetkode=='NOR' &amp;&amp; artkode=~['1032'] &amp;&amp; hovedomraadekode =~['08','28','42','41','40', '09', '43','47']</parameter>
       <output>LandingData</output>
     </process>
     <process name="ApplyPosToLanding">

@@ -13,11 +13,13 @@ eca_results$kolmule2017 <- "../kolmule/eca_2017/KOLMULE2017.fit.2017_allgears_to
 eca_results$makrell2017 <- "../makrell/eca_2017/MAKRELL2017.fit.2017_allgears_totalarea_season1234.caa.txt"
 eca_results$sei.nssk.2018 <- "../sei_nssk/eca_2018/SEI2018_ns_v00.fit.2018_allgears_totalarea_season1234.caa.txt"
 eca_results$hyse.nssk.2018 <- "../hyse_nssk/eca_2018/HYSE2018_ns_v00.fit.2018_allgears_27fire_season1234.caa.txt"
+eca_results$torsk.nssk.2018 <- "../torsk_nssk/eca_2018/TORSK2018_ns_v00.fit.2018_allgears_IV_season1234.caa.txt"
 stox_results <- list()
 stox_results$kolmule2017 <- "../kolmule/stox_2017/results"
 stox_results$makrell2017 <- "../makrell/stox_2017/results"
 stox_results$sei.nssk.2018 <- "../sei_nssk/stox_2018/results/"
 stox_results$hyse.nssk.2018 <- "../hyse_nssk/stox_2018/results/"
+stox_results$torsk.nssk.2018 <- "../torsk_nssk/stox_2018/results/"
 
 ```
 
@@ -116,9 +118,8 @@ Running this configuration triggered a bug in the RECA library. This has been re
 ECA 3.x estimates were prepared by Åge Fotland who provided results for reproduction analysis. This included ECA 3.x .param files. The ECA 3.x estimates used logbook-adjusted landings and had weight-length model configured with different geargroupings than the age-length model, neither of which is currently supported by StoX-Reca. Parameters extracted from ECA 3.x .param files suggest the model was configured with season and gear as fixed effects, but I did not have enough aged samples in the data compiled for reproduction to configure it like that. I configured the temporal covariate as a random effect in stead.
 
 * Total catch used in ECA 3.x estimate was 40 kt
-* Total catch used in StoX-Reca estimate was 34 kt 
+* Total catch used in StoX-Reca estimate was 40 kt 
 
-The discrepancy seem to be due to difference in landings data versions from Fdir, and not logbook-adjustment of catches. Estimates will be revisited with converted data later. But for now we can conclude that we se somewhat higher values for some age groups for the ECA 3.x estimate for both mean and standard deviation. This is expected from the differences in the landing total.
 
 ```{r sei means, fig.cap={"Estimates for mean catch in millions per age group of saithe in the North Sea and Skagerak 2018."}, echo=FALSE}
 
@@ -131,12 +132,12 @@ comppar("sei.nssk.2018", "sd")
 ```
 
 ### Reproduction of haddock NSSK 2018
-ECA 3.x estimates were prepared by Åge Fotland who provided results for reproduction analysis. This included ECA 3.x .param files. The ECA 3.x estimates used logbook-adjusted landings, which is not currently supported by StoX-Reca. Parameters extracted from ECA 3.x .param files suggest the model was configured with season and gear as fixed effects, but I did not have enough aged samples in the data compiled for reproduction to configure it like that. I configured the temporal covariate as a random effect in stead.
+ECA 3.x estimates were prepared by Åge Fotland who provided results for reproduction analysis. This included ECA 3.x .param files. The ECA 3.x estimates used logbook-adjusted landings, which is not currently supported by StoX-Reca. Parameters extracted from ECA 3.x .param files suggest the model was configured with season and gear as fixed effects, but I did not have enough aged samples in the data compiled for reproduction to configure it like that. I configured the temporal covariate as a random effect in stead. The spatial covariate had only one value, such covariates are implicitly dropped by ECA 3.x, so I configured the StoX-Reca esitmate without the spatial covariate.
 
 * Total catch used in ECA 3.x estimate was 1399 t
-* Total catch used in StoX-Reca estimate was 1198 t
+* Total catch used in StoX-Reca estimate was 1433 t
 
-I did not check, but assume this discrepancy is due to difference in landings data versions from Fdir.
+This discrepancy is probably due to the use of logbook-adjusted landings in ECA 3.x
 
 Running this configuration triggered a bug in the RECA library. This has been fixed by the Norwegian Computing Centre and Estimates will be revisited.
 
@@ -147,14 +148,18 @@ comppar("hyse.nssk.2018", "mean")
 
 
 ### Reproduction of cod NSSK 2018
-ECA 3.x estimates were prepared by Åge Fotland who provided results for reproduction analysis. This included ECA 3.x .param files. The ECA 3.x estimates used logbook-adjusted landings, which is not currently supported by StoX-Reca. Results were only provided decomposed on ICES area III (Skagerak) and IV (North Sea). I recall from conversation with Åge that coastal regions are excluded from these estimates, so I filtered landings by kysthav-code. I included coastal samples, still.
+ECA 3.x estimates were prepared by Åge Fotland who provided results for reproduction analysis. This included ECA 3.x .param files. The ECA 3.x estimates used logbook-adjusted landings, which is not currently supported by StoX-Reca. Results were only provided decomposed on ICES area III (Skagerak) and IV (North Sea). I recall from conversation with Åge that coastal regions are excluded from these estimates, so I filtered landings by kysthav-code. I included coastal samples, still. 
 
 #### ICES area IV
-Parameters extracted from ECA 3.x .param files suggest the model was configured with season and gear as fixed effects, but I did not have enough samples with weight in the data compiled for reproduction to configure it like that. I configured the temporal covariate as a random effect in stead.
+Parameters extracted from ECA 3.x .param files suggest the model was configured with season and gear as fixed effects, but I did not have enough samples with weight in the data compiled for reproduction to configure it like that. I configured the temporal covariate as a random effect in stead. I run the analysis for ICES area III and IV separately, rather than decoposing the report. In that case, the spatial covariate had only one value, such covariates are implicitly dropped by ECA 3.x, so I configured the StoX-Reca esitmate without the spatial covariate.
 
 * Total catch used in ECA 3.x estimate was 5133 t
-* Total catch used in StoX-Reca estimate was 4456 t
+* Total catch used in StoX-Reca estimate was 5197 t
 
-This difference seems to be mostly due to different version of Fdir landing file. I summed all cod over a landings file with version date close in time to when Åge run the NSSK estimates. The total weight of cod in ICES are IV, not in coastal regions were 5197 kt.
+This discrepancy is probably due to the use of logbook-adjusted landings in ECA 3.x
 
-Running this configuration triggered a bug in the RECA library. This has been fixed by the Norwegian Computing Centre and Estimates will be revisited.
+```{r torsk means, fig.cap={"Estimates for mean catch in millions per age group of cod in the North Sea 2018."}, echo=FALSE}
+
+comppar("torsk.nssk.2018", "mean")
+```
+
