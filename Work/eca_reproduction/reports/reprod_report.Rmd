@@ -37,27 +37,27 @@ The first StoX-Reca version has been delivered and has been tested during the sp
 Some decisions was made during the StoX-Reca implementation that excludes certain model and date configurations possible with the ECA 3.x. 
 
 * It has not yet been implemented a procedure for adjusting landings data with logbook records. A procedure that was supported with separate scripts for ECA 3.x. Adding this to the bookeeping necessary for versioning data is an extra burden, and the value added to the estimates has not been analysed.
-* Grouping of covariate values is not supported in StoX-Reca, rather it allows for redefinig variables to differen resolutions. This is more flexible and can in most cases this is can mimic grouping
-* Configuring covariates differently for the underlying ECA models ("length given age" and "weight given lengt") is not supported in StoX-Reca, as this requires grouping covariate values.
+* Grouping of covariate values is not supported in StoX-Reca, rather it allows for redefinig variables to differen resolutions. This is more flexible and can in most cases this can mimic grouping.
+* Configuring covariates differently for the underlying ECA models ("length given age" and "weight given length") is not supported in StoX-Reca, as this requires grouping covariate values.
 * Not all filters that are supported by ECA 3.x are implemented in StoX-Reca. Notably filtering for outliers in the age-length scatter. We have decided we want to flag these as data errors in stead, to be filtered out explicitly or cleaned up in the database.
 
 ## Usability testing
 Configuring estimates for reproduction has revealed some usability issues that should be considered for further StoX-Reca development.
 
 * The landings format readable by StoX is still only provided via API calls. A user interface in datasetexplorer should be considered.
-* At times I found the landings data to be outdated, not reflecting recent corrections from FDIR. A procedure for updating the landings API should be defined.
+* At times I found the landings data to be outdated, not reflecting recent corrections from FDIR. A procedure for regularly updating the landings API should be defined.
 * Grouping of areas are common in the configurations I have attempted to reproduce. Currently this require generation of new stratafiles and neighbourmatrices in StoX, which is cumbersome for users. A user interface for redefining spatial covariate and neighbour-matrices should be considered. Alternativelty scripts for generating regrouping of common strata systems could be provided
 * Some confiugrations use grouping of seasons. Defining odd temporal configurations are not straightforward in StoX, and I had to resort to manipulating the process-file, in order define temporal coviarates spanning several quarters.
 * Configuration of reports. It is common to configure ECA to decompose estimates on other covariates then those configured for the model (e.g. configure model for F.dir-areas, and reports for ICES areas). Stox-processes to support that should be considered.
 * ECA 3.x reports both total catch and the catch used for estimation. While these are usually the same, filtering out small fractions that precludes preffered model configurations can be desirable. In Stox-Reca this is currently cumbersome to facilitate.
-* Estimates for specific stocks often require filtering data by area. If only position is available, this is best done after stratum is assigned. But this requires filtering on variables added to the data in StoX, which I think is not supported.
+* Estimates for specific stocks often require filtering data by area. If only positions are available, this is best done after stratum is assigned. But this requires filtering on variables added to the data in StoX, which I think is not supported.
 * At the end of the prepareRECA process, data checks are performed and reports on potential data issues are compiled. Currently prepareRECA halts on some of these data issues, which precludes the reports from being compiled. Extracting data issue-reporting to a process run prior to prepareRECA should be considered.
 * Bug in StoX (STOX-218). Workaround implemented in prepareRECA, but this does not support non-seasonal temporal covaraite.
-* Traceplots for inspecting stabiloity of estimates should be considered. Such plots are produced by ECA 3.x.
+* Traceplots for inspecting stability of estimates should be considered. Such plots are produced by ECA 3.x.
 * Reports on data issues complies report for common covariates, without checking if these are configured. Consider if this can be avoided.
 
 ## Reproduction of ECA 3.x results
-As part of assuring the quality of the StoX-Reca implementations, I have attempted to configure StoX-Reca projects that mimic ECA 3.x estimates that has been used for advice. I have yet to identify all data and all model configurations from previous ECA 3.x runs, and it may be that this is not possible. In cases where I have ECA .param files I have near complete description of model configuration, but exactly identifying the data seems impossible. Re-running estimates with both implementations can possibly provide additional assurance that we are comparing like with like. ECA estimates are however dependent not only on model configuration and data, but also on random parameter exploration in the Monte Carlo simulations. Difference i estimated parameters that are smaller than random differences in parameter exploration does not affect valid interpretations of the results and I will therefore compare ECA 3.x estimates to multiple StoX-Reca estimates, egnerated with different random seed, and be content with the reproduction if the ECA 3.x estimate does not seem very unlikely given the distribution of StoX-Reca estimates. I have not formulated a formal criteria for reproduction, but will conclude based on inspection of plots. This validation criteria may pass for models that are not configured exactly the same way, which is useful for evaluating whether ECA 3.x feautres not yet implemented needs to be added to StoX-Reca. The validation apporach does however rest upon the assumption that the implementations sensitivity to random seed is acceptable for adaptation of StoX-Reca. This would follow from acceptance of ECA 3.x if ECA 3.x display similar sensitivity. We should inquire with the Norwegian Computing Centre if they have performed that kind of analysis.
+As part of assuring the quality of the StoX-Reca implementations, I have attempted to configure StoX-Reca projects that mimic ECA 3.x estimates that has been used for advice. I have yet to identify all data and all model configurations from previous ECA 3.x runs. In cases where I have ECA .param files I have near complete description of model configuration, but exactly identifying the data seems impossible. I have in these cases had to tinker with data selection to demonstrate that a reasonable data selection that approximately reproduces previous results can be found. This tinkering boils down to filtering on mission types and sample types. Selection of specific stations have only been done in order to match a complete listing of serial numbers from the ECA 3.x run, when such are available. ECA estimates are however dependent not only on model configuration and data, but also on random parameter exploration in the Monte Carlo simulations. Difference in estimated parameters that are smaller than random differences in parameter exploration does not affect valid interpretations of the results and I will therefore compare ECA 3.x estimates to multiple StoX-Reca estimates, generated with different random seed, and be content with the reproduction if the ECA 3.x estimate does not seem very unlikely given the distribution of StoX-Reca estimates. I have not formulated a formal criteria for reproduction, but will conclude based on inspection of plots. This validation criteria may pass for models that are not configured exactly the same way, which is useful for evaluating whether ECA 3.x feautres not yet implemented needs to be added to StoX-Reca. The validation apporach does however rest upon the assumption that the implementations sensitivity to random seed is acceptable for adaptation of StoX-Reca. This would follow from acceptance of ECA 3.x if ECA 3.x display similar sensitivity. We should inquire with the Norwegian Computing Centre if they have performed that kind of analysis.
 
 Using the criteria outlned above, I aim to reproduce the following estimates:
 
@@ -65,10 +65,11 @@ Using the criteria outlned above, I aim to reproduce the following estimates:
 * mackerel 2017: Preliminary
 * Norwegian Spring Spawning Herring 2017:
 * NSSK saithe 2018: Preliminary
-* NSSK cod 2018:
 * NSSK haddock 2018: Preliminary
+* NSSK cod 2018:
 
-I will just give brief descriptions of configurations below. Consult StoX process files for details.
+
+I will just give brief descriptions of configurations below. Consult StoX project files for details.
 
 ### Reproduction of blue whiting 2017
 ECA 3.x estimate from 2017. Model was configured and run by Sondre Aanes and results provided by Are Salthaug. ECA 3.x .param files was not kept. Based on Sondres notes, I have configured the model with only temporal (season) and platform (boat) as covariates, and verified that station selection (serial numbers) was identical between the two estimates. Quarter 2-4 was collapsed to one value. I used samples from HRF (High-seas reference fleet) and commercial samples, and ran 1500 burnin iterations and 500 sampling iterations, with the log-linear growth model.
@@ -145,6 +146,10 @@ Running this configuration triggered a bug in the RECA library. This has been fi
 
 comppar("hyse.nssk.2018", "mean")
 ```
+```{r hyse sd, fig.cap={"standard deviation of marginal posterior distribution of catch in millions per age group of haddock in the North Sea and Skagerak 2018."}, echo=FALSE}
+
+comppar("sei.nssk.2018", "sd")
+```
 
 
 ### Reproduction of cod NSSK 2018
@@ -163,3 +168,7 @@ This discrepancy is probably due to the use of logbook-adjusted landings in ECA 
 comppar("torsk.nssk.2018", "mean")
 ```
 
+```{r torsk sd, fig.cap={"standard deviation of marginal posterior distribution of catch in millions per age group of cod in ICES Sub Area 4."}, echo=FALSE}
+
+comppar("torsk.nssk.2018", "sd")
+```
