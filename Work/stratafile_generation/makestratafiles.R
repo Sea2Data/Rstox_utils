@@ -15,7 +15,7 @@ convertToWKT(kolmule2017, file.path("output", "RECA_kolmule_2017_stratafile.txt"
 #
 makrellmapping <- list()
 makrellmapping[["nord"]] <- c("00", "04", "05", "06", "07", "12", "27", "30", "34", "36", "37", "38", "39")
-makrellmapping[["sor"]] <- c("08", "09", "28", "41", "42", "43", "48", "57")
+makrellmapping[["sor"]] <- c("08", "09", "28", "41", "42", "43", "47", "48", "57", "58")
 makrell2018 <- merge_polygons(homr_tom2017, makrellmapping, "HAVOMR")
 convertToWKT(makrell2018, file.path("output", "RECA_makrell_2018_stratafile.txt"), "HAVOMR")
 makrell2018_neighbours <- extract_neighbours(makrell2018, namecol="HAVOMR")
