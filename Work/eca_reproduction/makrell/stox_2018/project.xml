@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project template="" rstoxversion="1.11.1" xmlns="http://www.imr.no/formats/stox/v1" lastmodified="18/06/19 21:51" rversion="3.5.0" stoxversion="2.7" resourceversion="1.87">
+<project template="" rstoxversion="1.11.1" xmlns="http://www.imr.no/formats/stox/v1" lastmodified="18/06/19 22:29" rversion="3.5.0" stoxversion="2.7" resourceversion="1.87">
   <model name="baseline">
     <process name="ReadProcessData">
       <function>ReadProcessData</function>
@@ -34,7 +34,7 @@
       <breakingui>false</breakingui>
       <fileoutput>true</fileoutput>
       <parameter name="BioticData">Process(ReadBioticXML)</parameter>
-      <parameter name="FishStationExpr">fs.hasCatch('makrell') &amp;&amp; fs.getCount('makrell')&gt;9 &amp;&amp; missiontype =~['1','2'] &amp;&amp; area!='61' &amp;&amp; serialno!~[89691, 89700, 89702, 89709, 89733, 89735, 89744, 89751, 89798, 89937, 89946, 89955, 89967, 89983, 89992, 89999, 90008, 90014, 90022, 87258, 87270, 87453, 87460, 87501, 87510, 87546, 87571, 91737, 91755, 38034, 38035, 39987, 39988, 39990, 39994, 39996, 39997, 39999, 38019, 38008, 38016, 38011, 38065, 38106, 38103, 38092, 38006, 38004, 38100, 38074, 38105, 38093, 38095, 38085, 38094, 38001, 38020, 38003, 38005, 38053, 38021, 38014, 38081, 38096, 38064, 38082, 38086, 38002, 38012, 38015, 38017, 38010, 38013, 38009, 38007]</parameter>
+      <parameter name="FishStationExpr">fs.hasCatch('makrell') &amp;&amp; fs.getCount('makrell')&gt;9 &amp;&amp; missiontype =~['1','2'] &amp;&amp; area!=['4','27','38','39','48'] &amp;&amp; serialno!~[89691, 89700, 89702, 89709, 89733, 89735, 89744, 89751, 89798, 89937, 89946, 89955, 89967, 89983, 89992, 89999, 90008, 90014, 90022, 87258, 87270, 87453, 87460, 87501, 87510, 87546, 87571, 91737, 91755, 38034, 38035, 39987, 39988, 39990, 39994, 39996, 39997, 39999, 38019, 38008, 38016, 38011, 38065, 38106, 38103, 38092, 38006, 38004, 38100, 38074, 38105, 38093, 38095, 38085, 38094, 38001, 38020, 38003, 38005, 38053, 38021, 38014, 38081, 38096, 38064, 38082, 38086, 38002, 38012, 38015, 38017, 38010, 38013, 38009, 38007]</parameter>
       <parameter name="CatchExpr">species == '172414'</parameter>
       <parameter name="SampleExpr">weight&gt;0  &amp;&amp; lengthsamplecount&gt;9 &amp;&amp; sampletype =~['20', '23']</parameter>
       <output>BioticData</output>

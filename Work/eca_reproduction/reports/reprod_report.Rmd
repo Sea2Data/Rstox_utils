@@ -49,6 +49,7 @@ Configuring estimates for reproduction has revealed some usability issues that s
 * Grouping of areas are common in the configurations I have attempted to reproduce. Currently this require generation of new stratafiles and neighbourmatrices in StoX, which is cumbersome for users. A user interface for redefining spatial covariate and neighbour-matrices should be considered. Alternativelty scripts for generating regrouping of common strata systems could be provided
 * Some confiugrations use grouping of seasons. Defining odd temporal configurations are not straightforward in StoX, and I had to resort to manipulating the process-file, in order define temporal coviarates spanning several quarters.
 * Configuration of reports. It is common to configure ECA to decompose estimates on other covariates then those configured for the model (e.g. configure model for F.dir-areas, and reports for ICES areas). Stox-processes to support that should be considered.
+* ECA 3.x supports filtering data based on whether there are aged fish in hauls. StoX only supports this via the field sampletype, which is sensitive to punching errors and to whether all ages have been read at the time of analysis.
 * ECA 3.x reports both total catch and the catch used for estimation. While these are usually the same, filtering out small fractions that precludes preffered model configurations can be desirable. In Stox-Reca this is currently cumbersome to facilitate.
 * Estimates for specific stocks often require filtering data by area. If only positions are available, this is best done after stratum is assigned. But this requires filtering on variables added to the data in StoX, which I think is not supported.
 * At the end of the prepareRECA process, data checks are performed and reports on potential data issues are compiled. Currently prepareRECA halts on some of these data issues, which precludes the reports from being compiled. Extracting data issue-reporting to a process run prior to prepareRECA should be considered.
@@ -62,7 +63,7 @@ As part of assuring the quality of the StoX-Reca implementations, I have attempt
 Using the criteria outlned above, I aim to reproduce the following estimates:
 
 * blue whiting 2017: Done
-* mackerel 2017: Preliminary
+* mackerel 2018: Preliminary
 * Norwegian Spring Spawning Herring 2017:
 * NSSK saithe 2018: Preliminary
 * NSSK haddock 2018: Preliminary
@@ -89,17 +90,16 @@ comppar("kolmule2017", "mean")
 comppar("kolmule2017", "sd")
 ```
 
-### Reproduction of mackerel 2017
-ECA 3.x estimate from 2017. Model was configured and run by Sondre Aanes and results provided by Are Salthaug. ECA 3.x .param files was not kept. Traceplot from ECA 3.x estimate indicate that analysed MCMC-samples were not stable, and estimated numbers does not seem consistent with reasonable individual weights for these total landings. I may have been provided the wrong files. Based on Sondres notes, I have filtered an exact serialnumber list, modelled the temporal covariate as random, and run with 1000 burnin iterations and 500 sampling iterations, using log-linear growth model. As practically all landings were caught with seine, I have run without gear as covariate. 
+### Reproduction of mackerel 2018
+ECA 3.x estimate from 2018. Model was configured and run by Sondre Aanes who provided results for reproduction analysis. ECA 3.x .param files was not kept, but a detailed log of data corrections done by ECA 3.x was provided. However, 1964 individuals were listed as removed for 'unkown reason'. I could not find a way to identify these. Total numver of individuals in StoX-Reca run was ~4K, total number in ECA 3.x sample overview was ~2K.
 
-* Total catch used in ECA 3.x estimate was 222 kt
-* Total catch used in StoX-Reca estimae was 222 kt
+* Total catch used in ECA 3.x estimate was 187 kt
+* Total catch used in StoX-Reca estimae was 187 kt
 
-The ECA 3.x estimates does not seem to be consistent with the Stox-Reca estimates. Before concluding I think it is warranted to investigate the apparent issue with the ECA 3.x estimate.
 
-```{r makrell means, fig.cap={"Estimates for mean catch in millions per age group of mackerel in 2017."}, echo=FALSE}
+```{r makrell means, fig.cap={"Estimates for mean catch in millions per age group of mackerel in 2018."}, echo=FALSE}
 
-comppar("makrell2017", "mean")
+comppar("makrell2018", "mean")
 ```
 
 ```{r makrell sd, fig.cap={"standard deviation of marginal posterior distribution of catch in millions per age group of mackerel in 2017."}, echo=FALSE}
