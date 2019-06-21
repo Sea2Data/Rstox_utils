@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project template="" rstoxversion="1.11.1" xmlns="http://www.imr.no/formats/stox/v1" lastmodified="18/06/19 22:29" rversion="3.5.0" stoxversion="2.7" resourceversion="1.87">
+<project template="" rstoxversion="1.11.1" xmlns="http://www.imr.no/formats/stox/v1" lastmodified="21/06/19 12:10" rversion="3.5.0" stoxversion="2.7" resourceversion="1.87">
   <model name="baseline">
     <process name="ReadProcessData">
       <function>ReadProcessData</function>
@@ -169,7 +169,7 @@
     </process>
     <process name="DefinePlatformBiotic">
       <function>DefinePlatform</function>
-      <enabled>true</enabled>
+      <enabled>false</enabled>
       <respondingui>true</respondingui>
       <breakingui>false</breakingui>
       <parameter name="ProcessData">Process(ReadProcessData)</parameter>
@@ -368,7 +368,6 @@
       <value covariatesourcetype="Biotic" covariate="9539">9539</value>
     </platformfactor>
     <covparam>
-      <value covariatetable="platformfactor" parameter="CovariateType">Random</value>
       <value covariatetable="spatial" parameter="CovariateType">Random</value>
       <value covariatetable="spatial" parameter="UseStratumNeighbour">true</value>
       <value covariatetable="temporal" parameter="CovariateType">Random</value>

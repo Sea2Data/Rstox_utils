@@ -10,13 +10,13 @@ knitr::opts_chunk$set(echo = TRUE)
 source("../compare_results_multiple_stox_runs.R")
 eca_results <- list()
 eca_results$kolmule2017 <- "../kolmule/eca_2017/KOLMULE2017.fit.2017_allgears_totalarea_season1234.caa.txt"
-eca_results$makrell2017 <- "../makrell/eca_2017/MAKRELL2017.fit.2017_allgears_totalarea_season1234.caa.txt"
+eca_results$makrell2018 <- "../makrell/eca_2018/MAKRELL2018.fit.2018_allgears_totalarea_season1234.caa.txt"
 eca_results$sei.nssk.2018 <- "../sei_nssk/eca_2018/SEI2018_ns_v00.fit.2018_allgears_totalarea_season1234.caa.txt"
 eca_results$hyse.nssk.2018 <- "../hyse_nssk/eca_2018/HYSE2018_ns_v00.fit.2018_allgears_27fire_season1234.caa.txt"
 eca_results$torsk.nssk.2018 <- "../torsk_nssk/eca_2018/TORSK2018_ns_v00.fit.2018_allgears_IV_season1234.caa.txt"
 stox_results <- list()
 stox_results$kolmule2017 <- "../kolmule/stox_2017/results"
-stox_results$makrell2017 <- "../makrell/stox_2017/results"
+stox_results$makrell2018 <- "../makrell/stox_2018/results"
 stox_results$sei.nssk.2018 <- "../sei_nssk/stox_2018/results/"
 stox_results$hyse.nssk.2018 <- "../hyse_nssk/stox_2018/results/"
 stox_results$torsk.nssk.2018 <- "../torsk_nssk/stox_2018/results/"
@@ -47,13 +47,12 @@ Configuring estimates for reproduction has revealed some usability issues that s
 * The landings format readable by StoX is still only provided via API calls. A user interface in datasetexplorer should be considered.
 * At times I found the landings data to be outdated, not reflecting recent corrections from FDIR. A procedure for regularly updating the landings API should be defined.
 * Grouping of areas are common in the configurations I have attempted to reproduce. Currently this require generation of new stratafiles and neighbourmatrices in StoX, which is cumbersome for users. A user interface for redefining spatial covariate and neighbour-matrices should be considered. Alternativelty scripts for generating regrouping of common strata systems could be provided
-* Some confiugrations use grouping of seasons. Defining odd temporal configurations are not straightforward in StoX, and I had to resort to manipulating the process-file, in order define temporal coviarates spanning several quarters.
+* Some confiugrations use grouping of seasons. The way to do this is not documented in stox. 
 * Configuration of reports. It is common to configure ECA to decompose estimates on other covariates then those configured for the model (e.g. configure model for F.dir-areas, and reports for ICES areas). Stox-processes to support that should be considered.
 * ECA 3.x supports filtering data based on whether there are aged fish in hauls. StoX only supports this via the field sampletype, which is sensitive to punching errors and to whether all ages have been read at the time of analysis.
 * ECA 3.x reports both total catch and the catch used for estimation. While these are usually the same, filtering out small fractions that precludes preffered model configurations can be desirable. In Stox-Reca this is currently cumbersome to facilitate.
 * Estimates for specific stocks often require filtering data by area. If only positions are available, this is best done after stratum is assigned. But this requires filtering on variables added to the data in StoX, which I think is not supported.
 * At the end of the prepareRECA process, data checks are performed and reports on potential data issues are compiled. Currently prepareRECA halts on some of these data issues, which precludes the reports from being compiled. Extracting data issue-reporting to a process run prior to prepareRECA should be considered.
-* Bug in StoX (STOX-218). Workaround implemented in prepareRECA, but this does not support non-seasonal temporal covaraite.
 * Traceplots for inspecting stability of estimates should be considered. Such plots are produced by ECA 3.x.
 * Reports on data issues complies report for common covariates, without checking if these are configured. Consider if this can be avoided.
 
@@ -91,7 +90,9 @@ comppar("kolmule2017", "sd")
 ```
 
 ### Reproduction of mackerel 2018
-ECA 3.x estimate from 2018. Model was configured and run by Sondre Aanes who provided results for reproduction analysis. ECA 3.x .param files was not kept, but a detailed log of data corrections done by ECA 3.x was provided. However, 1964 individuals were listed as removed for 'unkown reason'. I could not find a way to identify these. Total numver of individuals in StoX-Reca run was ~4K, total number in ECA 3.x sample overview was ~2K.
+ECA 3.x estimate from 2018. Model was configured and run by Sondre Aanes who provided results for reproduction analysis. ECA 3.x .param files was not kept, but a detailed log of data corrections done by ECA 3.x was provided. However, 1964 individuals were listed as removed for 'unkown reason'. I could not find a way to identify these. Total number of individuals in StoX-Reca run was ~4K, total number in ECA 3.x sample overview was ~2K.
+
+In order to get a closer reproduction, I ran the estimate without boat effect (platform as a random effect). This is not what was done in the estimate that Sondre sent, and the reasons for this discrepancy should be identified.
 
 * Total catch used in ECA 3.x estimate was 187 kt
 * Total catch used in StoX-Reca estimae was 187 kt
@@ -102,9 +103,9 @@ ECA 3.x estimate from 2018. Model was configured and run by Sondre Aanes who pro
 comppar("makrell2018", "mean")
 ```
 
-```{r makrell sd, fig.cap={"standard deviation of marginal posterior distribution of catch in millions per age group of mackerel in 2017."}, echo=FALSE}
+```{r makrell sd, fig.cap={"standard deviation of marginal posterior distribution of catch in millions per age group of mackerel in 2018."}, echo=FALSE}
 
-comppar("makrell2017", "sd")
+comppar("makrell2018", "sd")
 ```
 
 ### Reproduction of Norwegian Spring Spawning herring 2017
