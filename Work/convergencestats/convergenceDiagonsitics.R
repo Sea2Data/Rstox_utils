@@ -29,9 +29,9 @@ GlobalParameters <- projectdata$prepareRECA$GlobalParameters
 
 # setting parameters needed for running ECA. Running only a few samples for testing purposes.
 GlobalParameters$caa.burnin <- 0
-GlobalParameters$burnin <- 2000
-GlobalParameters$nSamples <- 1000
-GlobalParameters$thin <- 1
+GlobalParameters$burnin <- 20000
+GlobalParameters$nSamples <- 5000
+GlobalParameters$thin <- 10
 GlobalParameters$fitfile <- "fit"
 GlobalParameters$predictfile <- "pred"
 GlobalParameters$lgamodel <- "log-linear"
@@ -257,23 +257,45 @@ result$Rhat <- as.numeric(as.character(result$Rhat))
 Above1.1 <- which(result$Rhat > 1.1)
 if (length(Above1.1)>=1)
 {
-  Most_problematic_Rhat_val <- sort(result$Rhat, decreasing =T)[1:min(9, length(Above1.1))]
-  Most_problematic_Rhat_loc <- order(result$Rhat, decreasing =T)[1:min(9, length(Above1.1))]
+  nn <- length(Above1.1)
+  Most_problematic_Rhat_val <- sort(result$Rhat, decreasing =T)[1:min(9, nn)]
+  Most_problematic_Rhat_loc <- order(result$Rhat, decreasing =T)[1:min(9, nn)]
   
   library(tidyr)
-  par(mfrow=c(3,3), oma=c(3,4,3,1), mar=c(1,1,3,1))
+  par(mfrow=c(ifelse(nn>6,3,ifelse(nn>2,2,1)),ifelse(nn>4,3,ifelse(nn>1,2,1))), oma=c(3,4,3,1), mar=c(1,1,3,1))
   for (ijk in Most_problematic_Rhat_loc)
   {
-    mclist <- mcmc.list(mcmc(fit[[as.character(result[ijk,1])]][[as.character(result[ijk,2])]][[as.character(result[ijk,3])]][[as.character(result[ijk,4])]][as.numeric(extract_numeric(result[ijk,6])),as.numeric(as.character(result[ijk,5])),]),
-                        mcmc(fit2[[as.character(result[ijk,1])]][[as.character(result[ijk,2])]][[as.character(result[ijk,3])]][[as.character(result[ijk,4])]][as.numeric(extract_numeric(result[ijk,6])),as.numeric(as.character(result[ijk,5])),]),
-                        mcmc(fit3[[as.character(result[ijk,1])]][[as.character(result[ijk,2])]][[as.character(result[ijk,3])]][[as.character(result[ijk,4])]][as.numeric(extract_numeric(result[ijk,6])),as.numeric(as.character(result[ijk,5])),]))
-    
+    if (!is.na(as.character(result[ijk,5])) & !is.na(as.character(result[ijk,6]))) 
+    {
+      mclist <- mcmc.list(mcmc(fit[[as.character(result[ijk,1])]][[as.character(result[ijk,2])]][[as.character(result[ijk,3])]][[as.character(result[ijk,4])]][as.numeric(extract_numeric(result[ijk,6])),as.numeric(as.character(result[ijk,5])),]),
+                          mcmc(fit2[[as.character(result[ijk,1])]][[as.character(result[ijk,2])]][[as.character(result[ijk,3])]][[as.character(result[ijk,4])]][as.numeric(extract_numeric(result[ijk,6])),as.numeric(as.character(result[ijk,5])),]),
+                          mcmc(fit3[[as.character(result[ijk,1])]][[as.character(result[ijk,2])]][[as.character(result[ijk,3])]][[as.character(result[ijk,4])]][as.numeric(extract_numeric(result[ijk,6])),as.numeric(as.character(result[ijk,5])),]))
+    }       
+    if (is.na(as.character(result[ijk,5])) & !is.na(as.character(result[ijk,6]))) 
+        {
+          mclist <- mcmc.list(mcmc(fit[[as.character(result[ijk,1])]][[as.character(result[ijk,2])]][[as.character(result[ijk,3])]][[as.character(result[ijk,4])]][as.numeric(extract_numeric(result[ijk,6])),1,]),
+                              mcmc(fit2[[as.character(result[ijk,1])]][[as.character(result[ijk,2])]][[as.character(result[ijk,3])]][[as.character(result[ijk,4])]][as.numeric(extract_numeric(result[ijk,6])),1,]),
+                              mcmc(fit3[[as.character(result[ijk,1])]][[as.character(result[ijk,2])]][[as.character(result[ijk,3])]][[as.character(result[ijk,4])]][as.numeric(extract_numeric(result[ijk,6])),1,]))
+    }       
+    if (!is.na(as.character(result[ijk,5])) & is.na(as.character(result[ijk,6]))) 
+    {
+      mclist <- mcmc.list(mcmc(fit[[as.character(result[ijk,1])]][[as.character(result[ijk,2])]][[as.character(result[ijk,3])]][[as.character(result[ijk,4])]][1,as.numeric(as.character(result[ijk,5])),]),
+                          mcmc(fit2[[as.character(result[ijk,1])]][[as.character(result[ijk,2])]][[as.character(result[ijk,3])]][[as.character(result[ijk,4])]][1,as.numeric(as.character(result[ijk,5])),]),
+                          mcmc(fit3[[as.character(result[ijk,1])]][[as.character(result[ijk,2])]][[as.character(result[ijk,3])]][[as.character(result[ijk,4])]][1,as.numeric(as.character(result[ijk,5])),]))
+    }       
+    if (is.na(as.character(result[ijk,5])) & is.na(as.character(result[ijk,6]))) 
+    {
+      mclist <- mcmc.list(mcmc(fit[[as.character(result[ijk,1])]][[as.character(result[ijk,2])]][[as.character(result[ijk,3])]][[as.character(result[ijk,4])]]),
+                          mcmc(fit2[[as.character(result[ijk,1])]][[as.character(result[ijk,2])]][[as.character(result[ijk,3])]][[as.character(result[ijk,4])]]),
+                          mcmc(fit3[[as.character(result[ijk,1])]][[as.character(result[ijk,2])]][[as.character(result[ijk,3])]][[as.character(result[ijk,4])]]))
+    }       
+        
     traceplot(mclist, main=paste(paste(t(apply(result[ijk,-7],1,as.character)), collapse="_"), "Rhat =", round(result[ijk,7],2)))
   }
   mtext(side=1, "Number of iterations", outer=T, line=2)
   mtext(side=2, "Parameter values", outer=T, line=2)
   # mtext(side=3, paste0("STOP!!!! N=", length(Above1.1), " parameters (total=", nrow(result), ") have Rhat>1.1"), outer=T, line=0, cex=1.5, font=2)
-  mtext(side=3, paste0("STOP!!!! N=", length(Above1.1), " parameters have Rhat>1.1"), outer=T, line=0, cex=1.6, font=2)
+  mtext(side=3, paste0("STOP!!!! Convergence problem. N=", length(Above1.1), " parameters have Rhat>1.1"), outer=T, line=0, cex=1.6, font=2)
 } else {
   plot(0,0,type="n", axes=F, ann=FALSE)
   text(0,0,"ALL is GOOD! Continue the analysis", cex=2, col="red")
