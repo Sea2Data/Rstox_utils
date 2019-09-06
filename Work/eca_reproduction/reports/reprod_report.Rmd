@@ -36,8 +36,8 @@ The first StoX-Reca version has been delivered and has been tested during the sp
 ### Design decisions
 Some decisions was made during the StoX-Reca implementation that excludes certain model and date configurations possible with the ECA 3.x. 
 
-* It has not yet been implemented a procedure for adjusting landings data with logbook records. A procedure that was supported with separate scripts for ECA 3.x. Adding this to the bookeeping necessary for versioning data is an extra burden, and the value added to the estimates has not been analysed.
-* Grouping of covariate values is not supported in StoX-Reca, rather it allows for redefinig variables to differen resolutions. This is more flexible and can in most cases this can mimic grouping.
+* It has not yet been implemented a procedure for adjusting landings data with logbook records. Such procedure was supported via separate scripts for ECA 3.x. Adding this to the bookeeping necessary for versioning data is an extra burden, and the value added to the estimates has not been analysed.
+* Grouping of covariate values is not supported in StoX-Reca, rather it allows for redefinig variables to different resolutions. This is more flexible and can in most cases mimic grouping.
 * Configuring covariates differently for the underlying ECA models ("length given age" and "weight given length") is not supported in StoX-Reca, as this requires grouping covariate values.
 * Not all filters that are supported by ECA 3.x are implemented in StoX-Reca. Notably filtering for outliers in the age-length scatter. We have decided we want to flag these as data errors in stead, to be filtered out explicitly or cleaned up in the database.
 
@@ -47,27 +47,24 @@ Configuring estimates for reproduction has revealed some usability issues that s
 * The landings format readable by StoX is still only provided via API calls. A user interface in datasetexplorer should be considered.
 * At times I found the landings data to be outdated, not reflecting recent corrections from FDIR. A procedure for regularly updating the landings API should be defined.
 * Grouping of areas are common in the configurations I have attempted to reproduce. Currently this require generation of new stratafiles and neighbourmatrices in StoX, which is cumbersome for users. A user interface for redefining spatial covariate and neighbour-matrices should be considered. Alternativelty scripts for generating regrouping of common strata systems could be provided
-* Some confiugrations use grouping of seasons. The way to do this is not documented in stox. 
+* Some configurations use grouping of seasons. The way to do this is not documented in stox. 
 * Configuration of reports. It is common to configure ECA to decompose estimates on other covariates then those configured for the model (e.g. configure model for F.dir-areas, and reports for ICES areas). Stox-processes to support that should be considered.
 * ECA 3.x supports filtering data based on whether there are aged fish in hauls. StoX only supports this via the field sampletype, which is sensitive to punching errors and to whether all ages have been read at the time of analysis.
-* ECA 3.x reports both total catch and the catch used for estimation. While these are usually the same, filtering out small fractions that precludes preffered model configurations can be desirable. In Stox-Reca this is currently cumbersome to facilitate.
 * Estimates for specific stocks often require filtering data by area. If only positions are available, this is best done after stratum is assigned. But this requires filtering on variables added to the data in StoX, which I think is not supported.
 * At the end of the prepareRECA process, data checks are performed and reports on potential data issues are compiled. Currently prepareRECA halts on some of these data issues, which precludes the reports from being compiled. Extracting data issue-reporting to a process run prior to prepareRECA should be considered.
-* Traceplots for inspecting stability of estimates should be considered. Such plots are produced by ECA 3.x.
-* Reports on data issues complies report for common covariates, without checking if these are configured. Consider if this can be avoided.
+* Reports on data issues compiles report for common covariates, without checking if these are configured. Consider if this can be avoided.
 
 ## Reproduction of ECA 3.x results
-As part of assuring the quality of the StoX-Reca implementations, I have attempted to configure StoX-Reca projects that mimic ECA 3.x estimates that has been used for advice. I have yet to identify all data and all model configurations from previous ECA 3.x runs. In cases where I have ECA .param files I have near complete description of model configuration, but exactly identifying the data seems impossible. I have in these cases had to tinker with data selection to demonstrate that a reasonable data selection that approximately reproduces previous results can be found. This tinkering boils down to filtering on mission types and sample types. Selection of specific stations have only been done in order to match a complete listing of serial numbers from the ECA 3.x run, when such are available. ECA estimates are however dependent not only on model configuration and data, but also on random parameter exploration in the Monte Carlo simulations. Difference in estimated parameters that are smaller than random differences in parameter exploration does not affect valid interpretations of the results and I will therefore compare ECA 3.x estimates to multiple StoX-Reca estimates, generated with different random seed, and be content with the reproduction if the ECA 3.x estimate does not seem very unlikely given the distribution of StoX-Reca estimates. I have not formulated a formal criteria for reproduction, but will conclude based on inspection of plots. This validation criteria may pass for models that are not configured exactly the same way, which is useful for evaluating whether ECA 3.x feautres not yet implemented needs to be added to StoX-Reca. The validation apporach does however rest upon the assumption that the implementations sensitivity to random seed is acceptable for adaptation of StoX-Reca. This would follow from acceptance of ECA 3.x if ECA 3.x display similar sensitivity. We should inquire with the Norwegian Computing Centre if they have performed that kind of analysis.
+As part of assuring the quality of the StoX-Reca implementations, I have attempted to configure StoX-Reca projects that mimic ECA 3.x estimates that has been used for advice. We have not had protocols for complete documentation and model configuration for estimates. Indeed that is a central task for the ongoing incorporation of commercial catch estimates into StoX. I therefore can not identify all data and all model configurations from previous ECA 3.x runs. In cases where I have ECA .param files I have near complete description of model configuration, but exactly identifying the data seems impossible. I have in these cases had to tinker with data selection to demonstrate that a reasonable data selection that approximately reproduces previous results can be found. This tinkering is similar to what will have to be done to generate time-series. Unlest explicitly stated otherwise, this consist only of filtering on mission types and sample types. Selection of specific stations have only been done in order to match a complete listing of serial numbers from the ECA 3.x run, when such are available. ECA estimates are however dependent not only on model configuration and data, but also on random parameter exploration in the Monte Carlo simulations, and therefore also on the extent of Monte Carlo sampling. Luckily, I have documentation for the extent of simulations (number of samples and burnin-iterations) for all projects. Difference in estimated parameters that are smaller than random differences in parameter exploration does not affect valid interpretations of the results and I will therefore compare ECA 3.x estimates to multiple StoX-Reca estimates, generated with different random seed. Even considering this spread of estimates, there are several obstacles to exact estimation. As mentioned above some features of ECA 3.x has been deliberately left out of the StoX-Reca framework, and minor bugs have been identified and corrected in ECA throughout the integration process. I think we shall therefore be content with reproduction of estimates that seem consistent with historical results up to differences that would only have minor consequences for advice. I will refer to reproductions where mean and standard deviation for age groups are within the variability expected between several ECA-runs to be *strictly reproduced*. Reproductions that I think have difference of only minor consequence, I will refer to as *sufficiently reproduced*. 
 
 Using the criteria outlned above, I aim to reproduce the following estimates:
 
-* blue whiting 2017: Done
-* mackerel 2018: Preliminary
+* blue whiting 2017: *Strictly reproduced*
+* mackerel 2018: *Sufficiently reproduced*
 * Norwegian Spring Spawning Herring 2017:
-* NSSK saithe 2018: Preliminary
-* NSSK haddock 2018: Preliminary
-* NSSK cod 2018:
-
+* NSSK saithe 2018: *Sufficiently reproduced*
+* NSSK haddock 2018: *PInconclusive*
+* NSSK cod 2018: *Sufficiently reproduced*
 
 I will just give brief descriptions of configurations below. Consult StoX project files for details.
 
@@ -92,7 +89,7 @@ comppar("kolmule2017", "sd")
 ### Reproduction of mackerel 2018
 ECA 3.x estimate from 2018. Model was configured and run by Sondre Aanes who provided results for reproduction analysis. ECA 3.x .param files was not kept, but a detailed log of data corrections done by ECA 3.x was provided. However, 1964 individuals were listed as removed for 'unkown reason'. I could not find a way to identify these. Total number of individuals in StoX-Reca run was ~4K, total number in ECA 3.x sample overview was ~2K.
 
-In order to get a closer reproduction, I ran the estimate without boat effect (platform as a random effect). This is not what was done in the estimate that Sondre sent, and the reasons for this discrepancy should be identified.
+In order to get a close reproduction of standard deviations, I ran the estimate without platform as a random-effect covariate (boat effect). This is not what was done in the estimate that Sondre sent, and the reasons for this discrepancy should be identified.
 
 * Total catch used in ECA 3.x estimate was 187 kt
 * Total catch used in StoX-Reca estimae was 187 kt
@@ -109,7 +106,7 @@ comppar("makrell2018", "sd")
 ```
 
 ### Reproduction of Norwegian Spring Spawning herring 2017
-ECA 3.x estimate from 2017. Model was configured and run by Sondre Aanes and results provided by Are Salthaug. ECA 3.x .param files was not kept. ased on Sondres notes, I have filtered an exact serialnumber list, grouped Gillnet with Trawl, grouped seasons 1 with two and 3 with 4 and run 1000 burnin iterations and 500 sampling iterations with non-linear growth model.
+ECA 3.x estimate from 2017. Model was configured and run by Sondre Aanes and results provided by Are Salthaug. ECA 3.x .param files was not kept. Based on Sondres notes, I have filtered an exact serialnumber list, grouped Gillnet with Trawl, grouped seasons 1 with two and 3 with 4 and run 1000 burnin iterations and 500 sampling iterations with non-linear growth model.
 
 * Total catch used in ECA 3.x estimate was 389 kt
 * Total catch used in StoX-Reca estimate was 389 kt
@@ -141,15 +138,13 @@ ECA 3.x estimates were prepared by Åge Fotland who provided results for reprodu
 
 This discrepancy is probably due to the use of logbook-adjusted landings in ECA 3.x
 
-Running this configuration triggered a bug in the RECA library. This has been fixed by the Norwegian Computing Centre and Estimates will be revisited.
-
 ```{r hyse means, fig.cap={"Estimates for mean catch in millions per age group of haddock in the North Sea and Skagerak 2018."}, echo=FALSE}
 
 comppar("hyse.nssk.2018", "mean")
 ```
 ```{r hyse sd, fig.cap={"standard deviation of marginal posterior distribution of catch in millions per age group of haddock in the North Sea and Skagerak 2018."}, echo=FALSE}
 
-comppar("sei.nssk.2018", "sd")
+comppar("hyse.nssk.2018", "sd")
 ```
 
 
@@ -173,3 +168,6 @@ comppar("torsk.nssk.2018", "mean")
 
 comppar("torsk.nssk.2018", "sd")
 ```
+
+
+#### Effect of updating landings
