@@ -61,9 +61,9 @@ Using the criteria outlned above, I aim to reproduce the following estimates:
 
 * blue whiting 2017: *Strictly reproduced*
 * mackerel 2018: *Sufficiently reproduced*
-* Norwegian Spring Spawning Herring 2017:
+* Norwegian Spring Spawning Herring 2017: *software error*
 * NSSK saithe 2018: *Sufficiently reproduced*
-* NSSK haddock 2018: *PInconclusive*
+* NSSK haddock 2018: *Inconclusive*
 * NSSK cod 2018: *Sufficiently reproduced*
 
 I will just give brief descriptions of configurations below. Consult StoX project files for details.
@@ -137,6 +137,8 @@ ECA 3.x estimates were prepared by Åge Fotland who provided results for reprodu
 * Total catch used in StoX-Reca estimate was 1433 t
 
 This discrepancy is probably due to the use of logbook-adjusted landings in ECA 3.x
+
+The estimation shows a sever discrepancy for age 1. Inspection of data used reveals that there is likely less data in the StoX-Reca run (50 stations). This might be due to data massaging or imputation not implemented in. I will investigate this further and update the haddock reproduction analysis.
 
 ```{r hyse means, fig.cap={"Estimates for mean catch in millions per age group of haddock in the North Sea and Skagerak 2018."}, echo=FALSE}
 
