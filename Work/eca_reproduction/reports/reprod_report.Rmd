@@ -74,7 +74,7 @@ ECA 3.x estimate from 2017. Model was configured and run by Sondre Aanes and res
 * Total catch used in ECA 3.x estimate was 399 kt
 * Total catch used in StoX-Reca estimae was 399 kt
 
-Both mean estimates and standard deviations from ECA 3.x are consistent with the range of ten estimates from StoX-Reca. I consider this a satisfactory reproduction of the estimates for the 2017 advice.
+Both mean estimates and standard deviations from ECA 3.x are consistent with the range of ten estimates from StoX-Reca. I consider this a strict reproduction of the estimates for the 2017 advice.
 
 ```{r kolmule means, fig.cap={"Estimates for mean catch in millions per age group of blue whiting in 2017."}, echo=FALSE}
 
@@ -105,6 +105,11 @@ comppar("makrell2018", "mean")
 comppar("makrell2018", "sd")
 ```
 
+```{r makrell comparison, fig.cap={"StoX-Reca mean estimates on ECA 3.X 90% credible intervals"}, echo=FALSE}
+compareConfBands("makrell2018")
+```
+
+
 ### Reproduction of Norwegian Spring Spawning herring 2017
 ECA 3.x estimate from 2017. Model was configured and run by Sondre Aanes and results provided by Are Salthaug. ECA 3.x .param files was not kept. Based on Sondres notes, I have filtered an exact serialnumber list, grouped Gillnet with Trawl, grouped seasons 1 with two and 3 with 4 and run 1000 burnin iterations and 500 sampling iterations with non-linear growth model.
 
@@ -130,6 +135,11 @@ comppar("sei.nssk.2018", "mean")
 comppar("sei.nssk.2018", "sd")
 ```
 
+```{r sei comparison, fig.cap={"StoX-Reca mean estimates on ECA 3.X 90% credible intervals"}, echo=FALSE}
+compareConfBands("sei.nssk.2018")
+```
+
+
 ### Reproduction of haddock NSSK 2018
 ECA 3.x estimates were prepared by Åge Fotland who provided results for reproduction analysis. This included ECA 3.x .param files. The ECA 3.x estimates used logbook-adjusted landings, which is not currently supported by StoX-Reca. Parameters extracted from ECA 3.x .param files suggest the model was configured with season and gear as fixed effects, but I did not have enough aged samples in the data compiled for reproduction to configure it like that. I configured the temporal covariate as a random effect in stead. The spatial covariate had only one value, such covariates are implicitly dropped by ECA 3.x, so I configured the StoX-Reca esitmate without the spatial covariate.
 
@@ -138,7 +148,9 @@ ECA 3.x estimates were prepared by Åge Fotland who provided results for reprodu
 
 This discrepancy is probably due to the use of logbook-adjusted landings in ECA 3.x
 
-The estimation shows a sever discrepancy for age 1. Inspection of data used reveals that there is likely less data in the StoX-Reca run (50 stations). This might be due to data massaging or imputation not implemented in. I will investigate this further and update the haddock reproduction analysis.
+The estimation shows a severe discrepancy for age 1. Inspection of data used reveals that there is likely less data in the StoX-Reca run (~50 stations). This might be due to data massaging or imputation not implemented in StoX-Reca. The serialnumbers used was documented by Åge Fotland. Pulling these from the database reveals that most are missing mandataroy fields for estimating number in haul (catchsampleweight or lengthsamplecount). A few of these had catchcount listed, which are not used ny StoX-Reca.
+
+I will investiagte of catchcount would be estimated for such stations in ECA 3.x.
 
 ```{r hyse means, fig.cap={"Estimates for mean catch in millions per age group of haddock in the North Sea and Skagerak 2018."}, echo=FALSE}
 
@@ -149,6 +161,9 @@ comppar("hyse.nssk.2018", "mean")
 comppar("hyse.nssk.2018", "sd")
 ```
 
+```{r hyse comparison, fig.cap={"StoX-Reca mean estimates on ECA 3.X 90% credible intervals"}, echo=FALSE}
+compareConfBands("hyse.nssk.2018")
+```
 
 ### Reproduction of cod NSSK 2018
 ECA 3.x estimates were prepared by Åge Fotland who provided results for reproduction analysis. This included ECA 3.x .param files. The ECA 3.x estimates used logbook-adjusted landings, which is not currently supported by StoX-Reca. Results were only provided decomposed on ICES area III (Skagerak) and IV (North Sea). I recall from conversation with Åge that coastal regions are excluded from these estimates, so I filtered landings by kysthav-code. I included coastal samples, still. 
@@ -171,5 +186,8 @@ comppar("torsk.nssk.2018", "mean")
 comppar("torsk.nssk.2018", "sd")
 ```
 
+```{r torsk comparison, fig.cap={"StoX-Reca mean estimates on ECA 3.X 90% credible intervals"}, echo=FALSE}
+compareConfBands("torsk.nssk.2018")
+```
 
 #### Effect of updating landings
