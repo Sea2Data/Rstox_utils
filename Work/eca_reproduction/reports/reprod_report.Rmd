@@ -2,7 +2,9 @@
 title: "Reproduction of eca estimates"
 author: "Edvin Fuglebakk"
 date: "5/23/2019"
-output: html_document
+output:
+  pdf_document: default
+  html_document: default
 ---
 
 ```{r setup, include=FALSE}
@@ -60,7 +62,7 @@ As part of assuring the quality of the StoX-Reca implementations, I have attempt
 Using the criteria outlned above, I aim to reproduce the following estimates:
 
 * blue whiting 2017: *Strictly reproduced*
-* mackerel 2018: *Sufficiently reproduced*
+* mackerel 2018: *Inconclusive*
 * Norwegian Spring Spawning Herring 2017: *software error*
 * NSSK saithe 2018: *Sufficiently reproduced*
 * NSSK haddock 2018: *Inconclusive*
@@ -74,7 +76,7 @@ ECA 3.x estimate from 2017. Model was configured and run by Sondre Aanes and res
 * Total catch used in ECA 3.x estimate was 399 kt
 * Total catch used in StoX-Reca estimae was 399 kt
 
-Both mean estimates and standard deviations from ECA 3.x are consistent with the range of ten estimates from StoX-Reca. I consider this a strict reproduction of the estimates for the 2017 advice.
+Both mean estimates and standard deviations from ECA 3.x are consistent with the range of ten estimates from StoX-Reca. I consider this a strict reproduction of the estimates for the 2018 advice.
 
 ```{r kolmule means, fig.cap={"Estimates for mean catch in millions per age group of blue whiting in 2017."}, echo=FALSE}
 
@@ -89,11 +91,12 @@ comppar("kolmule2017", "sd")
 ### Reproduction of mackerel 2018
 ECA 3.x estimate from 2018. Model was configured and run by Sondre Aanes who provided results for reproduction analysis. ECA 3.x .param files was not kept, but a detailed log of data corrections done by ECA 3.x was provided. However, 1964 individuals were listed as removed for 'unkown reason'. I could not find a way to identify these. Total number of individuals in StoX-Reca run was ~4K, total number in ECA 3.x sample overview was ~2K.
 
-In order to get a close reproduction of standard deviations, I ran the estimate without platform as a random-effect covariate (boat effect). This is not what was done in the estimate that Sondre sent, and the reasons for this discrepancy should be identified.
-
 * Total catch used in ECA 3.x estimate was 187 kt
 * Total catch used in StoX-Reca estimae was 187 kt
 
+In order to get a close reproduction of standard deviations, I ran the estimate without platform as a random-effect covariate (boat effect). This is not what was done in the estimate that Sondre sent. It is in my opinion not easy to explain how the differences in specimen selection should compensate the use of boat effect so exactly, and I'd like to re-run the ECA 3.x estimate to make sure that boat effect was actually used. 
+
+~~Most age groups are well within the intervals reported with the previous estimate, age group 1 just barely outside. I consider this a sufficient reproduction of the estimates for the 2019 advice.~~
 
 ```{r makrell means, fig.cap={"Estimates for mean catch in millions per age group of mackerel in 2018."}, echo=FALSE}
 
@@ -105,7 +108,7 @@ comppar("makrell2018", "mean")
 comppar("makrell2018", "sd")
 ```
 
-```{r makrell comparison, fig.cap={"StoX-Reca mean estimates on ECA 3.X 90% credible intervals"}, echo=FALSE}
+```{r makrell comparison, fig.cap={"StoX-Reca mean estimates on ECA 3.x 90% credible intervals"}, echo=FALSE}
 compareConfBands("makrell2018")
 ```
 
@@ -125,6 +128,9 @@ ECA 3.x estimates were prepared by Åge Fotland who provided results for reprodu
 * Total catch used in StoX-Reca estimate was 40 kt 
 
 
+Allt age groups are well within the intervals reported with the previous estimate. I consider this a sufficient reproduction of the estimates for the 2019 advice.
+
+
 ```{r sei means, fig.cap={"Estimates for mean catch in millions per age group of saithe in the North Sea and Skagerak 2018."}, echo=FALSE}
 
 comppar("sei.nssk.2018", "mean")
@@ -135,7 +141,7 @@ comppar("sei.nssk.2018", "mean")
 comppar("sei.nssk.2018", "sd")
 ```
 
-```{r sei comparison, fig.cap={"StoX-Reca mean estimates on ECA 3.X 90% credible intervals"}, echo=FALSE}
+```{r sei comparison, fig.cap={"StoX-Reca mean estimates on ECA 3.x 90% credible intervals"}, echo=FALSE}
 compareConfBands("sei.nssk.2018")
 ```
 
@@ -148,9 +154,7 @@ ECA 3.x estimates were prepared by Åge Fotland who provided results for reprodu
 
 This discrepancy is probably due to the use of logbook-adjusted landings in ECA 3.x
 
-The estimation shows a severe discrepancy for age 1. Inspection of data used reveals that there is likely less data in the StoX-Reca run (~50 stations). This might be due to data massaging or imputation not implemented in StoX-Reca. The serialnumbers used was documented by Åge Fotland. Pulling these from the database reveals that most are missing mandataroy fields for estimating number in haul (catchsampleweight or lengthsamplecount). A few of these had catchcount listed, which are not used ny StoX-Reca.
-
-I will investiagte of catchcount would be estimated for such stations in ECA 3.x.
+The estimation shows a severe discrepancy for age 1. Inspection of data used reveals that there is likely less data in the StoX-Reca run (~50 stations), and that both estimates have a very low number of fish samples (aged specimens) supporting this age group (<5). The serialnumbers used was documented by Åge Fotland. Pulling these from the database reveals that most are missing mandataroy fields for estimating number in haul (catchsampleweight or lengthsamplecount). A few of these had catchcount listed, which are not used ny StoX-Reca. I have consulted Sondre Aanes, which can confirm that ECA 3.x are tolerant to missing number in haul estimates for samples which are not partioned before sampling (delprøve). This likely explains the difference in age group 1. Missing haul weights are generally fixable (from logbooks or landings), and it might not be necessary for StoX-Reca to support estimating when these are not present. In order to support missing sample weights, we may consider checking if the data requirements can be relaxed.
 
 ```{r hyse means, fig.cap={"Estimates for mean catch in millions per age group of haddock in the North Sea and Skagerak 2018."}, echo=FALSE}
 
@@ -161,7 +165,7 @@ comppar("hyse.nssk.2018", "mean")
 comppar("hyse.nssk.2018", "sd")
 ```
 
-```{r hyse comparison, fig.cap={"StoX-Reca mean estimates on ECA 3.X 90% credible intervals"}, echo=FALSE}
+```{r hyse comparison, fig.cap={"StoX-Reca mean estimates on ECA 3.x 90% credible intervals"}, echo=FALSE}
 compareConfBands("hyse.nssk.2018")
 ```
 
@@ -176,6 +180,9 @@ Parameters extracted from ECA 3.x .param files suggest the model was configured 
 
 This discrepancy is probably due to the use of logbook-adjusted landings in ECA 3.x
 
+Most age groups are well within the intervals reported with the previous estimate, age group 1 just barely outside. I consider this a sufficient reproduction of the estimates for the 2019 advice.
+
+
 ```{r torsk means, fig.cap={"Estimates for mean catch in millions per age group of cod in the North Sea 2018."}, echo=FALSE}
 
 comppar("torsk.nssk.2018", "mean")
@@ -186,8 +193,9 @@ comppar("torsk.nssk.2018", "mean")
 comppar("torsk.nssk.2018", "sd")
 ```
 
-```{r torsk comparison, fig.cap={"StoX-Reca mean estimates on ECA 3.X 90% credible intervals"}, echo=FALSE}
+```{r torsk comparison, fig.cap={"StoX-Reca mean estimates on ECA 3.x 90% credible intervals"}, echo=FALSE}
 compareConfBands("torsk.nssk.2018")
 ```
 
 #### Effect of updating landings
+I plan to re-run the NSSK estimates with later updates to the 2018 landings data, so that the effect of landings corrections can be compared the discrepancies between logbook-corrected landings and "raw"-landings that is particularly evident in the cod estimates. I will follow up on this when NMD has implemented protocols for updating landings (est. oct 2019).
