@@ -368,51 +368,19 @@ rbindXML <- function(x){
 
 
 
-readNMDxmlFiles <- function(FileNames=NULL){
-	
-	# Define a function that rbinds the ind'th element of each dataset:
-	rbindlist_oneElement <- function(ind, x){
-		# Get the ind'th element of each list returned from readNMDxmlFile:
-		temp <- lapply(x, "[[", ind)
-		# Fast rbind using data.table:
-		data.table::rbindlist(temp)
-	}
-	
-	# Read the XML files in a loop:
-	out <- lapply(FileNames, readNMDxmlFile)
-	
-	# Rbind the levels across the files:
-	if(length(out) > 1){
-		# Get the names of the first element:
-		names_out <- names(out[[1]])
-		
-		# Rbind all fish stations, catch samples etc across files:
-		ind <- seq_along(out[[1]])
-		out <- lapply(ind, rbindlist_oneElement, x=out)
-		
-		# Set the names of the output:
-		names(out) <- names_out
-	}
-	else{
-		out <- out[[1]]
-	}
-	
-	return(out)
-}
 
 
-ReadBioticXML <- function(FileNames=NULL, bioticFormat="3.0"){
-	
-	# Read the biotic files:
-	out <- readNMDxmlFiles(FileNames=NULL)
-	
-	# Convert to the specified biotic data format (this function must detect the format that was read):
-	bioticFormat <- convertBiotic(out, bioticFormat=bioticFormat)
-	
-	# Do ther stuff with the data, such as merge specific levels:
-	
-	return(out)
-}
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -455,14 +423,6 @@ ReadAcousticXML <- function(FileNames=NULL){
 
 
 ReadBioticXML <- function(FileNames=NULL){
-	
-	# Define a function that rbinds the ind'th element of each dataset:
-	rbindlist_oneElement <- function(ind, x){
-		# Get the ind'th element of each list returned from readNMDxmlFile:
-		temp <- lapply(x, "[[", ind)
-		# Fast rbind using data.table:
-		data.table::rbindlist(temp)
-	}
 	
 	# Read the biotic XML files in a loop:
 	out <- lapply(FileNames, readNMDxmlFile)
