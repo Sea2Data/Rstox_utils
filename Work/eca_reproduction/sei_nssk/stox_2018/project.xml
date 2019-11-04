@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project template="" rstoxversion="1.11.1" xmlns="http://www.imr.no/formats/stox/v1" lastmodified="23/05/19 19:41" rversion="3.5.0" stoxversion="2.7" resourceversion="1.87">
+<project template="" rstoxversion="1.11.1" xmlns="http://www.imr.no/formats/stox/v1" lastmodified="17/06/19 08:12" rversion="3.5.0" stoxversion="2.7" resourceversion="1.87">
   <model name="baseline">
     <process name="ReadProcessData">
       <function>ReadProcessData</function>
@@ -44,9 +44,9 @@
       <breakingui>false</breakingui>
       <fileoutput>true</fileoutput>
       <parameter name="BioticData">Process(ReadBioticXML)</parameter>
-      <parameter name="FishStationExpr">fs.hasCatch('sei')  &amp;&amp; missiontype =~['1','2', '3','9','10','11','12','13'] &amp;&amp; system==2 &amp;&amp; area=~['8','28','42','41','40','9'] &amp;&amp; startdate!=null</parameter>
+      <parameter name="FishStationExpr">fs.hasCatch('sei')  &amp;&amp; missiontype =~['1','2','3'] &amp;&amp; system==2 &amp;&amp; area=~['8','28','42','41','40', '9', '43','47'] &amp;&amp; startdate!=null</parameter>
       <parameter name="CatchExpr">species =='164727'</parameter>
-      <parameter name="SampleExpr">lengthsampleweight&gt;0</parameter>
+      <parameter name="SampleExpr">lengthsampleweight&gt;0 &amp;&amp; sampletype =~['20','23']</parameter>
       <parameter name="IndExpr">age==null || age&gt;1</parameter>
       <output>BioticData</output>
     </process>
@@ -76,7 +76,7 @@
       <breakingui>false</breakingui>
       <fileoutput>true</fileoutput>
       <parameter name="LandingData">Process(ReadLandingXML)</parameter>
-      <parameter name="LandingExpr">rundvekt&gt;0  &amp;&amp; fiskernasjonalitetkode=='NOR' &amp;&amp; artkode=~['1032'] &amp;&amp; hovedomraadekode =~['08','28','42','41','40', '09']</parameter>
+      <parameter name="LandingExpr">rundvekt&gt;0  &amp;&amp; fiskernasjonalitetkode=='NOR' &amp;&amp; artkode=~['1032'] &amp;&amp; hovedomraadekode =~['08','28','42','41','40', '09', '43','47']</parameter>
       <output>LandingData</output>
     </process>
     <process name="ApplyPosToLanding">
@@ -346,146 +346,31 @@
       <value covariatesourcetype="Landing" covariate="Skageraak">Skageraak</value>
     </spatial>
     <platformfactor>
-      <value covariatesourcetype="Biotic" covariate="1727">1727</value>
       <value covariatesourcetype="Biotic" covariate="1755">1755</value>
-      <value covariatesourcetype="Biotic" covariate="1836">1836</value>
-      <value covariatesourcetype="Biotic" covariate="2413">2413</value>
-      <value covariatesourcetype="Biotic" covariate="2420">2420</value>
       <value covariatesourcetype="Biotic" covariate="2464">2464</value>
-      <value covariatesourcetype="Biotic" covariate="2476">2476</value>
       <value covariatesourcetype="Biotic" covariate="2478">2478</value>
-      <value covariatesourcetype="Biotic" covariate="2617">2617</value>
-      <value covariatesourcetype="Biotic" covariate="2752">2752</value>
-      <value covariatesourcetype="Biotic" covariate="2881">2881</value>
-      <value covariatesourcetype="Biotic" covariate="2882">2882</value>
-      <value covariatesourcetype="Biotic" covariate="2891">2891</value>
       <value covariatesourcetype="Biotic" covariate="2932">2932</value>
       <value covariatesourcetype="Biotic" covariate="2959">2959</value>
-      <value covariatesourcetype="Biotic" covariate="2984">2984</value>
       <value covariatesourcetype="Biotic" covariate="3004">3004</value>
-      <value covariatesourcetype="Biotic" covariate="3039">3039</value>
-      <value covariatesourcetype="Biotic" covariate="3050">3050</value>
-      <value covariatesourcetype="Biotic" covariate="3058">3058</value>
       <value covariatesourcetype="Biotic" covariate="3074">3074</value>
-      <value covariatesourcetype="Biotic" covariate="3097">3097</value>
       <value covariatesourcetype="Biotic" covariate="3215">3215</value>
       <value covariatesourcetype="Biotic" covariate="3313">3313</value>
-      <value covariatesourcetype="Biotic" covariate="3320">3320</value>
       <value covariatesourcetype="Biotic" covariate="3487">3487</value>
       <value covariatesourcetype="Biotic" covariate="3488">3488</value>
       <value covariatesourcetype="Biotic" covariate="3516">3516</value>
-      <value covariatesourcetype="Biotic" covariate="3641">3641</value>
-      <value covariatesourcetype="Biotic" covariate="3652">3652</value>
-      <value covariatesourcetype="Biotic" covariate="3657">3657</value>
-      <value covariatesourcetype="Biotic" covariate="3671">3671</value>
-      <value covariatesourcetype="Biotic" covariate="3736">3736</value>
       <value covariatesourcetype="Biotic" covariate="3740">3740</value>
-      <value covariatesourcetype="Biotic" covariate="3772">3772</value>
-      <value covariatesourcetype="Biotic" covariate="3820">3820</value>
-      <value covariatesourcetype="Biotic" covariate="3846">3846</value>
-      <value covariatesourcetype="Biotic" covariate="3879">3879</value>
-      <value covariatesourcetype="Biotic" covariate="3921">3921</value>
-      <value covariatesourcetype="Biotic" covariate="3965">3965</value>
-      <value covariatesourcetype="Biotic" covariate="3971">3971</value>
-      <value covariatesourcetype="Biotic" covariate="4001">4001</value>
-      <value covariatesourcetype="Biotic" covariate="4083">4083</value>
-      <value covariatesourcetype="Biotic" covariate="4111">4111</value>
-      <value covariatesourcetype="Biotic" covariate="4114">4114</value>
-      <value covariatesourcetype="Biotic" covariate="4134">4134</value>
-      <value covariatesourcetype="Biotic" covariate="4140">4140</value>
       <value covariatesourcetype="Biotic" covariate="4150">4150</value>
       <value covariatesourcetype="Biotic" covariate="4160">4160</value>
-      <value covariatesourcetype="Biotic" covariate="4167">4167</value>
-      <value covariatesourcetype="Biotic" covariate="4218">4218</value>
       <value covariatesourcetype="Biotic" covariate="4227">4227</value>
       <value covariatesourcetype="Biotic" covariate="4277">4277</value>
       <value covariatesourcetype="Biotic" covariate="4346">4346</value>
-      <value covariatesourcetype="Biotic" covariate="4398">4398</value>
       <value covariatesourcetype="Biotic" covariate="4408">4408</value>
       <value covariatesourcetype="Biotic" covariate="4567">4567</value>
-      <value covariatesourcetype="Biotic" covariate="4571">4571</value>
       <value covariatesourcetype="Biotic" covariate="4574">4574</value>
-      <value covariatesourcetype="Biotic" covariate="4602">4602</value>
-      <value covariatesourcetype="Biotic" covariate="4653">4653</value>
       <value covariatesourcetype="Biotic" covariate="4780">4780</value>
-      <value covariatesourcetype="Biotic" covariate="5020">5020</value>
-      <value covariatesourcetype="Biotic" covariate="5022">5022</value>
-      <value covariatesourcetype="Biotic" covariate="5027">5027</value>
-      <value covariatesourcetype="Biotic" covariate="5036">5036</value>
-      <value covariatesourcetype="Biotic" covariate="5108">5108</value>
-      <value covariatesourcetype="Biotic" covariate="5207">5207</value>
-      <value covariatesourcetype="Biotic" covariate="5236">5236</value>
-      <value covariatesourcetype="Biotic" covariate="5269">5269</value>
-      <value covariatesourcetype="Biotic" covariate="5700">5700</value>
-      <value covariatesourcetype="Biotic" covariate="5738">5738</value>
-      <value covariatesourcetype="Biotic" covariate="5745">5745</value>
-      <value covariatesourcetype="Biotic" covariate="5796">5796</value>
-      <value covariatesourcetype="Biotic" covariate="5985">5985</value>
-      <value covariatesourcetype="Biotic" covariate="6081">6081</value>
-      <value covariatesourcetype="Biotic" covariate="6730">6730</value>
-      <value covariatesourcetype="Biotic" covariate="6803">6803</value>
-      <value covariatesourcetype="Biotic" covariate="6894">6894</value>
-      <value covariatesourcetype="Biotic" covariate="6898">6898</value>
-      <value covariatesourcetype="Biotic" covariate="6899">6899</value>
-      <value covariatesourcetype="Biotic" covariate="6904">6904</value>
-      <value covariatesourcetype="Biotic" covariate="6905">6905</value>
-      <value covariatesourcetype="Biotic" covariate="7050">7050</value>
-      <value covariatesourcetype="Biotic" covariate="7182">7182</value>
-      <value covariatesourcetype="Biotic" covariate="7329">7329</value>
-      <value covariatesourcetype="Biotic" covariate="7331">7331</value>
-      <value covariatesourcetype="Biotic" covariate="7378">7378</value>
-      <value covariatesourcetype="Biotic" covariate="7431">7431</value>
-      <value covariatesourcetype="Biotic" covariate="7435">7435</value>
-      <value covariatesourcetype="Biotic" covariate="7447">7447</value>
-      <value covariatesourcetype="Biotic" covariate="7475">7475</value>
-      <value covariatesourcetype="Biotic" covariate="7488">7488</value>
-      <value covariatesourcetype="Biotic" covariate="7491">7491</value>
-      <value covariatesourcetype="Biotic" covariate="7498">7498</value>
-      <value covariatesourcetype="Biotic" covariate="7571">7571</value>
-      <value covariatesourcetype="Biotic" covariate="7588">7588</value>
-      <value covariatesourcetype="Biotic" covariate="7614">7614</value>
-      <value covariatesourcetype="Biotic" covariate="7634">7634</value>
-      <value covariatesourcetype="Biotic" covariate="7647">7647</value>
-      <value covariatesourcetype="Biotic" covariate="7649">7649</value>
-      <value covariatesourcetype="Biotic" covariate="7650">7650</value>
-      <value covariatesourcetype="Biotic" covariate="7672">7672</value>
-      <value covariatesourcetype="Biotic" covariate="7684">7684</value>
-      <value covariatesourcetype="Biotic" covariate="7695">7695</value>
-      <value covariatesourcetype="Biotic" covariate="7717">7717</value>
-      <value covariatesourcetype="Biotic" covariate="7734">7734</value>
-      <value covariatesourcetype="Biotic" covariate="7761">7761</value>
-      <value covariatesourcetype="Biotic" covariate="7763">7763</value>
-      <value covariatesourcetype="Biotic" covariate="7775">7775</value>
-      <value covariatesourcetype="Biotic" covariate="7777">7777</value>
-      <value covariatesourcetype="Biotic" covariate="7781">7781</value>
-      <value covariatesourcetype="Biotic" covariate="9116">9116</value>
-      <value covariatesourcetype="Biotic" covariate="9128">9128</value>
-      <value covariatesourcetype="Biotic" covariate="9204">9204</value>
       <value covariatesourcetype="Biotic" covariate="9258">9258</value>
-      <value covariatesourcetype="Biotic" covariate="9318">9318</value>
-      <value covariatesourcetype="Biotic" covariate="9320">9320</value>
       <value covariatesourcetype="Biotic" covariate="9326">9326</value>
-      <value covariatesourcetype="Biotic" covariate="9361">9361</value>
-      <value covariatesourcetype="Biotic" covariate="9362">9362</value>
-      <value covariatesourcetype="Biotic" covariate="9366">9366</value>
-      <value covariatesourcetype="Biotic" covariate="9369">9369</value>
-      <value covariatesourcetype="Biotic" covariate="9386">9386</value>
-      <value covariatesourcetype="Biotic" covariate="9476">9476</value>
-      <value covariatesourcetype="Biotic" covariate="9523">9523</value>
-      <value covariatesourcetype="Biotic" covariate="9563">9563</value>
-      <value covariatesourcetype="Biotic" covariate="9628">9628</value>
-      <value covariatesourcetype="Biotic" covariate="9630">9630</value>
-      <value covariatesourcetype="Biotic" covariate="9632">9632</value>
-      <value covariatesourcetype="Biotic" covariate="9635">9635</value>
-      <value covariatesourcetype="Biotic" covariate="9647">9647</value>
-      <value covariatesourcetype="Biotic" covariate="9652">9652</value>
-      <value covariatesourcetype="Biotic" covariate="9685">9685</value>
-      <value covariatesourcetype="Biotic" covariate="9686">9686</value>
       <value covariatesourcetype="Biotic" covariate="9701">9701</value>
-      <value covariatesourcetype="Biotic" covariate="9722">9722</value>
-      <value covariatesourcetype="Biotic" covariate="9723">9723</value>
-      <value covariatesourcetype="Biotic" covariate="9727">9727</value>
-      <value covariatesourcetype="Biotic" covariate="9731">9731</value>
     </platformfactor>
     <covparam>
       <value covariatetable="gearfactor" parameter="CovariateType">Fixed</value>

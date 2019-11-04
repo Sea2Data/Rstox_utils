@@ -1,12 +1,12 @@
 eca_results <- list()
 
 eca_results$kolmule2017 <- "./kolmule/eca_2017/KOLMULE2017.fit.2017_allgears_totalarea_season1234.caa.txt"
-eca_results$makrell2017<- "./makrell/eca_2017/MAKRELL2017.fit.2017_allgears_totalarea_season1234.caa.txt"
+eca_results$makrell2017<- "./makrell/eca_2018/MAKRELL2018.fit.2018_allgears_totalarea_season1234.caa.txt"
 eca_results$sei.nssk.2018<- "./sei_nssk/eca_2018/SEI2018_ns_v00.fit.2018_allgears_totalarea_season1234.caa.txt"
 eca_results$hyse.nssk.2018 <- "./hyse_nssk/eca_2018/HYSE2018_ns_v00.fit.2018_allgears_27fire_season1234.caa.txt"
 stox_results <- list()
 stox_results$kolmule2017 <- "./kolmule/stox_2017/results"
-stox_results$makrell2017 <- "./makrell/stox_2017/results"
+stox_results$makrell2017 <- "./makrell/stox_2018/results"
 stox_results$sei.nssk.2018 <- "./sei_nssk/stox_2018/results/"
 stox_results$hyse.nssk.2018 <- "./hyse_nssk/stox_2018/results/"
 
@@ -55,7 +55,36 @@ comppar <- function(estimate, parameter){
   legend("topright", col=c("black", "grey"), legend = c("eca", "stox.Reca"), pch=c(4,1))
 }
 
-
+compareConfBands <- function(estimate){
+  eca <- parse_eca(eca_results[[estimate]])
+  eca$cv <- eca$sd / eca$mean
+  ecabase <- load_comptable(eca, list.files(stox_results[[estimate]], full.names = T)[[1]])
+  
+  ecaparname <- paste("mean", "eca", sep=".")
+  stoxparname <- paste("mean", "stoxreca", sep=".")
+  
+  stoxest <- list()
+  stoxages <- list()
+  ymax <- max(ecabase[[ecaparname]])
+  for (f in list.files(stox_results[[estimate]], full.names = T)){
+    comtable <- load_comptable(eca, f)
+    stoxest[[f]]<-comtable[[stoxparname]]
+    stoxages[[f]]<-comtable$age
+    if (max(comtable[[stoxparname]])>ymax){
+      ymax <- max(comtable[[stoxparname]])
+    }
+  }
+  
+  plot(ecabase$age, ecabase[[ecaparname]], ylim=c(0,ymax), col="black", xlab="age", ylab="caa", type="n", main=paste("caa millions", "estimates", estimate))
+  segments(as.numeric(ecabase$age), ecabase$X5., as.numeric(ecabase$age), ecabase$X95.)
+  for (n in names(stoxest)){
+    points(stoxages[[n]], stoxest[[n]], col="grey", pch=1)
+  }
+  
+  #points(ecabase$age, ecabase[[ecaparname]], col="black", pch=4)
+  legend("topright", col=c("black", "grey"), legend = c("eca 90%", "stox.Reca means"), pch=c("-",1))
+  
+}
 
 compareCaa <- function(){
   
@@ -73,3 +102,4 @@ compareCaa <- function(){
   }
   
 }
+
