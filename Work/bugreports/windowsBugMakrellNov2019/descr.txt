@@ -1,0 +1,4 @@
+Datasett krasjer på Windows 10, fungerer på Mac. Krasjer i alder-lengde parameterisering.
+
+data set: makrell2018.Rdata
+output fra kommandolinjekjøring: cmd_ouput.pdf
