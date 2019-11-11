@@ -115,7 +115,7 @@
 RstoxBuild::buildRstoxPackage("Rstox", version="1.11.1", Rversion="3.5", pckversion=list(data.table="1.10.4-3"), suggests=c("ncdf4", "pgirmess", "Reca", "plotrix"), check=FALSE)
 
 # Before moving to the new account!!!!!!!!!!!!111:
-RstoxBuild::buildRstoxPackage("Rstox", version="1.11.1", Rversion="3.5", pckversion=list(data.table="1.10.4-3"), suggests=c("ncdf4", "pgirmess", "Reca", "plotrix"), check=FALSE, githubRoot = "https://github.com/IMR-StoX")
+RstoxBuild::buildRstoxPackage("Rstox", version="1.11.1", Rversion="3.5", pckversion=list(data.table="1.10.4-3"), suggests=c("ncdf4", "pgirmess", "Reca", "plotrix"), check=FALSE, githubRoot = "https://github.com/Sea2Data")
 
 
 
