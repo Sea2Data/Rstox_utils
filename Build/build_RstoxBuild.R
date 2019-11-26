@@ -12,7 +12,13 @@ buildRstoxBuildFromSource <- function(rootDir = "~/Code/Github"){
 
 
 # Build 1.0:
-RstoxBuild::buildRstoxPackage("RstoxBuild", version="1.0", Rversion="3.5", check=FALSE, suggests=c("Rstox"))
+RstoxBuild::buildRstoxPackage(
+	"RstoxBuild", 
+	version = "1.0", 
+	Rversion = "3.6", 
+	check = FALSE, 
+	suggests = "Rstox"
+	)
 
 
 
