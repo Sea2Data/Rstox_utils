@@ -16,7 +16,10 @@ lgamodeldefault = "log-linear"
 #projectname <- "ECA_sild_2015"
 #baselineOutput <- getBaseline(projectname)
 #projectname <- "ECA_sild_2015_errorcheck"
-projectname <- "ECA_makrell_2018_sindre_nov_2019"
+#projectname <- "ECA_makrell_2018_sindre_nov_2019"
+#projectname <- "Hyse_2018_Elise_Test"
+#projectname <- "ECA_pb_test"
+projectname <- "ECA_Haddock_2018_Silje_Test"
 
 runproject <- function(projectname, burnin=burnindefault, caa.burnin=burnindefault, nSamples=samplesdefault, seed=NULL, tempres=tempresdefault, lgamodel=lgamodeldefault){
   prepareRECA(projectname, temporalresolution=tempres)
@@ -41,7 +44,7 @@ runRECA_file <- function(runfile=NULL, runfiledir=NULL){
 }
 
 #runproject(projectname)
-#runRScripts(projectname)
+runRScripts(projectname)
 #Rstox:::saveDecomposedCatchMatrix(projectname, "~/test.csv", addQuarterToDecomp = T, plusgr=6)
 #loadProjectData(projectname, var="prepareRECA")
 #runRECA(projectname, lgamodel = "non-linear", burnin = 1000, nSamples = 500, seed=42, export_only = "bugreports/mactest20190524_sild.rdata")
