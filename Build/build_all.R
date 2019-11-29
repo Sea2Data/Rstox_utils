@@ -3,7 +3,7 @@
 RstoxBuild::buildRstoxPackage(
 	"Rstox", 
 	version = "1.11.1", 
-	Rversion = "3.6", 
+	Rversion = "3.5", 
 	imports = list(
 		data.table = "1.10.4-3", 
 		MASS = NULL,
@@ -20,7 +20,7 @@ RstoxBuild::buildRstoxPackage(
 		XML = NULL,
 		scatterpie = NULL
 	), 
-	suggests = c("ncdf4", "pgirmess", "Reca"), 
+	suggests = c("pgirmess", "Reca"), 
 	githubRoot = "https://github.com/Sea2Data", 
 	check = FALSE
 )
