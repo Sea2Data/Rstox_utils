@@ -7,7 +7,7 @@ RstoxBuild::buildRstoxPackage(
 	imports = list(
 		data.table = "1.10.4-3", 
 		MASS = NULL,
-		merhods = NULL,
+		methods = NULL,
 		RColorBrewer = NULL,
 		ggplot2 = NULL,
 		gridExtra = NULL,
