@@ -6,15 +6,21 @@ RstoxBuild::buildRstoxPackage(
 	Rversion = "3.6", 
 	imports = list(
 		data.table = "1.10.4-3", 
+		MASS = NULL,
+		merhods = NULL,
+		RColorBrewer = NULL,
 		ggplot2 = NULL,
+		gridExtra = NULL,
+		plotrix = NULL,
 		pbapply = NULL,
 		rgdal = NULL,
 		rgeos = NULL,
 		rJava = NULL,
 		sp = NULL,
-		XML = NULL
+		XML = NULL,
+		scatterpie = NULL
 	), 
-	suggests = c("ncdf4", "pgirmess", "Reca", "plotrix"), 
+	suggests = c("ncdf4", "pgirmess", "Reca"), 
 	githubRoot = "https://github.com/Sea2Data", 
 	check = FALSE
 )
