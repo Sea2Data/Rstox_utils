@@ -3,7 +3,7 @@
 RstoxBuild::buildRstoxPackage(
 	"Rstox", 
 	version = "1.11.1", 
-	Rversion = "3.6", 
+	Rversion = "3.5", 
 	imports = list(
 		data.table = "1.10.4-3", 
 		ggplot2 = NULL,
@@ -20,27 +20,11 @@ RstoxBuild::buildRstoxPackage(
 )
 
 
-# Build RstoxFramework:
-RstoxBuild::buildRstoxPackage(
-	"RstoxFramework", 
-	version = "1.0", 
-	Rversion = "3.6", 
-	imports = list(
-		data.table = "1.12.6", 
-		geojsonio = "0.8.0", 
-		jsonlite = "1.6", 
-		sp = "1.3.2"
-	), 
-	suggests = "testthat", 
-	check = FALSE
-)
-
-
 # Build RstoxBase:
 RstoxBuild::buildRstoxPackage(
 	"RstoxBase", 
 	version = "1.0", 
-	Rversion = "3.6", 
+	Rversion = "3.5", 
 	imports = list(
 		data.table="1.10.4-3", 
 		rgdal = "1.4.7",
@@ -56,7 +40,7 @@ RstoxBuild::buildRstoxPackage(
 RstoxBuild::buildRstoxPackage(
 	"RstoxFramework", 
 	version = "1.0", 
-	Rversion = "3.6", 
+	Rversion = "3.5", 
 	imports = list(
 		data.table = "1.12.6", 
 		geojsonio = "0.8.0", 
@@ -72,7 +56,7 @@ RstoxBuild::buildRstoxPackage(
 RstoxBuild::buildRstoxPackage(
 	"RstoxData", 
 	version = "1.0", 
-	Rversion = "3.6", 
+	Rversion = "3.5", 
 	imports = list(
 		data.table = "1.12.6", 
 		Rcpp = "1.0.0", 
@@ -88,7 +72,7 @@ RstoxBuild::buildRstoxPackage(
 RstoxBuild::buildRstoxPackage(
 	"RstoxFDA", 
 	version = "1.0", 
-	Rversion = "3.6", 
+	Rversion = "3.5", 
 	imports = list(
 		data.table = "1.12.6"
 	), 
@@ -101,7 +85,7 @@ RstoxBuild::buildRstoxPackage(
 RstoxBuild::buildRstoxPackage(
 	"RstoxTempdoc", 
 	version = "1.0", 
-	Rversion = "3.6", 
+	Rversion = "3.5", 
 	check = FALSE
 )
 
@@ -110,7 +94,7 @@ RstoxBuild::buildRstoxPackage(
 RstoxBuild::buildRstoxPackage(
 	"RstoxBuild", 
 	version = "1.0", 
-	Rversion = "3.6", 
+	Rversion = "3.5", 
 	check = FALSE, 
 	imports = c("usethis", "devtools"), 
 	suggests = c("Rstox", "png", "jpeg", "tiff", "rJava", "callr")

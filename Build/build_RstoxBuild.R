@@ -11,15 +11,15 @@ buildRstoxBuildFromSource <- function(rootDir = "~/Code/Github"){
 # buildRstoxBuildFromSource()
 
 
-# Build 1.0:
+# Build RstoxBuild:
 RstoxBuild::buildRstoxPackage(
 	"RstoxBuild", 
 	version = "1.0", 
-	Rversion = "3.6", 
+	Rversion = "3.5", 
 	check = FALSE, 
-	suggests = "Rstox"
-	)
-
+	imports = c("usethis", "devtools"), 
+	suggests = c("Rstox", "png", "jpeg", "tiff", "rJava", "callr")
+)
 
 
 
