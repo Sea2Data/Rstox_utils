@@ -61,7 +61,7 @@ RstoxBuild::buildRstoxPackage(
 # Build RstoxData:
 RstoxBuild::buildRstoxPackage(
 	"RstoxData", 
-	version = "0.6.3", 
+	version = "0.6.5", 
 	Rversion = "3.5", 
 	imports = list(
 		data.table = "1.12.6", 
