@@ -51,7 +51,10 @@ RstoxBuild::buildRstoxPackage(
 		data.table = "1.12.6", 
 		geojsonio = "0.8.0", 
 		jsonlite = "1.6", 
-		sp = "1.3.2"
+		rgdal = "1.4.7", 
+		sp = "1.3.2", 
+		RstoxBase = "1.0", 
+		RstoxData = "0.6.5"
 	), 
 	suggests = "testthat", 
 	check = FALSE

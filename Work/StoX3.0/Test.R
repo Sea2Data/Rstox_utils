@@ -528,8 +528,8 @@ jsonlite::toJSON(d7, pretty = TRUE, auto_unbox = TRUE)
 
 
 
-stratum <- "{\"type\":\"FeatureCollection\",\"features\":[{\"type\":\"Feature\",\"geometry\":{\"type\":\"Polygon\",\"coordinates\":[[[-12.000000000000002,61.99999999741889],[-12.496999999999998,62.24799999727737],[-13.876000000000001,62.93799999688672],[-14.000000000000009,62.99999999685182],[-13.999999999999998,63.49999999657333],[-13.999999999999996,63.627999996502666],[-13.999999999999996,63.99999999629934],[-13.681999999999999,64.317999996128],[-12.999999999999991,64.99999999576929],[-13.503999999999994,65.69799999541652],[-14.000000000000005,66.3849999950859],[-13.998000000000005,66.38699999508493],[-11.770000000000001,67.05999999477915],[-8.38549811472583,67.21228074023003],[-10.620000000000003,68.45999999420836],[-10.05,69.14999999396332],[-9.469999999999997,69.81999999375041],[-9.340000000000003,69.9999999936976],[-9.000000000000005,69.9999999936976],[-8.499999999999995,69.9999999936976],[-8,69.9999999936976],[-7.499999999999987,69.9999999936976],[-6.999999999999992,69.9999999936976],[-6.4999999999999885,69.9999999936976],[-5.999999999999997,69.9999999936976],[-5.5,69.9999999936976],[-4.999999999999999,69.99999999369763],[-4.500000000000008,69.99999999369763],[-3.999999999999998,69.99999999369763],[-3.5000000000000018,69.9999999936976],[-3.000000000000001,69.99999999369763],[-2.5000000000000004,69.9999999936976],[-1.999999999999995,69.99999999369763],[-1.4999999999999927,69.9999999936976],[-1.000000000000003,69.9999999936976],[-0.5000000000000007,69.99999999369763],[-9.54166404439055e-15,69.9999999936976],[-3.1805546814635168e-15,69.83699999374538],[-1.5902773407317584e-15,69.60899999381463],[-4.770832022195275e-15,69.1469999939643],[6.3611093629270335e-15,68.8459999940681],[-4.770832022195275e-15,68.45699999420945],[-4.770832022195275e-15,68.08399999435234],[1.5902773407317584e-15,67.99999999438546],[-0.5000000000000039,67.99999999438549],[-1.0000000000000062,67.99999999438546],[-1.5000000000000069,67.99999999438546],[-1.999999999999998,67.99999999438546],[-2.499999999999994,67.99999999438546],[-3.0000000000000044,67.99999999438546],[-3.4999999999999907,67.99999999438546],[-3.999999999999999,67.99999999438549],[-4.500000000000004,67.99999999438546],[-4.999999999999999,67.99999999438549],[-5.175000000000001,67.82499999445557],[-5.232999999999996,67.76699999447925],[-5.924000000000001,67.07599999477206],[-6.613000000000006,66.38699999508493],[-6.672999999999999,66.32699999511303],[-7.3020000000000005,65.69799999541652],[-7.421999999999996,65.577999995476],[-7.991999999999999,65.00799999576506],[-8.171000000000006,64.828999995858],[-8.682000000000013,64.317999996128],[-8.919000000000006,64.0809999962555],[-9.371999999999993,63.627999996502666],[-9.668000000000006,63.33199999666645],[-10.000000000000009,62.999999996851834],[-9.752,62.93799999688669],[-8.333000000000007,62.582999997087],[-8,62.49999999713407],[-8.000000000000004,62.24799999727737],[-8.000000000000004,61.999999997418875],[-8.5,61.99999999741889],[-9.00000000000001,61.99999999741889],[-9.500000000000005,61.999999997418875],[-10.000000000000009,61.999999997418875],[-10.499999999999996,61.999999997418875],[-10.999999999999995,61.99999999741889],[-11.499999999999998,61.999999997418875],[-12.000000000000002,61.99999999741889]]]},\"properties\":{\"dummy\":0},\"id\":3}]}"
-modifyStratum(stratum, projectPath = "~/workspace/stox/project/Test_Rstox3", modelName = "Baseline", processID = "P003")
+stratum <- "{\"type\":\"FeatureCollection\",\"features\":[{\"type\":\"Feature\",\"geometry\":{\"type\":\"Polygon\",\"coordinates\":[[[4.3000000000000025,62.249999997276205],[3.7666666700000015,62.249999997276205],[3.7666666699999984,62.48999999713977],[-1.6640291377292762,64.84799456068586],[6.116666670000004,63.499999996573344],[7.000000000000003,63.499999996573344],[4.3000000000000025,62.249999997276205]]]},\"properties\":{\"polygonName\":\"2\"},\"id\":2},{\"type\":\"Feature\",\"geometry\":{\"type\":\"Polygon\",\"coordinates\":[[[4.3000000000000025,62.249999997276205],[3.7666666700000015,62.249999997276205],[3.7666666699999984,62.48999999713977],[-1.6640291377292762,64.84799456068586],[6.116666670000004,63.499999996573344],[7.000000000000003,63.499999996573344],[4.3000000000000025,62.249999997276205]]]},\"properties\":{\"polygonName\":\"5\"},\"id\":5}]}"
+modifyStratum(stratum, projectPath = "~/workspace/stox/project/Test_Rstox3_cod2019", modelName = "Baseline", processID = "P003")
 
 
 
@@ -605,7 +605,7 @@ addReadAcoustic <- function(projectPath, skeleton, ...) {
 	acousticFileNames <- list.files(acousticResourceProjectPath, full.names = TRUE)
 	file.copy(
 		acousticFileNames, 
-		inputFile(acousticFileNames, projectPath = projectPath, folder = "biotic")
+		inputFile(acousticFileNames, projectPath = projectPath, folder = "acoustic")
 	)
 	temp <- addProcess(
 		projectPath = projectPath, 
@@ -770,6 +770,25 @@ addLengthDistribution <- function(projectPath, ...) {
 	temp
 }
 # Funciton to add LengthDistribution:
+addRegroupLengthDistribution <- function(projectPath, ...) {
+	temp <- addProcess(
+		projectPath = projectPath, 
+		modelName = "Baseline", 
+		values = list(
+			processName = "RegroupLengthDistribution", 
+			functionName = "RegroupLengthDistribution", 
+			functionInputs = list(
+				LengthDistribution = "LengthDistribution"
+			), 
+			functionParameters = list(
+				LengthInterval = 5
+			)
+		)
+	)
+	
+	temp
+}
+# Funciton to add LengthDistribution:
 addNASC <- function(projectPath, ...) {
 	temp <- addProcess(
 		projectPath = projectPath, 
@@ -863,9 +882,6 @@ createTestProject <- function(projectName, projectPathOriginal, processes = c("R
 	#addLengthDistribution(projectPath = projectPath)
 	
 	
-	# Run the original project and save the baseline:
-	original <- getBaseline(skeleton$projectPathOriginal)
-	
 	# Get the names of the processes: 
 	processTable <- getProcessTable(skeleton$projectPath, "Baseline")
 	
@@ -875,6 +891,9 @@ createTestProject <- function(projectName, projectPathOriginal, processes = c("R
 	# Get the process output:
 	processOutput <- mapply(getProcessOutput, skeleton$projectPath, "Baseline", processTable$processID)
 	names(processOutput) <- processTable$processName
+	
+	# Run the original project and save the baseline:
+	original <- getBaseline(skeleton$projectPathOriginal)
 	
 	# Return the original and new output:
 	out <- list(
@@ -887,6 +906,8 @@ createTestProject <- function(projectName, projectPathOriginal, processes = c("R
 
 library(Rstox)
 library(RstoxFramework)
+options(deparse.max.lines = 10)
+
 
 # Create the Barents sea cod 2019 project:
 # First time you will need to set download = TRUE to download the specific year of the survey time series:
@@ -897,7 +918,8 @@ cod2019 <- createTestProject(
 	projectName = projectName, 
 	sts = sts, 
 	year = year, 
-	dir = "~/workspace/stox/project"
+	dir = "~/workspace/stox/project", 
+	processes = c("ReadBiotic", "StoxBiotic", "DefineStrata", "StratumArea", "DefineSweptAreaPSU", "DefineSweptAreaLayer", "LengthDistribution", "RegroupLengthDistribution")
 )
 
 cod2019$original$outputData$StationLengthDist
@@ -917,6 +939,9 @@ herring2018 <- createTestProject(
 )
 
 
+system.time(f <- runModel("~/workspace/stox/project/Test_Rstox3_herring2018", modelName = "Baseline", endProcess = 3))
+############################################
+############################################
 
 
 
@@ -1116,4 +1141,17 @@ d$outputData$StationLengthDist
 
 d <- RstoxBase:::meanData(processOutput$LengthDistribution, "Stratum")
 dim(d)
+
+
+
+
+
+
+
+
+
+usethis::browse_github_pat() # Generate new token, then copy it
+usethis::edit_r_environ() # A file is opened. Paste the token to this file. Then viola!
+
+
 
