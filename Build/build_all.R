@@ -51,10 +51,7 @@ RstoxBuild::buildRstoxPackage(
 		data.table = "1.12.6", 
 		geojsonio = "0.8.0", 
 		jsonlite = "1.6", 
-		rgdal = "1.4.7", 
-		sp = "1.3.2", 
-		RstoxBase = "1.0", 
-		RstoxData = "0.6.5"
+		sp = "1.3.2"
 	), 
 	suggests = "testthat", 
 	check = FALSE
@@ -64,7 +61,7 @@ RstoxBuild::buildRstoxPackage(
 # Build RstoxData:
 RstoxBuild::buildRstoxPackage(
 	"RstoxData", 
-	version = "0.6.5", 
+	version = "0.6.6", 
 	Rversion = "3.5", 
 	imports = list(
 		data.table = "1.12.6", 
@@ -79,24 +76,24 @@ RstoxBuild::buildRstoxPackage(
 
 # Build RstoxFDA:
 RstoxBuild::buildRstoxPackage(
-  "RstoxFDA",
-  version = "1.0",
-  Rversion = "3.6",
-  imports = list(
-    stats = "3.5.0",
-    methods = "3.5.0",
-    utils = "3.5.0",
-    readr = "1.3.1",
-    data.table = "1.12.6",
-    ggplot2 = "3.2.1",
-    RColorBrewer = "1.1-2",
-    gridExtra = "2.3",
-    sp = "1.3.2",
-    RstoxData = "0.6.1",
-    RstoxBase = "1.0"
-  ),
-  suggests = c("testthat", "Reca"),
-  check = FALSE
+	"RstoxFDA",
+	version = "1.0",
+	Rversion = "3.6",
+	imports = list(
+		stats = "3.5.0",
+		methods = "3.5.0",
+		utils = "3.5.0",
+		readr = "1.3.1",
+		data.table = "1.12.6",
+		ggplot2 = "3.2.1",
+		RColorBrewer = "1.1-2",
+		gridExtra = "2.3",
+		sp = "1.3.2",
+		RstoxData = "0.6.1",
+		RstoxBase = "1.0"
+	),
+	suggests = c("testthat", "Reca"),
+	check = FALSE
 )
 
 
