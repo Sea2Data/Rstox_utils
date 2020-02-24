@@ -45,7 +45,7 @@ RstoxBuild::buildRstoxPackage(
 # Build RstoxFramework:
 RstoxBuild::buildRstoxPackage(
 	"RstoxFramework", 
-	version = "1.0", 
+	version = "1.0.1", 
 	Rversion = "3.5", 
 	imports = list(
 		data.table = "1.12.6", 

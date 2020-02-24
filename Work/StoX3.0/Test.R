@@ -1,177 +1,4 @@
 
-system.time(RstoxFramework::createProject("~/workspace/stox/project/Test_Rstox copy3", template = "Test3.0", ow = TRUE))
-
-RstoxFramework::closeProject("~/workspace/stox/project/Test_Rstox copy3")
-
-RstoxFramework::openProject("~/workspace/stox/project/Test_Rstox copy3")
-
-RstoxFramework::saveProject("~/workspace/stox/project/Test_Rstox copy3")
-
-RstoxFramework::saveAsProject("~/workspace/stox/project/Test_Rstox copy3", "~/workspace/stox/project/Test_Rstox copy4", ow = TRUE)
-
-RstoxFramework::isOpenProject("~/workspace/stox/project/Test_Rstox copy3")
-RstoxFramework::isOpenProject("~/workspace/stox/project/Test_Rstox copy4")
-RstoxFramework::closeProject("~/workspace/stox/project/Test_Rstox copy4")
-RstoxFramework::openProject("~/workspace/stox/project/Test_Rstox copy4")
-RstoxFramework::openProject("~/workspace/stox/project/Test_Rstox copy3")
-
-
-
-
-system.time(modifyProcess("~/workspace/stox/project/Test_Rstox copy3", "baseline", "ReadBiotic", list(functionParameters = list(FileNames = "~/workspace/stox/project/StoXVerTest_temp/unix_18.2.0/Proj/Bar_Se_Nort_Arc_co_bo_tr_in_i_wi_2017_bioticV3.0/input/biotic/biotic_cruiseNumber_2017102_G+O+Sars_2019-01-15T03.27.17.822Z.xml"))))
-
-system.time(modifyProcess("~/workspace/stox/project/Test_Rstox copy3", "baseline", "DefineStrata", list(functionParameters = list(FileName = c("~/workspace/stox/reference/stratum/angola_15-500M.txt")))))
-
-system.time(modifyProcess("~/workspace/stox/project/Test_Rstox copy3", "baseline", "StratumArea", list(functionInputs = list(StratumPolygon = "DefineStrata"))))
-
-
-
-
-system.time(f1 <- runProcess("~/workspace/stox/project/Test_Rstox copy3", "baseline", "P001"))
-
-system.time(f2 <- runProcess("~/workspace/stox/project/Test_Rstox copy3", "baseline", "P002"))
-
-system.time(f3 <- runProcess("~/workspace/stox/project/Test_Rstox copy3", "baseline", "P003"))
-
-
-system.time(f <- runModel("~/workspace/stox/project/Test_Rstox copy3", modelName = "baseline"))
-
-system.time(f <- runFunction(runModel, list("~/workspace/stox/project/Test_Rstox copy3", modelName = "baseline")))
-
-
-
-
-
-getProcessTable("~/workspace/stox/project/Test_Rstox copy3", "baseline")
-
-
-g <- getProcessOutput("~/workspace/stox/project/Test_Rstox copy3", "baseline", "P002")
-
-
-
-d1 <- getProcessPropertySheet("~/workspace/stox/project/Test_Rstox copy3", "baseline", "P001")
-d2 <- getProcessPropertySheet("~/workspace/stox/project/Test_Rstox copy3", "baseline", "P002")
-d3 <- getProcessPropertySheet("~/workspace/stox/project/Test_Rstox copy3", "baseline", "P003")
-jsonlite::toJSON(d1, pretty = TRUE)
-jsonlite::toJSON(d2, pretty = TRUE)
-jsonlite::toJSON(d3, pretty = TRUE)
-jsonlite::toJSON(d2, pretty = TRUE, auto_unbox = TRUE)
-jsonlite::toJSON(d1, pretty = TRUE, auto_unbox = TRUE)
-jsonlite::toJSON(d3, pretty = TRUE, auto_unbox = TRUE)
-
-
-d3 <- setProcessPropertyValue(groupName = "processArguments", name = "functionName", value = "ReadBiotic", "~/workspace/stox/project/Test_Rstox copy3", "baseline", "P003")
-
-d3 <- setProcessPropertyValue(groupName = "processArguments", name = "functionName", value = "DefineStrata", "~/workspace/stox/project/Test_Rstox3", "baseline", "P003")
-
-v <- c("a")
-a <- array(v))
-dt <- data.table::data.table(a)
-jsonlite::toJSON(dt, auto_unbox = TRUE)
-
-v <- c("a")
-a <- array(v)
-dt <- data.table::data.table(a)
-is.array(dt$a)
-
-
-
-
-
-
-
-# Create a portable project:
-
-RstoxFramework::openProject("~/workspace/stox/project/Test_Rstox copy2")
-
-system.time(modifyProcess("~/workspace/stox/project/Test_Rstox copy2", "baseline", "ReadBiotic", list(functionParameters = list(FileNames = "~/workspace/stox/project/Test_Rstox copy2/Input/Biotic/biotic_cruiseNumber_2017102_G+O+Sars_2019-01-15T03.27.17.822Z.xml"))))
-
-system.time(modifyProcess("~/workspace/stox/project/Test_Rstox copy2", "baseline", "DefineStrata", list(functionParameters = list(FileName = c("~/workspace/stox/project/Test_Rstox copy2/Input/angola_15-500M.txt")))))
-
-system.time(modifyProcess("~/workspace/stox/project/Test_Rstox copy2", "baseline", "StratumArea", list(functionInputs = list(StratumPolygon = "DefineStrata"))))
-
-
-system.time(addProcess("~/workspace/stox/project/Test_Rstox copy2", "baseline", list(processName = "ReadAcoustic", functionName = "RstoxBase::ReadAcoustic", functionParameters = list(FileNames = "Input/Acoustic/echosounder_cruiseNumber_2019203_Johan+Hjort.xml"))))
-
-
-
-
-
-
-
-
-system.time(RstoxFramework::createProject("~/workspace/stox/project/Test_Rstox3", template = "Test3.0", ow = TRUE))
-
-#RstoxFramework::openProject("~/workspace/stox/project/Test_Rstox3")
-
-
-
-system.time(modifyProcess("~/workspace/stox/project/Test_Rstox3", "baseline", "ReadBiotic", list(functionParameters = list(FileNames = "Input/Biotic/biotic_cruiseNumber_2017102_G+O+Sars_2019-01-15T03.27.17.822Z.xml"))))
-
-system.time(modifyProcess("~/workspace/stox/project/Test_Rstox3", "baseline", "DefineStrata", list(functionParameters = list(FileName = c("Input/norwegian_sea2014.txt")))))
-
-system.time(modifyProcess("~/workspace/stox/project/Test_Rstox3", "baseline", "StratumArea", list(functionInputs = list(StratumPolygon = "DefineStrata"))))
-
-
-system.time(addProcess("~/workspace/stox/project/Test_Rstox3", "baseline", list(processName = "ReadAcoustic", functionName = "RstoxBase::ReadAcoustic", functionParameters = list(FileNames = "Input/Acoustic/libas_ListUserFile20__L40.0-2259.9.txt"))))
-
-system.time(addProcess("~/workspace/stox/project/Test_Rstox3", "baseline", list(processName = "StoxAcoustic", functionName = "RstoxData::StoxAcoustic", functionInputs = list(AcousticData = "ReadAcoustic"))))
-
-system.time(addProcess("~/workspace/stox/project/Test_Rstox3", "baseline", list(processName = "DefineAcousticPSU", functionName = "RstoxBase::DefineAcousticPSU", functionInputs = list(StratumPolygon = "DefineStrata", StoxAcousticData = "StoxAcoustic"))))
-
-system.time(addProcess("~/workspace/stox/project/Test_Rstox3", "baseline", list(processName = "DefineAcousticLayer", functionName = "RstoxBase::DefineAcousticLayer", functionInputs = list(StoxAcousticData = "StoxAcoustic"))))
-
-
-
-
-
-getProcessTable("~/workspace/stox/project/Test_Rstox3", "baseline")
-
-
-system.time(f <- runModel("~/workspace/stox/project/Test_Rstox3", modelName = "baseline"))
-
-RstoxFramework::saveProject("~/workspace/stox/project/Test_Rstox3")
-
-
-g1 <- getProcessOutput("~/workspace/stox/project/Test_Rstox3", "baseline", "P001")
-g1
-
-g2 <- getProcessOutput("~/workspace/stox/project/Test_Rstox3", "baseline", "P002")
-g2
-
-g3 <- getProcessOutput("~/workspace/stox/project/Test_Rstox3", "baseline", "P003")
-g3
-
-g4 <- getProcessOutput("~/workspace/stox/project/Test_Rstox3", "baseline", "P004")
-g4
-
-g5 <- getProcessOutput("~/workspace/stox/project/Test_Rstox3", "baseline", "P005")
-g5
-
-g6 <- getProcessOutput("~/workspace/stox/project/Test_Rstox3", "baseline", "P006")
-g6
-
-g7 <- getProcessOutput("~/workspace/stox/project/Test_Rstox3", "baseline", "P007")
-g7
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 library(RstoxFramework)
 options(deparse.max.lines = 10)
@@ -225,6 +52,21 @@ temp <- addProcess(
 	)
 )
 
+# Add process 24, FilterBiotic:
+temp <- addProcess(
+	projectPath = projectPath, 
+	modelName = "baseline", 
+	values = list(
+		processName = "FilterBiotic", 
+		functionName = "FilterBiotic", 
+		functionInputs = list(
+			BioticData = "ReadBiotic"
+		), 
+		functionParameters = list(
+			FilterExpression = list("biotic_cruiseNumber_2017838_Eros_2019-02-19T08.33.14.905Z.xml/individual" = "length > 2")
+		)
+	)
+)
 
 # Add process 2, StoxBiotic:
 temp <- addProcess(
@@ -238,6 +80,24 @@ temp <- addProcess(
 		)
 	)
 )
+
+
+# Add process 24, FilterStoxBiotic:
+temp <- addProcess(
+	projectPath = projectPath, 
+	modelName = "baseline", 
+	values = list(
+		processName = "FilterStoxBiotic", 
+		functionName = "FilterStoxBiotic", 
+		functionInputs = list(
+			StoxBioticData = "StoxBiotic"
+		), 
+		functionParameters = list(
+			FilterExpression = list(SpeciesCategory = "SpeciesCategory != \"sild'G03/161722.G03/126417/NA\"")
+		)
+	)
+)
+
 
 # Add process 3, DefineStrata:
 inputFileNames <- list.files(inputresourceProjectPath, full.names = TRUE)
@@ -289,6 +149,23 @@ temp <- addProcess(
 	)
 )
 
+# Add process 24, FilterAcoustic:
+temp <- addProcess(
+	projectPath = projectPath, 
+	modelName = "baseline", 
+	values = list(
+		processName = "FilterAcoustic", 
+		functionName = "FilterAcoustic", 
+		functionInputs = list(
+			AcousticData = "ReadAcoustic"
+		), 
+		functionParameters = list(
+			FilterExpression = list("echosounder_cruiseNumber_2017838_Eros.xml/ch_type" = "type == \"P\"")
+		)
+	)
+)
+
+
 # Add process 6, StoxAcoustic:
 temp <- addProcess(
 	projectPath = projectPath, 
@@ -301,6 +178,26 @@ temp <- addProcess(
 		)
 	)
 )
+
+# Add process 24, FilterStoxAcoustic:
+temp <- addProcess(
+	projectPath = projectPath, 
+	modelName = "baseline", 
+	values = list(
+		processName = "FilterStoxAcoustic", 
+		functionName = "FilterStoxAcoustic", 
+		functionInputs = list(
+			StoxAcousticData = "StoxAcoustic"
+		), 
+		functionParameters = list(
+			FilterExpression = list(
+				ChannelReference = "ChannelReferenceType == \"P\""
+			), 
+			PropagateUpwards = TRUE
+		)
+	)
+)
+
 
 # # Add process 6b, MergeStoxAcoustic:
 # temp <- addProcess(
@@ -494,7 +391,7 @@ temp <- addProcess(
 		processName = "NASC", 
 		functionName = "NASC", 
 		functionInputs = list(
-			StoxAcousticData = "StoxAcoustic", 
+			StoxAcousticData = "FilterStoxAcoustic", 
 			AcousticLayer = "DefineAcousticLayer", 
 			AcousticPSU = "DefineAcousticPSU"
 		)
@@ -526,7 +423,7 @@ temp <- addProcess(
 		processName = "MeanNASC", 
 		functionName = "MeanNASC", 
 		functionInputs = list(
-			NASCData = "NASC"
+			NASCData = "SumNASC"
 		), 
 		functionParameters = list(
 			TargetResolution = "Stratum"
@@ -642,21 +539,45 @@ temp <- addProcess(
 	)
 )
 
-# Add process 24, FilterStoxBiotic:
+
+# Add process 24, SuperIndividualsSweptArea:
 temp <- addProcess(
 	projectPath = projectPath, 
 	modelName = "baseline", 
 	values = list(
-		processName = "FilterStoxBiotic", 
-		functionName = "FilterStoxBiotic", 
+		processName = "SuperIndividualsSweptAreaEqual", 
+		functionName = "SuperIndividuals", 
 		functionInputs = list(
-			StoxBioticData = "StoxBiotic"
+			IndividualsData = "IndividualsSweptArea", 
+			AbundanceData = "Abundance", 
+			LengthDistributionData = "LengthDistribution"
 		), 
 		functionParameters = list(
-			FilterExpression = list(Individual = "SpeciesCategoryKey != \"sild'G03/161722.G03/126417/NA\"")
+			AbundWeightMethod = "Equal"
 		)
 	)
 )
+
+# Add process 24, SuperIndividualsSweptArea:
+temp <- addProcess(
+	projectPath = projectPath, 
+	modelName = "baseline", 
+	values = list(
+		processName = "SuperIndividualsSweptAreaHaulDensity", 
+		functionName = "SuperIndividuals", 
+		functionInputs = list(
+			IndividualsData = "IndividualsSweptArea", 
+			AbundanceData = "Abundance", 
+			LengthDistributionData = "LengthDistribution"
+		), 
+		functionParameters = list(
+			AbundWeightMethod = "HaulDensity"
+		)
+	)
+)
+
+
+
 
 
 
@@ -689,12 +610,17 @@ getAvailableStoxFunctionNames("baseline")
 getAvailableStoxFunctionNames("analysis")
 getAvailableStoxFunctionNames("report")
 
-processTable <- getProcessTable("~/workspace/stox/project/Test_Rstox3", "baseline")
+c <- "~/workspace/stox/project/Test_Rstox3"
+modelName <- "baseline"
+processTable <- getProcessTable(projectPath, modelName)
 
-system.time(f <- runModel("~/workspace/stox/project/Test_Rstox3", modelName = "baseline"))
+system.time(f <- runModel(projectPath, modelName))
+
+system.time(g <- getModel(projectPath, modelName))
 
 
-RstoxFramework::saveProject("~/workspace/stox/project/Test_Rstox3")
+
+#RstoxFramework::saveProject("~/workspace/stox/project/Test_Rstox3")
 
 processOutput <- mapply(getProcessOutput, "~/workspace/stox/project/Test_Rstox3", "baseline", processTable$processID)
 names(processOutput) <- processTable$processName
@@ -735,6 +661,8 @@ g1 <- getFilterOptions("~/workspace/stox/project/Test_Rstox3", "baseline", "P002
 g2 <- getFilterOptions("~/workspace/stox/project/Test_Rstox3", "baseline", "P001", "biotic_cruiseNumber_2017838_Eros_2019-02-19T08.33.14.905Z.xml/fishstation")
 names(g1)
 names(g2)
+jsonlite::toJSON(g1, auto_unbox = TRUE, pretty = TRUE)
+jsonlite::toJSON(g2, auto_unbox = TRUE, pretty = TRUE)
 
 
 l <- list(
@@ -815,6 +743,7 @@ assignedHauls <- BioticAssignment[, .(Haul = unique(Haul)), by = abundanceResolu
 IndividualsData <- processOutput$IndividualsSweptArea
 AbundanceData <- processOutput$Abundance
 SuperIndividualsData <- merge(IndividualsData, AbundanceData, by = intersect(names(IndividualsData), names(AbundanceData)))
+LengthDistributionData <- processOutput$LengthDistribution
 
 
 
@@ -1572,5 +1501,29 @@ buildExpression <- function(expression) {
 }
 ll <- rapply(l, buildExpression, how = "replace")
 
+
+
+
+
+
+
+
+
+
+
+
+f <- list(
+	Individual = "SpeciesCategory != \"sild'G03/161722.G03/126417/NA\"", 
+	Station = "Longitude >= 62"
+)
+
+ff <- jsonlite::toJSON(f, auto_unbox = TRUE)
+
+ff
+{"Individual":"SpeciesCategory != \"sild'G03/161722.G03/126417/NA\"","Station":"Longitude >= 62"} 
+
+as.character(ff)
+
+"{\"Individual\":\"SpeciesCategory != \\\"sild'G03/161722.G03/126417/NA\\\"\",\"Station\":\"Longitude >= 62\"}"
 
 
