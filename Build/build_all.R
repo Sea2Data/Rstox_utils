@@ -28,7 +28,7 @@ RstoxBuild::buildRstoxPackage(
 # Build RstoxBase:
 RstoxBuild::buildRstoxPackage(
 	"RstoxBase", 
-	Rversion = "3.5", 
+	Rversion = "3.6", 
 	imports = list(
 		data.table="1.10.4-3", 
 		rgdal = "1.4.7",
@@ -58,7 +58,7 @@ RstoxBuild::buildRstoxPackage(
 # Build RstoxData:
 RstoxBuild::buildRstoxPackage(
 	"RstoxData", 
-	Rversion = "3.5", 
+	Rversion = "3.6", 
 	imports = list(
 		data.table = "1.12.6", 
 		Rcpp = "1.0.0", 
@@ -95,7 +95,7 @@ RstoxBuild::buildRstoxPackage(
 # Build RstoxTempdoc:
 RstoxBuild::buildRstoxPackage(
 	"RstoxTempdoc", 
-	Rversion = "3.5", 
+	Rversion = "3.6", 
 	check = FALSE
 )
 
@@ -103,7 +103,7 @@ RstoxBuild::buildRstoxPackage(
 # Build RstoxBuild:
 RstoxBuild::buildRstoxPackage(
 	"RstoxBuild", 
-	Rversion = "3.5", 
+	Rversion = "3.6", 
 	check = FALSE, 
 	imports = c("usethis", "devtools"), 
 	suggests = c("Rstox", "png", "jpeg", "tiff", "rJava", "callr")
@@ -115,7 +115,7 @@ RstoxBuild::buildRstoxPackage(
 # Build RstoxBuild:
 RstoxBuild::buildRstoxPackage(
 	"RstoxAPI", 
-	Rversion = "3.5", 
+	Rversion = "3.6", 
 	check = FALSE, 
 	imports = c("RstoxFramework", "devtools")
 )

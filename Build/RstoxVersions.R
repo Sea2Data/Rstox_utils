@@ -4,5 +4,5 @@ RstoxVersions <- list(
 	RstoxData = "0.7", 
 	RstoxFDA = "0.0.1", 
 	RstoxBuild = "0.0.1", 
-	RstoxAPI = "1.0."
+	RstoxAPI = "1.0"
 )
