@@ -2,7 +2,6 @@
 # Build Rstox 1.11.1:
 RstoxBuild::buildRstoxPackage(
 	"Rstox", 
-	version = "1.11.1", 
 	Rversion = "3.5", 
 	imports = list(
 		data.table = "1.10.4-3", 
@@ -29,7 +28,6 @@ RstoxBuild::buildRstoxPackage(
 # Build RstoxBase:
 RstoxBuild::buildRstoxPackage(
 	"RstoxBase", 
-	version = "1.0", 
 	Rversion = "3.5", 
 	imports = list(
 		data.table="1.10.4-3", 
@@ -45,7 +43,6 @@ RstoxBuild::buildRstoxPackage(
 # Build RstoxFramework:
 RstoxBuild::buildRstoxPackage(
 	"RstoxFramework", 
-	version = "1.0.1", 
 	Rversion = "3.6", # This is due to change in formals() which now includes the 'envir' argument which we have employed, and the fact that sampling has changed as of R 3.6.
 	imports = list(
 		data.table = "1.12.6", 
@@ -61,7 +58,6 @@ RstoxBuild::buildRstoxPackage(
 # Build RstoxData:
 RstoxBuild::buildRstoxPackage(
 	"RstoxData", 
-	version = "0.6.6", 
 	Rversion = "3.5", 
 	imports = list(
 		data.table = "1.12.6", 
@@ -77,7 +73,6 @@ RstoxBuild::buildRstoxPackage(
 # Build RstoxFDA:
 RstoxBuild::buildRstoxPackage(
 	"RstoxFDA",
-	version = "1.0",
 	Rversion = "3.6",
 	imports = list(
 		stats = "3.5.0",
@@ -100,7 +95,6 @@ RstoxBuild::buildRstoxPackage(
 # Build RstoxTempdoc:
 RstoxBuild::buildRstoxPackage(
 	"RstoxTempdoc", 
-	version = "1.0", 
 	Rversion = "3.5", 
 	check = FALSE
 )
@@ -109,9 +103,19 @@ RstoxBuild::buildRstoxPackage(
 # Build RstoxBuild:
 RstoxBuild::buildRstoxPackage(
 	"RstoxBuild", 
-	version = "1.0", 
 	Rversion = "3.5", 
 	check = FALSE, 
 	imports = c("usethis", "devtools"), 
 	suggests = c("Rstox", "png", "jpeg", "tiff", "rJava", "callr")
+)
+
+
+
+
+# Build RstoxBuild:
+RstoxBuild::buildRstoxPackage(
+	"RstoxAPI", 
+	Rversion = "3.5", 
+	check = FALSE, 
+	imports = c("RstoxFramework", "devtools")
 )
