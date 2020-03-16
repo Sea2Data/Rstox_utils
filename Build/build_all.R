@@ -46,7 +46,7 @@ RstoxBuild::buildRstoxPackage(
 RstoxBuild::buildRstoxPackage(
 	"RstoxFramework", 
 	version = "1.0.1", 
-	Rversion = "3.5", 
+	Rversion = "3.6", # This is due to change in formals() which now includes the 'envir' argument which we have employed, and the fact that sampling has changed as of R 3.6.
 	imports = list(
 		data.table = "1.12.6", 
 		geojsonio = "0.8.0", 

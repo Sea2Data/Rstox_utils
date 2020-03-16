@@ -63,7 +63,7 @@ temp <- addProcess(
 			BioticData = "ReadBiotic"
 		), 
 		functionParameters = list(
-			FilterExpression = list("biotic_cruiseNumber_2017838_Eros_2019-02-19T08.33.14.905Z.xml/individual" = "length > 2")
+			FilterExpression = list("biotic_cruiseNumber_2017838_Eros_2019-02-19T08.33.14.905Z.xml/individual" = "length > 0.02")
 		)
 	)
 )
@@ -77,9 +77,25 @@ temp <- addProcess(
 		functionName = "StoxBiotic", 
 		functionInputs = list(
 			BioticData = "ReadBiotic"
+		), 
+		functionParameters = list(
+			cores = 1
 		)
 	)
 )
+
+## Add process 2, StoxBiotic2:
+#temp <- addProcess(
+#	projectPath = projectPath, 
+#	modelName = "baseline", 
+#	values = list(
+#		processName = "StoxBiotic2", 
+#		functionName = "StoxBiotic2", 
+#		functionInputs = list(
+#			BioticData = "ReadBiotic"
+#		)
+#	)
+#)
 
 
 # Add process 24, FilterStoxBiotic:
@@ -93,7 +109,7 @@ temp <- addProcess(
 			StoxBioticData = "StoxBiotic"
 		), 
 		functionParameters = list(
-			FilterExpression = list(SpeciesCategory = "SpeciesCategory != \"sild'G03/161722.G03/126417/NA\"")
+			FilterExpression = list(SpeciesCategory = "SpeciesCategory == \"sild'G03/161722.G03/126417/NA\"")
 		)
 	)
 )
@@ -232,6 +248,10 @@ temp <- addProcess(
 	values = list(
 		processName = "DefineAcousticPSU", 
 		functionName = "DefineAcousticPSU", 
+		functionParameters = list(
+			DefinitionMethod = "EDSUToPSU"
+			#DefinitionMethod = "None"
+		), 
 		functionInputs = list(
 			StratumPolygon = "DefineStrata", 
 			StoxAcousticData = "StoxAcoustic"
@@ -264,7 +284,7 @@ temp <- addProcess(
 		functionName = "DefineSweptAreaPSU", 
 		functionInputs = list(
 			StratumPolygon = "DefineStrata", 
-			StoxBioticData = "StoxBiotic"
+			StoxBioticData = "FilterStoxBiotic"
 		)
 	)
 )
@@ -277,7 +297,7 @@ temp <- addProcess(
 		processName = "DefineSweptAreaLayer", 
 		functionName = "DefineSweptAreaLayer", 
 		functionInputs = list(
-			StoxBioticData = "StoxBiotic"
+			StoxBioticData = "FilterStoxBiotic"
 		), 
 		functionParameters = list(
 			#DefinitionMethod = "WaterColumn"
@@ -295,7 +315,7 @@ temp <- addProcess(
 		processName = "LengthDistribution", 
 		functionName = "LengthDistribution", 
 		functionInputs = list(
-			StoxBioticData = "StoxBiotic", 
+			StoxBioticData = "FilterStoxBiotic", 
 			SweptAreaPSU = "DefineSweptAreaPSU", 
 			SweptAreaLayer = "DefineSweptAreaLayer"
 		), 
@@ -333,10 +353,13 @@ temp <- addProcess(
 		), 
 		functionParameters = list(
 			LengthDependentSweepWidthParameters = data.table::data.table(
-				SpeciesCategory = "sild'G03/161722.G03/126417/NA", 
+				SpeciesCategory = c(
+					"sild'G03/161722.G03/126417/NA", 
+					"laksesild/162187/127312/NA"
+				), 
 				Alpha = 5.91, 
 				Beta = 0.43, 
-				LMin = 15, 
+				LMin = c(15, 14), 
 				LMax = 62
 			)
 		)
@@ -436,6 +459,26 @@ temp <- addProcess(
 	projectPath = projectPath, 
 	modelName = "baseline", 
 	values = list(
+		processName = "DefineAcousticTargetStrength", 
+		functionName = "DefineAcousticTargetStrength", 
+		functionParameters = list(
+			ParameterTable = data.table::data.table(
+				AcousticCategory = "12", 
+				Frequency = 38000, 
+				m = 20, 
+				a = -71.9, 
+				d = 0
+			)
+		)
+	)
+)
+
+
+# Add process 20, SweptAreaDensity:
+temp <- addProcess(
+	projectPath = projectPath, 
+	modelName = "baseline", 
+	values = list(
 		processName = "SweptAreaDensity", 
 		functionName = "SweptAreaDensity", 
 		functionInputs = list(
@@ -456,26 +499,28 @@ temp <- addProcess(
 		functionName = "DefineBioticAssignment", 
 		functionInputs = list(
 			NASCData = "NASC", 
-			StoxBioticData = "StoxBiotic", 
+			StoxAcousticData = "StoxAcoustic", 
+			AcousticPSU = "DefineAcousticPSU", 
+			StoxBioticData = "FilterStoxBiotic", 
 			StratumPolygon = "DefineStrata"
 		)
 	)
 )
 
 
-## Add process 22, AssignmentLengthDistribution:
-#temp <- addProcess(
-#	projectPath = projectPath, 
-#	modelName = "baseline", 
-#	values = list(
-#		processName = "AssignmentLengthDistribution", 
-#		functionName = "AssignmentLengthDistribution", 
-#		functionInputs = list(
-#			LengthDistributionData = "LengthDependentCatchCompensation", 
-#			BioticAssignment = "DefineBioticAssignment"
-#		)
-#	)
-#)
+# Add process 22, AssignmentLengthDistribution:
+temp <- addProcess(
+	projectPath = projectPath, 
+	modelName = "baseline", 
+	values = list(
+		processName = "AssignmentLengthDistribution", 
+		functionName = "AssignmentLengthDistribution", 
+		functionInputs = list(
+			LengthDistributionData = "LengthDependentCatchCompensation", 
+			BioticAssignment = "DefineBioticAssignment"
+		)
+	)
+)
 
 
 # Add process 23, MeanDensity:
@@ -513,7 +558,7 @@ temp <- addProcess(
 		processName = "IndividualsAcoustic", 
 		functionName = "Individuals", 
 		functionInputs = list(
-			StoxBioticData = "StoxBiotic", 
+			StoxBioticData = "FilterStoxBiotic", 
 			BioticAssignment = "DefineBioticAssignment"
 		), 
 		functionParameters = list(
@@ -530,7 +575,7 @@ temp <- addProcess(
 		processName = "IndividualsSweptArea", 
 		functionName = "Individuals", 
 		functionInputs = list(
-			StoxBioticData = "StoxBiotic", 
+			StoxBioticData = "FilterStoxBiotic", 
 			LengthDistributionData = "LengthDependentCatchCompensation"
 		), 
 		functionParameters = list(
@@ -610,14 +655,46 @@ getAvailableStoxFunctionNames("baseline")
 getAvailableStoxFunctionNames("analysis")
 getAvailableStoxFunctionNames("report")
 
-c <- "~/workspace/stox/project/Test_Rstox3"
+projectPath <- "~/workspace/stox/project/Test_Rstox3"
 modelName <- "baseline"
-processTable <- getProcessTable(projectPath, modelName)
+system.time(processTable <- getProcessTable(projectPath, modelName))
+system.time(processTable2 <- scanForModelError(projectPath, modelName))
 
 system.time(f <- runModel(projectPath, modelName))
 
-system.time(g <- getModel(projectPath, modelName))
 
+# 1: Move processes [DONE]
+rearrangeProcesses(projectPath, modelName, c("P014", "P013"), "P010")
+getProcessTable(projectPath, modelName)
+# Produces function input errors:
+rearrangeProcesses(projectPath, modelName, c("P017", "P029"), "P010")
+getProcessTable(projectPath, modelName)
+
+# 2: Change process name - change process index table [DONE]
+# 3: activeProcessID to the current, and a flag processModified which is TRUE if the user modifies something
+setProcessPropertyValue("processArguments", "processName", "StoxAcoustic2", projectPath, modelName, "P009")
+
+# 4: Function name "" shuold be allowed
+setProcessPropertyValue("processArguments", "functionName", "", projectPath, modelName, "P009")
+
+# 6: nchar of process name should be > 0 [DONE]
+setProcessPropertyValue("processArguments", "processName", "", projectPath, modelName, "P009")
+
+
+setProcessPropertyValue("processArguments", "enabled", FALSE, projectPath, modelName, "P009")
+setProcessPropertyValue("processArguments", "processName", "", projectPath, modelName, "P009")
+
+RstoxFramework:::modifyFunctionName(projectPath, modelName, "P014", "")
+
+addEmptyProcess(projectPath, modelName, processName = NULL)
+
+
+
+
+RstoxFramework:::getProcessData(projectPath, modelName, "P011")
+addAcousticPSU("9", NULL, projectPath, modelName, "P011")
+RstoxFramework:::getProcessData(projectPath, modelName, "P011")
+addAcousticPSU("9", NULL, projectPath, modelName, "P011")
 
 
 #RstoxFramework::saveProject("~/workspace/stox/project/Test_Rstox3")
@@ -714,9 +791,9 @@ system.time(g5 <- getInteractiveData("~/workspace/stox/project/Test_Rstox3", "ba
 
 projectPathprojectPath <- "~/workspace/stox/project/Test_Rstox3"
 modelName <- "baseline"
-processID <- "P007"
-RstoxFramework::getProcessPropertySheet(projectPath, modelName, processID)
-
+processID <- "P017"
+p <- RstoxFramework::getProcessPropertySheet(projectPath, modelName, processID)
+p
 
 
 projectPath <- "~/workspace/stox/project/Test_Rstox3"
