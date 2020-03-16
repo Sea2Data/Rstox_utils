@@ -20,7 +20,7 @@ RstoxBuild::buildRstoxPackage(
 		XML = NULL,
 		scatterpie = NULL
 	), 
-	suggests = c("pgirmess", "Reca"), 
+	suggests = c("pgirmess", "Reca","testthat"), 
 	githubRoot = "https://github.com/Sea2Data", 
 	check = FALSE
 )
