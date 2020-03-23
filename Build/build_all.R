@@ -15,6 +15,7 @@ RstoxBuild::buildRstoxPackage(
 		rgdal = NULL,
 		rgeos = NULL,
 		rJava = NULL,
+		readr = NULL,
 		sp = NULL,
 		XML = NULL,
 		scatterpie = NULL
