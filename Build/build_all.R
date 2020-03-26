@@ -30,16 +30,17 @@ RstoxBuild::buildRstoxPackage(
 	"RstoxBase", 
 	Rversion = "3.6", 
 	imports = list(
-		data.table="1.10.4-3", 
+		data.table ="1.10.4-3", 
 		rgdal = "1.4.7",
 		rgeos = "0.5.2",
 		sp = "1.3.2"
 	), 
 	suggests = "testthat", 
+	remotes = "RstoxData", 
 	check = FALSE
 )
 
-
+	
 # Build RstoxFramework:
 RstoxBuild::buildRstoxPackage(
 	"RstoxFramework", 
@@ -58,7 +59,7 @@ RstoxBuild::buildRstoxPackage(
 # Build RstoxData:
 RstoxBuild::buildRstoxPackage(
 	"RstoxData", 
-	Rversion = "3.6", 
+	Rversion = "3.5", 
 	imports = list(
 		data.table = "1.12.6", 
 		Rcpp = "1.0.0", 

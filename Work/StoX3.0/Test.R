@@ -1,6 +1,7 @@
 
 
 library(RstoxFramework)
+library(RstoxAPI)
 options(deparse.max.lines = 10)
 
 inputFile <- function(fileName, projectPath = NULL, folder = "acoustic") {
@@ -270,7 +271,7 @@ temp <- addProcess(
 			StoxAcousticData = "StoxAcoustic"
 		), 
 		functionParameters = list(
-			DefinitionMethod = "HighestResolution"
+			DefinitionMethod = "WaterColumn"
 		)
 	)
 )
@@ -508,19 +509,19 @@ temp <- addProcess(
 )
 
 
-# Add process 22, AssignmentLengthDistribution:
-temp <- addProcess(
-	projectPath = projectPath, 
-	modelName = "baseline", 
-	values = list(
-		processName = "AssignmentLengthDistribution", 
-		functionName = "AssignmentLengthDistribution", 
-		functionInputs = list(
-			LengthDistributionData = "LengthDependentCatchCompensation", 
-			BioticAssignment = "DefineBioticAssignment"
-		)
-	)
-)
+#### Add process 22, AssignmentLengthDistribution:
+###temp <- addProcess(
+###	projectPath = projectPath, 
+###	modelName = "baseline", 
+###	values = list(
+###		processName = "AssignmentLengthDistribution", 
+###		functionName = "AssignmentLengthDistribution", 
+###		functionInputs = list(
+###			LengthDistributionData = "LengthDependentCatchCompensation", 
+###			BioticAssignment = "DefineBioticAssignment"
+###		)
+###	)
+###)
 
 
 # Add process 23, MeanDensity:
@@ -623,6 +624,19 @@ temp <- addProcess(
 
 
 
+#temp <- addProcess(
+#	projectPath = projectPath, 
+#	modelName = "baseline", 
+#	values = list(
+#		processName = "PrepareRecaEstimate2", 
+#		functionName = "RstoxFDA::PrepareRecaEstimate", 
+#		functionInputs = list(
+#			StoxBioticData = "StoxBiotic", 
+#			StoxLandingData = "StoxBiotic"
+#		)
+#	)
+#)
+
 
 
 
@@ -659,13 +673,63 @@ projectPath <- "~/workspace/stox/project/Test_Rstox3"
 modelName <- "baseline"
 system.time(processTable <- getProcessTable(projectPath, modelName))
 system.time(processTable2 <- scanForModelError(projectPath, modelName))
+system.time(processTable2 <- RstoxFramework:::getProcessesSansProcessData(projectPath, modelName))
+
 
 system.time(f <- runModel(projectPath, modelName))
 
 
+
+system.time(f <- runModel(projectPath, modelName, endProcess = 12))
+system.time(f <- runModel(projectPath, modelName, endProcess = 1))
+
+
+system.time(closeProject(projectPath = projectPath))
+system.time(openProject(projectPath = projectPath))
+
+addProcess(projectPath, modelName)
+
+RstoxFramework:::getFunctionName(
+	projectPath = projectPath, 
+	modelName = modelName, 
+	processID = "P033"
+)
+
+removeProcess(projectPath, modelName, processID = "P005")
+
+
+rearrangeProcesses(projectPath, modelName, c("P003"), "P002")
+
+
+resetModel(projectPath, modelName, "P003")
+resetModel(projectPath, modelName, "P073")
+
+resetModel(projectPath, modelName)
+resetModel(projectPath, modelName)
+
+
+RstoxAPI::runFunction("getModelInfo", args = list())
+
+runFunction("getAvailableTemplatesDescriptions", args = list())
+jsonlite::toJSON(runFunction("getActiveProcessID", args = list(projectPath = projectPath, modelName = "baseline")), auto_unbox = TRUE, pretty = TRUE)
+
+
+
+
+setProcessMemoryNew(projectPath, modelName, "P001", "processName", "ddddd")
+setProcessMemoryNew(projectPath, modelName, "P001", "functionParameters", list(FileNames ="asdfas"))
+
+RstoxFramework:::getArgumentFilePaths(projectPath, modelName = NULL, processID = NULL, argumentName = NULL)
+
+
+	
+	
+
+
+
 # 1: Move processes [DONE]
 rearrangeProcesses(projectPath, modelName, c("P014", "P013"), "P010")
-getProcessTable(projectPath, modelName)
+g <- getProcessTable(projectPath, modelName)
 # Produces function input errors:
 rearrangeProcesses(projectPath, modelName, c("P017", "P029"), "P010")
 getProcessTable(projectPath, modelName)
@@ -675,18 +739,30 @@ getProcessTable(projectPath, modelName)
 setProcessPropertyValue("processArguments", "processName", "StoxAcoustic2", projectPath, modelName, "P009")
 
 # 4: Function name "" shuold be allowed
-setProcessPropertyValue("processArguments", "functionName", "", projectPath, modelName, "P009")
+setProcessPropertyValue("processArguments", "functionName", "", projectPath, modelName, "P006")
 
 # 6: nchar of process name should be > 0 [DONE]
 setProcessPropertyValue("processArguments", "processName", "", projectPath, modelName, "P009")
 
 
-setProcessPropertyValue("processArguments", "enabled", FALSE, projectPath, modelName, "P009")
-setProcessPropertyValue("processArguments", "processName", "", projectPath, modelName, "P009")
+setProcessPropertyValue("processArguments", "enabled", FALSE, projectPath, modelName, "P001")
 
-RstoxFramework:::modifyFunctionName(projectPath, modelName, "P014", "")
+
+RstoxFramework:::modifyFunctionName(projectPath, modelName, "P015", "")
 
 addEmptyProcess(projectPath, modelName, processName = NULL)
+
+
+# Set file names
+setProcessPropertyValue("functionParameters", "FileNames", c("~/workspace/stox/project/Test_Rstox3/process/projectSession/projectMemory/current/maxProcessIntegerID.txt", "~/workspace/stox/project/Test_Rstox3/process/projectSession/projectMemory/current/processIndexTable.txt"), projectPath, modelName, "P001")
+
+getProcessPropertySheet(projectPath, modelName, processID = "P002")
+
+
+resp <- POST("http://localhost:5307/ocpu/library/RstoxAPI/R/runFunction/json?auto_unbox=TRUE", body = list(what="'getActiveProcessID'", args="{\"projectPath\":\"/Users/arnejh/workspace/stox/project/Test_Rstox3\",\"modelName\":\"baseline\"}", removeCall=F), encode = 'form')
+
+
+
 
 
 
@@ -976,6 +1052,23 @@ addReadBiotic <- function(projectPath, skeleton, ...) {
 			functionParameters = list(
 				FileNames = inputFile(bioticFileNames, projectPath = NULL, folder = "biotic")
 			)
+		)
+	)
+	
+	temp
+}
+# Funciton to add StoxBiotic:
+addFilterBiotic <- function(projectPath, ...) {
+	temp <- addProcess(
+		projectPath = projectPath, 
+		modelName = "baseline", 
+		values = list(
+			processName = "FilterBiotic", 
+			functionName = "FilterBiotic", 
+			functionInputs = list(
+				BioticData = "ReadBiotic"
+			), 
+			
 		)
 	)
 	
@@ -1342,7 +1435,7 @@ cod2019 <- createTestProject(
 	sts = sts, 
 	year = year, 
 	dir = "~/workspace/stox/project", 
-	processes = c("ReadBiotic", "StoxBiotic", "DefineStrata", "StratumArea", "DefineSweptAreaPSU", "DefineSweptAreaLayer", "LengthDistribution", "LengthDependentCatchCompensation", "RegroupLengthDistribution")
+	processes = c("ReadBiotic", "StoxBiotic", "FilterStoxBiotic", "DefineStrata", "StratumArea", "DefineSweptAreaPSU", "DefineSweptAreaLayer", "LengthDistribution", "LengthDependentCatchCompensation", "RegroupLengthDistribution")
 )
 
 cod2019$original$outputData$StationLengthDist
@@ -1602,5 +1695,28 @@ ff
 as.character(ff)
 
 "{\"Individual\":\"SpeciesCategory != \\\"sild'G03/161722.G03/126417/NA\\\"\",\"Station\":\"Longitude >= 62\"}"
+
+
+
+
+
+system.time(r.ices <- readXmlFile("~/Code/Github/StoX/Releases/StoX 2.9.6/TestProjects/Acoustic_578-1019-2019207.xml"))
+system.time(r.ices <- readXmlFile("~/Code/Github/StoX/Releases/StoX 2.9.6/TestProjects/Acoustic_578-1019-2019207.xml", stream = FALSE))
+
+system.time(a.ices <- ReadAcoustic("~/Code/Github/StoX/Releases/StoX 2.9.6/TestProjects/Acoustic_578-1019-2019207.xml"))
+system.time(A.ices <- StoxAcoustic(a.ices))
+
+system.time(a.nmd <- ReadAcoustic("~/Code/Github/StoX/Releases/StoX 2.9.6/TestProjects/echosounder_cruiseNumber_2017838_Eros.xml"))
+system.time(A.nmd <- StoxAcoustic(a.nmd))
+
+
+
+system.time(b.ices <- ReadBiotic("~/Code/Github/StoX/Releases/StoX 2.9.6/TestProjects/Biotic_578-1019-2018207.xml"))
+system.time(B.ices <- StoxBiotic(b.ices))
+
+system.time(b.nmd <- ReadBiotic("~/Code/Github/StoX/Releases/StoX 2.9.6/TestProjects/biotic_cruiseNumber_2017838_Eros_2019-02-19T08.33.14.905Z.xml"))
+system.time(B.nmd <- StoxBiotic(b.nmd))
+
+
 
 
