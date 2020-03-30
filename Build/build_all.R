@@ -34,7 +34,8 @@ RstoxBuild::buildRstoxPackage(
 		data.table ="1.10.4-3", 
 		rgdal = "1.4.7",
 		rgeos = "0.5.2",
-		sp = "1.3.2"
+		sp = "1.3.2", 
+		RstoxData = "0.7.0"
 	), 
 	suggests = "testthat", 
 	remotes = "RstoxData", 
@@ -50,9 +51,15 @@ RstoxBuild::buildRstoxPackage(
 		data.table = "1.12.6", 
 		geojsonio = "0.8.0", 
 		jsonlite = "1.6", 
-		sp = "1.3.2"
+		sp = "1.3.2", 
+		RstoxData = "0.7.0",
+		RstoxBase = "1.1.0"
 	), 
 	suggests = "testthat", 
+	remotes = c(
+		"RstoxData", 
+		"RstoxBase"
+	), 
 	check = FALSE
 )
 
@@ -87,7 +94,7 @@ RstoxBuild::buildRstoxPackage(
 		gridExtra = "2.3",
 		sp = "1.3.2",
 		RstoxData = "0.6.1",
-		RstoxBase = "1.0"
+		RstoxBase = "1.0.0"
 	),
 	suggests = c("testthat", "Reca"),
 	check = FALSE
@@ -119,5 +126,9 @@ RstoxBuild::buildRstoxPackage(
 	"RstoxAPI", 
 	Rversion = "3.6", 
 	check = FALSE, 
-	imports = c("RstoxFramework", "devtools")
+	imports = list(
+		RstoxFramework = "1.1.0", 
+		devtools = NULL
+	), 
+	remotes = "RstoxFramework"
 )

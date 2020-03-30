@@ -1,7 +1,7 @@
 RstoxVersions <- list(
-	RstoxFramework = "1.1.0", 
-	RstoxBase = "1.1.0", 
-	RstoxData = "0.7.0", 
+	RstoxFramework = "1.1.1", 
+	RstoxBase = "1.1.1", 
+	RstoxData = "0.7.1", 
 	RstoxFDA = "0.0.1", 
 	RstoxBuild = "0.0.1", 
 	RstoxAPI = "1.0.0"

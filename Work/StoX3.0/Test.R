@@ -676,11 +676,23 @@ system.time(processTable2 <- scanForModelError(projectPath, modelName))
 system.time(processTable2 <- RstoxFramework:::getProcessesSansProcessData(projectPath, modelName))
 
 
+
+RstoxFramework::saveProject(projectPath, "JSON")
+
 system.time(f <- runModel(projectPath, modelName))
 
+RstoxFramework::saveProject(projectPath, "JSON")
 
 
-system.time(f <- runModel(projectPath, modelName, endProcess = 12))
+getFunctionHelpAsHtml(projectPath, modelName, "P001")
+
+
+
+
+
+
+
+system.time(f <- runModel(projectPath, modelName, startProcess = 1, endProcess = 17))
 system.time(f <- runModel(projectPath, modelName, endProcess = 1))
 
 
@@ -688,6 +700,7 @@ system.time(closeProject(projectPath = projectPath))
 system.time(openProject(projectPath = projectPath))
 
 addProcess(projectPath, modelName)
+removeProcess(projectPath, modelName, "P033")
 
 RstoxFramework:::getFunctionName(
 	projectPath = projectPath, 
@@ -1720,3 +1733,34 @@ system.time(B.nmd <- StoxBiotic(b.nmd))
 
 
 
+F.nmd <- FilterStoxAcoustic(A.nmd,  FilterExpression = list(ChannelReference = "ChannelReferenceType == \"P\"", AcousticCategory = "AcousticCategory == \"12\""))
+						
+						
+system.time(nasc.ices <- NASC(A.ices))
+
+
+# Test of effect of displaced origin in stratum area calculation. The conclusion is to use indiivdual origins, since these are more appropriate for each stratum:
+lat_0 <- seq(-85,85,5)
+lon_0 <- seq(-20,30,1)
+
+stratumPolygon <- f$DefineStrata
+stratumPolygon <- head(stratumPolygon, 1)
+sp::proj4string(stratumPolygon) <- sp::CRS("+proj=longlat +ellps=WGS84")	
+
+area <- array(NA, dim = c(length(lon_0), length(lat_0)))
+
+for(i in seq_along(lat_0)) {
+	for(j in seq_along(lon_0)) {
+		area[j, i] <- rgeos::gArea(sp::spTransform(stratumPolygon, sp::CRS(
+			paste0(
+				"+proj=laea +lat_0=", 
+				lat_0[i], 
+				" +lon_0=", 
+				lon_0[j], 
+				" +x_0=0 +y_0=0 +ellps=WGS84 +datum=WGS84 +units=kmi +no_defs"
+			)
+		)))
+	}
+}
+
+rgl::persp3d(lon_0, lat_0, area, col = "pink", xlab = "lon", ylab = "lat")
