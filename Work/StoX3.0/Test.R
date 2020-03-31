@@ -1,5 +1,3 @@
-
-
 library(RstoxFramework)
 library(RstoxAPI)
 options(deparse.max.lines = 10)
@@ -147,6 +145,23 @@ temp <- addProcess(
 	)
 )
 
+
+# Add process 4, StratumArea:
+temp <- addProcess(
+	projectPath = projectPath, 
+	modelName = "baseline", 
+	values = list(
+		processName = "StratumAreaSimple", 
+		functionName = "StratumArea", 
+		functionInputs = list(
+			StratumPolygon = "DefineStrata"
+		), 
+		functionParameters = list(
+			AreaMethod = "Simple"
+		)
+	)
+)
+
 # Add process 5, ReadAcoustic:
 #acousticFileName <- "libas_ListUserFile20__L40.0-2259.9.txt"
 acousticFileName <- list.files(acousticresourceProjectPath, full.names = TRUE)
@@ -209,8 +224,7 @@ temp <- addProcess(
 		functionParameters = list(
 			FilterExpression = list(
 				ChannelReference = "ChannelReferenceType == \"P\""
-			), 
-			PropagateUpwards = TRUE
+			)
 		)
 	)
 )
@@ -375,7 +389,7 @@ temp <- addProcess(
 		processName = "SumLengthDistribution", 
 		functionName = "SumLengthDistribution", 
 		functionInputs = list(
-			LengthDistributionData = "LengthDependentCatchCompensation"
+			LengthDistributionData = "RegroupLengthDistribution"
 		)
 	)
 )
@@ -389,6 +403,32 @@ temp <- addProcess(
 		functionName = "MeanLengthDistribution", 
 		functionInputs = list(
 			LengthDistributionData = "SumLengthDistribution"
+		)
+	)
+)
+
+# Add process 14, SumLengthDistribution:
+temp <- addProcess(
+	projectPath = projectPath, 
+	modelName = "baseline", 
+	values = list(
+		processName = "SumLengthDistributionCompensated", 
+		functionName = "SumLengthDistribution", 
+		functionInputs = list(
+			LengthDistributionData = "LengthDependentCatchCompensation"
+		)
+	)
+)
+
+# Add process 15, MeanLengthDistribution:
+temp <- addProcess(
+	projectPath = projectPath, 
+	modelName = "baseline", 
+	values = list(
+		processName = "MeanLengthDistributionCompensated", 
+		functionName = "MeanLengthDistribution", 
+		functionInputs = list(
+			LengthDistributionData = "SumLengthDistributionCompensated"
 		)
 	)
 )
@@ -455,7 +495,7 @@ temp <- addProcess(
 	)
 )
 
-# Add process 20, SweptAreaDensity:
+# Add process 20, DefineAcousticTargetStrength:
 temp <- addProcess(
 	projectPath = projectPath, 
 	modelName = "baseline", 
@@ -480,12 +520,30 @@ temp <- addProcess(
 	projectPath = projectPath, 
 	modelName = "baseline", 
 	values = list(
-		processName = "SweptAreaDensity", 
+		processName = "SweptAreaDensityPreDefined", 
+		functionName = "SweptAreaDensity", 
+		functionInputs = list(
+			LengthDistributionData = "MeanLengthDistributionCompensated"
+		), 
+		functionParameters = list(
+			SweepWidthMethod = "PreDefined"
+		)
+	)
+)
+
+
+# Add process 20, SweptAreaDensity:
+temp <- addProcess(
+	projectPath = projectPath, 
+	modelName = "baseline", 
+	values = list(
+		processName = "SweptAreaDensityConstant", 
 		functionName = "SweptAreaDensity", 
 		functionInputs = list(
 			LengthDistributionData = "MeanLengthDistribution"
 		), 
 		functionParameters = list(
+			SweepWidthMethod = "Constant", 
 			SweepWidth = 25
 		)
 	)
@@ -532,7 +590,7 @@ temp <- addProcess(
 		processName = "MeanDensity", 
 		functionName = "MeanDensity", 
 		functionInputs = list(
-			DensityData = "SweptAreaDensity"
+			DensityData = "SweptAreaDensityPreDefined"
 		)
 	)
 )
@@ -662,7 +720,6 @@ temp <- addProcess(
 
 ##### End of test project: #####
 
-
 stoxLibrary <- getRstoxFrameworkDefinitions("stoxLibrary")
 names(stoxLibrary)
 getAvailableStoxFunctionNames("baseline")
@@ -672,12 +729,11 @@ getAvailableStoxFunctionNames("report")
 projectPath <- "~/workspace/stox/project/Test_Rstox3"
 modelName <- "baseline"
 system.time(processTable <- getProcessTable(projectPath, modelName))
-system.time(processTable2 <- scanForModelError(projectPath, modelName))
-system.time(processTable2 <- RstoxFramework:::getProcessesSansProcessData(projectPath, modelName))
+#system.time(processTable2 <- scanForModelError(projectPath, modelName))
+#system.time(processTable2 <- RstoxFramework:::getProcessesSansProcessData(projectPath, modelName))
 
-
-
-RstoxFramework::saveProject(projectPath, "JSON")
+#RstoxFramework::saveProject(projectPath, "JSON")
+#RstoxFramework::saveProject(projectPath)
 
 system.time(f <- runModel(projectPath, modelName))
 
@@ -700,6 +756,7 @@ system.time(closeProject(projectPath = projectPath))
 system.time(openProject(projectPath = projectPath))
 
 addProcess(projectPath, modelName)
+RstoxFramework:::modifyFunctionName(projectPath, modelName, "P034", "StoXBiotic")
 removeProcess(projectPath, modelName, "P033")
 
 RstoxFramework:::getFunctionName(
@@ -769,7 +826,7 @@ addEmptyProcess(projectPath, modelName, processName = NULL)
 # Set file names
 setProcessPropertyValue("functionParameters", "FileNames", c("~/workspace/stox/project/Test_Rstox3/process/projectSession/projectMemory/current/maxProcessIntegerID.txt", "~/workspace/stox/project/Test_Rstox3/process/projectSession/projectMemory/current/processIndexTable.txt"), projectPath, modelName, "P001")
 
-getProcessPropertySheet(projectPath, modelName, processID = "P002")
+getProcessPropertySheet(projectPath, modelName, processID = "P006")
 
 
 resp <- POST("http://localhost:5307/ocpu/library/RstoxAPI/R/runFunction/json?auto_unbox=TRUE", body = list(what="'getActiveProcessID'", args="{\"projectPath\":\"/Users/arnejh/workspace/stox/project/Test_Rstox3\",\"modelName\":\"baseline\"}", removeCall=F), encode = 'form')
@@ -1004,11 +1061,11 @@ jsonlite::toJSON(d1, pretty = TRUE, auto_unbox = TRUE)
 d2 <- getProcessPropertySheet("~/workspace/stox/project/Test_Rstox3", "baseline", "P004")
 jsonlite::toJSON(d2, pretty = TRUE, auto_unbox = TRUE)
 
-d3 <- getProcessPropertySheet("~/workspace/stox/project/Test_Rstox3", "baseline", "P003")
+d3 <- getProcessPropertySheet("~/workspace/stox/project/Test_Rstox3", "baseline", "P005")
 jsonlite::toJSON(d3, pretty = TRUE, auto_unbox = TRUE)
 
 
-d7 <- getProcessPropertySheet("~/workspace/stox/project/Test_Rstox3", "baseline", "P007")
+d7 <- getProcessPropertySheet("~/workspace/stox/project/Test_Rstox3", "baseline", "P017")
 jsonlite::toJSON(d7, pretty = TRUE, auto_unbox = TRUE)
 
 
@@ -1729,6 +1786,12 @@ system.time(B.ices <- StoxBiotic(b.ices))
 
 system.time(b.nmd <- ReadBiotic("~/Code/Github/StoX/Releases/StoX 2.9.6/TestProjects/biotic_cruiseNumber_2017838_Eros_2019-02-19T08.33.14.905Z.xml"))
 system.time(B.nmd <- StoxBiotic(b.nmd))
+
+
+system.time(b.nmd <- ReadBiotic("~/workspace/stox/project/StoXVerTest/StagedProjOrig/Rstox_1.8_StoXLib_1.76/2017_O-gr_Lengthbased_Selectivity_Several_species/input/biotic/4-2017-1173-56_HH.out.xml"))
+system.time(B.nmd <- StoxBiotic(b.nmd))
+
+
 
 
 
