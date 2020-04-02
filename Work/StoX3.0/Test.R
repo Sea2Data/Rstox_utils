@@ -744,7 +744,10 @@ getFunctionHelpAsHtml(projectPath, modelName, "P001")
 
 
 
-
+# Known issues:
+# 1. Un-informative error when trying to modify function name to non-existing function ()
+RstoxFramework:::modifyFunctionName(projectPath, modelName, "P034", "StoXBiotic")
+RstoxFramework:::modifyFunctionName(projectPath, modelName, "P034", "RstoxData::StoxBiotic2")
 
 
 
@@ -756,8 +759,8 @@ system.time(closeProject(projectPath = projectPath))
 system.time(openProject(projectPath = projectPath))
 
 addProcess(projectPath, modelName)
-RstoxFramework:::modifyFunctionName(projectPath, modelName, "P034", "StoXBiotic")
-removeProcess(projectPath, modelName, "P033")
+RstoxFramework:::modifyFunctionName(projectPath, modelName, "P037", "RstoxData::StoxBiotic2")
+removeProcess(projectPath, modelName, "P037")
 
 RstoxFramework:::getFunctionName(
 	projectPath = projectPath, 
@@ -765,7 +768,6 @@ RstoxFramework:::getFunctionName(
 	processID = "P033"
 )
 
-removeProcess(projectPath, modelName, processID = "P005")
 
 
 rearrangeProcesses(projectPath, modelName, c("P003"), "P002")
@@ -785,11 +787,6 @@ jsonlite::toJSON(runFunction("getActiveProcessID", args = list(projectPath = pro
 
 
 
-
-setProcessMemoryNew(projectPath, modelName, "P001", "processName", "ddddd")
-setProcessMemoryNew(projectPath, modelName, "P001", "functionParameters", list(FileNames ="asdfas"))
-
-RstoxFramework:::getArgumentFilePaths(projectPath, modelName = NULL, processID = NULL, argumentName = NULL)
 
 
 	
