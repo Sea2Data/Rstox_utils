@@ -50,7 +50,8 @@ RstoxBuild::buildRstoxPackage(
 		data.table = "1.12.6", 
 		geojsonio = "0.8.0", 
 		jsonlite = "1.6", 
-		sp = "1.3.2"
+		sp = "1.3.2",
+		xml2="1.2.2"
 	), 
 	suggests = "testthat", 
 	remotes = c(
