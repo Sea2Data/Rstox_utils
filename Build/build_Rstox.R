@@ -117,6 +117,12 @@ RstoxBuild::buildRstoxPackage("Rstox", version="1.11.1", Rversion="3.5", pckvers
 # Before moving to the new account!!!!!!!!!!!!111:
 RstoxBuild::buildRstoxPackage("Rstox", version="1.11.1", Rversion="3.5", pckversion=list(data.table="1.10.4-3"), suggests=c("ncdf4", "pgirmess", "Reca", "plotrix"), check=FALSE, githubRoot = "https://github.com/Sea2Data")
 
+# 2020-06-03: After change in RstoxBuild:
+RstoxBuild::buildRstoxPackage("Rstox", version="1.11.1", Rversion="3.5", imports=list(data.table="1.10.4-3"), suggests=c("ncdf4", "pgirmess", "Reca", "plotrix"), check=FALSE, accountName = "Sea2Data", rootDir = "~/Code/Github/Rstox")
+
+
+
+
 
 
 

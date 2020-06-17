@@ -1,29 +1,31 @@
-
-# Build Rstox 1.11.1:
-RstoxBuild::buildRstoxPackage(
-	"Rstox", 
-	Rversion = "3.5", 
-	imports = list(
-		data.table = "1.10.4-3", 
-		MASS = NULL,
-		methods = NULL,
-		RColorBrewer = NULL,
-		ggplot2 = NULL,
-		gridExtra = NULL,
-		plotrix = NULL,
-		pbapply = NULL,
-		rgdal = NULL,
-		rgeos = NULL,
-		rJava = NULL,
-		readr = NULL,
-		sp = NULL,
-		XML = NULL,
-		scatterpie = NULL
-	), 
-	suggests = c("pgirmess", "Reca","testthat"), 
-	githubRoot = "https://github.com/Sea2Data", 
-	check = FALSE
-)
+# #
+# # Build Rstox 1.11.1:
+# RstoxBuild::buildRstoxPackage(
+# 	"Rstox", 
+# 	Rversion = "3.5", 
+# 	imports = list(
+# 		data.table = "1.10.4-3", 
+# 		MASS = NULL,
+# 		methods = NULL,
+# 		RColorBrewer = NULL,
+# 		ggplot2 = NULL,
+# 		gridExtra = NULL,
+# 		plotrix = NULL,
+# 		pbapply = NULL,
+# 		rgdal = NULL,
+# 		rgeos = NULL,
+# 		rJava = NULL,
+# 		readr = NULL,
+# 		sp = NULL,
+# 		XML = NULL,
+# 		scatterpie = NULL
+# 	), 
+# 	rootDir = "~/Code/Github/Rstox", 
+# 	accountName = "Sea2DataSea2Data", 
+# 	suggests = c("pgirmess", "Reca","testthat"), 
+# 	#githubRoot = "https://github.com/Sea2Data", 
+# 	check = FALSE
+# )
 
 
 # Build RstoxBase:
@@ -37,7 +39,8 @@ RstoxBuild::buildRstoxPackage(
 		sp = "1.3.2"
 	), 
 	suggests = "testthat", 
-	remotes = "RstoxData", 
+	internal.dependencies = "RstoxData", 
+	additional_repositories = "https://stoxproject.github.io/repo", 
 	check = FALSE
 )
 
@@ -50,13 +53,16 @@ RstoxBuild::buildRstoxPackage(
 		data.table = "1.12.6", 
 		geojsonio = "0.8.0", 
 		jsonlite = "1.6", 
-		sp = "1.3.2"
+		jsonvalidate = "1.1.0", 
+		sp = "1.3.2"#, 
+		#fst = "0.9.2"
 	), 
 	suggests = "testthat", 
-	remotes = c(
+	internal.dependencies = c(
 		"RstoxData", 
 		"RstoxBase"
 	), 
+	additional_repositories = "https://stoxproject.github.io/repo", 
 	check = FALSE
 )
 
@@ -64,7 +70,7 @@ RstoxBuild::buildRstoxPackage(
 # Build RstoxData:
 RstoxBuild::buildRstoxPackage(
 	"RstoxData", 
-	Rversion = "3.5", 
+	Rversion = "3.6", 
 	imports = list(
 		data.table = "1.12.6", 
 		Rcpp = "1.0.0", 
@@ -72,6 +78,7 @@ RstoxBuild::buildRstoxPackage(
 		readr = "1.3.1"
 	), 
 	suggests = "testthat", 
+	linkingto = "Rcpp",
 	check = FALSE
 )
 
@@ -81,9 +88,6 @@ RstoxBuild::buildRstoxPackage(
 	"RstoxFDA",
 	Rversion = "3.6",
 	imports = list(
-		stats = "3.5.0",
-		methods = "3.5.0",
-		utils = "3.5.0",
 		readr = "1.3.1",
 		data.table = "1.12.6",
 		ggplot2 = "3.2.1",
@@ -91,7 +95,7 @@ RstoxBuild::buildRstoxPackage(
 		gridExtra = "2.3",
 		sp = "1.3.2"
 	),
-	remotes = c(
+	internal.dependencies = c(
 		"RstoxData", 
 		"RstoxBase"
 	), 
@@ -120,7 +124,7 @@ RstoxBuild::buildRstoxPackage(
 
 
 
-# Build RstoxBuild:
+# Build RstoxAPI:
 RstoxBuild::buildRstoxPackage(
 	"RstoxAPI", 
 	Rversion = "3.6", 
@@ -128,5 +132,6 @@ RstoxBuild::buildRstoxPackage(
 	imports = list(
 		devtools = NULL
 	), 
-	remotes = "RstoxFramework"
+	internal.dependencies = "RstoxFramework", 
+	additional_repositories = "https://stoxproject.github.io/repo"
 )

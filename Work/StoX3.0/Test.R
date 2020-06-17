@@ -1,4 +1,3 @@
-library(RstoxFramework)
 library(RstoxAPI)
 options(deparse.max.lines = 10)
 
@@ -21,11 +20,55 @@ bioticresourceProjectPath <- file.path(resourceProjectPath, "biotic")
 acousticresourceProjectPath <- file.path(resourceProjectPath, "acoustic")
 inputresourceProjectPath <- file.path(resourceProjectPath, "input")
 
+system.time(stoxLibrary <- getRstoxFrameworkDefinitions("stoxLibrary"))
+getAvailableStoxFunctionNames("baseline")
+getAvailableStoxFunctionNames("analysis")
+getAvailableStoxFunctionNames("report")
+
 system.time(RstoxFramework::createProject(projectPath, template = "UserDefinedTemplate", ow = TRUE))
 
 #RstoxFramework::openProject("~/workspace/stox/project/Test_Rstox3")
-
 ##### Create the test project: #####
+
+# Add process 3, DefineStratumPolygon:
+inputFileNames <- list.files(inputresourceProjectPath, full.names = TRUE)
+file.copy(
+	inputFileNames, 
+	inputFile(inputFileNames, projectPath = projectPath, folder = "input")
+)
+temp <- addProcess(
+	projectPath = projectPath, 
+	modelName = "baseline", 
+	values = list(
+		processName = "DefineStratumPolygon", 
+		functionName = "DefineStratumPolygon", 
+		processParameters = list(
+			showInMap = TRUE
+		),
+		functionParameters = list(
+			DefinitionMethod = "ResourceFile", 
+			FileName = inputFile(inputFileNames, projectPath = NULL, folder = "input")
+		)
+	), 
+	returnProcessTable = FALSE
+)
+
+# Add process 4, StratumArea:
+temp <- addProcess(
+	projectPath = projectPath, 
+	modelName = "baseline", 
+	values = list(
+		processName = "StratumArea", 
+		functionName = "StratumArea", 
+		functionInputs = list(
+			StratumPolygon = "DefineStratumPolygon"
+		),
+		functionParameters = list(
+			AreaMethod = "Accurate"
+		)
+	), 
+	returnProcessTable = FALSE
+)
 
 # Add process 1, ReadBiotic:
 #bioticFileNames <- c(
@@ -48,7 +91,8 @@ temp <- addProcess(
 		functionParameters = list(
 			FileNames = inputFile(bioticFileNames, projectPath = NULL, folder = "biotic")
 		)
-	)
+	), 
+	returnProcessTable = FALSE
 )
 
 # Add process 24, FilterBiotic:
@@ -62,9 +106,15 @@ temp <- addProcess(
 			BioticData = "ReadBiotic"
 		), 
 		functionParameters = list(
-			FilterExpression = list("biotic_cruiseNumber_2017838_Eros_2019-02-19T08.33.14.905Z.xml/individual" = "length > 0.02")
+			FilterExpression = list(
+				"biotic_cruiseNumber_2017838_Eros_2019-02-19T08.33.14.905Z.xml/individual" = "length < 0.12", 
+				"biotic_cruiseNumber_2017839_Kings+Bay_2019-02-19T08.31.05.461Z.xml/fishstation" = "latitudestart < 30", 
+				"biotic_cruiseNumber_2017839_Kings+Bay_2019-02-19T08.31.05.461Z.xml/individual" = "length > 0.03"
+			), 
+			FilterUpwards = FALSE
 		)
-	)
+	), 
+	returnProcessTable = FALSE
 )
 
 # Add process 2, StoxBiotic:
@@ -74,13 +124,14 @@ temp <- addProcess(
 	values = list(
 		processName = "StoxBiotic", 
 		functionName = "StoxBiotic", 
+		processParameters = list(
+			showInMap = TRUE
+		),
 		functionInputs = list(
 			BioticData = "ReadBiotic"
-		), 
-		functionParameters = list(
-			cores = 1
 		)
-	)
+	), 
+	returnProcessTable = FALSE
 )
 
 ## Add process 2, StoxBiotic2:
@@ -108,42 +159,19 @@ temp <- addProcess(
 			StoxBioticData = "StoxBiotic"
 		), 
 		functionParameters = list(
-			FilterExpression = list(SpeciesCategory = "SpeciesCategory == \"sild'G03/161722.G03/126417/NA\"")
+			FilterExpression = list(
+				#SpeciesCategory = "SpeciesCategory %in% c(\"sild'G03/161722.G03/126417/NA\", \"torsk/164712/126436/NA\")", 
+				SpeciesCategory = "SpeciesCategory %in% c(\"torsk/164712/126436/NA\", \"sild'G03/161722.G03/126417/NA\")", 
+				Individual = "IndividualSex %in% NA"
+			), 
+			FilterUpwards = FALSE
 		)
-	)
+	), 
+	returnProcessTable = FALSE
 )
 
 
-# Add process 3, DefineStrata:
-inputFileNames <- list.files(inputresourceProjectPath, full.names = TRUE)
-file.copy(
-	inputFileNames, 
-	inputFile(inputFileNames, projectPath = projectPath, folder = "input")
-)
-temp <- addProcess(
-	projectPath = projectPath, 
-	modelName = "baseline", 
-	values = list(
-		processName = "DefineStrata", 
-		functionName = "DefineStrata", 
-		functionParameters = list(
-			FileName = inputFile(inputFileNames, projectPath = NULL, folder = "input")
-		)
-	)
-)
 
-# Add process 4, StratumArea:
-temp <- addProcess(
-	projectPath = projectPath, 
-	modelName = "baseline", 
-	values = list(
-		processName = "StratumArea", 
-		functionName = "StratumArea", 
-		functionInputs = list(
-			StratumPolygon = "DefineStrata"
-		)
-	)
-)
 
 
 # Add process 4, StratumArea:
@@ -154,12 +182,13 @@ temp <- addProcess(
 		processName = "StratumAreaSimple", 
 		functionName = "StratumArea", 
 		functionInputs = list(
-			StratumPolygon = "DefineStrata"
+			StratumPolygon = "DefineStratumPolygon"
 		), 
 		functionParameters = list(
 			AreaMethod = "Simple"
 		)
-	)
+	), 
+	returnProcessTable = FALSE
 )
 
 # Add process 5, ReadAcoustic:
@@ -178,25 +207,27 @@ temp <- addProcess(
 		functionParameters = list(
 			FileNames = inputFile(acousticFileName, projectPath = NULL, folder = "acoustic")
 		)
-	)
+	), 
+	returnProcessTable = FALSE
 )
 
 # Add process 24, FilterAcoustic:
-temp <- addProcess(
-	projectPath = projectPath, 
-	modelName = "baseline", 
-	values = list(
-		processName = "FilterAcoustic", 
-		functionName = "FilterAcoustic", 
-		functionInputs = list(
-			AcousticData = "ReadAcoustic"
-		), 
-		functionParameters = list(
-			FilterExpression = list("echosounder_cruiseNumber_2017838_Eros.xml/ch_type" = "type == \"P\"")
-		)
-	)
-)
-
+#temp <- addProcess(
+#	projectPath = projectPath, 
+#	modelName = "baseline", 
+#	values = list(
+#		processName = "FilterAcoustic", 
+#		functionName = "FilterAcoustic", 
+#		functionInputs = list(
+#			AcousticData = "ReadAcoustic"
+#		), 
+#		functionParameters = list(
+#			FilterExpression = list("echosounder_cruiseNumber_2017838_Eros.xml/ch_type" = "type == #\"P\"")
+#		), 
+#		FilterUpwards = FALSE
+#	), 
+#	returnProcessTable = FALSE
+#)
 
 # Add process 6, StoxAcoustic:
 temp <- addProcess(
@@ -205,10 +236,14 @@ temp <- addProcess(
 	values = list(
 		processName = "StoxAcoustic", 
 		functionName = "StoxAcoustic", 
+		processParameters = list(
+			showInMap = TRUE
+		),
 		functionInputs = list(
 			AcousticData = "ReadAcoustic"
 		)
-	)
+	), 
+	returnProcessTable = FALSE
 )
 
 # Add process 24, FilterStoxAcoustic:
@@ -223,15 +258,18 @@ temp <- addProcess(
 		), 
 		functionParameters = list(
 			FilterExpression = list(
-				ChannelReference = "ChannelReferenceType == \"P\""
-			)
+				ChannelReference = "ChannelReferenceType == \"P\"", 
+				AcousticCategory = "AcousticCategory %in% c(12, 21, 24, 31)"
+			), 
+			FilterUpwards = FALSE
 		)
-	)
+	), 
+	returnProcessTable = FALSE
 )
 
 
 # # Add process 6b, MergeStoxAcoustic:
-# temp <- addProcess(
+# system.time(temp <- addProcess(
 # 	projectPath = projectPath, 
 # 	modelName = "baseline", 
 # 	values = list(
@@ -241,10 +279,10 @@ temp <- addProcess(
 # 			StoxAcousticData = "StoxAcoustic"
 # 		)
 # 	)
-# )
+# ))
 
 ## Add process 6c, MergeStoxBiotic:
-#temp <- addProcess(
+#system.time(temp <- addProcess(
 #	projectPath = projectPath, 
 #	modelName = "baseline", 
 #	values = list(
@@ -254,7 +292,7 @@ temp <- addProcess(
 #			StoxBioticData = "StoxBiotic"
 #		)
 #	)
-#)
+#))
 
 # Add process 7, DefineAcousticPSU:
 temp <- addProcess(
@@ -268,10 +306,11 @@ temp <- addProcess(
 			#DefinitionMethod = "None"
 		), 
 		functionInputs = list(
-			StratumPolygon = "DefineStrata", 
+			StratumPolygon = "DefineStratumPolygon", 
 			StoxAcousticData = "StoxAcoustic"
 		)
-	)
+	), 
+	returnProcessTable = FALSE
 )
 
 # Add process 8, DefineAcousticLayer:
@@ -285,9 +324,11 @@ temp <- addProcess(
 			StoxAcousticData = "StoxAcoustic"
 		), 
 		functionParameters = list(
-			DefinitionMethod = "WaterColumn"
+			DefinitionMethod = "HighestResolution"
+			#DefinitionMethod = "WaterColumn"
 		)
-	)
+	), 
+	returnProcessTable = FALSE
 )
 
 # Add process 9, DefineSweptAreaPSU:
@@ -298,10 +339,14 @@ temp <- addProcess(
 		processName = "DefineSweptAreaPSU", 
 		functionName = "DefineSweptAreaPSU", 
 		functionInputs = list(
-			StratumPolygon = "DefineStrata", 
+			StratumPolygon = "DefineStratumPolygon", 
 			StoxBioticData = "FilterStoxBiotic"
+		), 
+		functionParameters = list(
+			DefinitionMethod = "StationToPSU"
 		)
-	)
+	), 
+	returnProcessTable = FALSE
 )
 
 # Add process 10, DefineSweptAreaLayer:
@@ -318,7 +363,8 @@ temp <- addProcess(
 			#DefinitionMethod = "WaterColumn"
 			DefinitionMethod = "HighestResolution"
 		)
-	)
+	), 
+	returnProcessTable = FALSE
 )
 
 
@@ -330,15 +376,80 @@ temp <- addProcess(
 		processName = "LengthDistribution", 
 		functionName = "LengthDistribution", 
 		functionInputs = list(
-			StoxBioticData = "FilterStoxBiotic", 
-			SweptAreaPSU = "DefineSweptAreaPSU", 
-			SweptAreaLayer = "DefineSweptAreaLayer"
+			StoxBioticData = "FilterStoxBiotic"
 		), 
 		functionParameters = list(
-			LengthDistributionType = "Normalized"
+			LengthDistributionType = "Normalized", 
+			IncludePSU = FALSE, 
+			IncludeLayer = FALSE, 
+			RaisingFactorPriority = "Weight"
 		)
-	)
+	), 
+	returnProcessTable = FALSE
 )
+
+# Add process 11, LengthDistribution:
+temp <- addProcess(
+	projectPath = projectPath, 
+	modelName = "baseline", 
+	values = list(
+		processName = "LengthDistributionWithPSULayer", 
+		functionName = "LengthDistribution", 
+		functionInputs = list(
+			StoxBioticData = "FilterStoxBiotic", 
+			SweptAreaLayer = "DefineSweptAreaLayer", 
+			SweptAreaPSU = "DefineSweptAreaPSU"
+		), 
+		functionParameters = list(
+			LengthDistributionType = "Normalized", 
+			IncludePSU = TRUE, 
+			IncludeLayer = TRUE, 
+			RaisingFactorPriority = "Weight"
+		)
+	), 
+	returnProcessTable = FALSE
+)
+
+# Add process 11, LengthDistribution:
+temp <- addProcess(
+	projectPath = projectPath, 
+	modelName = "baseline", 
+	values = list(
+		processName = "LengthDistributionStandard", 
+		functionName = "LengthDistribution", 
+		functionInputs = list(
+			StoxBioticData = "FilterStoxBiotic"
+		), 
+		functionParameters = list(
+			LengthDistributionType = "Standard", 
+			IncludePSU = FALSE, 
+			IncludeLayer = FALSE, 
+			RaisingFactorPriority = "Weight"
+		)
+	), 
+	returnProcessTable = FALSE
+)
+
+# Add process 11, LengthDistribution:
+temp <- addProcess(
+	projectPath = projectPath, 
+	modelName = "baseline", 
+	values = list(
+		processName = "LengthDistributionPercent", 
+		functionName = "LengthDistribution", 
+		functionInputs = list(
+			StoxBioticData = "FilterStoxBiotic"
+		), 
+		functionParameters = list(
+			LengthDistributionType = "Percent", 
+			IncludePSU = FALSE, 
+			IncludeLayer = FALSE, 
+			RaisingFactorPriority = "Weight"
+		)
+	), 
+	returnProcessTable = FALSE
+)
+
 
 # Add process 12, RegroupLengthDistribution:
 temp <- addProcess(
@@ -351,9 +462,10 @@ temp <- addProcess(
 			LengthDistributionData = "LengthDistribution"
 		), 
 		functionParameters = list(
-			LengthInterval = 5
+			LengthIntervalCentimeter = 5
 		)
-	)
+	), 
+	returnProcessTable = FALSE
 )
 
 # Add process 13, LengthDependentCatchCompensation:
@@ -367,10 +479,12 @@ temp <- addProcess(
 			LengthDistributionData = "RegroupLengthDistribution"
 		), 
 		functionParameters = list(
+			CompensationMethod = "LengthDependentSweepWidth", 
 			LengthDependentSweepWidthParameters = data.table::data.table(
 				SpeciesCategory = c(
 					"sild'G03/161722.G03/126417/NA", 
-					"laksesild/162187/127312/NA"
+					"laksesild/162187/127312/NA", 
+					"torsk/164712/126436/NA"
 				), 
 				Alpha = 5.91, 
 				Beta = 0.43, 
@@ -378,7 +492,8 @@ temp <- addProcess(
 				LMax = 62
 			)
 		)
-	)
+	), 
+	returnProcessTable = FALSE
 )
 
 # Add process 14, SumLengthDistribution:
@@ -389,9 +504,15 @@ temp <- addProcess(
 		processName = "SumLengthDistribution", 
 		functionName = "SumLengthDistribution", 
 		functionInputs = list(
-			LengthDistributionData = "RegroupLengthDistribution"
+			LengthDistributionData = "RegroupLengthDistribution", 
+			SweptAreaLayer = "DefineSweptAreaLayer"
+		), 
+		functionParameters = list(
+			LayerDefinition = "FunctionInput", 
+			TargetResolution = "Layer"
 		)
-	)
+	), 
+	returnProcessTable = FALSE
 )
 
 # Add process 15, MeanLengthDistribution:
@@ -402,9 +523,15 @@ temp <- addProcess(
 		processName = "MeanLengthDistribution", 
 		functionName = "MeanLengthDistribution", 
 		functionInputs = list(
-			LengthDistributionData = "SumLengthDistribution"
+			LengthDistributionData = "SumLengthDistribution", 
+			SweptAreaPSU = "DefineSweptAreaPSU"
+		), 
+		functionParameters = list(
+			PSUDefinition = "FunctionInput", 
+			TargetResolution = "PSU"
 		)
-	)
+	), 
+	returnProcessTable = FALSE
 )
 
 # Add process 14, SumLengthDistribution:
@@ -415,9 +542,15 @@ temp <- addProcess(
 		processName = "SumLengthDistributionCompensated", 
 		functionName = "SumLengthDistribution", 
 		functionInputs = list(
-			LengthDistributionData = "LengthDependentCatchCompensation"
+			LengthDistributionData = "LengthDependentCatchCompensation", 
+			SweptAreaLayer = "DefineSweptAreaLayer"
+		), 
+		functionParameters = list(
+			LayerDefinition = "FunctionInput", 
+			TargetResolution = "Layer"
 		)
-	)
+	), 
+	returnProcessTable = FALSE
 )
 
 # Add process 15, MeanLengthDistribution:
@@ -428,9 +561,15 @@ temp <- addProcess(
 		processName = "MeanLengthDistributionCompensated", 
 		functionName = "MeanLengthDistribution", 
 		functionInputs = list(
-			LengthDistributionData = "SumLengthDistributionCompensated"
+			LengthDistributionData = "SumLengthDistributionCompensated", 
+			SweptAreaPSU = "DefineSweptAreaPSU"
+		), 
+		functionParameters = list(
+			PSUDefinition = "FunctionInput", 
+			TargetResolution = "PSU"
 		)
-	)
+	), 
+	returnProcessTable = FALSE
 )
 
 # Add process 16, RelativeLengthDistribution:
@@ -443,7 +582,8 @@ temp <- addProcess(
 		functionInputs = list(
 			LengthDistributionData = "LengthDependentCatchCompensation"
 		)
-	)
+	), 
+	returnProcessTable = FALSE
 )
 
 
@@ -455,12 +595,37 @@ temp <- addProcess(
 		processName = "NASC", 
 		functionName = "NASC", 
 		functionInputs = list(
+			StoxAcousticData = "FilterStoxAcoustic"
+		),
+		functionParameters = list(
+			IncludePSU = FALSE, 
+			IncludeLayer = FALSE
+		)
+	), 
+	returnProcessTable = FALSE
+)
+
+
+# Add process 17, NASCWithPSUAndLayer:
+temp <- addProcess(
+	projectPath = projectPath, 
+	modelName = "baseline", 
+	values = list(
+		processName = "NASCRaw", 
+		functionName = "NASC", 
+		functionInputs = list(
 			StoxAcousticData = "FilterStoxAcoustic", 
 			AcousticLayer = "DefineAcousticLayer", 
 			AcousticPSU = "DefineAcousticPSU"
+		),
+		functionParameters = list(
+			IncludePSU = TRUE, 
+			IncludeLayer = TRUE
 		)
-	)
+	), 
+	returnProcessTable = FALSE
 )
+
 
 # Add process 18, SumNASC:
 temp <- addProcess(
@@ -470,12 +635,15 @@ temp <- addProcess(
 		processName = "SumNASC", 
 		functionName = "SumNASC", 
 		functionInputs = list(
-			NASCData = "NASC"
+			NASCData = "NASC", 
+			AcousticLayer = "DefineAcousticLayer"
 		), 
 		functionParameters = list(
-			TargetResolution = "Layer"
+			TargetResolution = "Layer", 
+			LayerDefinition = "FunctionInput"
 		)
-	)
+	), 
+	returnProcessTable = FALSE
 )
 
 
@@ -487,12 +655,15 @@ temp <- addProcess(
 		processName = "MeanNASC", 
 		functionName = "MeanNASC", 
 		functionInputs = list(
-			NASCData = "SumNASC"
+			NASCData = "SumNASC", 
+			AcousticPSU = "DefineAcousticPSU"
 		), 
 		functionParameters = list(
-			TargetResolution = "Stratum"
+			TargetResolution = "PSU", 
+			PSUDefinition = "FunctionInput"
 		)
-	)
+	), 
+	returnProcessTable = FALSE
 )
 
 # Add process 20, DefineAcousticTargetStrength:
@@ -503,15 +674,17 @@ temp <- addProcess(
 		processName = "DefineAcousticTargetStrength", 
 		functionName = "DefineAcousticTargetStrength", 
 		functionParameters = list(
+			DefinitionMethod = "Table", 
 			ParameterTable = data.table::data.table(
-				AcousticCategory = "12", 
+				AcousticCategory = 12L, 
 				Frequency = 38000, 
-				m = 20, 
-				a = -71.9, 
-				d = 0
+				LengthExponent = 20, 
+				TargetStrength0 = -71.9, 
+				DepthExponent = 0
 			)
 		)
-	)
+	), 
+	returnProcessTable = FALSE
 )
 
 
@@ -528,7 +701,8 @@ temp <- addProcess(
 		functionParameters = list(
 			SweepWidthMethod = "PreDefined"
 		)
-	)
+	), 
+	returnProcessTable = FALSE
 )
 
 
@@ -546,7 +720,8 @@ temp <- addProcess(
 			SweepWidthMethod = "Constant", 
 			SweepWidth = 25
 		)
-	)
+	), 
+	returnProcessTable = FALSE
 )
 
 # Add process 21, DefineBioticAssignment:
@@ -557,30 +732,161 @@ temp <- addProcess(
 		processName = "DefineBioticAssignment", 
 		functionName = "DefineBioticAssignment", 
 		functionInputs = list(
-			NASCData = "NASC", 
-			StoxAcousticData = "StoxAcoustic", 
+			StratumPolygon = "DefineStratumPolygon", 
 			AcousticPSU = "DefineAcousticPSU", 
-			StoxBioticData = "FilterStoxBiotic", 
-			StratumPolygon = "DefineStrata"
+			AcousticLayer = "DefineAcousticLayer", 
+			StoxBioticData = "FilterStoxBiotic"
+		), 
+		functionParameters = list(
+			DefinitionMethod = "Stratum"
 		)
-	)
+	), 
+	returnProcessTable = FALSE
 )
 
 
-#### Add process 22, AssignmentLengthDistribution:
-###temp <- addProcess(
-###	projectPath = projectPath, 
-###	modelName = "baseline", 
-###	values = list(
-###		processName = "AssignmentLengthDistribution", 
-###		functionName = "AssignmentLengthDistribution", 
-###		functionInputs = list(
-###			LengthDistributionData = "LengthDependentCatchCompensation", 
-###			BioticAssignment = "DefineBioticAssignment"
-###		)
-###	)
-###)
+# Add process 21, DefineBioticAssignment:
+temp <- addProcess(
+	projectPath = projectPath, 
+	modelName = "baseline", 
+	values = list(
+		processName = "DefineBioticAssignmentRadius", 
+		functionName = "DefineBioticAssignment", 
+		functionInputs = list(
+			AcousticPSU = "DefineAcousticPSU", 
+			AcousticLayer = "DefineAcousticLayer", 
+			StoxBioticData = "FilterStoxBiotic", 
+			StoxAcousticData = "FilterStoxAcoustic"
+		), 
+		functionParameters = list(
+			DefinitionMethod = "Radius", 
+			Radius = 25
+		)
+	), 
+	returnProcessTable = FALSE
+)
 
+
+# Add process 21, DefineBioticAssignment:
+temp <- addProcess(
+	projectPath = projectPath, 
+	modelName = "baseline", 
+	values = list(
+		processName = "DefineBioticAssignmentEllipsoidalDistance", 
+		functionName = "DefineBioticAssignment", 
+		functionInputs = list(
+			AcousticPSU = "DefineAcousticPSU", 
+			AcousticLayer = "DefineAcousticLayer", 
+			StoxBioticData = "FilterStoxBiotic", 
+			StoxAcousticData = "FilterStoxAcoustic"
+		), 
+		functionParameters = list(
+			DefinitionMethod = "EllipsoidalDistance", 
+			DistanceNauticalMiles = 50, 
+			TimeDifferenceHours = 12, 
+			BottomDepthDifferenceMeters = 500, 
+			LongitudeDifferenceDegrees = 5, 
+			LatitudeDifferenceDegrees = 5
+		)
+	), 
+	returnProcessTable = FALSE
+)
+
+
+# Add process 4, BioticAssignmentWeighting:
+temp <- addProcess(
+	projectPath = projectPath, 
+	modelName = "baseline", 
+	values = list(
+		processName = "BioticAssignmentWeighting", 
+		functionName = "BioticAssignmentWeighting", 
+		functionInputs = list(
+			BioticAssignment = "DefineBioticAssignment",
+			StoxBioticData = "StoxBiotic"
+		),
+		functionParameters = list(
+			WeightingMethod = "NumberOfLengthSamples"
+		)
+	), 
+	returnProcessTable = FALSE
+)
+
+
+# Add process 4, BioticAssignmentWeighting:
+temp <- addProcess(
+	projectPath = projectPath, 
+	modelName = "baseline", 
+	values = list(
+		processName = "BioticAssignmentWeightingNASC", 
+		functionName = "BioticAssignmentWeighting", 
+		functionInputs = list(
+			BioticAssignment = "DefineBioticAssignment",
+			StoxBioticData = "StoxBiotic", 
+			LengthDistributionData = "LengthDistribution", 
+			StoxAcousticData = "FilterStoxAcoustic"
+		),
+		functionParameters = list(
+			WeightingMethod = "NASC", 
+			Radius = 20, 
+			LengthExponentTable = data.table::data.table(
+				SpeciesCategory = c(
+					"sild'G03/161722.G03/126417/NA", 
+					"torsk/164712/126436/NA"
+				), 
+				LengthExponent = 2
+			)
+		)
+	), 
+	returnProcessTable = FALSE
+)
+
+
+# Add process 22, AssignmentLengthDistribution:
+temp <- addProcess(
+	projectPath = projectPath, 
+	modelName = "baseline", 
+	values = list(
+		processName = "AssignmentLengthDistribution", 
+		functionName = "AssignmentLengthDistribution", 
+		functionInputs = list(
+			LengthDistributionData = "LengthDistributionPercent", 
+			BioticAssignment = "BioticAssignmentWeighting"
+		)
+	), 
+	returnProcessTable = FALSE
+)
+
+# Add process 20, AcousticDensity:
+system.time(temp <- addProcess(
+	projectPath = projectPath, 
+	modelName = "baseline", 
+	values = list(
+		processName = "AcousticDensity", 
+		functionName = "AcousticDensity", 
+		functionInputs = list(
+			NASCData = "MeanNASC", 
+			AssignmentLengthDistributionData = "AssignmentLengthDistribution", 
+			AcousticTargetStrength = "DefineAcousticTargetStrength"
+		), 
+		functionParameters = list(
+			SpeciesLinkTable = data.table::data.table(
+				SpeciesCategory = c(
+					"torsk/164712/126436/NA", 
+					"sild'G03/161722.G03/126417/NA", 
+					"kolmule/164774/126439/NA", 
+					"makrell/172414/127023/NA"
+				), 
+				AcousticCategory = c(
+					31L,
+					12L, 
+					24L, 
+					21L
+				)
+			), 
+			TargetStrengthMethod = "Foote1987"
+		)
+	)
+))
 
 # Add process 23, MeanDensity:
 temp <- addProcess(
@@ -591,8 +897,12 @@ temp <- addProcess(
 		functionName = "MeanDensity", 
 		functionInputs = list(
 			DensityData = "SweptAreaDensityPreDefined"
+		), 
+		functionParameters = list(
+			TargetResolution = "Stratum"
 		)
-	)
+	), 
+	returnProcessTable = FALSE
 )
 
 # Add process 24, Abundance:
@@ -604,10 +914,31 @@ temp <- addProcess(
 		functionName = "Abundance", 
 		functionInputs = list(
 			DensityData = "MeanDensity", 
-			StratumArea = "StratumArea"
+			StratumAreaData = "StratumArea"
 		)
-	)
+	), 
+	returnProcessTable = FALSE
 )
+
+# Add process 24, IndividualsSweptArea:
+temp <- addProcess(
+	projectPath = projectPath, 
+	modelName = "baseline", 
+	values = list(
+		processName = "IndividualsSweptArea", 
+		functionName = "Individuals", 
+		functionInputs = list(
+			StoxBioticData = "FilterStoxBiotic", 
+			SweptAreaPSU = "DefineSweptAreaPSU", 
+			SweptAreaLayer = "DefineSweptAreaLayer"
+		), 
+		functionParameters = list(
+			AbundanceType = "SweptArea"
+		)
+	), 
+	returnProcessTable = FALSE
+)
+
 
 # Add process 24, IndividualsAcoustic:
 temp <- addProcess(
@@ -621,27 +952,12 @@ temp <- addProcess(
 			BioticAssignment = "DefineBioticAssignment"
 		), 
 		functionParameters = list(
-			DensityType = "Acoustic"
+			AbundanceType = "Acoustic"
 		)
-	)
+	), 
+	returnProcessTable = FALSE
 )
 
-# Add process 24, IndividualsSweptArea:
-temp <- addProcess(
-	projectPath = projectPath, 
-	modelName = "baseline", 
-	values = list(
-		processName = "IndividualsSweptArea", 
-		functionName = "Individuals", 
-		functionInputs = list(
-			StoxBioticData = "FilterStoxBiotic", 
-			LengthDistributionData = "LengthDependentCatchCompensation"
-		), 
-		functionParameters = list(
-			DensityType = "SweptArea"
-		)
-	)
-)
 
 
 # Add process 24, SuperIndividualsSweptArea:
@@ -659,7 +975,8 @@ temp <- addProcess(
 		functionParameters = list(
 			AbundWeightMethod = "Equal"
 		)
-	)
+	), 
+	returnProcessTable = FALSE
 )
 
 # Add process 24, SuperIndividualsSweptArea:
@@ -677,12 +994,45 @@ temp <- addProcess(
 		functionParameters = list(
 			AbundWeightMethod = "HaulDensity"
 		)
-	)
+	), 
+	returnProcessTable = FALSE
 )
 
 
+# Add process 37, SuperIndividualsSweptArea:
+temp <- addProcess(
+	projectPath = projectPath, 
+	modelName = "baseline", 
+	values = list(
+		processName = "SpeciesCategoryCatch", 
+		functionName = "SpeciesCategoryCatch", 
+		functionInputs = list(
+			StoxBioticData = "StoxBiotic"
+		), 
+		functionParameters = list(
+			CatchVariable = "Count"
+		)
+	), 
+	returnProcessTable = FALSE
+)
 
-#temp <- addProcess(
+
+# Add process 38 SuperIndividualsSweptArea:
+temp <- addProcess(
+	projectPath = projectPath, 
+	modelName = "baseline", 
+	values = list(
+		processName = "SpeciesCategoryDensity", 
+		functionName = "SpeciesCategoryDensity", 
+		functionInputs = list(
+			DensityData= "SweptAreaDensityPreDefined", 
+			StoxBioticData = "StoxBiotic", 
+			SweptAreaPSU = "DefineSweptAreaPSU"
+		)
+	), 
+	returnProcessTable = FALSE
+)
+#system.time(temp <- addProcess(
 #	projectPath = projectPath, 
 #	modelName = "baseline", 
 #	values = list(
@@ -693,13 +1043,13 @@ temp <- addProcess(
 #			StoxLandingData = "StoxBiotic"
 #		)
 #	)
-#)
+#))
 
 
 
 
 # Add process 18, BioticStationAssignment:
-#temp <- addProcess(
+#system.time(temp <- addProcess(
 #	projectPath = projectPath, 
 #	modelName = "baseline", 
 #	values = list(
@@ -708,23 +1058,17 @@ temp <- addProcess(
 #		functionInputs = list(
 #			NASCData = "NASC", 
 #			StoxBioticData = "StoxBiotic", 
-#			StratumPolygon = "DefineStrata"
+#			StratumPolygon = "DefineStratumPolygon"
 #		), 
 #		functionParameters = list(
 #			DefinitionMethod = "Stratum"
 #		)
 #	)
-#)
+#))
 
 
 
 ##### End of test project: #####
-
-stoxLibrary <- getRstoxFrameworkDefinitions("stoxLibrary")
-names(stoxLibrary)
-getAvailableStoxFunctionNames("baseline")
-getAvailableStoxFunctionNames("analysis")
-getAvailableStoxFunctionNames("report")
 
 projectPath <- "~/workspace/stox/project/Test_Rstox3"
 modelName <- "baseline"
@@ -735,12 +1079,894 @@ system.time(processTable <- getProcessTable(projectPath, modelName))
 #RstoxFramework::saveProject(projectPath, "JSON")
 #RstoxFramework::saveProject(projectPath)
 
+system.time(closeProject(projectPath, save = TRUE))
+system.time(o <- openProject(projectPath))
+
+#system.time(f <- runModel(projectPath, modelName, 1, 4))
+system.time(f <- runModel(projectPath, modelName, fileOutput = TRUE))
+
+#system.time(f <- runModel(projectPath, modelName, 1, 34))
+
+
+# Test overriding parameters:
+system.time(f2 <- runModel(projectPath, modelName, fileOutput = FALSE, BioticAssignmentWeightingNASC = list(Radius = 100), save = FALSE))
+
+
+
+
+# Test the StoX 2.7 sandeel against StoX 2.9.12:
+
+# Run in  StoX 2.9.12: 
+projectPath <- "~/workspace/stox/project/Test30_sandeel2020"
+modelName <- "baseline"
+openProject(projectPath)
 system.time(f <- runModel(projectPath, modelName))
+
+# Run in  StoX 2.7: 
+library(Rstox)
+pr <- "North Sea NOR lesser sandeel acoustic abundance estimate in spring_2020"
+system.time(g <- getBaseline(pr))
+
+# Get abundance:
+AbundanceOld <- data.table::as.data.table(g$outputData$Abundance)
+AbundanceNew <- data.table::as.data.table(f$Abundance)
+data.table::setorderv(AbundanceOld, c("SampleUnit", "SpecCat", "LengthGroup"))
+data.table::setorderv(AbundanceNew, c("Stratum", "SpeciesCategory", "IndividualTotalLengthCentimeter"))
+
+# Use equal names and SpeciesCategory:
+data.table::setnames(AbundanceOld, c("SampleUnit", "SpecCat", "LengthGroup"), c("Stratum", "SpeciesCategory", "IndividualTotalLengthCentimeter"))
+AbundanceNew$SpeciesCategory <- fileParts(AbundanceNew$SpeciesCategory, 1)
+d <- merge(
+	AbundanceOld, 
+	AbundanceNew, 
+	by = c("Stratum", "SpeciesCategory", "IndividualTotalLengthCentimeter")
+)
+
+# Only minor differences:
+plot(d$Abundance.x, type = "l")
+points(d$Abundance.y, col = 2, type = "l")
+
+plot(d$Abundance.x / d$Abundance.y, type = "l")
+
+
+
+
+
+g$outputData$MeanNASC <- data.table::as.data.table(g$outputData$MeanNASC)
+d <- merge(g$outputData$MeanNASC, f$MeanNASC, by.x = "SampleUnit", by.y = "PSU")
+d <- d[AcousticCategory == 27]
+plot(d$NASC.x)
+points(d$NASC.x, col = 2, cex = 2)
+
+all.equal(d$NASC.x, d$NASC.y)
+# [1] "Mean relative difference: 9.237291e-08"
+
+
+fileParts <- function(x, ind, paste0 = TRUE, collapse = "/") {
+	x <- strsplit(x, "/")
+	x <- lapply(x, "[", ind)
+	if(paste0) {
+		x <- sapply(x, paste0, collapse = collapse)
+	}
+	return(x)
+}
+
+
+g$outputData$RegroupLengthDist <- data.table::as.data.table(g$outputData$RegroupLengthDist)
+f$RegroupLengthDistribution$Haul2 <- fileParts(f$RegroupLengthDistribution$Haul, c(1,6))
+d <- merge(g$outputData$RegroupLengthDist, f$RegroupLengthDistribution, by.x = "Station", by.y = "Haul2", allow.cartesian=TRUE)
+
+plot(d$WeightedCount.x)
+points(d$WeightedCount.y, col = 2, cex = 0.7)
+
+
+
+
+ass <- data.table::as.data.table(merge(g$processData$bioticassignment, g$processData$suassignment))
+f$BioticAssignmentWeighting$Haul2 <- fileParts(f$BioticAssignmentWeighting$Haul, c(1,6))
+d <- merge(ass, f$BioticAssignmentWeighting, by.x = "Station", by.y = "Haul2", allow.cartesian=TRUE)
+
+plot(d$StationWeight)
+points(d$WeightingFactor, col = 2, cex = 0.7)
+
+
+
+
+
+
+g$outputData$TotalLengthDist <- data.table::as.data.table(g$outputData$TotalLengthDist)
+#g$outputData$TotalLengthDist[, PSU := paste0("T", AssignmentID)]
+tot <- merge(g$outputData$TotalLengthDist, g$processData$suassignment, by = "AssignmentID", allow.cartesian = TRUE)
+
+data.table::setorderv(tot, c("SampleUnit", "SpecCat", "LengthGroup"))
+data.table::setorderv(f$AssignmentLengthDistribution, c("PSU", "SpeciesCategory", "IndividualTotalLengthCentimeter"))
+
+tot
+f$AssignmentLengthDistribution
+
+
+
+
+
+plot(tot[SampleUnit == "T47"]$LengthGroup, tot[SampleUnit == "T47"]$WeightedCount)
+points(f$AssignmentLengthDistribution[PSU == "T47"]$IndividualTotalLengthCentimeter, f$AssignmentLengthDistribution[PSU == "T47"]$WeightedCount * 100, col =2)
+
+# Observe that the new code does not sum to 100:
+summary(tot[, sum(WeightedCount, na.rm = TRUE), by = c("SampleUnit")])
+summary(f$AssignmentLengthDistribution[, sum(WeightedCount, na.rm = TRUE), by = c("PSU")])
+
+
+
+
+acd <- data.table::as.data.table(g$outputData$AcousticDensity)
+data.table::setnames(acd, c("SampleUnit", "SpecCat", "LengthGroup"), c("PSU", "SpeciesCategory", "IndividualTotalLengthCentimeter"))
+
+f$AcousticDensity$SpeciesCategory <- fileParts(f$AcousticDensity$SpeciesCategory, 1)
+d <- merge(acd, f$AcousticDensity, by = c("PSU", "SpeciesCategory", "IndividualTotalLengthCentimeter"))
+
+
+
+plot(d$Density.x, type = "l")
+points(d$Density.y, col = 2, type = "l")
+
+plot(d$Density.x - d$Density.y, col = 2, type = "l")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# Check whether all EDSUs are present in NASCData:
+allEDSUs <- unique(f$StoxAcoustic$Log$EDSU)
+length(allEDSUs)
+plot(f$StoxAcoustic$Log[, c("Longitude", "Latitude")])
+
+allNASCEDSUs <- unique(f$NASC$EDSU)
+length(allNASCEDSUs)
+points(f$NASC[, c("Longitude", "Latitude")], col = 2)
+
+f$DefineAcousticPSU
+# NASC contains only EDSUs with data for the selected species.
+
+# Check whether all Stations are present in LengthDistributionData:
+allStations <- unique(f$StoxBiotic$Station$Station)
+length(allStations)
+plot(f$StoxBiotic$Station[, c("Longitude", "Latitude")])
+
+allLengthDistributionStations <- unique(f$LengthDistribution$Station)
+length(allLengthDistributionStations)
+allLengthDistributionWithPSULayerStations <- unique(f$LengthDistributionWithPSULayer$Station)
+length(allLengthDistributionWithPSULayerStations)
+points(f$LengthDistribution[, c("Longitude", "Latitude")], col = 2)
+
+f$DefineSweptAreaPSU
+# NASC contains only EDSUs with data for the selected species.
+
+
+
+sp::plot(f$DefineStratumPolygon)
+points(f$StoxBiotic$Station[, c("Longitude", "Latitude")])
+
+
+
+
+
+
+
+
+library(RstoxAPI)
+options(deparse.max.lines = 10)
+
+projectPath <- "~/workspace/stox/project/Test_Rstox3"
+modelName <- "baseline"
+
+
+# Add process 4, StratumArea:
+temp <- addProcess(
+	projectPath = projectPath, 
+	modelName = "baseline", 
+	values = list(
+		processName = "BioticAssignmentWeighting", 
+		functionName = "BioticAssignmentWeighting", 
+		functionInputs = list(
+			BioticAssignment = "DefineBioticAssignment",
+			StoxBioticData = "StoxBiotic", 
+			LengthDistributionData = "LengthDistribution",
+			NASCData = "NASC"
+		),
+		functionParameters = list(
+			WeightingMethod = "Equal", 
+			Radius = 25, 
+			LengthExponent = 2
+		)
+	), 
+	returnProcessTable = FALSE
+)
+
+
+# Add process 4, StratumArea:
+temp <- addProcess(
+	projectPath = projectPath, 
+	modelName = "baseline", 
+	values = list(
+		processName = "BioticAssignmentWeighting2", 
+		functionName = "BioticAssignmentWeighting", 
+		functionInputs = list(
+			BioticAssignment = "DefineBioticAssignment",
+			StoxBioticData = "StoxBiotic", 
+			LengthDistributionData = "LengthDistribution",
+			NASCData = "NASC"
+		),
+		functionParameters = list(
+			WeightingMethod = "NumberOfLengthSamples", 
+			Radius = 25, 
+			LengthExponent = 2, 
+			MaxNumberOfLengthSamples = 20
+		)
+	), 
+	returnProcessTable = FALSE
+)
+
+
+
+
+# Add process 4, StratumArea:
+temp <- addProcess(
+	projectPath = projectPath, 
+	modelName = "baseline", 
+	values = list(
+		processName = "BioticAssignmentWeighting3", 
+		functionName = "BioticAssignmentWeighting", 
+		functionInputs = list(
+			BioticAssignment = "DefineBioticAssignment",
+			StoxBioticData = "StoxBiotic", 
+			LengthDistributionData = "LengthDistribution",
+			NASCData = "NASC"
+		),
+		functionParameters = list(
+			WeightingMethod = "NormalizedTotalWeight", 
+			Radius = 25, 
+			LengthExponent = 2, 
+			MaxNumberOfLengthSamples = 100
+		)
+	), 
+	returnProcessTable = FALSE
+)
+
+
+
+
+# Add process 4, StratumArea:
+temp <- addProcess(
+	projectPath = projectPath, 
+	modelName = "baseline", 
+	values = list(
+		processName = "BioticAssignmentWeighting4", 
+		functionName = "BioticAssignmentWeighting", 
+		functionInputs = list(
+			BioticAssignment = "DefineBioticAssignment",
+			StoxBioticData = "StoxBiotic", 
+			LengthDistributionData = "LengthDistribution",
+			NASCData = "NASC"
+		),
+		functionParameters = list(
+			WeightingMethod = "NormalizedTotalCount", 
+			Radius = 25, 
+			LengthExponent = 2, 
+			MaxNumberOfLengthSamples = 100
+		)
+	), 
+	returnProcessTable = FALSE
+)
+
+
+# Add process 4, StratumArea:
+temp <- addProcess(
+	projectPath = projectPath, 
+	modelName = "baseline", 
+	values = list(
+		processName = "BioticAssignmentWeighting5", 
+		functionName = "BioticAssignmentWeighting", 
+		functionInputs = list(
+			BioticAssignment = "DefineBioticAssignment",
+			StoxBioticData = "StoxBiotic", 
+			LengthDistributionData = "LengthDistribution",
+			NASCData = "NASC"
+		),
+		functionParameters = list(
+			WeightingMethod = "SumWeightedCount", 
+			Radius = 25, 
+			LengthExponent = 2, 
+			MaxNumberOfLengthSamples = 100
+		)
+	), 
+	returnProcessTable = FALSE
+)
+
+
+# Add process 4, StratumArea:
+temp <- addProcess(
+	projectPath = projectPath, 
+	modelName = "baseline", 
+	values = list(
+		processName = "BioticAssignmentWeighting6", 
+		functionName = "BioticAssignmentWeighting", 
+		functionInputs = list(
+			BioticAssignment = "DefineBioticAssignment",
+			StoxBioticData = "StoxBiotic", 
+			LengthDistributionData = "LengthDistribution",
+			NASCData = "NASC"
+		),
+		functionParameters = list(
+			WeightingMethod = "InverseSumWeightedCount", 
+			Radius = 25, 
+			LengthExponent = 2, 
+			MaxNumberOfLengthSamples = 100
+		)
+	), 
+	returnProcessTable = FALSE
+)
+
+
+
+
+library(RstoxAPI)
+options(deparse.max.lines = 10)
+
+inputFile <- function(fileName, projectPath = NULL, folder = "acoustic") {
+	inputFolder <- getRstoxFrameworkDefinitions("paths")$stoxFolders[["Input"]]
+	if(length(projectPath)) {
+		folder <- file.path(projectPath, inputFolder, folder)
+		dir.create(folder, recursive = TRUE, showWarnings = FALSE)
+	}
+	else {
+		folder <- file.path(inputFolder, folder)
+	}
+	
+	file.path(folder, basename(fileName))
+}
+
+projectPath <- "~/workspace/stox/project/Test_Rstox3"
+resourceProjectPath <- "~/workspace/stox/project/Test_Rstox3files2"
+bioticresourceProjectPath <- file.path(resourceProjectPath, "biotic")
+acousticresourceProjectPath <- file.path(resourceProjectPath, "acoustic")
+inputresourceProjectPath <- file.path(resourceProjectPath, "input")
+
+system.time(RstoxFramework::createProject(projectPath, template = "UserDefinedTemplate", ow = TRUE))
+
+#RstoxFramework::openProject("~/workspace/stox/project/Test_Rstox3")
+##### Create the test project: #####
+
+# Add process 3, DefineStratumPolygon:
+inputFileNames <- list.files(inputresourceProjectPath, full.names = TRUE)
+file.copy(
+	inputFileNames, 
+	inputFile(inputFileNames, projectPath = projectPath, folder = "input")
+)
+temp <- addProcess(
+	projectPath = projectPath, 
+	modelName = "baseline", 
+	values = list(
+		processName = "DefineStratumPolygon", 
+		functionName = "DefineStratumPolygon", 
+		processParameters = list(
+			showInMap = TRUE
+		),
+		functionParameters = list(
+			DefinitionMethod = "ResourceFile", 
+			FileName = inputFile(inputFileNames, projectPath = NULL, folder = "input")
+		)
+	), 
+	returnProcessTable = FALSE
+)
+
+# Add process 4, StratumArea:
+temp <- addProcess(
+	projectPath = projectPath, 
+	modelName = "baseline", 
+	values = list(
+		processName = "StratumArea", 
+		functionName = "StratumArea", 
+		functionInputs = list(
+			StratumPolygon = "DefineStratumPolygon"
+		),
+		functionParameters = list(
+			AreaMethod = "Accurate"
+		)
+	), 
+	returnProcessTable = FALSE
+)
+##### End of test project: #####
+
+
+system.time(closeProject(projectPath, save = TRUE))
+system.time(o <- openProject(projectPath))
+
+projectPath <- "~/workspace/stox/project/Test_Rstox3"
+modelName <- "baseline"
+system.time(f <- runModel(projectPath, modelName))
+
+
+system.time(closeProject(projectPath, save = "JSON"))
+system.time(o <- openProject(projectPath, type = "JSON"))
+
+
+system.time(o <- openProject(projectPath, type = "JSON", force = TRUE))
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+system.time(writeProjectDescription(projectPath, "JSON"))
+system.time(ss <- readProjectDescription(projectPath, "JSON"))
+projectDescription <- getProjectMemoryData(projectPath, named.list = TRUE)
+
+
+addHaulToAssignment("PSU0001", "Layer02", "xxxxxx", projectPath, "baseline", "P030")
+
+
+a <- addHaulToAssignment(PSU = "PSU0001", Layer = "WaterColumn", Haul = "2017840/5/2017/3206/40/37066", projectPath, modelName, processID = "P030")
+
 
 RstoxFramework::saveProject(projectPath, "JSON")
 
 
 getFunctionHelpAsHtml(projectPath, modelName, "P001")
+
+
+
+d <- getProcessOutput(projectPath, modelName, "P005")
+
+
+
+rearrangeProcesses(projectPath, modelName, c("P011"), "P003")
+
+
+rearrangeProcesses(projectPath, modelName, c("P001"), "P036")
+setProcessPropertyValue("processArguments", "processName", "ddddddddd", projectPath, modelName, "P009")
+
+
+
+
+
+
+addEDSU(PSU = "PSU1", EDSU = "2017838/2017-02-13T19:54:09.000Z", projectPath, modelName, "P011")
+
+
+
+
+# Update Biotic variable:
+BioticData <- ReadBiotic("~/workspace/stox/project/BS_swept_area_cod_2019/input/biotic/biotic_cruiseNumber_0146_2019_UFJN_VLNY_Vilnyus_2019-05-03T22.03.07.377Z.xml")
+VariableConversionTable <- data.table::data.table(
+	TableName = "catchsample", 
+	VariableName = "commonname", 
+	Value = c("sild'G03", "laksesild", "vassild"), 
+	NewValue = "EndsWithSild"
+)
+BioticData2 <- ConvertStoxBioticVariables(BioticData, VariableConversionTable = VariableConversionTable)
+
+# Update StoxBiotic variable:
+StoxBioticData <- StoxBiotic(BioticData)
+VariableConversionTable <- data.table::data.table(
+	TableName = "SpeciesCategory", 
+	VariableName = "SpeciesCategory", 
+	Value = c(
+		"sild'G03/161722.G03/126417/NA", 
+		"krokulke/167208/127193/NA", 
+		"paddeulke/167408/127235/NA", 
+		"sølvtorsk/164772/126435/NA", 
+		"torsk/164712/126436/NA"
+	), 
+	NewValue = c(
+		"Herring", 
+		"Ulke", 
+		"Ulke", 
+		"Cod", 
+		"Cod"
+	)
+)
+StoxBioticData2 <- ConvertStoxBioticVariables(StoxBioticData, VariableConversionTable = VariableConversionTable)
+# The SpeciesCategory has changed:
+StoxBioticData2$SpeciesCategory
+
+
+
+
+
+
+
+
+
+
+sizes <- 10^(1:5)
+times <- rep(NA, length(sizes))
+
+for(ind in seq_along(sizes)) {
+	DT1 <- data.table::data.table(
+		a = sort(sample(1:3, sizes[ind], replace = TRUE))
+	)
+	
+	DT2 <- data.table::data.table(
+		a = sort(sample(1:2, sizes[ind], replace = TRUE))
+	)
+	
+	times[ind] <- system.time(DT <- data.table::fsetdiff(DT1, DT2))[3]
+}
+
+data.table::data.table(
+	sizes = sizes, 
+	times = times
+)
+
+
+
+
+
+
+
+
+
+
+projectPath <- "~/Downloads/Test4"
+RstoxFramework::openProject(projectPath, force = TRUE)
+modelName <- "baseline"
+processTable <- getProcessTable(projectPath, modelName)
+f2 <- runModel(projectPath, modelName)
+
+
+
+temp <-removeStratum("1", projectPath, modelName, "P001")
+								
+								
+
+
+
+# Run the test project of cod 2019:
+projectPath <- "~/workspace/stox/project/Test30_sandeel2020"
+RstoxFramework::openProject(projectPath, force = TRUE)
+modelName <- "baseline"
+processTable <- getProcessTable(projectPath, modelName)
+f2 <- runModel(projectPath, modelName)
+
+
+
+
+
+
+
+
+
+
+# Run the test project of cod 2019:
+projectPath <- "~/workspace/stox/project/BS_swept_area_cod_2019"
+RstoxFramework::openProject(projectPath, force = TRUE)
+modelName <- "baseline"
+processTable <- getProcessTable(projectPath, modelName)
+f2 <- runModel(projectPath, modelName)
+
+
+# Get the data from the old project:
+library(Rstox)
+g <- getBaseline("~/workspace/stox/project/Barents Sea Northeast Arctic cod bottom trawl index in winter_2019_noFishstationFilter")
+
+# Check Abundance:
+Abundance_old <- data.table::as.data.table(g$outputData$Abundance)
+Abundance_old[, Stratum := as.character(SampleUnit)]
+Abundance_new <- f2$Abundance
+Abundance_new <- subset(Abundance_new, !is.na(IndividualTotalLengthCentimeter))
+
+cat_old <- c("Stratum", "LengthGroup", "LengthInterval")
+data.table::setorderv(Abundance_old, cat_old)
+cat_new <- c("Stratum", "IndividualTotalLengthCentimeter", "LengthResolutionCentimeter")
+data.table::setorderv(Abundance_new, cat_new)
+head(cbind(Abundance_old[, c(..cat_old, "Abundance")], Abundance_new[, c(..cat_new, "Abundance")]), 200)
+
+plot(Abundance_old$Abundance)
+points(Abundance_new$Abundance, col = 2, cex = 0.6)
+
+plot(Abundance_old$Abundance / Abundance_new$Abundance) # Rather similar. Some difference that may be due to stratum/PSU definitions
+
+
+# Check SuperIndividuals:
+SuperIndividuals_old <- data.table::as.data.table(g$outputData$SuperIndAbundance)
+SuperIndividuals_old[, Stratum := as.character(Stratum)]
+SuperIndividuals_new <- f2$SuperIndividuals
+
+cat_old <- c("Stratum", "LenGrp", "LenIntv", "serialnumber")
+data.table::setorderv(SuperIndividuals_old, cat_old)
+cat_new <- c("Stratum", "IndividualTotalLengthCentimeter", "LengthResolutionCentimeter", "Haul")
+data.table::setorderv(SuperIndividuals_new, cat_new)
+
+SuperIndividuals_old[, c(..cat_old, "Abundance")]
+SuperIndividuals_new[, c(..cat_new, "Abundance")]
+
+
+head(cbind(SuperIndividuals_old[, c(..cat_old, "Abundance")], SuperIndividuals_new[, c(..cat_new, "Abundance")]), 200)
+
+plot(SuperIndividuals_old$Abundance)
+points(SuperIndividuals_new$Abundance, col = 2, cex = 0.6)
+
+
+
+
+useOldStationCode <- function(DT) {
+	parts <- strsplit(DT$Haul, "/")
+	oldStation <- paste(sapply(parts, head, 1), sapply(parts, tail, 1), sep = "/")
+	DT[, Station := ..oldStation]
+}
+
+
+
+StationHaulLink <- merge(f2$StoxBiotic$Station, f2$StoxBiotic$Haul)[, c("Station", "Haul")]
+StationHaulLink[, NewStation := Station]
+useOldStationCode(StationHaulLink)
+
+
+
+
+
+StationLengthDist <- g$outputData$StationLengthDist[!is.na(g$outputData$StationLengthDist$WeightedCount), ]
+# Convert to data.table:
+StationLengthDist <- data.table::as.data.table(StationLengthDist)
+
+# Get the RegroupLengthDistribution, and rename the Stations to the convension of the old StoX (cruise/serialnumber):
+StationLengthDistNew <- f2$RegroupLengthDistribution[!is.na(Haul), ]
+useOldStationCode(StationLengthDistNew)
+
+
+# Order the length distributions of the old and new StoX:
+StationLengthDist <- StationLengthDist[order(StationLengthDist$Station), ]
+StationLengthDistNew <- StationLengthDistNew[order(StationLengthDistNew$Station), ]
+
+# Observe that there are stations not filtered out in the new project, which could have been filtered out using FilterBiotic():
+l1 <- unique(StationLengthDist$Station)
+l2 <- unique(StationLengthDistNew$Station)
+ll <- intersect(l1, l2)
+cbind(l1[1:40], l2[1:40])
+setdiff(l1, l2)
+setdiff(l2, l1)
+
+# Keep only the stations common to both projects:
+StationLengthDist <- StationLengthDist[Station %in% ll, ]
+StationLengthDistNew <- StationLengthDistNew[Station %in% ll, ]
+
+# The WeightedCount is almost identical:
+plot(StationLengthDist$WeightedCount)
+points(StationLengthDistNew$WeightedCount, col = 2)
+
+all.equal(StationLengthDist$WeightedCount, StationLengthDistNew$WeightedCount)
+range(StationLengthDist$WeightedCount - StationLengthDistNew$WeightedCount)
+
+
+
+
+
+TotalLengthDist <- data.table::as.data.table(g$outputData$TotalLengthDist)
+bioticassignment <- data.table::as.data.table(g$processData$bioticassignment)
+suassignment <- data.table::as.data.table(g$processData$suassignment)
+
+StationPSULink <- merge(TotalLengthDist, bioticassignment, all = TRUE)
+StationPSULink <- merge(StationPSULink, suassignment, all = TRUE)
+StationPSULink <- StationPSULink[, c("Station", "SampleUnit")]
+StationPSULink <- unique(StationPSULink)
+
+
+
+#StationLengthDistNew_S <- data.table::copy(StationLengthDistNew)
+#StationLengthDistNew_S[, PSU := paste0("S", as.numeric(substr(PSU, 4, 6)))]
+
+
+SweptAreaDensity <- data.table::as.data.table(g$outputData$SweptAreaDensity)
+
+merge(SweptAreaDensity, StationPSULink)
+
+
+
+setkey(SweptAreaDensity, SampleUnit)
+setkey(m, SampleUnit)
+SweptAreaDensity[m, Station := newName]
+testData
+
+
+
+
+SweptAreaDensity[, PSU := SampleUnit]
+
+
+# Get the RegroupLengthDistribution, and rename the Stations to the convension of the old StoX (cruise/serialnumber):
+SweptAreaDensityNew <- data.table::copy(f2$SweptAreaDensity)
+dd <- merge(SweptAreaDensityNew, f2$DefineSweptAreaPSU$Station_PSU)
+# SweptAreaDensityNew[, PSU := paste0("S", as.numeric(substr(PSU, 4, 6)))]
+useOldStationCode(StationLengthDistNew)
+
+
+# Order the length distributions of the old and new StoX:
+SweptAreaDensity <- SweptAreaDensity[order(SweptAreaDensity$PSU), ]
+SweptAreaDensityNew <- SweptAreaDensityNew[order(SweptAreaDensityNew$PSU), ]
+
+# Observe that there are stations not filtered out in the new project, which could havev been filtered out using FilterBiotic():
+l1 <- unique(SweptAreaDensity$PSU)
+l2 <- unique(SweptAreaDensityNew$PSU)
+ll <- intersect(l1, l2)
+cbind(l1[1:40], l2[1:40])
+# Some stations are outside of the stratum system in the new project (what should we do with these?):
+setdiff(l1, l2)
+# Some stations are not filtered out in the new project:
+setdiff(l2, l1)
+
+# Keep only the stations common to both projects:
+SweptAreaDensity <- SweptAreaDensity[PSU %in% ll, ]
+SweptAreaDensityNew <- SweptAreaDensityNew[PSU %in% ll, ]
+
+# The WeightedCount is almost identical:
+plot(StationLengthDist$WeightedCount)
+points(StationLengthDistNew$WeightedCount, col = 2)
+
+all.equal(StationLengthDist$WeightedCount, StationLengthDistNew$WeightedCount)
+range(StationLengthDist$WeightedCount - StationLengthDistNew$WeightedCount)
+
+
+
+
+
+
+AbundanceNew <- data.table::copy(f2$Abundance)
+Abundance <- data.table::as.data.table(g$outputData$AbundanceByLength)
+AbundanceNew
+Abundance
+par(mfrow = c(5,5), mar = c(1,1,1,1), oma = c(0,0,0,0))
+for(s in unique(AbundanceNew$Stratum)) {
+	plot(Abundance[SampleUnit == s]$Abundance, cex = 1.2)
+	points(AbundanceNew[Stratum == s]$Abundance, col = 2)
+}
+
+par(mfrow = c(5,5), mar = c(1,4,1,1), oma = c(0,0,0,0))
+for(s in unique(AbundanceNew$Stratum)) {
+	plot((Abundance[SampleUnit == s]$Abundance - AbundanceNew[Stratum == s]$Abundance) / Abundance[SampleUnit == s]$Abundance)
+}
+
+
+
+
+# 
+
+
+
+dup <- function(x) {
+	duplicated(x) | duplicated(x, fromLast = TRUE)
+}
+
+by <- c("PSU", "SpeciesCategory", "IndividualTotalLengthCentimeter", "LengthResolutionCentimeter")
+w <- which(dup(LengthDistributionData[, ..by]))
+LengthDistributionData[w]
+by <- c("PSU", "Haul", "SpeciesCategory", "IndividualTotalLengthCentimeter", "LengthResolutionCentimeter")
+w <- which(dup(LengthDistributionData[, ..by]))
+LengthDistributionData[w]
+by <- c("PSU", "Haul", "SampleKey", "SpeciesCategory", "IndividualTotalLengthCentimeter", "LengthResolutionCentimeter")
+w <- which(dup(LengthDistributionData[, ..by]))
+LengthDistributionData[w]
+by <- c("PSU", "CruiseKey", "Haul", "SampleKey", "SpeciesCategory", "IndividualTotalLengthCentimeter", "LengthResolutionCentimeter")
+w <- which(dup(LengthDistributionData[, ..by]))
+LengthDistributionData[w]
+by <- c("PSU", "CruiseKey", "Haul", "StationKey", "SampleKey", "SpeciesCategory", "IndividualTotalLengthCentimeter", "LengthResolutionCentimeter")
+w <- which(dup(LengthDistributionData[, ..by]))
+LengthDistributionData[w]
+
+
+
+
+
+
+
+# Compare the swept area density:
+SweptAreaDensity <- data.table::as.data.table(g$outputData$SweptAreaDensity)
+SweptAreaDensityNew <- f2$SweptAreaDensity
+
+
+
+
+
+
+profvis({
+	g2 <- getFilterOptionsAll("~/workspace/stox/project/Test_Rstox3", "baseline", "P002")
+})
+
+
+g2 <- getFilterOptionsAll("~/workspace/stox/project/Test_Rstox3", "baseline", "P002")
+
+
+
+
+
+system.time(g2 <- getFilterOptionsAll("~/workspace/stox/project/Test_Rstox3", "baseline", "P009", include.numeric = FALSE))
+
+
+
+g1 <- getFilterOptions("~/workspace/stox/project/Test_Rstox3", "baseline", "P004", "Station")
+g2 <- getFilterOptionsAll("~/workspace/stox/project/Test_Rstox3", "baseline", "P004")
+
+
+
+
+
+
+projectPath <- "~/workspace/stox/project/Test4"
+closeProject(projectPath)
+openProject(projectPath, force = TRUE)
+modelName <- "baseline"
+system.time(processTable <- getProcessTable(projectPath, modelName))
+setUseProcessDataToFALSE(projectPath, modelName, "P012")
+modifyProcess(projectPath, modelName, "DefineBioticAssignment", list(functionParameters = list(DefinitionMethod = "None")))
+system.time(f2 <- runModel(projectPath, modelName))
+
+system.time(g4 <- getInteractiveData(projectPath, "baseline", "P010"))
+
+
+system.time(g <- getProcessOutputTableNames(projectPath, modelName, "P012"))
+
+
+
+
+RstoxFramework::addHaulToAssignment(Stratum = "s1", PSU = "PSU1", Layer = "WaterColumn", Haul = "2017102/4/2017/4174/2/70162", projectPath, modelName, "P012")
+
+
+
+
+
+
+
+projectPath <- "~/workspace/stox/project/testStoX30_lengtdistribution"
+closeProject(projectPath)
+openProject(projectPath)
+modelName <- "baseline"
+system.time(processTable <- getProcessTable(projectPath, modelName))
+system.time(f3 <- runModel(projectPath, modelName))
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -751,14 +1977,43 @@ RstoxFramework:::modifyFunctionName(projectPath, modelName, "P034", "RstoxData::
 
 
 
-system.time(f <- runModel(projectPath, modelName, startProcess = 1, endProcess = 17))
+system.time(f <- runModel(projectPath, modelName, startProcess = 1, endProcess = 1))
 system.time(f <- runModel(projectPath, modelName, endProcess = 1))
 
 
 system.time(closeProject(projectPath = projectPath))
 system.time(openProject(projectPath = projectPath))
 
-addProcess(projectPath, modelName)
+
+
+
+
+
+
+
+VariableConversionTable <- DefineBioticVariableConversion(FileName = "~/workspace/stox/project/TestDefineVariables2.txt")
+b <- ConvertBioticVariables(f2$ReadBiotic, ConversionMethod = "PreDefined", BioticVariableConversion = VariableConversionTable)
+
+
+
+
+
+
+
+
+
+
+projectPath <- "~/workspace/stox/project/BS_swept_area_cod_2019"
+openProject(projectPath)
+modelName <- "baseline"
+addProcess(projectPath, modelName, list(functionName = "FilterStoxBiotic"))
+gg <- getProjectMemoryData(projectPath, modelName)
+saveProject(projectPath)
+closeProject(projectPath)
+openProject(projectPath)
+system.time(processTable <- getProcessTable(projectPath, modelName))
+
+
 RstoxFramework:::modifyFunctionName(projectPath, modelName, "P037", "RstoxData::StoxBiotic2")
 removeProcess(projectPath, modelName, "P037")
 
@@ -771,6 +2026,8 @@ RstoxFramework:::getFunctionName(
 
 
 rearrangeProcesses(projectPath, modelName, c("P003"), "P002")
+
+rearrangeProcesses(projectPath, modelName, c("P001"), "P003")
 
 
 resetModel(projectPath, modelName, "P003")
@@ -791,7 +2048,7 @@ jsonlite::toJSON(runFunction("getActiveProcessID", args = list(projectPath = pro
 
 	
 	
-
+setProcessPropertyValue("functionParameters", "FilterExpression", "{\"biotic_cruiseNumber_0146_2019_UFJN_VLNY_Vilnyus_2019-05-03T22.03.07.377Z.xml/individual\":\"(length < 0.07)\"}", projectPath, modelName, "P002")
 
 
 # 1: Move processes [DONE]
@@ -815,6 +2072,9 @@ setProcessPropertyValue("processArguments", "processName", "", projectPath, mode
 setProcessPropertyValue("processArguments", "enabled", FALSE, projectPath, modelName, "P001")
 
 
+setProcessPropertyValue("functionParameters", "FilterExpression", "", projectPath, modelName, "P004")
+
+
 RstoxFramework:::modifyFunctionName(projectPath, modelName, "P015", "")
 
 addEmptyProcess(projectPath, modelName, processName = NULL)
@@ -823,7 +2083,7 @@ addEmptyProcess(projectPath, modelName, processName = NULL)
 # Set file names
 setProcessPropertyValue("functionParameters", "FileNames", c("~/workspace/stox/project/Test_Rstox3/process/projectSession/projectMemory/current/maxProcessIntegerID.txt", "~/workspace/stox/project/Test_Rstox3/process/projectSession/projectMemory/current/processIndexTable.txt"), projectPath, modelName, "P001")
 
-getProcessPropertySheet(projectPath, modelName, processID = "P006")
+getProcessPropertySheet(projectPath, modelName, processID = "P004")
 
 
 resp <- POST("http://localhost:5307/ocpu/library/RstoxAPI/R/runFunction/json?auto_unbox=TRUE", body = list(what="'getActiveProcessID'", args="{\"projectPath\":\"/Users/arnejh/workspace/stox/project/Test_Rstox3\",\"modelName\":\"baseline\"}", removeCall=F), encode = 'form')
@@ -877,7 +2137,7 @@ dim(nn)
 dim(s)
 
 
-g1 <- getFilterOptions("~/workspace/stox/project/Test_Rstox3", "baseline", "P002", "Individual")
+g1 <- getFilterOptions("~/workspace/stox/project/Test_Rstox3", "baseline", "P003", "Individual")
 g2 <- getFilterOptions("~/workspace/stox/project/Test_Rstox3", "baseline", "P001", "biotic_cruiseNumber_2017838_Eros_2019-02-19T08.33.14.905Z.xml/fishstation")
 names(g1)
 names(g2)
@@ -927,10 +2187,11 @@ all.equal(lll, l)
 
 
 system.time(g <- getEDSUData("~/workspace/stox/project/Test_Rstox3", "baseline", "P006"))
-system.time(gg <- getMapData("~/workspace/stox/project/Test_Rstox3", "baseline", "P002"))
+system.time(gg <- getMapData("~/workspace/stox/project/Test_Rstox3", "baseline", "P003"))
 system.time(ggg <- getMapData("~/workspace/stox/project/Test_Rstox3", "baseline", "P006"))
 system.time(g4 <- getInteractiveData("~/workspace/stox/project/Test_Rstox3", "baseline", "P007"))
 system.time(g5 <- getInteractiveData("~/workspace/stox/project/Test_Rstox3", "baseline", "P009"))
+system.time(g5 <- getInteractiveData("~/workspace/stox/project/Test_Rstox3", "baseline", "P030"))
 
 projectPathprojectPath <- "~/workspace/stox/project/Test_Rstox3"
 modelName <- "baseline"
@@ -983,7 +2244,7 @@ TSD::dim_all(mapData)
 
 
 library(sp)
-plot(processOutput$DefineStrata)
+plot(processOutput$DefineStratumPolygon)
 points(processOutput$StoxAcoustic$Log$Longitude, processOutput$StoxAcoustic$Log$Latitude)
 points(processOutput$StoxBiotic$Station$Longitude, processOutput$StoxBiotic$Station$Latitude, col = 2)
 
@@ -1018,7 +2279,7 @@ temp <- addAcousticPSU("S2", PSU = NULL, projectPath, modelName, processID)
 projectPath <- "~/workspace/stox/project/Test_Rstox3"
 modelName <- "baseline"
 processID <- "P003"
-StratumPolygon <- processOutput$DefineStrata
+StratumPolygon <- processOutput$DefineStratumPolygon
 
 newStratum <- StratumPolygon$StratumPolygon
 newStratumnewStratum@polygons <- newStratum$newStratum@polygons[1]
@@ -1195,8 +2456,8 @@ addStoxAcoustic <- function(projectPath, ...) {
 	
 	temp
 }
-# Funciton to add DefineStrata:
-addDefineStrata <- function(projectPath, skeleton, ...) {
+# Funciton to add DefineStratumPolygon:
+addDefineStratumPolygon <- function(projectPath, skeleton, ...) {
 	inputFileNames <- skeleton$polygonFile
 	file.copy(
 		inputFileNames, 
@@ -1206,8 +2467,8 @@ addDefineStrata <- function(projectPath, skeleton, ...) {
 		projectPath = projectPath, 
 		modelName = "baseline", 
 		values = list(
-			processName = "DefineStrata", 
-			functionName = "DefineStrata", 
+			processName = "DefineStratumPolygon", 
+			functionName = "DefineStratumPolygon", 
 			functionParameters = list(
 				FileName = inputFile(inputFileNames, projectPath = NULL, folder = "input")
 			)
@@ -1225,7 +2486,7 @@ addStratumArea <- function(projectPath, ...) {
 			processName = "StratumArea", 
 			functionName = "StratumArea", 
 			functionInputs = list(
-				StratumPolygon = "DefineStrata"
+				StratumPolygon = "DefineStratumPolygon"
 			)
 		)
 	)
@@ -1241,7 +2502,7 @@ addDefineSweptAreaPSU <- function(projectPath, ...) {
 			processName = "DefineSweptAreaPSU", 
 			functionName = "DefineSweptAreaPSU", 
 			functionInputs = list(
-				StratumPolygon = "DefineStrata", 
+				StratumPolygon = "DefineStratumPolygon", 
 				StoxBioticData = "StoxBiotic"
 			)
 		)
@@ -1278,7 +2539,7 @@ addDefineAcousticPSU <- function(projectPath, ...) {
 			processName = "DefineAcousticPSU", 
 			functionName = "DefineAcousticPSU", 
 			functionInputs = list(
-				StratumPolygon = "DefineStrata", 
+				StratumPolygon = "DefineStratumPolygon", 
 				StoxBioticData = "StoxAcoustic"
 			)
 		)
@@ -1433,7 +2694,7 @@ createTestProjectSkeleton <- function(projectName, projectPathOriginal, sts = NU
 }
 
 # Create a swept area project:
-createTestProject <- function(projectName, projectPathOriginal, processes = c("ReadBiotic", "StoxBiotic", "DefineStrata", "StratumArea", "DefineSweptAreaPSU", "DefineSweptAreaLayer", "LengthDistribution"), sts = NULL, year = NULL, dir = "~/workspace/stox/project", download = FALSE) {
+createTestProject <- function(projectName, projectPathOriginal, processes = c("ReadBiotic", "StoxBiotic", "DefineStratumPolygon", "StratumArea", "DefineSweptAreaPSU", "DefineSweptAreaLayer", "LengthDistribution"), sts = NULL, year = NULL, dir = "~/workspace/stox/project", download = FALSE) {
 	
 	skeleton <- createTestProjectSkeleton(
 		projectName = projectName, 
@@ -1453,8 +2714,8 @@ createTestProject <- function(projectName, projectPathOriginal, processes = c("R
 	#addReadBiotic(projectPath = projectPath, skeleton = skeleton)
 	## Add process 2, StoxBiotic:
 	#addStoxBiotic(projectPath = projectPath)
-	## Add process 3, DefineStrata:
-	#addDefineStrata(projectPath = projectPath, skeleton = skeleton)
+	## Add process 3, DefineStratumPolygon:
+	#addDefineStratumPolygon(projectPath = projectPath, skeleton = skeleton)
 	## Add process 4, StratumArea:
 	#addStratumArea(projectPath = projectPath)
 	## Add process 5, DefineSweptAreaPSU:
@@ -1502,7 +2763,7 @@ cod2019 <- createTestProject(
 	sts = sts, 
 	year = year, 
 	dir = "~/workspace/stox/project", 
-	processes = c("ReadBiotic", "StoxBiotic", "FilterStoxBiotic", "DefineStrata", "StratumArea", "DefineSweptAreaPSU", "DefineSweptAreaLayer", "LengthDistribution", "LengthDependentCatchCompensation", "RegroupLengthDistribution")
+	processes = c("ReadBiotic", "StoxBiotic", "FilterStoxBiotic", "DefineStratumPolygon", "StratumArea", "DefineSweptAreaPSU", "DefineSweptAreaLayer", "LengthDistribution", "LengthDependentCatchCompensation", "RegroupLengthDistribution")
 )
 
 cod2019$original$outputData$StationLengthDist
@@ -1518,7 +2779,7 @@ herring2018 <- createTestProject(
 	sts = sts, 
 	year = year, 
 	dir = "~/workspace/stox/project", 
-	processes = c("ReadBiotic", "StoxBiotic", "ReadAcoustic", "StoxAcoustic", "DefineStrata", "StratumArea", "DefineAcousticPSU", "DefineAcousticLayer", "LengthDistribution", "NASC")
+	processes = c("ReadBiotic", "StoxBiotic", "ReadAcoustic", "StoxAcoustic", "DefineStratumPolygon", "StratumArea", "DefineAcousticPSU", "DefineAcousticLayer", "LengthDistribution", "NASC")
 )
 
 
@@ -1539,9 +2800,116 @@ d <- RstoxBase:::meanData(cod2019$new$LengthDistribution)
 
 
 
-l <- load('~/workspace/stox/project/Test_Rstox3/process/project.RData')
-geo <- geojsonio::geojson_json(projectDescription$baseline$P003$processData$StratumPolygon)
+#l <- load('~/workspace/stox/project/Test_Rstox3/process/project.RData')
+projectPath <- "~/workspace/stox/project/Test_Rstox3"
+projectDescription <- getProjectMemoryData(projectPath, named.list = TRUE)
+geo <- geojsonio::geojson_json(projectDescription$baseline$P001$processData$StratumPolygon)
 p <- pretty(as.character(geo), indent = 4)
+
+
+# 1. Convert spatial to geojson string: 
+convertProcessDataToGeojson <- function(projectDescription) {
+	# Run through the processes and convert SpatialPolygonsDataFrame to geojson string:
+	for(modelName in names(projectDescription)) {
+		for(processIndex in seq_along(projectDescription [[modelName]])) {
+			for(processDataIndex in names(projectDescription [[modelName]] [[processIndex]]$processData)) {
+				this <- projectDescription [[modelName]] [[processIndex]]$processData[[processDataIndex]]
+				if("SpatialPolygonsDataFrame" %in% class(this)) {
+					projectDescription [[modelName]] [[processIndex]]$processData[[processDataIndex]] <- geojsonio::geojson_json(this)
+				}
+			}
+		}
+	}
+	
+	return(projectDescription)
+}
+
+
+
+
+
+projectDescription3 <- convertProcessDataToGeojson(projectDescription)
+
+# 2. Convert to json structure:
+for(ind in seq_along(projectDescription3)) {
+	#names(projectDescription3[[ind]]) <- "process"
+	projectDescription3[[ind]] <- c(
+		modelName = unname(names(projectDescription3)[ind]),
+		processes = list(unname(projectDescription3[[ind]]))
+	)
+}
+projectDescription3 <- unname(projectDescription3)
+
+# 3. Write project.json file:
+system.time(j <- jsonlite::toJSON(projectDescription3, pretty = TRUE, auto_unbox = TRUE))
+write(j, "wtest.json")
+
+# 4. Read project.json file to R list:
+system.time(g <- jsonlite::read_json("wtest.json"))
+
+
+# 5. Reintroduce spatial from geojson string:
+convertGeojsonToProcessData <- function(projectDescription) {
+	# Run through the processes and convert SpatialPolygonsDataFrame to geojson string:
+	for(modelName in names(projectDescription)) {
+		for(processIndex in seq_along(projectDescription [[modelName]])) {
+			for(processDataIndex in names(projectDescription [[modelName]] [[processIndex]]$processData)) {
+				this <- projectDescription [[modelName]] [[processIndex]]$processData[[processDataIndex]]
+				if(is.character(this) && grepl("FeatureCollection", substring(this, 1, 100))) {
+					projectDescription [[modelName]] [[processIndex]]$processData[[processDataIndex]] <- geojsonio::geojson_sp(this)
+				}
+			}
+		}
+	}
+	
+	return(projectDescription)
+}
+
+
+
+
+
+
+
+
+for(ind in seq_along(projectDescription3)) {
+	projectDescription3[[ind]] <- c(
+		modelName = unname(names(projectDescription3)[ind]),
+		projectDescription3[[ind]]
+	)
+}
+
+
+
+pr <- projectDescription3
+pr[[1]]$processes <- pr[[1]]$processes[c(1, 2, 11)]
+j <- jsonlite::toJSON(pr, pretty = TRUE, auto_unbox = TRUE)
+write(j, "wtest.json")
+
+
+
+projectDescription2 <- projectDescription
+projectDescription2$baseline$P001$processData$StratumPolygon <- geojsonio::geojson_json(projectDescription2$baseline$P001$processData$StratumPolygon)
+j <- jsonlite::toJSON(projectDescription3[[1]][1:2], force = FALSE, pretty = TRUE, auto_unbox = TRUE)
+jsonlite::write_json(j, "test.json")
+write(j, "wtest.json")
+g1 <- jsonlite::read_json("test.json")
+g2 <- jsonlite::read_json("wtest.json")
+
+
+j <- jsonlite::toJSON(projectDescription$baseline[1:2], force = TRUE, pretty = TRUE, auto_unbox = TRUE)
+jsonlite::write_json(j, "test.json")
+write(j, "wtest.json")
+
+g <- jsonlite::read_json("test.json")
+gg <- jsonlite::fromJSON(g[[1]])
+
+
+
+j <- jsonlite::toJSON(projectDescription, force = TRUE, pretty = TRUE, auto_unbox = TRUE)
+jsonlite::write_json(j, "test.json")
+g <- jsonlite::read_json("test.json")
+gg <- jsonlite::fromJSON(g[[1]])
 
 
 # Filter list structure:
@@ -1749,24 +3117,6 @@ ll <- rapply(l, buildExpression, how = "replace")
 
 
 
-f <- list(
-	Individual = "SpeciesCategory != \"sild'G03/161722.G03/126417/NA\"", 
-	Station = "Longitude >= 62"
-)
-
-ff <- jsonlite::toJSON(f, auto_unbox = TRUE)
-
-ff
-{"Individual":"SpeciesCategory != \"sild'G03/161722.G03/126417/NA\"","Station":"Longitude >= 62"} 
-
-as.character(ff)
-
-"{\"Individual\":\"SpeciesCategory != \\\"sild'G03/161722.G03/126417/NA\\\"\",\"Station\":\"Longitude >= 62\"}"
-
-
-
-
-
 system.time(r.ices <- readXmlFile("~/Code/Github/StoX/Releases/StoX 2.9.6/TestProjects/Acoustic_578-1019-2019207.xml"))
 system.time(r.ices <- readXmlFile("~/Code/Github/StoX/Releases/StoX 2.9.6/TestProjects/Acoustic_578-1019-2019207.xml", stream = FALSE))
 
@@ -1781,7 +3131,7 @@ system.time(A.nmd <- StoxAcoustic(a.nmd))
 system.time(b.ices <- ReadBiotic("~/Code/Github/StoX/Releases/StoX 2.9.6/TestProjects/Biotic_578-1019-2018207.xml"))
 system.time(B.ices <- StoxBiotic(b.ices))
 
-system.time(b.nmd <- ReadBiotic("~/Code/Github/StoX/Releases/StoX 2.9.6/TestProjects/biotic_cruiseNumber_2017838_Eros_2019-02-19T08.33.14.905Z.xml"))
+system.time(b.nmd <- ReadBiotic("~/workspace/stox/project/BS_swept_area_cod_2019/input/biotic/biotic_cruiseNumber_0146_2019_UFJN_VLNY_Vilnyus_2019-05-03T22.03.07.377Z.xml"))
 system.time(B.nmd <- StoxBiotic(b.nmd))
 
 
@@ -1803,7 +3153,7 @@ system.time(nasc.ices <- NASC(A.ices))
 lat_0 <- seq(-85,85,5)
 lon_0 <- seq(-20,30,1)
 
-stratumPolygon <- f$DefineStrata
+stratumPolygon <- f$DefineStratumPolygon
 stratumPolygon <- head(stratumPolygon, 1)
 sp::proj4string(stratumPolygon) <- sp::CRS("+proj=longlat +ellps=WGS84")	
 
@@ -1824,3 +3174,337 @@ for(i in seq_along(lat_0)) {
 }
 
 rgl::persp3d(lon_0, lat_0, area, col = "pink", xlab = "lon", ylab = "lat")
+
+
+
+
+
+
+
+
+
+
+projectPath <- "~/workspace/stox/project/BS NEA cod 2019"
+openProject(projectPath)
+modelName <- "baseline"
+system.time(processTable <- getProcessTable(projectPath, modelName))
+setProcessPropertyValue("functionParameters", "FilterExpression", projectPath, "baseline", "P002")
+
+
+
+
+
+
+
+
+
+
+
+d1 <- data.table::data.table(a = 1:12, b = 3, c = "Hei")
+d2 <- data.table::data.table(a = seq_len(1e6), b = 3, c = "Hei")
+d3 <- data.table::data.table(a = 1:12, b = "/process/projectSession/memory/models/baseline/P006/functionName/functionName_20200430T171700.433Z.rds")
+system.time(d <- readRDS("~/workspace/stox/project/Test_Rstox3/process/projectSession/memory/history/projectMemory_20200430T171713.680Z.rds"))
+
+
+system.time(for(i in 1:10) saveRDS(d1, "test.rds"))
+system.time(for(i in 1:10) readRDS("test.rds"))
+system.time(for(i in 1:10) saveRDS(d2, "test.rds"))
+system.time(for(i in 1:10) readRDS("test.rds"))
+system.time(for(i in 1:10) saveRDS(d3, "test.rds"))
+system.time(for(i in 1:10) readRDS("test.rds"))
+system.time(for(i in 1:10) saveRDS(d, "test.rds"))
+system.time(for(i in 1:10) readRDS("test.rds"))
+
+
+system.time(for(i in 1:10) fst::write_fst(as.data.frame(d1), "test.fst"))
+system.time(for(i in 1:10) data.table::as.data.table(fst::read_fst("test.fst")))
+system.time(for(i in 1:10) fst::write_fst(as.data.frame(d2), "test.fst"))
+system.time(for(i in 1:10) data.table::as.data.table(fst::read_fst("test.fst")))
+system.time(for(i in 1:10) fst::write_fst(as.data.frame(d3), "test.fst"))
+system.time(for(i in 1:10) data.table::as.data.table(fst::read_fst("test.fst")))
+system.time(for(i in 1:10) fst::write_fst(as.data.frame(d), "test.fst"))
+system.time(for(i in 1:10) data.table::as.data.table(fst::read_fst("test.fst")))
+
+
+# Hadleys example:
+df <- as.data.frame(matrix(runif(256*65536), nrow = 256))
+
+print("Write RDS")
+for(i in 1) print(system.time(saveRDS(df, "df.rds")))
+for(i in 1:3) print(system.time(saveRDS(df, "df.rds", compress = FALSE)))
+print("Write Feather")
+for(i in 1:3) print(system.time(feather::write_feather(df, "df.feather")))
+print("Write FST")
+for(i in 1:3) print(system.time(fst::write_fst(as.data.frame(df), "df.fst")))
+
+file.info("df.rds")$size * 1e-6
+file.info("df.feather")$size * 1e-6
+file.info("df.fst")$size * 1e-6
+
+
+print("Read RDS")
+for(i in 1:3) print(system.time(readRDS("df.rds")))
+print("Read Feather")
+for(i in 1:3) print(system.time(feather::read_feather("df.feather")))
+print("Read FST")
+for(i in 1:3) print(system.time(data.table::as.data.table(fst::read_fst("df.fst"))))
+
+
+df <- f$DefineBioticAssignment
+
+print("Write RDS")
+for(i in 1) print(system.time(saveRDS(df, "df.rds")))
+for(i in 1:3) print(system.time(saveRDS(df, "df.rds", compress = FALSE)))
+print("Write Feather")
+for(i in 1:3) print(system.time(feather::write_feather(df, "df.feather")))
+print("Write FST")
+for(i in 1:3) print(system.time(fst::write_fst(as.data.frame(df), "df.fst")))
+
+file.info("df.rds")$size * 1e-6
+file.info("df.feather")$size * 1e-6
+file.info("df.fst")$size * 1e-6
+
+
+print("Read RDS")
+for(i in 1:3) print(system.time(readRDS("df.rds")))
+print("Read Feather")
+for(i in 1:3) print(system.time(feather::read_feather("df.feather")))
+print("Read FST")
+for(i in 1:3) print(system.time(data.table::as.data.table(fst::read_fst("df.fst"))))
+
+
+
+
+# Test speed of writeRDS vs fst::write_fst(as.data.frame(x), path = filePath):
+string <- "/process/projectSession/memory/models/baseline/P006/functionName/functionName_20200430T171700.433Z.rds"
+string6 <- rep(string, 6)
+
+system.time(
+	for(i in seq_len(1e4)) {
+		saveRDS(string, "test.rds")
+	}
+)
+
+system.time(
+	for(i in seq_len(1e4)) {
+		readRDS("test.rds")
+	}
+)
+
+system.time(
+	for(i in seq_len(1e4 / 6)) {
+		saveRDS(string6, "test.rds")
+	}
+)
+
+system.time(
+	for(i in seq_len(1e4 / 6)) {
+		readRDS("test.rds")
+	}
+)
+
+
+
+system.time(
+	for(i in seq_len(1e4)) {
+		writeChar(string, "test.rds")
+	}
+)
+
+system.time(
+	for(i in seq_len(1e4)) {
+		readChar("test.rds", 200)
+	}
+)
+
+system.time(
+	for(i in seq_len(1e4 / 6)) {
+		writeChar(string6, "test.rds")
+	}
+)
+
+system.time(
+	for(i in seq_len(1e4 / 6)) {
+		readChar("test.rds", 200 * 6)
+	}
+)
+
+
+system.time(
+	for(i in seq_len(1e4)) {
+		data.table::fwrite(list(string), "test.rds")
+	}
+)
+
+system.time(
+	for(i in seq_len(1e4)) {
+		readChar("test.rds", 200)
+	}
+)
+
+system.time(
+	for(i in seq_len(1e4 / 6)) {
+		writeChar(string6, "test.rds")
+	}
+)
+
+system.time(
+	for(i in seq_len(1e4 / 6)) {
+		readChar("test.rds", 200 * 6)
+	}
+)
+
+
+
+
+
+system.time(
+	for(i in seq_len(1e4)) {
+		writeChar(string, "test.txt")
+	}
+)
+system.time(
+	for(i in seq_len(1e4)) {
+		scan("test.txt", what = "character",  quiet = TRUE, encoding = "UTF-8", skipNul = TRUETRUE)
+	}
+)
+system.time(
+	for(i in seq_len(1e4 / 6)) {
+		writeChar(string6, "test.txt")
+	}
+)
+system.time(
+	for(i in seq_len(1e4 / 6)) {
+		scan("test.txt", what = "character",  quiet = TRUE, encoding = "UTF-8", skipNul = TRUE)
+	}
+)
+
+
+system.time(
+	for(i in seq_len(1e4)) {
+		readChar("test.txt", 200)
+	}
+)
+
+
+system.time(
+	for(i in seq_len(1e4)) {
+		f <- file( "test.txt")
+		close(f)
+	}
+)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# Test RstoxAPI 1.1.9:
+
+library(RstoxAPI)
+
+# Run the cod project of 2019:
+projectPaht_SweptArea <- "~/workspace/stox/project/Example_BS_swept_area_cod_2019"
+modelName <- "baseline"
+# Open the project:
+system.time(openProject(projectPaht_SweptArea))
+# Run the project:
+system.time(output_SweptArea <- runModel(projectPaht_SweptArea, modelName, fileOutput = FALSE))
+# Total estimated biomass in tonnes:
+TSB_SweptArea <- sum(output_SweptArea$SuperIndividuals$Abundance * output_SweptArea$SuperIndividuals$IndividualRoundWeightGram * 1e-6, na.rm = TRUE) # 240808.4
+
+
+# Run the sandeel project of 2020:
+projectPaht_AcousticTrawl <- "~/workspace/stox/project/Example_North Sea_Lesser_sandeel_2020"
+modelName <- "baseline"
+# Open the project:
+system.time(openProject(projectPaht_AcousticTrawl))
+# Run the project:
+system.time(output_AcousticTrawl <- runModel(projectPaht_AcousticTrawl, modelName, fileOutput = FALSE))
+# Total estimated biomass in tonnes:
+TSB_AcousticTrawl <- sum(output_AcousticTrawl$SuperIndividuals$Abundance * output_AcousticTrawl$SuperIndividuals$IndividualRoundWeightGram * 1e-6, na.rm = TRUE) # 664411.5
+
+
+
+
+
+
+
+
+# Compare to the StoX 2.7 projects:
+library(Rstox)
+
+# Inside the IRM firewall, get the official estimate:
+projectPaht_SweptArea2.7 <- getNMDdata("Barents Sea Northeast Arctic cod bottom trawl index in winter", subset = "2019", ow = TRUE)
+# Run the project:
+system.time(output_SweptArea2.7 <- getBaseline(projectPaht_SweptArea2.7))
+# Total estimated biomass in tonnes:
+TSB_SweptArea2.7 <- sum(output_SweptArea2.7$outputData$SuperIndAbundance$Abundance * output_SweptArea2.7$outputData$SuperIndAbundance$IndividualWeightGram * 1e-6, na.rm = TRUE) # 248810.2
+
+
+# Inside the IRM firewall, get the official estimate:
+projectPaht_AcousticTrawl2.7 <- getNMDdata("North Sea NOR lesser sandeel acoustic abundance estimate in spring", subset = "2020", ow = TRUE)
+# Run the project:
+system.time(output_AcousticTrawl2.7 <- getBaseline(projectPaht_AcousticTrawl2.7))
+# Total estimated biomass in tonnes:
+TSB_AcousticTrawl2.7 <- sum(output_AcousticTrawl2.7$outputData$SuperIndAbundance$Abundance * output_AcousticTrawl2.7$outputData$SuperIndAbundance$IndividualWeightGram * 1e-6, na.rm = TRUE) # 664209.5
+
+
+
+
+
+# The estimates from StoX 2.7 to 2.9.13 differ in the decimal:
+TSB <- data.table::data.table(
+	StoX = c("2.7", "2.9.13", "relative difference"), 
+	TSB_SweptArea = c(TSB_SweptArea2.7, TSB_SweptArea, (TSB_SweptArea2.7 - TSB_SweptArea) / TSB_SweptArea2.7), 
+	TSB_AcousticTrawl = c(TSB_AcousticTrawl2.7, TSB_AcousticTrawl, (TSB_AcousticTrawl2.7 - TSB_AcousticTrawl) / TSB_AcousticTrawl2.7)
+)
+TSB
+
+
+
+
+# Test bootstrap:
+library(RstoxAPI)
+
+# Run the sandeel project of 2020:
+projectPaht_AcousticTrawl <- "~/workspace/stox/project/Example_North Sea_Lesser_sandeel_2020"
+modelName <- "baseline"
+# Open the project:
+system.time(openProject(projectPaht_AcousticTrawl))
+# Run the project:
+system.time(output_AcousticTrawl <- runModel(projectPaht_AcousticTrawl, modelName, fileOutput = FALSE))
+
+system.time(processTable <- getProcessTable(projectPaht_AcousticTrawl, modelName))
+
+b <- Bootstrap(projectPaht_AcousticTrawl, BootstrapMethodTable <- data.table::data.table(
+	ProcessName = c(
+		"LengthDistribution", 
+		"NASC"
+	), 
+	ResampleFunction = c(
+		"ResampleHauls", 
+		"ResampleEDSUs"
+	), 
+	ResampleBy = c(
+		"Stratum", 
+		"Stratum"
+	), 
+	Seed = c(
+		1, 
+		2
+	)
+), NumberOfBootstraps = 2,  NumberOfCores = 1)
+
+
+
+
