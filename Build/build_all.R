@@ -55,7 +55,7 @@ RstoxBuild::buildRstoxPackage(
 		jsonlite = "1.6", 
 		jsonvalidate = "1.1.0", 
 		sp = "1.3.2"#, 
-		#fst = "0.9.2"
+		xml2="1.2.2"
 	), 
 	suggests = "testthat", 
 	internal.dependencies = c(
