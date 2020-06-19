@@ -1094,6 +1094,19 @@ system.time(f2 <- runModel(projectPath, modelName, fileOutput = FALSE, BioticAss
 
 
 
+
+
+# TestSpeciesCategoryCatch:
+projectPath <- "~/workspace/stox/project/TestSpeciesCategoryCatch"
+modelName <- "baseline"
+openProject(projectPath)
+system.time(f <- runModel(projectPath, modelName))
+
+
+
+
+
+
 # Test the StoX 2.7 sandeel against StoX 2.9.12:
 
 # Run in  StoX 2.9.12: 

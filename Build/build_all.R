@@ -1,31 +1,37 @@
-# #
-# # Build Rstox 1.11.1:
-# RstoxBuild::buildRstoxPackage(
-# 	"Rstox", 
-# 	Rversion = "3.5", 
-# 	imports = list(
-# 		data.table = "1.10.4-3", 
-# 		MASS = NULL,
-# 		methods = NULL,
-# 		RColorBrewer = NULL,
-# 		ggplot2 = NULL,
-# 		gridExtra = NULL,
-# 		plotrix = NULL,
-# 		pbapply = NULL,
-# 		rgdal = NULL,
-# 		rgeos = NULL,
-# 		rJava = NULL,
-# 		readr = NULL,
-# 		sp = NULL,
-# 		XML = NULL,
-# 		scatterpie = NULL
-# 	), 
-# 	rootDir = "~/Code/Github/Rstox", 
-# 	accountName = "Sea2DataSea2Data", 
-# 	suggests = c("pgirmess", "Reca","testthat"), 
-# 	#githubRoot = "https://github.com/Sea2Data", 
-# 	check = FALSE
-# )
+# Build Rstox:
+RstoxBuild::buildRstoxPackage(
+	"Rstox", 
+	Rversion="3.5", 
+	version="1.11.1", 
+	imports = list(
+		data.table = "1.10.4-3", 
+		MASS = NULL,
+		methods = NULL,
+		RColorBrewer = NULL,
+		ggplot2 = NULL,
+		gridExtra = NULL,
+		plotrix = NULL,
+		pbapply = NULL,
+		rgdal = NULL,
+		rgeos = NULL,
+		rJava = NULL,
+		readr = NULL,
+		sp = NULL,
+		XML = NULL,
+		scatterpie = NULL
+	), 
+	rootDir = "~/Code/Github/Rstox", 
+	accountName = "Sea2Data", 
+	suggests = c(
+		"ncdf4", 
+		"pgirmess", 
+		"Reca", 
+		"plotrix",
+		"testthat"
+	), 
+	check=FALSE
+)
+
 
 
 # Build RstoxBase:
@@ -54,7 +60,7 @@ RstoxBuild::buildRstoxPackage(
 		geojsonio = "0.8.0", 
 		jsonlite = "1.6", 
 		jsonvalidate = "1.1.0", 
-		sp = "1.3.2"#, 
+		sp = "1.3.2",
 		xml2="1.2.2"
 	), 
 	suggests = "testthat", 
