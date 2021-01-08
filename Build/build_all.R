@@ -1,3 +1,5 @@
+feil
+
 # Build Rstox:
 RstoxBuild::buildRstoxPackage(
 	"Rstox", 
@@ -40,12 +42,14 @@ RstoxBuild::buildRstoxPackage(
 	imports = list(
 		data.table = "1.12.6", 
 		Rcpp = "1.0.0", 
-		xml2 = "1.2.2", 
-		readr = "1.3.1"
+		xml2 = "1.2.2"
 	), 
-	suggests = "testthat", 
+	suggests = list(
+		readr = "1.3.1", 
+		testthat = NULL
+	), 
 	linkingto = "Rcpp",
-	globalVariables = c("RstoxDataEnv", "xsdObjects", ".", "..allDuplicated", "..colAgg", "..colList", "..columns", "..digits", "..keep", "..key", "..signifDigits", "..sourceColumns", "..targetAndSourceVariables", "..varToExtract", "..x", "AcousticCategory", "Addition", "age", "agingstructure", "ap", "aphia", "BeamKey", "bottomdepthstart", "bottomdepthstop", "catCatchWgt", "catchcount", "catchpartnumber", "catchproducttype", "CatchSpeciesCategoryNumber", "CatchSpeciesCategoryWeight", "CatchSpeciesCode", "CatchSubsampledNumber", "CatchSubsampleWeight", "catchweight", "cc", "Constant", "Country", "cruise", "Cruise", "CruiseKey", "cw", "DateTime", "direction", "DoorType", "EchoType", "EDSU", "FishID", "fishingdepthmax", "fishingdepthmin", "freq", "g", "gear", "Gear", "gearcondition", "GearExp", "gearflow", "HaulNo", "HaulNumber", "HaulVal", "HaulValidity", "hv", "inapplicableFormats", "individualweight", "isCrustacean", "isHerringOrSprat", "isHerringOrSpratOrMackerel", "latitudeend", "latitudestart", "LengthClass", "LengthCode", "lengthmeasurement", "lengthsamplecount", "lengthsampleweight", "lenInterval", "level", "lngtClass", "lngtCode", "LocalID", "LogDuration", "LogKey", "LogOrigin", "longitudeend", "longitudestart", "lsc", "lsCountTot", "maturationstage", "maturity", "meanW", "MiddleDateTime", "missionstartdate", "missionstopdate", "ms", "N", "nation", "nInd", "noMeas", "NumberAtLength", "nWithWeight", "parasite", "platformname", "preferredagereading", "Quarter", "readability", "ReplaceBy", "reportInMM", "res", "rowIndex", "s", "SaCategory", "sampleFac", "samplequality", "sampletype", "Scaling", "serialnumber", "sex", "Ship", "sp", "specialstage", "specimenid", "SpecVal", "start_time", "StartDateTime", "startyear", "station", "stationstartdate", "stationstarttime", "stationstopdate", "stationstoptime", "stationtype", "StatRec", "stomach", "StopDateTime", "stoxBioticObject", "subFactor", "SubsampledNumber", "subWeight", "suffixes", "Survey", "SweepLngt", "target", "Time", "tissuesample", "totalNo", "totWeight", "transceiver", "trawldoorarea", "trawldoorspread", "trawldoortype", "trawldoorweight", "VariableName", "verticaltrawlopening", "WeightMeasurement", "winddirection", "windspeed", "wingspread", "wiredensity", "wirediameter", "wirelength"), 
+	globalVariables = c(".", "..Country", "..Organisation", "..SurveyName", "..allDuplicated", "..colAgg", "..colList", "..columns", "..digits", "..keep", "..key", "..signifDigits", "..sourceColumns", "..targetAndSourceVariables", "..varToExtract", "..x", "AcousticCategory", "Addition", "BeamKey", "Constant", "Country", "Cruise", "CruiseKey", "DateTime", "DoorType", "EDSU", "EchoType", "FishID", "Gear", "GearExp", "HaulNo", "HaulVal", "LengthClass", "LengthCode", "LocalID", "LogKey", "N", "Number", "NumberAtLength", "Quarter", "ReplaceBy", "SaCategory", "Scaling", "Ship", "SpecVal", "SpeciesCategoryNumber", "SpeciesCategoryWeight", "SpeciesCode", "StatRec", "SubsampleWeight", "SubsampledNumber", "Survey", "SweepLngt", "Time", "TransducerOrientation", "Validity", "VariableName", "WeightMeasurement", "age", "agingstructure", "ap", "aphia", "bottomdepthstart", "bottomdepthstop", "catCatchWgt", "catchcount", "catchpartnumber", "catchproducttype", "catchweight", "cc", "cruise", "cw", "direction", "fishingdepthmax", "fishingdepthmin", "freq", "g", "gear", "gearcondition", "gearflow", "hv", "inapplicableFormats", "individualweight", "isCrustacean", "isHerringOrSprat", "isHerringOrSpratOrMackerel", "latitudeend", "latitudestart", "lenInterval", "lengthmeasurement", "lengthsamplecount", "lengthsampleweight", "level", "lngtClass", "lngtCode", "longitudeend", "longitudestart", "lsCountTot", "lsc", "maturationstage", "maturity", "meanW", "missionstartdate", "missionstopdate", "ms", "nInd", "nWithWeight", "nation", "noMeas", "parasite", "platformname", "preferredagereading", "readability", "reportInMM", "res", "rowIndex", "s", "sampleFac", "samplequality", "sampletype", "serialnumber", "sex", "sp", "specialstage", "specimenid", "start_time", "startyear", "station", "stationstartdate", "stationstarttime", "stationstopdate", "stationstoptime", "stationtype", "stomach", "stoxBioticObject", "subFactor", "subWeight", "suffixes", "target", "tissuesample", "totWeight", "totalNo", "transceiver", "trawldoorarea", "trawldoorspread", "trawldoortype", "trawldoorweight", "verticaltrawlopening", "winddirection", "windspeed", "wingspread", "wiredensity", "wirediameter", "wirelength"), 
 	addManual = TRUE, 
 	check = FALSE
 )
@@ -57,41 +61,17 @@ RstoxBuild::buildRstoxPackage(
 	Rversion = "3.6", 
 	imports = list(
 		data.table ="1.10.4-3", 
-		rgdal = "1.4.7",
+		#rgdal = "1.4.7",
 		rgeos = "0.5.2",
-		sp = "1.3.2"
+		sp = "1.3.2", 
+		sf = "0.9.0", 
+		geojsonsf = "2.0.0"
 	), 
 	importToNamespace = "data.table", 
 	suggests = "testthat", 
 	internal.dependencies = "RstoxData", 
 	additional_repositories = "https://stoxproject.github.io/repo", 
-	globalVariables = c(
-	    ":=", ".", "..abundanceGrouping", "..atMissingLengthGroup", "..by", "..columnOrder",
-	    "..extract", "..extractFromDataCopy", "..haulGrouping", "..Hauls", "..intervalVector",
-	    "..keys", "..keysSansSample", "..LengthDistributionType", "..LengthInterval",
-	    "..LengthIntervalWidths", "..lengthVar", "..presentResolutionVariables", "..refvar",
-	    "..relevantVariables", "..resolutionVar", "..RowIndex", "..Stratum", "..sumWeigthsBy",
-	    "..toAdd", "..validVariables", "..variablesToGetFromAbundanceData", "..vars",
-	    "..VerticalResolutionMax", "..VerticalResolutionMin", "..WeightingFactors", ".N",
-	    "abundanceWeightFactor", "AllStrata", "approx", "Area", "assignmentID", "assignmentPasted",
-	    "backscatteringCrossSection", "Biomass", "CatchFractionCount", "CatchFractionWeight",
-	    "ChannelReferenceDepth", "ChannelReferenceOrientation", "crossSection", "Cruise", "Density",
-	    "DensityWeight", "Depth", "DepthExponent", "distance", "EDSU", "EDSUIIndex",
-	    "EffectiveLogDistance", "EffectiveTowedDistance", "functionName",
-	    "getRstoxFrameworkDefinitions", "Haul", "haulWeightFactor", "imputeSeed", "Individual",
-	    "individualCount", "IndividualIndex", "IndividualKey", "IndividualRoundWeight",
-	    "IndividualTotalLength", "IndividualTotalLengthMiddle", "inside", "intervalIndex", "Layer",
-	    "LengthDistributionType", "LengthDistributionWeight", "LengthExponent", "LengthGroup",
-	    "LengthResolution", "MaxChannelDepth", "MaxChannelRange", "MeanLengthDistributionWeight",
-	    "MeanNASCWeight", "mergeDataTables", "MergeStoxBiotic", "midDepth", "midIndividualTotalLength",
-	    "MinChannelDepth", "MinChannelRange", "multiple", "na.omit", "NASCDistributed", "NASCWeight",
-	    "NewValue", "packageName", "PSU", "quantile", "raisingFactor", "ReplaceLevel",
-	    "ReplaceRowIndex", "representativeBackscatteringCrossSection",
-	    "representativeBackscatteringCrossSectionNormalized", "RowIndex", "RstoxBaseEnv", "sd",
-	    "StartDateTime", "StopDateTime", "Stratum", "SummedWeights", "sumWeightedCount", "Survey",
-	    "SweepWidthNauticalMile", "TargetStrength", "TargetStrength0", "TargetStrengthFunction",
-	    "TotalLength", "V1", "Value", "weighted", "WeightedCount", "WeightingFactor",
-	    "weightingParameter", "x", "y"), 
+	globalVariables = c(".", "..Hauls", "..LengthDistributionType", "..LengthInterval", "..LengthIntervalWidths", "..RowIndex", "..Stratum", "..VerticalResolutionMax", "..VerticalResolutionMin", "..WeightingFactors", "..atMissingLengthGroup", "..by", "..extract", "..extractFromDataCopy", "..haulGrouping", "..intervalVector", "..keys", "..keysSansSample", "..lengthVar", "..presentResolutionVariables", "..refvar", "..resolutionVar", "..sumWeigthsBy", "..variablesToGetFromAbundanceData", "..vars", "AllStrata", "Area", "Biomass", "CatchFractionCount", "CatchFractionWeight", "ChannelReferenceDepth", "ChannelReferenceTilt", "Cruise", "DateTime", "Density", "DensityWeight", "Depth", "DepthExponent", "EffectiveLogDistance", "EffectiveTowedDistance", "Haul", "Individual", "IndividualIndex", "IndividualKey", "IndividualRoundWeight", "IndividualTotalLength", "IndividualTotalLengthMiddle", "Layer", "LengthDistributionType", "LengthExponent", "LengthGroup", "LengthResolution", "LogDuration", "LogOrigin", "MaxChannelDepth", "MaxChannelRange", "MeanLengthDistributionWeight", "MeanNASCWeight", "MergeStoxBiotic", "MiddleDateTime", "MinChannelDepth", "MinChannelRange", "NASCDistributed", "NASCWeight", "NewValue", "PSU", "ReplaceLevel", "ReplaceRowIndex", "RowIndex", "SSU", "SSUIndex", "StartDateTime", "StationLevel", "StopDateTime", "Stratum", "SummedWeights", "Survey", "SweepWidthNauticalMile", "TargetStrength", "TargetStrength0", "TargetStrengthFunction", "TotalLength", "V1", "Value", "WeightedCount", "WeightingFactor", "assignmentID", "assignmentPasted", "backscatteringCrossSection", "crossSection", "distance", "functionName", "getRstoxFrameworkDefinitions", "haulWeightFactor", "imputeSeed", "individualCount", "inside", "intervalIndex", "midDepth", "midIndividualTotalLength", "multiple", "packageName", "raisingFactor", "representativeBackscatteringCrossSection", "representativeBackscatteringCrossSectionNormalized", "sd", "sumWeightedCount", "weighted", "weightingParameter", "x", "y"), 
 	addManual = TRUE, 
 	check = FALSE
 )
@@ -99,20 +79,20 @@ RstoxBuild::buildRstoxPackage(
 
 
 
-
-
-	
 # Build RstoxFramework:
 RstoxBuild::buildRstoxPackage(
 	"RstoxFramework", 
 	Rversion = "3.6", # This is due to change in formals() which now includes the 'envir' argument which we have employed, and the fact that sampling has changed as of R 3.6.
 	imports = list(
 		data.table = "1.12.6", 
-		geojsonio = "0.8.0", 
+		#geojsonio = "0.8.0", 
+		geojsonsf = "2.0.0",
 		jsonlite = "1.6", 
 		jsonvalidate = "1.1.0", 
 		sp = "1.3.2",
-		xml2 ="1.2.2"
+		sf = "0.9.0", 
+		xml2 = "1.2.2", 
+		stringr = "1.0.0"
 	), 
 	importToNamespace = "data.table", 
 	suggests = "testthat", 
@@ -124,6 +104,8 @@ RstoxBuild::buildRstoxPackage(
 	globalVariables = c("RstoxFrameworkEnv", ":=", ".", "..PSU", "..activeProcessID", "..clickPointNames", "..coordinateNames", "..functionInputs", "..functionName", "..functionParameters", "..infoToKeep", "..processDirty", "..newProcessName", "CruiseKey", "Latitude", "Latitude2", "LogOrigin", "LogOrigin2", "Longitude", "Longitude2", "PSU", "atRemove", "canShowInMap", "filePahts", "functionName", "functionOutputDataType", "hasBeenRun", "hasProcessData", "modelName", "processDirty", "name", "possibleValues", "processID", "projectPath", "value", "..EDSUInfoToKeep", "..haulInfoToKeep", "..ind", "..propertyDirty", "..stationInfoToKeep", "..validInd", "BootstrapID", "JavaJEXL2R", "ProcessName", "ResampleFunction", "Stratum", "col2rgb", "colorRampPalette", "dataTable2SpatialPolygonsDataFrame", "dataType", "functionArguments", "packageVersion", "processIndex", "processName", "readProjectDescriptionXML", "resampledCountWithUniqueName", "writeProjectXML"), 
 	check = FALSE
 )
+
+	
 
 
 # Build RstoxFDA:
@@ -155,27 +137,29 @@ RstoxBuild::buildRstoxPackage(
 )
 
 
-# Build RstoxBuild:
-RstoxBuild::buildRstoxPackage(
-	"RstoxBuild", 
-	Rversion = "3.6", 
-	check = FALSE, 
-	imports = c("usethis", "devtools"), 
-	suggests = c("Rstox", "png", "jpeg", "tiff", "rJava", "callr")
-)
+
+
+## Build RstoxAPI:
+#RstoxBuild::buildRstoxPackage(
+#	"RstoxAPI", 
+#	Rversion = "3.6", 
+#	check = FALSE, 
+#	imports = list(
+#		devtools = NULL, 
+#		data.table ="1.10.4-3"
+#	), 
+#	internal.dependencies = "RstoxFramework", 
+#	additional_repositories = "https://stoxproject.github.io/repo"
+#)
 
 
 
+convertGlobalVariables <- function(x = "~/ttt.txt") {
+	d <- unlist(lapply(readLines(x), strsplit, " ", fixed = TRUE))
+	d <- paste0("\"", paste0(d, collapse = "\", \""), "\"")
+	writeLines(d, x)
+}
+convertGlobalVariables()
 
-# Build RstoxAPI:
-RstoxBuild::buildRstoxPackage(
-	"RstoxAPI", 
-	Rversion = "3.6", 
-	check = FALSE, 
-	imports = list(
-		devtools = NULL, 
-		data.table ="1.10.4-3"
-	), 
-	internal.dependencies = "RstoxFramework", 
-	additional_repositories = "https://stoxproject.github.io/repo"
-)
+
+
