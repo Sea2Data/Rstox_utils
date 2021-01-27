@@ -119,7 +119,8 @@ RstoxBuild::buildRstoxPackage(
 	  ggplot2 = "3.2.1",
 	  RColorBrewer = "1.1-2",
 	  gridExtra = "2.3",
-	  sp = "1.3.2"
+	  sp = "1.3.2",
+	  sf = "0.9.0"
 	),
 	internal.dependencies = c(
 		"RstoxData", 
