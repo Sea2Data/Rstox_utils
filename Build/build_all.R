@@ -126,7 +126,7 @@ RstoxBuild::buildRstoxPackage(
 		"RstoxData", 
 		"RstoxBase"
 	), 
-	suggests = c("testthat", "Reca"),
+	suggests = c("testthat", "Reca", "rnaturalearth"),
 	check = FALSE
 )
 
