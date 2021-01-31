@@ -120,7 +120,8 @@ RstoxBuild::buildRstoxPackage(
 	  RColorBrewer = "1.1-2",
 	  gridExtra = "2.3",
 	  sp = "1.3.2",
-	  sf = "0.9.0"
+	  sf = "0.9.0",
+	  RstoxData = "1.0.25"
 	),
 	internal.dependencies = c(
 		"RstoxData", 
