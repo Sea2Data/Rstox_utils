@@ -1,6 +1,5 @@
-feil
 
-library(RstoxFramework)
+#library(RstoxFramework)
 options(deparse.max.lines = 10)
 
 inputFile <- function(fileName, projectPath = NULL, folder = "acoustic") {
@@ -4189,6 +4188,379 @@ TSB
 # 1:                 2.7  2.531620e+05      6.642095e+05
 # 2:              2.9.13  2.872358e+05      6.749699e+05
 # 3: relative difference -1.345928e-01     -1.620029e-02
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+exampleProjects <- c(
+	"~/Code/Github/StoX/Releases/2.9.20/TestProjects/Example_BS_swept_area_cod_2019_2.9.20", 
+	"~/Code/Github/StoX/Releases/2.9.20/TestProjects/Example_ICESAcoustic_2.9.20", 
+	"~/Code/Github/StoX/Releases/2.9.20/TestProjects/Example_ICESBiotic_2.9.20", 
+	"~/Code/Github/StoX/Releases/2.9.20/TestProjects/Example_North Sea_Lesser_sandeel_2020_impute_2.9.20", 
+	"~/Code/Github/StoX/Releases/2.9.20/TestProjects/Example_SpeciesCategoryCatch_2.9.20", 
+	"~/Code/Github/StoX/Releases/2.9.20/TestProjects/Example_WriteICES_2.9.20"
+)
+
+
+
+
+
+delete_ds_store <-  function(projectPath) {
+	if (Sys.info()["sysname"] == "Darwin") {
+		setwd(projectPath)
+		
+		# List files, then delete .DS_Store:
+		ds_store_files <- list.files(
+			path = projectPath,
+			pattern = "\\.DS_Store",
+			all.files = TRUE,
+			full.names = TRUE,
+			recursive = TRUE
+		)
+		unlink(ds_store_files)
+	}
+}
+
+
+zipProject <- function(projectPath) {
+	if (Sys.info()["sysname"] == "Darwin") {
+		setwd(projectPath)
+		
+		# List files, then delete .DS_Store:
+		ds_store_files <- list.files(
+			path = projectPath,
+			pattern = "\\.DS_Store",
+			all.files = TRUE,
+			full.names = TRUE,
+			recursive = TRUE
+		)
+		unlink(ds_store_files)
+		
+		files <- list.files(
+			projectPath, 
+			recursive = TRUE
+		)
+		
+		print(files)
+		
+		dirs <- list.dirs(projectPath)
+		# Keep only folders with files
+		
+		zipfile <- paste(projectPath, "zip", sep =".")
+		utils::zip(zipfile, files, extras = c("-x \".*\"",  "-x \"__MACOSX\""))
+		#utils::zip(zipfile, files)
+	}
+}
+
+
+delete_ds_store <-  function(projectPath) {
+	if (Sys.info()["sysname"] == "Darwin") {
+		setwd(projectPath)
+		
+		# List files, then delete .DS_Store:
+		ds_store_files <- list.files(
+			path = projectPath,
+			pattern = "\\.DS_Store",
+			all.files = TRUE,
+			full.names = TRUE,
+			recursive = TRUE
+		)
+		print(ds_store_files)
+		unlink(ds_store_files)
+	}
+}
+
+exampleProjects <- list.dirs("~/Code/Github/StoX/Releases/2.9.21/TestProjects", recursive = FALSE, full.names = TRUE)
+
+
+lapply(exampleProjects, delete_ds_store)
+
+
+
+
+exampleProjects <- list.dirs("~/Code/Github/StoX/Releases/2.9.22/TestProjects", recursive = FALSE, full.names = TRUE)
+
+
+lapply(exampleProjects, delete_ds_store)
+
+
+
+exampleProjects <- list.dirs("~/Code/Github/StoX/Releases/2.9.23/TestProjects", recursive = FALSE, full.names = TRUE)
+
+
+lapply(exampleProjects, delete_ds_store)
+
+
+
+
+
+exampleProjects <- list.dirs("~/Code/Github/StoX/Releases/3.0.0/TestProjects", recursive = FALSE, full.names = TRUE)
+
+
+lapply(exampleProjects, delete_ds_store)
+
+
+
+
+
+
+
+
+
+
+
+
+projectPath <- "~/workspace/stox/project/Capelin spawning 2020_master final - Copy"
+newProjectPath <- "~/workspace/stox/project/Capelin spawning 2020_master final - Copy_2.9.22"
+
+RstoxFramework:::redefineAcousticPSUFrom2.7(
+	projectPath = projectPath, 
+	newProjectPath = newProjectPath
+)
+
+
+
+
+
+
+
+
+
+
+
+# Test if all projects are running:
+runProject <- function(projectPath, modelName = NULL, ...) {
+	if(!length(modelName)) {
+		modelName <- c(
+			"baseline", 
+			"analysis", 
+			"report"
+		)
+	}
+	message("Running model(s) ", paste(modelName, collapse = ", "), " of project", projectPath, "...")
+	
+	try(RstoxFramework::runModel(projectPath = projectPath, modelName = modelName, ...))
+}
+
+runAllZippedProjects <- function(projectsDir, modelName = NULL, ..., run = TRUE) {
+	# Find project zips:
+	l <- list.files(projectsDir, recursive = FALSE, pattern = "\\.zip$", full.names = TRUE)
+	
+	# Unzip and run:
+	projectPaths <- lapply(l, unzipThenDelete__MACOSX)
+	if(run) {
+		lapply(projectPaths, runProject, modelName = modelName, ...)
+	}
+}
+
+unzipThenDelete__MACOSX <- function(zip, exdir = NULL) {
+	
+	if(!length(exdir)) {
+		exdir <- dirname(zip)
+	}
+	projectName <- tools::file_path_sans_ext(basename(zip))
+	projectPath <- file.path(exdir, projectName)
+	
+	l <- unzip(zip, list = TRUE)
+	
+	
+	unzipThenDelete__MACOSXOne <- function(zip, exdir) {
+		unzip(zip, exdir = exdir)
+		# Find the "__MACOSX" folder:
+		MACOSXFolder <- file.path(exdir, "__MACOSX")
+		if(file.exists(MACOSXFolder)) {
+			unlink(MACOSXFolder, recursive = TRUE, force = TRUE)
+		}
+	}
+	
+	if(!any(grepl(projectName, l$Name))) {
+		unlink(projectPath, recursive = TRUE, force = TRUE)
+		unzipThenDelete__MACOSXOne(zip, exdir = file.path(exdir, projectName))
+	}
+	else {
+		unzipThenDelete__MACOSXOne(zip, exdir = exdir)
+	}
+	
+	
+	return(projectPath)
+}
+
+
+testDirs <- c(
+	"~/Code/Github/StoX/Releases/2.9.16", 
+	"~/Code/Github/StoX/Releases/2.9.17", 
+	"~/Code/Github/StoX/Releases/2.9.18", 
+	"~/Code/Github/StoX/Releases/2.9.19", 
+	"~/Code/Github/StoX/Releases/2.9.20", 
+	"~/Code/Github/StoX/Releases/2.9.21", 
+	"~/Code/Github/StoX/Releases/2.9.22", 
+	"~/Code/Github/StoX/Releases/2.9.23"
+)
+testDirs <- file.path(testDirs, "TestProjects")
+
+#models <- c(
+#	"baseline", 
+#	"analysis", 
+#	"report"
+#)
+models <- c(
+	"baseline"
+)
+d <- lapply(testDirs, runAllZippedProjects, modelName = models)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+subsetNMDBiotic("~/Code/Github/StoX/Releases/TestRstoxFramework/Example_Barents_Sea_cod_swept_area_survey_1999/input/biotic_cruiseNumber_1999203_Johan+Hjort_2021-01-21T08.52.01.460Z.xml", "~/Code/Github/StoX/Releases/TestRstoxFramework/Example_Barents_Sea_cod_swept_area_survey_1999/input/biotic_cruiseNumber_1999203_Johan+Hjort_2021-01-21T08.52.01.460Z_subset.xml", stationsIndex = 1:10)
+
+subsetNMDEchosounder("~/Code/Github/StoX/Releases/TestRstoxFramework/Example_Barents_Sea_cod_swept_area_survey_1999/input/biotic_cruiseNumber_1999203_Johan+Hjort_2021-01-21T08.52.01.460Z.xml", "~/Code/Github/StoX/Releases/TestRstoxFramework/Example_Barents_Sea_cod_swept_area_survey_1999/input/biotic_cruiseNumber_1999203_Johan+Hjort_2021-01-21T08.52.01.460Z_subset.xml", stationsIndex = 1:10)
+
+
+
+
+
+
+
+
+
+
+
+outputdir_cod_23 <- "~/Code/Github/StoX/Releases/2.9.23/TestProjects/Example_Barents_Sea_cod_swept_area_survey_1999_2.9.23/output"
+outputdir_cod_24 <- "~/Code/Github/StoX/Releases/2.9.24/TestProjects/Example_Barents_Sea_cod_swept_area_survey_1999_2.9.24/output"
+
+I_cod_23 <- data.table::fread(file.path(
+	outputdir_cod_23, 
+	"baseline/Individuals/Individuals_IndividualsData.txt"
+))
+SI_cod_23 <- data.table::fread(file.path(
+	outputdir_cod_23, 
+	"baseline/SuperIndividuals/SuperIndividuals_SuperIndividualsData.txt"
+))
+ISI_cod_23 <- data.table::fread(file.path(
+	outputdir_cod_23, 
+	"baseline/ImputeSuperIndividuals/ImputeSuperIndividuals_SuperIndividualsData.txt"
+))
+
+
+I_cod_24 <- data.table::fread(file.path(
+	outputdir_cod_24, 
+	"baseline/Individuals/Individuals_IndividualsData.txt"
+))
+SI_cod_24 <- data.table::fread(file.path(
+	outputdir_cod_24, 
+	"baseline/SuperIndividuals/SuperIndividuals_SuperIndividualsData.txt"
+))
+ISI_cod_24 <- data.table::fread(file.path(
+	outputdir_cod_24, 
+	"baseline/ImputeSuperIndividuals/ImputeSuperIndividuals_SuperIndividualsData.txt"
+))
+
+
+outputdir_tobis_22 <- "~/Code/Github/StoX/Releases/2.9.22/TestProjects/Example_North Sea_Lesser_sandeel_2020_impute_2.9.22/output"
+outputdir_tobis_24 <- "~/Code/Github/StoX/Releases/2.9.24/TestProjects/Example_North Sea_Lesser_sandeel_2020_2.9.24/output"
+
+I_tobis_22 <- data.table::fread(file.path(
+	outputdir_tobis_22, 
+	"baseline/Individuals/Individuals_IndividualsData.txt"
+))
+SI_tobis_22 <- data.table::fread(file.path(
+	outputdir_tobis_22, 
+	"baseline/SuperIndividuals/SuperIndividuals_SuperIndividualsData.txt"
+))
+ISI_tobis_22 <- data.table::fread(file.path(
+	outputdir_tobis_22, 
+	"baseline/ImputeSuperIndividuals/ImputeSuperIndividuals_SuperIndividualsData.txt"
+))
+
+
+I_tobis_24 <- data.table::fread(file.path(
+	outputdir_tobis_24, 
+	"baseline/Individuals/Individuals_IndividualsData.txt"
+))
+SI_tobis_24 <- data.table::fread(file.path(
+	outputdir_tobis_24, 
+	"baseline/SuperIndividuals/SuperIndividuals_SuperIndividualsData.txt"
+))
+ISI_tobis_24 <- data.table::fread(file.path(
+	outputdir_tobis_24, 
+	"baseline/ImputeSuperIndividuals/ImputeSuperIndividuals_SuperIndividualsData.txt"
+))
+
+
+
+
+
+all.equal(ISI_tobis_22, ISI_tobis_24)
+
+
+
+
+
+
+
+# Rename example projects:
+f <- list.dirs("~/Code/Github/StoX/Releases/3.0.4/TestProjects", recursive = FALSE)
+newf <- sub("3.0.3", "3.0.4", f)
+mapply(file.rename, f, newf)
+
+
+
+
+# Rename example projects:
+f <- list.dirs("~/Code/Github/StoX/Releases/3.0.5/TestProjects", recursive = FALSE)
+newf <- sub("3.0.4", "3.0.5", f)
+mapply(file.rename, f, newf)
+
+
+
+# Run example projects:
+f <- list.dirs("~/Code/Github/StoX/Releases/3.0.5/TestProjects", recursive = FALSE)
+system.time(d <- RstoxData::mapplyOnCores(RstoxFramework::runProject, NumberOfCores = 8, projectPath = f))
+
+
+
+
+# Rename example projects:
+f <- list.dirs("~/Code/Github/StoX/Releases/3.0.6/TestProjects", recursive = FALSE)
+newf <- sub("3.0.5", "3.0.6", f)
+mapply(file.rename, f, newf)
+
+# Run example projects:
+f <- list.dirs("~/Code/Github/StoX/Releases/3.0.6/TestProjects", recursive = FALSE)
+system.time(d <- RstoxData::mapplyOnCores(RstoxFramework::runProject, NumberOfCores = 9, projectPath = f, close = TRUE))
 
 
 
