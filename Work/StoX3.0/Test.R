@@ -1,3 +1,4 @@
+feil 
 
 #library(RstoxFramework)
 options(deparse.max.lines = 10)
@@ -3411,82 +3412,6 @@ system.time(
 
 
 
-# Test RstoxAPI 1.1.9:
-
-
-library(RstoxAPI)
-options(deparse.max.lines = 10)
-
-# Run the cod project of 2019:
-projectPath_SweptArea <- "~/workspace/stox/project/Example_BS_swept_area_cod_2019"
-modelName <- "baseline"
-# Open the project:
-system.time(openProject(projectPath_SweptArea))
-# Run the project:
-system.time(output_SweptArea <- runModel(projectPath_SweptArea, modelName, fileOutput = FALSE))
-# Total estimated biomass in tonnes:
-TSB_SweptArea <- sum(output_SweptArea$SuperIndividuals$Biomass * 1e-6, na.rm = TRUE) # 240808.4
-
-
-# Run the sandeel project of 2020:
-projectPath_AcousticTrawl <- "~/workspace/stox/project/Example_North Sea_Lesser_sandeel_2020_impute"
-modelName <- "baseline"
-# Open the project:
-system.time(openProject(projectPath_AcousticTrawl))
-# Run the project:
-system.time(output_AcousticTrawl <- runModel(projectPath_AcousticTrawl, modelName, fileOutput = FALSE))
-# Total estimated biomass in tonnes:
-TSB_AcousticTrawl <- sum(output_AcousticTrawl$SuperIndividuals$Biomass * 1e-6, na.rm = TRUE) # 664411.5
-
-
-
-# Compare to the StoX 2.7 projects:
-library(Rstox)
-
-# Inside the IRM firewall, get the official estimate:
-#projectPath_SweptArea2.7 <- getNMDdata("Barents Sea Northeast Arctic cod bottom trawl index in winter", subset = "2019", ow = TRUE)
-# Run the project:
-projectPath_SweptArea2.7 <- "~/workspace/stox/project/Barents Sea Northeast Arctic cod bottom trawl index in winter_2019"
-system.time(output_SweptArea2.7 <- getBaseline(projectPath_SweptArea2.7))
-# Total estimated biomass in tonnes:
-TSB_SweptArea2.7 <- sum(output_SweptArea2.7$outputData$SuperIndAbundance$Abundance * output_SweptArea2.7$outputData$SuperIndAbundance$IndividualWeightGram * 1e-6, na.rm = TRUE) # 248810.2
-
-
-# Inside the IMR firewall, get the official estimate:
-#projectPath_AcousticTrawl2.7 <- getNMDdata("North Sea NOR lesser sandeel acoustic abundance estimate in spring", subset = "2020", ow = TRUE)
-# Run the project:
-projectPath_AcousticTrawl2.7 <- "~/workspace/stox/project/North Sea NOR lesser sandeel acoustic abundance estimate in spring_2020"
-system.time(output_AcousticTrawl2.7 <- getBaseline(projectPath_AcousticTrawl2.7))
-# Total estimated biomass in tonnes:
-TSB_AcousticTrawl2.7 <- sum(output_AcousticTrawl2.7$outputData$SuperIndAbundance$Abundance * output_AcousticTrawl2.7$outputData$SuperIndAbundance$IndividualWeightGram * 1e-6, na.rm = TRUE) # 664209.5
-
-
-
-
-
-# The estimates from StoX 2.7 to 2.9.13 differ in the decimal:
-TSB <- data.table::data.table(
-	StoX = c("2.7", "2.9.13", "relative difference"), 
-	TSB_SweptArea = c(TSB_SweptArea2.7, TSB_SweptArea, (TSB_SweptArea2.7 - TSB_SweptArea) / TSB_SweptArea2.7), 
-	TSB_AcousticTrawl = c(TSB_AcousticTrawl2.7, TSB_AcousticTrawl, (TSB_AcousticTrawl2.7 - TSB_AcousticTrawl) / TSB_AcousticTrawl2.7)
-)
-TSB
-
-# Correct:
-#StoX TSB_SweptArea TSB_AcousticTrawl
-#1:                 2.7  2.531620e+05      6.642095e+05
-#2:              2.9.13  2.451803e+05      6.641215e+05
-#3: relative difference  3.152801e-02      1.325416e-04
-
-
-# Wrong?
-# StoX TSB_SweptArea TSB_AcousticTrawl
-# 1:                 2.7  2.531620e+05      6.642095e+05
-# 2:              2.9.13  2.872358e+05      6.749699e+05
-# 3: relative difference -1.345928e-01     -1.620029e-02
-
-
-
 
 # Test RstoxAPI 1.1.9:
 
@@ -4122,7 +4047,8 @@ library(RstoxFramework)
 options(deparse.max.lines = 10)
 
 # Run the cod project of 2019:
-projectPath_SweptArea <- "~/Code/Github/StoX/Releases/2.9.19/TestProjects/Example_BS_swept_area_cod_2019_2.9.19"
+#projectPath_SweptArea <- "~/Code/Github/StoX/Releases/2.9.19/TestProjects/Example_BS_swept_area_cod_2019_2.9.19"
+projectPath_SweptArea <- "~/Code/Github/StoX/Releases/3.0.2/TestProjects/Example_Barents_Sea_cod_swept_area_survey_1999_3.0.2"
 modelName <- "baseline"
 # Open the project:
 system.time(openProject(projectPath_SweptArea))
@@ -4242,6 +4168,7 @@ delete_ds_store <-  function(projectPath) {
 		)
 		unlink(ds_store_files)
 	}
+    return(ds_store_files)
 }
 
 
@@ -4323,6 +4250,8 @@ exampleProjects <- list.dirs("~/Code/Github/StoX/Releases/3.0.0/TestProjects", r
 lapply(exampleProjects, delete_ds_store)
 
 
+exampleProjects <- list.dirs("~/Code/Github/StoXExamples/StoXExamples/Examples_StoX_v3.1.0", recursive = FALSE, full.names = TRUE)
+lapply(exampleProjects, delete_ds_store)
 
 
 
@@ -4567,4 +4496,126 @@ system.time(d <- RstoxData::mapplyOnCores(RstoxFramework::runProject, NumberOfCo
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# Test RstoxAPI 1.1.9:
+
+
+library(RstoxFramework)
+options(deparse.max.lines = 10)
+
+# Run the cod project of 2019:
+projectPath_SweptArea <- "~/Code/Github/StoX/Testing/Barents Sea Northeast Arctic cod bottom trawl index in winter_1999_3.0.7"
+modelName <- "baseline"
+# Open the project:
+system.time(openProject(projectPath_SweptArea))
+# Run the project:
+system.time(output_SweptArea <- runModel(projectPath_SweptArea, modelName, fileOutput = FALSE))
+
+# Total estimated biomass in tonnes:
+SumAbundance_SweptArea2.7 <- sum(output_SweptArea$SuperIndividuals$Abundance, na.rm = TRUE)
+SumWeight_SweptArea2.7 <- sum(output_SweptArea$SuperIndividuals$IndividualRoundWeight, na.rm = TRUE)
+SumAbundanceTimesWeight_SweptArea2.7 <- sum(output_SweptArea$SuperIndividuals$Abundance * output_SweptArea$SuperIndividuals$IndividualRoundWeight * 1e-6, na.rm = TRUE)
+SumBiomass_SweptArea2.7 <- sum(output_SweptArea$SuperIndividuals$Biomass * 1e-6, na.rm = TRUE)
+
+SumAbundance_SweptArea2.7 # [1] 1294322554
+SumWeight_SweptArea2.7 # [1] 2486007
+SumAbundanceTimesWeight_SweptArea2.7 # [1] 46768.56
+SumBiomass_SweptArea2.7 # [1] 46768.56
+
+
+
+subset(output_SweptArea$SuperIndividuals, HaulKey == 80102 & IndividualTotalLength == 20)
+
+
+
+
+
+# Run the sandeel project of 2020:
+projectPath_AcousticTrawl <- "~/workspace/stox/project/Example_North Sea_Lesser_sandeel_2020_impute"
+modelName <- "baseline"
+# Open the project:
+system.time(openProject(projectPath_AcousticTrawl))
+# Run the project:
+system.time(output_AcousticTrawl <- runModel(projectPath_AcousticTrawl, modelName, fileOutput = FALSE))
+# Total estimated biomass in tonnes:
+TSB_AcousticTrawl <- sum(output_AcousticTrawl$SuperIndividuals$Biomass * 1e-6, na.rm = TRUE) # 664411.5
+
+
+
+# Compare to the StoX 2.7 projects:
+library(Rstox)
+
+# Inside the IRM firewall, get the official estimate:
+#projectPath_SweptArea2.7 <- getNMDdata("Barents Sea Northeast Arctic cod bottom trawl index in winter", subset = "2019", ow = TRUE)
+# Run the project:
+projectPath_SweptArea2.7 <- "~/Code/Github/StoX/Testing/Barents Sea Northeast Arctic cod bottom trawl index in winter_1999"
+system.time(output_SweptArea2.7 <- getBaseline(projectPath_SweptArea2.7))
+
+# Total estimated biomass in tonnes:
+SumAbundance_SweptArea2.7 <- sum(output_SweptArea2.7$outputData$SuperIndAbundance$Abundance, na.rm = TRUE)
+SumWeight_SweptArea2.7 <- sum(output_SweptArea2.7$outputData$SuperIndAbundance$weight, na.rm = TRUE)
+SumAbundanceTimesWeight_SweptArea2.7 <- sum(output_SweptArea2.7$outputData$SuperIndAbundance$Abundance * output_SweptArea2.7$outputData$SuperIndAbundance$weight * 1e-6, na.rm = TRUE)
+
+SumAbundance_SweptArea2.7 # [1] 1294322554
+SumWeight_SweptArea2.7 # [1] 2486007
+SumAbundanceTimesWeight_SweptArea2.7 # [1] 59777.35
+
+subset(output_SweptArea2.7$outputData$SuperIndAbundance, output_SweptArea2.7$outputData$SuperIndAbundance$serialno == 80102 & output_SweptArea2.7$outputData$SuperIndAbundance$LenGrp == 20)
+
+
+#Indiiduals_SweptArea2.7 <- data.table::fread("~/Code/Github/StoX/Testing/Barents Sea Northeast Arctic cod bottom trawl index in winter_1999/output/baseline/data/15_IndividualData_IndividualData.txt")
+
+
+# Inside the IMR firewall, get the official estimate:
+#projectPath_AcousticTrawl2.7 <- getNMDdata("North Sea NOR lesser sandeel acoustic abundance estimate in spring", subset = "2020", ow = TRUE)
+# Run the project:
+projectPath_AcousticTrawl2.7 <- "~/workspace/stox/project/North Sea NOR lesser sandeel acoustic abundance estimate in spring_2020"
+system.time(output_AcousticTrawl2.7 <- getBaseline(projectPath_AcousticTrawl2.7))
+# Total estimated biomass in tonnes:
+TSB_AcousticTrawl2.7 <- sum(output_AcousticTrawl2.7$outputData$SuperIndAbundance$Abundance * output_AcousticTrawl2.7$outputData$SuperIndAbundance$IndividualWeightGram * 1e-6, na.rm = TRUE) # 664209.5
+
+
+
+
+
+# The estimates from StoX 2.7 to 2.9.13 differ in the decimal:
+TSB <- data.table::data.table(
+    StoX = c("2.7", "2.9.13", "relative difference"), 
+    TSB_SweptArea = c(TSB_SweptArea2.7, TSB_SweptArea, (TSB_SweptArea2.7 - TSB_SweptArea) / TSB_SweptArea2.7), 
+    TSB_AcousticTrawl = c(TSB_AcousticTrawl2.7, TSB_AcousticTrawl, (TSB_AcousticTrawl2.7 - TSB_AcousticTrawl) / TSB_AcousticTrawl2.7)
+)
+TSB
+
+# Correct:
+#StoX TSB_SweptArea TSB_AcousticTrawl
+#1:                 2.7  2.531620e+05      6.642095e+05
+#2:              2.9.13  2.451803e+05      6.641215e+05
+#3: relative difference  3.152801e-02      1.325416e-04
+
+
+# Wrong?
+# StoX TSB_SweptArea TSB_AcousticTrawl
+# 1:                 2.7  2.531620e+05      6.642095e+05
+# 2:              2.9.13  2.872358e+05      6.749699e+05
+# 3: relative difference -1.345928e-01     -1.620029e-02
 
