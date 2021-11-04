@@ -4619,3 +4619,20 @@ TSB
 # 2:              2.9.13  2.872358e+05      6.749699e+05
 # 3: relative difference -1.345928e-01     -1.620029e-02
 
+
+
+
+
+
+# Run example projects:
+f <- list.dirs("~/Code/Github/RstoxFramework/testProjects/Used", recursive = FALSE)
+system.time(d <- RstoxData::mapplyOnCores(RstoxFramework::runProject, NumberOfCores = 9, projectPath = f, close = TRUE))
+
+
+
+
+
+pr <- c("~/Code/Github/RstoxFramework/testProjects/Used/BIAS_19_ICES", "~/Code/Github/RstoxFramework/testProjects/Used/cod_19", "~/Code/Github/RstoxFramework/testProjects/Used/haddock_19", "~/Code/Github/RstoxFramework/testProjects/Used/split_18", "~/Code/Github/RstoxFramework/testProjects/Used/tobis_20", "~/Code/Github/RstoxFramework/testProjects/Used/tobis_20_depth")
+lapply(pr, runProject)
+
+
