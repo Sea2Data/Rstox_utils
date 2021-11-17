@@ -128,7 +128,7 @@ system.time(RstoxBuild::buildRstoxPackage(
 RstoxBuild::buildRstoxPackage(
 	"RstoxFDA",
 	Rversion = "3.6",
-	version = "1.0.0",
+	version = "1.0.3",
 	imports = list(
 	  stats = "3.5.0",
 	  methods = "3.5.0",
@@ -140,6 +140,7 @@ RstoxBuild::buildRstoxPackage(
 	  sp = "1.3.2",
 	  sf = "0.9.0",
 	  rgdal = "1.5.0",
+	  rgeos = "0.5",
 	  RstoxData = "1.0.25"
 	),
 	internal.dependencies = c(
