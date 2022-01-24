@@ -6,7 +6,16 @@ buildRstoxBuildFromSource <- function(rootDir = "~/Code/Github"){
 	RstoxBuildSourceCodeFile <- file.path(rootDir, "RstoxBuild", "RstoxBuild", "R", "build.R")
 	source(RstoxBuildSourceCodeFile)
 	# Then build the RstoxBuild package from the sourced function buildRstoxPackage():
-	buildRstoxPackage("RstoxBuild", version="1.0", Rversion="3.5", check=FALSE, rootDir=rootDir)
+	buildRstoxPackage(
+	    "RstoxBuild", 
+	    version="1.0", 
+	    Rversion="3.5", 
+	    check=FALSE, 
+        importToNamespace = "data.table", 
+	    imports = c("usethis", "devtools", "data.table"), 
+	    suggests = c("Rstox", "png", "jpeg", "tiff", "rJava", "callr"), 
+	    rootDir = rootDir
+    )
 }
 # buildRstoxBuildFromSource()
 
