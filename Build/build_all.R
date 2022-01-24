@@ -139,24 +139,27 @@ system.time(RstoxBuild::buildRstoxPackage(
 system.time(RstoxBuild::buildRstoxPackage(
 	"RstoxFDA",
 	Rversion = "3.6",
+	version = "1.0.3",
 	imports = list(
 	  stats = "3.5.0",
 	  methods = "3.5.0",
 	  utils = "3.5.0",
-	  readr = "1.3.1",
 	  data.table = "1.12.6",
 	  ggplot2 = "3.2.1",
 	  RColorBrewer = "1.1-2",
 	  gridExtra = "2.3",
 	  sp = "1.3.2",
 	  sf = "0.9.0",
+	  rgdal = "1.5.0",
+	  rgeos = "0.5",
 	  RstoxData = "1.0.25"
 	),
 	internal.dependencies = c(
 		"RstoxData", 
 		"RstoxBase"
 	), 
-	suggests = c("testthat", "Reca", "rnaturalearth"),
+	suggests = c("testthat", "Reca", "rnaturalearth", "rnaturalearthdata"),
+	additional_repositories = "https://stoxproject.github.io/repo",
 	check = FALSE
 ))
 
