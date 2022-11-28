@@ -39,22 +39,24 @@ RstoxBuild::buildRstoxPackage(
 system.time(RstoxBuild::buildRstoxPackage(
 	"RstoxData", 
 	Rversion = "3.6", 
-	#type = "minor", 
+	type = "patch", 
+	prerelease = TRUE, 
 	imports = list(
-		data.table = "1.12.6", 
-		Rcpp = "1.0.0",
-		xml2 = "1.2.2", 
+		data.table = "1.12.0", #"1.12.6", 
+		Rcpp = "1.0.0", 
+		xml2 = "1.2.0", #"1.2.2", 
 		xslt = "1.4",
 		units = "0.7", 
 		#stringr = "1.0.0", 
-		stringi = "1.4.3"
+		stringi = "1.4.0" #"1.4.3"
 	), 
 	suggests = list(
 	    #testthat = "2.0.0", 
 	    tinytest = "1.2.0"
 	), 
 	linkingto = "Rcpp",
-	globalVariables = c(".", "..ConditionalVariableName", "..Country", "..NAToInsert", "..Organisation", "..SurveyName", "..VariableName", "..allDuplicated", "..colList", "..columns", "..digits", "..keep", "..key", "..parameterNames", "..signifDigits", "..sourceColumns", "..targetAndSourceVariables", "..toKeep", "..valueVariablesInTranslation", "..varToExtract", "..variableKeys", "..variablesInTable", "..x", "AcousticCategory", "Addition", "BeamKey", "Channel", "ChannelDepthLower", "ChannelDepthUpper", "ConditionalValue", "Constant", "Country", "Cruise", "CruiseKey", "DateTime", "DoorType", "EDSU", "EchoType", "EffectiveTowDistance", "FishID", "Gear", "GearEx", "HaulNo", "HaulVal", "LengthCode", "LocalID", "LogKey", "N", "NewValue", "NumberAtLength", "NumberOfIndividualsToGenerate", "NumberOfSampledIndividuals", "Quarter", "ReplaceBy", "SaCategory", "Scaling", "Ship", "SpecVal", "SpeciesCategoryNumber", "SpeciesCategoryWeight", "SpeciesCode", "StatRec", "SubsampleWeight", "SubsampledNumber", "Survey", "SweepLngt", "Time", "TransducerOrientation", "Value", "VariableName", "WeightMeasurement", "age", "agingstructure", "ap", "aphia", "bottomdepthstart", "bottomdepthstop", "catCatchWgt", "catchcount", "catchpartnumber", "catchproducttype", "catchweight", "cc", "cruise", "cw", "direction", "distance", "fishingdepthcount", "fishingdepthmax", "fishingdepthmin", "freq", "g", "gear", "gearcondition", "gearflow", "hv", "inapplicableFormats", "individualweight", "isCrustacean", "isHerringOrSprat", "isPelagic", "iskey", "latitudeend", "latitudestart", "lenInterval", "lengthCode", "lengthmeasurement", "lengthresolution", "lengthsamplecount", "lengthsampleweight", "level", "lngtClass", "lngtCode", "logstart", "longitudeend", "longitudestart", "lsCountTot", "lsc", "maturationstage", "maturity", "maxFishID", "meanW", "missionstartdate", "missionstopdate", "ms", "nInd", "nWithWeight", "nation", "noMeas", "parasite", "platformname", "preferredagereading", "readability", "reportInMM", "reportingUnit", "res", "rowIndex", "s", "sampleFac", "samplequality", "sampletype", "serialnumber", "sex", "shortname", "sp", "specialstage", "specimenid", "start_time", "startyear", "station", "stationstartdate", "stationstarttime", "stationstopdate", "stationstoptime", "stomach", "stoxBioticObject", "subFactor", "subWeight", "suffixes", "sweeplength", "target", "tissuesample", "totWeight", "totalNo", "transceiver", "trawldoorarea", "trawldoorspread", "trawldoortype", "trawldoorweight", "verticaltrawlopening", "winddirection", "windspeed", "wingspread", "wiredensity", "wirediameter", "wirelength", "xsdObjects"), 
+	globalVariables = c(".", "..Country", "..NAToInsert", "..Organisation", "..SurveyName", "..colList", "..columns", "..digits", "..groupingVariables", "..keep", "..key", "..parameterNames", "..relevantColumns", "..replacement", "..signifDigits", "..sourceColumns", "..targetAndSourceVariables", "..toKeep", "..valueVariablesInTranslation", "..varToExtract", "..variableKeys", "..variablesInTable", "..x", "AcousticCategory", "Addition", "BeamKey", "Channel", "ChannelDepthLower", "ChannelDepthUpper", "ChannelReferenceKey", "ChannelReferenceType", "Constant", "Country", "Cruise", "CruiseKey", "DateTime", "DoorType", "EDSU", "EchoType", "EffectiveTowDistance", "FishID", "Gear", "GearEx", "HLNoAtLngt", "HaulNo", "LengthCode", "LengthResolution", "LngtClass", "LocalID", "LogKey", "N", "NewValue", "NumberAtLength", "NumberOfIndividualsToGenerate", "NumberOfSampledIndividuals", "Quarter", "ReplaceBy", "SaCategory", "Scaling", "Ship", "SpecVal", "SpeciesCategoryNumber", "SpeciesCategoryWeight", "SpeciesCode", "StatRec", "SubsampleWeight", "SubsampledNumber", "Survey", "SweepLngt", "Time", "TransducerOrientation", "VariableName", "WeightMeasurement", "age", "agingstructure", "aphia", "area", "as.formula", "bottomdepthstart", "bottomdepthstop", "catCatchWgt", "catchcount", "catchpartnumber", "catchproducttype", "catchweight", "cruise", "direction", "distance", "fishingdepthcount", "fishingdepthmax", "fishingdepthmin", "freq", "gear", "gearflow", "inapplicableFormats", "individualweight", "iskey", "latitudeend", "latitudestart", "lenInterval", "lengthCode", "lengthmeasurement", "lengthresolution", "lengthsamplecount", "lengthsampleweight", "level", "liverweight", "lngtClass", "lngtCode", "location", "logstart", "longitudeend", "longitudestart", "lsCountTot", "maturity", "maxFishID", "meanW", "missionstartdate", "missionstopdate", "nInd", "nWithWeight", "nation", "newClass", "noMeas", "parasite", "platformname", "preferredagereading", "readability", "reportInMM", "reportingUnit", "res", "sa", "sampleFac", "serialnumber", "sex", "shortname", "specialstage", "specimenid", "start_time", "startyear", "station", "stationstartdate", "stationstarttime", "stationstopdate", "stationstoptime", "stomach", "stoxBioticObject", "subFactor", "subWeight", "suffixes", "sum_sa.x", "sum_sa.y", "sweeplength", "target", "tissuesample", "totWeight", "totalNo", "transceiver", "trawldoorarea", "trawldoorspread", "trawldoortype", "trawldoorweight", "verticaltrawlopening", "vesselspeed", "winddirection", "windspeed", "wingspread", "wiredensity", "wirediameter", "wirelength", "xsdObjects"
+), 
 	addManual = TRUE, 
 	avoid_compileAttributes_error = TRUE, 
 	check = FALSE
@@ -67,26 +69,32 @@ system.time(RstoxBuild::buildRstoxPackage(
 system.time(RstoxBuild::buildRstoxPackage(
 	"RstoxBase", 
 	Rversion = "3.6", 
-	#type = "minor", 
+	type = "patch", 
+	prerelease = TRUE, 
 	imports = list(
-		data.table = "1.12.6", 
+		data.table = "1.12.0", #"1.12.6", 
 		geojsonsf = "2.0.0", 
-		rgeos = "0.5.2",
-		rgdal = "1.5.0",
-		sp = "1.3.2", 
+		#rgeos = "0.5.2",
+		#rgdal = "1.5.0",
+		sp = "1.3.0", #"1.3.2", 
 		sf = "0.9.0", 
 		lwgeom = "0.2-0", # Used for calculation of area of sf object in simplifyStratumPolygon(). Added here since it is only suggested by sf, but RstoxBase needs it.
+		maps = "0.2-0", # Only suggested by ggplot2, but needed for map_data in plotting functions.
 		ggplot2 = "3.0.0", 
 		units = "0.7", 
-		methods = "3.6.2", 
-		xml2 = "1.2.2", 
-		stringi = "1.4.3"
+		#methods = "3.6.2", Do we really need to specify this minimum version? I do not remember why.
+		xml2 = "1.2.0", #"1.2.2", 
+		stringi = "1.4.0" #"1.4.3"
 	), 
 	importToNamespace = "data.table", 
-	suggests = "testthat", 
+	suggests = list(
+	    #testthat = "2.0.0", 
+	    tinytest = "1.2.0"
+	), 
 	internal.dependencies = "RstoxData", 
 	additional_repositories = "https://stoxproject.github.io/repo", 
-	globalVariables = c(".", "..Cruise", "..DateTime", "..DensityType", "..Hauls", "..LengthDistributionType", "..SpeciesCategoryCatchType", "..VerticalResolutionMax", "..VerticalResolutionMin", "..WeightingFactors", "..acceptedColumns", "..atMissingLengthGroup", "..by", "..cols", "..columnsToKeep", "..extract", "..extractFromDataCopy", "..haulGrouping", "..intervalVector", "..keys", "..keysSansSample", "..lengthInterval", "..lengthIntervalWidths", "..lengthVar", "..locatedStratum", "..meanBy", "..paddingVariables", "..presentResolutionVariables", "..refvar", "..resolutionVar", "..sumBy", "..tomerge", "..variablesToGetFromQuantityData", "..vars", "Abundance", "AcousticCategory", "AcousticCategoryKey", "AcousticTargetStrength", "Area", "Beam", "BeamKey", "Biomass", "CatchFractionNumber", "CatchFractionWeight", "Channel", "ChannelReferenceDepth", "ChannelReferenceKey", "ChannelReferenceTilt", "ChannelReferenceType", "Cruise", "CruiseKey", "CruiseKey1", "DateTime", "Density", "DensityType", "DensityWeight", "Depth", "DepthExponent", "EDSU", "EffectiveLogDistance", "EffectiveTowDistance", "EstimationMethod", "HasAnyPositiveWeightedNumber", "Haul", "HaulKey", "Individual", "IndividualIndex", "IndividualKey", "IndividualRoundWeight", "IndividualTotalLength", "IndividualTotalLengthMiddle", "Layer", "LengthDistributionType", "LengthExponent", "LengthGroup", "LengthResolution", "LogDuration", "LogKey", "LogOrigin", "MaxChannelDepth", "MaxChannelRange", "MeanNASCWeight", "MiddleDateTime", "MinChannelDepth", "MinChannelRange", "NASCKey", "NASCWeight", "NumberOfAssignedHauls", "NumberOfAssignedHaulsWithCatch", "PSU", "ReplaceIndividual", "ReplaceIndividualIndex", "ReplaceLevel", "SSU", "SSUIndex", "SpeciesCategory", "SpeciesCategoryCatchWeight", "SplitAcousticCategory", "StartDateTime", "Station", "StationLevel", "StopDateTime", "Stratum", "SummedWeights", "Survey", "SweepWidth", "TableName", "TargetStrength", "TargetStrength0", "TargetStrengthFunction", "TotalLength", "V1", "ValidHaul", "WeightedNumber", "WeightingFactor", "assignmentID", "assignmentPasted", "backscatteringCrossSection", "crossSection", "distance", "functionName", "haulWeightFactor", "imputeSeed", "includeintotal", "individualNumber", "individualWeightFactor", "inside", "intervalIndex", "midIndividualTotalLength", "minDistance", "missingAssignment", "multiple", "numberOfIndividuals", "numberOfSubSamples", "packageName", "raisingFactor", "representativeBackscatteringCrossSection", "representativeBackscatteringCrossSectionNormalized", "sumIndividualWeightFactor", "sumWeightedNumber", "weighted", "weightingParameter", "x", "y"), 
+	globalVariables = c(".", "..Cruise", "..DateTime", "..DensityType", "..Hauls", "..LengthDistributionType", "..SpeciesCategoryCatchType", "..VerticalResolutionMax", "..VerticalResolutionMin", "..WeightingFactors", "..acceptedColumns", "..atMissingLengthGroup", "..by", "..cols", "..columnsToKeep", "..extract", "..extractFromDataCopy", "..haulGrouping", "..intervalVector", "..keys", "..keysSansSample", "..lengthInterval", "..lengthIntervalWidths", "..lengthVar", "..locatedStratum", "..meanBy", "..mergeBy", "..paddingVariables", "..presentResolutionVariables", "..refvar", "..resolutionVar", "..sumBy", "..tomerge", "..variablesToGetFromQuantityData", "..vars", "Abundance", "AcousticCategory", "AcousticCategoryKey", "AcousticTargetStrength", "AllHaulsHaveAllSpeciesCategory", "AllHaulsHaveAnySpeciesCategory", "Area", "Beam", "BeamKey", "Biomass", "CatchFractionNumber", "CatchFractionWeight", "Channel", "ChannelReferenceDepth", "ChannelReferenceKey", "ChannelReferenceTilt", "ChannelReferenceType", "ContainsAllSpeciesCategory", "ContainsAnySpeciesCategory", "Cruise", "CruiseKey", "CruiseKey1", "DateTime", "Density", "DensityType", "DensityWeight", "Depth", "DepthExponent", "EDSU", "EffectiveLogDistance", "EffectiveTowDistance", "EstimationMethod", "Haul", "HaulKey", "Individual", "IndividualIndex", "IndividualKey", "IndividualRoundWeight", "IndividualTotalLength", "IndividualTotalLengthMiddle", "Layer", "LengthDistributionType", "LengthExponent", "LengthGroup", "LengthResolution", "LogDuration", "LogKey", "LogOrigin", "MaxChannelDepth", "MaxChannelRange", "MeanNASCWeight", "MiddleDateTime", "MinChannelDepth", "MinChannelRange", "N", "NASCKey", "NASCWeight", "NumberOfAssignedHauls", "PSU", "ReplaceIndividual", "ReplaceIndividualIndex", "ReplaceLevel", "SSU", "SSUIndex", "Sample", "SampleNumber", "SampleWeight", "SpeciesCategory", "SpeciesCategoryCatchWeight", "SplitAcousticCategory", "StartDateTime", "Station", "StationLevel", "StopDateTime", "Stratum", "StratumPolygon", "SummedWeights", "Survey", "SweepWidth", "TableName", "TargetStrength", "TargetStrength0", "TargetStrengthFunction", "TotalLength", "V1", "WeightedNumber", "WeightingFactor", "assignmentID", "assignmentPasted", "backscatteringCrossSection", "crossSection", "distance", "functionName", "getTrueCentroid", "ggtitle", "haulWeightFactor", "imputeSeed", "includeintotal", "individualNumber", "individualWeightFactor", "inside", "insideRadius", "intervalIndex", "midIndividualTotalLength", "minDistance", "missingAssignment", "missingSpecies", "multiple", "numberOfIndividuals", "numberOfSubSamples", "packageName", "raisingFactor", "representativeBackscatteringCrossSection", "representativeBackscatteringCrossSectionNormalized", "sumIndividualWeightFactor", "sumWeightedNumber", "weighted", "weightingParameter", "x", "y"
+), 
 	addManual = TRUE, 
 	check = FALSE
 ))
@@ -98,20 +106,22 @@ system.time(RstoxBuild::buildRstoxPackage(
 system.time(RstoxBuild::buildRstoxPackage(
     "RstoxFramework", 
     Rversion = "3.6", # This is due to change in formals() which now includes the 'envir' argument which we have employed, and the fact that sampling has changed as of R 3.6.
-    #type = "minor",
+    type = "patch", 
+    prerelease = TRUE, 
     imports = list(
-        data.table = "1.12.6", 
+        data.table = "1.12.0", #"1.12.6", 
         #geojsonio = "0.8.0", 
         geojsonsf = "2.0.0",
         jsonlite = "1.6", 
-        jsonvalidate = "1.3.2", 
-        rgdal = "1.5.0",
-        sp = "1.3.2",
+        jsonvalidate = "1.3.0", #"1.3.2", 
+        #rgdal = "1.5.0",
+        sp = "1.3.0", #"1.3.2",
         sf = "0.9.0", 
-        methods = "3.6.2", 
-        xml2 = "1.2.2", 
-        stringr = "1.0.0", 
-        stringi = "1.4.3"
+        methods = "3.6.0", # "3.6.2", # To avoid message during testing:  '::' or ':::' import not declared from: ‘methods’
+        #xml2 = "1.2.2", 
+        #stringr = "1.0.0", 
+        stringi = "1.4.0", #"1.4.3", 
+        ggplot2 = "3.0.0"
     ), 
     importToNamespace = "data.table", 
     suggests = list(
@@ -126,11 +136,10 @@ system.time(RstoxBuild::buildRstoxPackage(
         "RstoxBase"
     ), 
     additional_repositories = "https://stoxproject.github.io/repo", 
-    globalVariables = c(".", "..Cruise", "..DateTime", "..EDSUInfoToKeep", "..PSU", "..activeProcessID", "..clickPointNames", "..coordinateNames", "..functionInputs", "..functionName", "..functionParameters", "..haulInfoToKeep", "..ind", "..newProcessName", "..processDirty", "..propertyDirty", "..skipNAAt", "..stationInfoToKeep", "..validInd", "AcoCat", "BeamKey", "BootstrapID", "CruiseKey", "EDSU", "Haul", "JavaJEXL2R", "Latitude", "Latitude2", "Layer", "LogKey", "LogOrigin", "LogOrigin2", "Longitude", "Longitude2", "PSU", "Package", "PolygonKey", "ProcessName", "ResampleFunction", "SampleUnit", "Station", "StationWeight", "StoX", "Stratum", "Version", "WeightingFactor", "assignmentPasted", "attriributes<-", "baselineTable", "binaryPath", "canShowInMap", "capture.output", "ch", "col2rgb", "colorRampPalette", "dataTable2SpatialPolygonsDataFrame", "dataType", "download.file", "freq", "functionName", "functionOutputDataType", "hasProcessData", "install.packages", "model", "modelName", "models", "name", "newVersion", "numStations", "possibleValues", "processID", "processIndex", "processName", "processNames", "projectList", "projectList2.7", "projectPath", "projectPath2.7", "read.table", "remove.packages", "resampledCountWithUniqueName", "start_time", "transceiver", "value", "weightsPasted"), 
-    check = FALSE, 
-    parallelTest = TRUE
+    globalVariables = c("..EDSUInfoToKeep", "..PSU", "..activeProcessID", "..clickPointNames", "..coordinateNames", "..functionInputs", "..functionName", "..functionParameters", "..haulInfoToKeep", "..ind", "..newProcessName", "..presentVariables", "..processDirty", "..propertyDirty", "..skipNAAt", "..stationInfoToKeep", "..validInd", "AcoCat", "BeamKey", "BootstrapID", "CruiseKey", "Haul", "Layer", "LogKey", "LogOrigin", "LogOrigin2", "PSU", "Package", "PolygonKey", "ProcessName", "ResampleFunction", "SampleUnit", "Station", "StationWeight", "StoX", "Stratum", "Version", "WeightingFactor", "assignmentPasted", "binaryPath", "canShowInMap", "capture.output", "ch", "col2rgb", "colorRampPalette", "download.file", "freq", "functionName", "functionOutputDataType", "hasProcessData", "modelName", "name", "newVersion", "numStations", "possibleValues", "processID", "processIndex", "processName", "projectPath", "read.table", "remove.packages", "resampledCountWithUniqueName", "start_time", "transceiver", "value", "weightsPasted"
+), 
+    check = FALSE
 ))
-
 
 
 
@@ -192,7 +201,7 @@ RstoxBuild::buildRstoxPackage(
 	Rversion = "3.6", 
 	check = FALSE, 
 	importToNamespace = "data.table", 
-	imports = c("usethis", "devtools", "data.table"), 
+	imports = c("usethis", "devtools", "data.table", "semver"), 
 	suggests = c("Rstox", "png", "jpeg", "tiff", "rJava", "callr")
 )
 
@@ -218,5 +227,13 @@ convertGlobalVariables <- function(x = "~/ttt.txt") {
 }
 convertGlobalVariables()
 
+
+
+
+
+
+
+#pr <- c("~/Code/Github/RstoxFramework/RstoxFramework/inst/test/coastalCod_20", "~/Code/Github/RstoxFramework/RstoxFramework/inst/test/export_ICESbiotic", "~/Code/Github/RstoxFramework/RstoxFramework/inst/test/splitNASC_18", "~/Code/Github/RstoxFramework/RstoxFramework/inst/test/tobis_20", "~/Code/Github/RstoxFramework/RstoxFramework/inst/test/tobis_20_depth")
+#d <- lapply(pr, RstoxFramework::runProject, close = TRUE)
 
 
