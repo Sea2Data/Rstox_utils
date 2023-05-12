@@ -1,5 +1,3 @@
-feil
-
 # Build Rstox:
 RstoxBuild::buildRstoxPackage(
 	"Rstox", 
