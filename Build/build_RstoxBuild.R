@@ -12,7 +12,12 @@ buildRstoxBuildFromSource <- function(rootDir = "~/Code/Github"){
 	    Rversion="3.5", 
 	    check=FALSE, 
         importToNamespace = "data.table", 
-	    imports = c("usethis", "devtools", "data.table"), 
+	    imports = c(
+	        "usethis", "devtools", 
+	        "data.table", 
+	        "httr", "jsonlite", "roxygen2", "rcmdcheck", 
+	        "callr", "desc", "semver"
+	    ), 
 	    suggests = c("Rstox", "png", "jpeg", "tiff", "rJava", "callr"), 
 	    rootDir = rootDir
     )
